@@ -11,14 +11,6 @@ GitHub is pretty developer-centric. As such, the first thing a developer sees wh
 
 Provide a short description of the project's goals and a bit of background. Any links that you frequently access are also good to include up at the top as well, for easy access. Everyone loves easy access.
 
-## Information about the directory structure.
-
-Typically we have more than just Drupal in our repository root, so it's helpful to have a brief description of what is in there. We typically have a drush folder for aliases and commands, as well as a patches directory with its own README.
-
-## How to get started developing.
-
-Tell the developers what the best way to jump into the project might be. Things like, "clone this repository, create a feature branch, run the installer, download a copy of the database, etc.. Whomever reviews the pull request should also do things like remove the remote branch from the repository once it is merged."
-
 ## Code promotion workflow.
 
 The workflow below outlines the development process.
@@ -37,6 +29,20 @@ Icebox Issues should not take up a team member’s time or mental bandwidth; we 
 **Review/QA** We use the Review/QA column for Issues that are open to the team for review and testing. Usually this means the code is deployed into our Staging environment and in-use by the 40+ member Axiom Zen team spread across the world. 
 
 **Done** Issues in this pipeline need no further work and are ready to be closed. Having a good ‘Definition of Done’ agreed upon before work starts on an Issue is very helpful here! If there were any objectives or key metrics associated with the Issue, they can be appended prior to closing. 
+
+## Product Development Milestones
+
+We will make heavy use of GitHub’s native Milestones feature to break up the product backlog into manageable chunks. We then use an easy filter by milestones feature on the ZenHub Boards to create powerful snapshots of our product roadmap. 
+
+Each product development Sprint also has a Milestone associated. During the Sprint planning meeting, we create the new Milestone and assign to it the most important Issues from the 'backlog' Pipeline of the Global milestone. 
+
+Each Issue then flows through the remaining Pipeline steps until it lands in the “done” Pipeline and is shipped as part of the next releasable version of ZenHub. 
+
+## Keeping a Record of Sprints
+
+We are currently doing weekly Sprints and have found it very helpful to have a ‘master’ record of the Sprint. Initially, we experimented with the GitHub wiki, but found it was too out of sight and therefore did not hit our internal goals around visibility and transparency. 
+
+Instead, we have started creating a special Issue per Sprint, identified with the label ‘Sprint Goal’ that details all the information around the Sprint. 
 
 ## Environments.
 
