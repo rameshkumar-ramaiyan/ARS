@@ -7,11 +7,11 @@ We recently started using GitHub for project management after the developers sta
 ## Project Introductions
 GitHub is pretty developer-centric. As such, the first thing a developer sees when they open a project, is a view of the code repository. Below that, GitHub automatically renders the README file found in the root of the code base. It's a very typical practice for software projects, especially open source software projects, to have this file in place. The README can be in various formats, but a favorite of mine is Markdown. Simply giving the README an extension of .md tells GitHub to render your README.md using the Markdown syntax. Even better, GitHub has it's own flavor of markdown. Since the developers of your project see the README first, this is a great place for information that will get them up and running with the project as quickly as possible. Be concise. If you need to write more than a few sentences, chances are, you should be linking off to more in-depth documentation in your project's wiki. Here's a quick guideline of some of the things that you might want to include in your README.
 
-## A quick project overview.
+## A quick project overview
 
 Provide a short description of the project's goals and a bit of background. Any links that you frequently access are also good to include up at the top as well, for easy access. Everyone loves easy access.
 
-## Code promotion workflow.
+## Code promotion workflow
 
 The workflow below outlines the development process.
 ![Code promotion workflow](/images/code promotion workflow.jpg)
@@ -44,11 +44,11 @@ We are currently doing weekly Sprints and have found it very helpful to have a �
 
 Instead, we have started creating a special Issue per Sprint, identified with the label ‘Sprint Goal’ that details all the information around the Sprint. 
 
-## Environments.
+## Environments
 
 Outline information for your dev, staging and live environments, if you have them. Also, outline the process for getting things to the various places. How do I make sure my code is on staging? What is the best way to grab a database dump? We like to setup drush aliases for each environment ahead of time as a means of outlining this information and giving developers a good starting point. This document contains some example commands for doing some typical operations. Here's an example.
 
-## Links to where to find more information.
+## Links to where to find more information
 
 Typically this is our wiki, where we keep more detailed documentation and notes on things; project details like the original proposal's SOW, credentials to environments, Scrum Notes, Pre-launch checklists, etc.
 
