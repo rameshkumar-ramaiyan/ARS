@@ -21,9 +21,22 @@ Tell the developers what the best way to jump into the project might be. Things 
 
 ## Code promotion workflow.
 
-It's a good idea to outline your development process, as it may change from project to project. Do you want people to fork your repository and send pull requests; create feature branches and send pull requests; or just go ahead and commit to master? Let the developers know up-front, so there's no confusion.
+The workflow below outlines the development process.
+![Code promotion workflow](/images/code promotion workflow.jpg)
 
-https://www.zenhub.io/blog/content/images/2014/Sep/1364c6ce-3d07-11e4-8f7f-30eb1b84a6ca.jpg
+New Issues This Pipeline is the landing point for new Issues. We have a weekly triage meeting to review and prioritize all Issues in this pipeline. Anyone from the team can create an Issue at any time and know that, through this process, it will be visible to everyone. The triage meeting should always end with an empty 'New Issues' pipeline! 
+
+Icebox The Icebox represents items that are a low priority in the product backlog. We don't want to delete these and create a cycle of raising duplicate issues, so we keep them in our icebox with just enough information attached that we can pick it up some time in the future -- if and when we choose to do so. 
+
+Icebox Issues should not take up a team member’s time or mental bandwidth; we find that putting ideas into the Icebox Pipeline gets them out of our heads and helps us focus on immediate priorities.
+
+Backlog This Pipeline is a prioritized backlog of items ready for development. The Backlog is used heavily during sprint planning meetings: the higher an issue is on this list, the higher the priority. Higher-priority items will typically have more in-depth information attached, and we keep all our use cases and requirements in the Issue comments. 
+
+In Progress This one is self-explanatory! Each Issue in this pipeline should have an assigned owner who is responsible for its completion. If a team member decides to take on a task, she or he simply self-assigns the Issue and moves it to the In Progress column, instantly communicating to the rest of the team that the task is underway. 
+
+Review/QA We use the Review/QA column for Issues that are open to the team for review and testing. Usually this means the code is deployed into our Staging environment and in-use by the 40+ member Axiom Zen team spread across the world. 
+
+Done Issues in this pipeline need no further work and are ready to be closed. Having a good ‘Definition of Done’ agreed upon before work starts on an Issue is very helpful here! If there were any objectives or key metrics associated with the Issue, they can be appended prior to closing. 
 
 ## Environments.
 
