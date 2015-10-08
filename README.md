@@ -8,8 +8,7 @@ Provide a short description of the project's goals and a bit of background. Any 
 
 ## Code promotion workflow
 
-The workflow below outlines the development process.
-/images/code promotion workflow.jpg
+Please refer to wiki for an outline of the development process. The wiki also provides a picture of the code promotion workflow. 
 
 **New Issues** All new tasks are recorded as new issues. We conduct a weekly triage meeting to review and prioritize new tasks. Anyone from the team can create an Issue at any time and know that, through this process, it will be visible to everyone. 
 
