@@ -9,42 +9,26 @@ Provide a short description of the project's goals and a bit of background. Any 
 ## Code promotion workflow
 
 The workflow below outlines the development process.
-![Code promotion workflow](/images/code promotion workflow.jpg)
+/images/code promotion workflow.jpg
 
-**New Issues** This Pipeline is the landing point for new Issues. We have a weekly triage meeting to review and prioritize all Issues in this pipeline. Anyone from the team can create an Issue at any time and know that, through this process, it will be visible to everyone. The triage meeting should always end with an empty 'New Issues' pipeline! 
+**New Issues** All new tasks are recorded as new issues. We conduct a weekly triage meeting to review and prioritize new tasks. Anyone from the team can create an Issue at any time and know that, through this process, it will be visible to everyone. 
 
-**Icebox** The Icebox represents items that are a low priority in the product backlog. We don't want to delete these and create a cycle of raising duplicate issues, so we keep them in our icebox with just enough information attached that we can pick it up some time in the future -- if and when we choose to do so. 
+**Backlog** This Pipeline is a prioritized backlog of items ready for development. The Backlog is used heavily during sprint planning meetings: the higher an issue is on this list, the higher the priority. All use cases and requirements associated with the tasks are maintained in the Issue comments. 
 
-Icebox Issues should not take up a team member’s time or mental bandwidth; we find that putting ideas into the Icebox Pipeline gets them out of our heads and helps us focus on immediate priorities.
+**In Progress** Each Issue in this pipeline is assigned to a team member responsible for its completion. If a team member decides to take on a task, she or he simply self-assigns the Issue and moves it to the In Progress column, instantly communicating to the rest of the team that the task is underway. 
 
-**Backlog** This Pipeline is a prioritized backlog of items ready for development. The Backlog is used heavily during sprint planning meetings: the higher an issue is on this list, the higher the priority. Higher-priority items will typically have more in-depth information attached, and we keep all our use cases and requirements in the Issue comments. 
+**Review/QA** We use the Review/QA column for Issues that are open to the team for review and testing. Usually this means the code is deployed into our Staging environment. 
 
-**In Progress** This one is self-explanatory! Each Issue in this pipeline should have an assigned owner who is responsible for its completion. If a team member decides to take on a task, she or he simply self-assigns the Issue and moves it to the In Progress column, instantly communicating to the rest of the team that the task is underway. 
-
-**Review/QA** We use the Review/QA column for Issues that are open to the team for review and testing. Usually this means the code is deployed into our Staging environment and in-use by the 40+ member Axiom Zen team spread across the world. 
-
-**Done** Issues in this pipeline need no further work and are ready to be closed. Having a good ‘Definition of Done’ agreed upon before work starts on an Issue is very helpful here! If there were any objectives or key metrics associated with the Issue, they can be appended prior to closing. 
+**Done** Issues in this pipeline need no further work and are ready to be closed. All objectives and key metrics associated with the Issue are appended prior to closing. 
 
 ## Product Development Milestones
 
-We will make heavy use of GitHub’s native Milestones feature to break up the product backlog into manageable chunks. We then use an easy filter by milestones feature on the ZenHub Boards to create powerful snapshots of our product roadmap. 
-
-Each product development Sprint also has a Milestone associated. During the Sprint planning meeting, we create the new Milestone and assign to it the most important Issues from the 'backlog' Pipeline of the Global milestone. 
-
-Each Issue then flows through the remaining Pipeline steps until it lands in the “done” Pipeline and is shipped as part of the next releasable version of ZenHub. 
+We use the GitHub native Milestones feature to break up the product backlog into manageable chunks. We then use an easy filter by milestones feature on the ZenHub Boards to create snapshots of our product roadmap. Each product development Sprint has a Milestone associated. During the Sprint planning meeting, we create the new Milestone and assign to it tasks from the 'backlog' Pipeline that make up the Sprint. 
 
 ## Keeping a Record of Sprints
 
-We are currently doing weekly Sprints and have found it very helpful to have a ‘master’ record of the Sprint. Initially, we experimented with the GitHub wiki, but found it was too out of sight and therefore did not hit our internal goals around visibility and transparency. 
-
-Instead, we have started creating a special Issue per Sprint, identified with the label ‘Sprint Goal’ that details all the information around the Sprint. 
+We implement weekly Sprints.  A special Issue associated with a milestone is created per Sprint, identified with the label ‘Sprint Goal’ that details all the information around the Sprint. 
 
 ## Environments
 
-Outline information for your dev, staging and live environments, if you have them. Also, outline the process for getting things to the various places. How do I make sure my code is on staging? What is the best way to grab a database dump? We like to setup drush aliases for each environment ahead of time as a means of outlining this information and giving developers a good starting point. This document contains some example commands for doing some typical operations. Here's an example.
-
-## Links to where to find more information
-
-Typically this is our wiki, where we keep more detailed documentation and notes on things; project details like the original proposal's SOW, credentials to environments, Scrum Notes, Pre-launch checklists, etc.
-
-We've attempted to create a drupal-boilerplate, of sorts, for our Drupal projects which we're continuously re-using for new projects and modifying when we find things that work better. Take a look, and if you find it useful, please feel free to use it! If you find anything missing, or have ideas on improving it, please fork it and send us a pull request!
+Information for the dev, staging and live environments is provided as a wiki page.
