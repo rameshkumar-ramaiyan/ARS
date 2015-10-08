@@ -3,8 +3,13 @@
 This site provisions a Virtual Performance Center (VPC) for this task order. The VPC is a secure central repository of project information to allow USDA Umbraco participants to access all Technik tools, metrics, schedules, reviews, templates, training, and guidance. The VPC provides performance transparency using real-time reporting; dashboards; and management tools to simplify surveillance, monitor performance, and seek opportunities for continuous improvement. Using our VPC, Task Leads and the PM monitor performance metrics, reallocate resources, and make adjustments as necessary to ensure timely and cost-accurate performance.
 
 ## A quick project overview
-
-Provide a short description of the project's goals and a bit of background. Any links that you frequently access are also good to include up at the top as well, for easy access. Everyone loves easy access.
+Implement and deploy the Umbraco Web Content Management system for USDA-ARS web site by accomplishing the following.
+* Migrate in-house developed ‘SitePublisher’ web content management system in its entirety to *Umbraco web content management system.
+* Migrate all existing web features and functions to new infrastructure and Umbraco.
+* Convert ARS dynamic web content and components from ColdFusion to ASP.NET.
+* Migrate existing ARS static web content to Umbraco.
+* Convert schema/stored procedures/functions/view tables to SQL Server 2012.
+* Provide on-site knowledge transfer and documentation to OCIO staff.
 
 ## Code promotion workflow
 
