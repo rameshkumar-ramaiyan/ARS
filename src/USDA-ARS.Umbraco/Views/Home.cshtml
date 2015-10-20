@@ -1,0 +1,1172 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = null;
+}
+
+<!DOCTYPE HTML>
+	
+<HEAD>
+	<meta http-equiv='Content-Type:text/html; charset=UTF-8' />
+	<meta http-equiv="X-UA-Compatible" content="IE=8" />			<!-- disable IE compatibility view -->
+	
+	<link href="/css/layout.css" 		rel="stylesheet" type="text/css" />
+	<link href="/css/ARSbranding.css" 	rel="stylesheet" type="text/css" />
+	<link href="/css/ie8-and-down.css" 	rel="stylesheet" type="text/css" />
+	
+	
+	
+	<script id="_fed_an_ua_tag" src="/incme/handf/Universal-Federated-Analytics-Min.js?agency=USDA&subagency=ARS"></script>
+	
+
+	
+	<!-- include jQuery library -->
+		
+	<script src="/jQuery/jquery.min.js"></script>
+	<script src="/jQuery/jquery.cycle.all.min.js"></script>
+	<script src="/jQuery/jquery.corner.js"></script>			<!-- Corner Plugin -->
+	
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+	
+    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+
+	<!-- jQuery validation -->
+	<script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
+
+	<!-- for the tabs in the middle section in the home page -->
+	<script type="text/javascript">
+	    function displaySelected(field)
+		{
+	        var DetailObj_Latest = document.getElementById("AgencyNewsDetail_Latest");
+	        var DetailObj_Topic = document.getElementById("AgencyNewsDetail_Topic");
+	        var DetailObj_Blog = document.getElementById("AgencyNewsDetail_Blog");
+	        
+	        var TopObj_Latest = document.getElementById("AgencyNewsTop_Latest");
+	        var TopObj_Topic = document.getElementById("AgencyNewsTop_Topic");
+	        var TopObj_Blog = document.getElementById("AgencyNewsTop_Blog");
+	        
+	        DetailObj_Latest.style.visibility = "hidden";
+	        DetailObj_Topic.style.visibility = "hidden";
+	        DetailObj_Blog.style.visibility = "hidden";
+	        
+	        TopObj_Latest.className = "toplink";
+	        TopObj_Topic.className = "toplink";
+	        TopObj_Blog.className = "toplink";
+	        
+	        if (field == "") {
+	            field = "Latest";
+	        }
+	        var selectedObj_Top = document.getElementById("AgencyNewsTop_" + field);
+	        var selectedObj_Detail = document.getElementById("AgencyNewsDetail_" + field);
+	        
+	        selectedObj_Top.className = "selectedTab";
+	        selectedObj_Detail.style.visibility = "visible";
+	    }
+	</script>
+	
+	
+	
+	<script type="text/javascript">
+		$(function() {
+			$("#tabs").tabs()
+					  .tabs('select', 1)					// activate second tab
+					  .removeClass('ui-widget-content');	// change the white background to teal
+					  
+			$("#middleTabs").tabs();
+			
+			// Popular Topic Links Menu
+			
+			$("#popularLinksMoreMenu").menu({
+												position: {
+													my: "right top", 
+													at: "right bottom"
+												}
+											});
+		});
+	</script>
+
+	 <style>
+		.ui-menu { width: auto;}
+		.ui-widget-content {border: none; bgColorHoever: #FFFFFF;}	/* remove the border */
+	</style>
+<meta name='docid' content='6091'><title>ARS : Home</title><meta name='bbsect' content='Main'><meta name='modestem' content='00a00b00c00d'><meta name='modestem1' content='00a'><meta name='modestem2' content='00b'><meta name='modestem3' content='00c'><meta name='modestem4' content='00d'><meta name='site_code' content='00000000'></HEAD>
+
+<body onload="displaySelected('Latest');">
+
+
+<div id="pageComplete">
+
+
+
+
+
+
+
+
+<!-- ARS Header start -->
+<div id="masthead">
+	<a class="section508" name="masthead">
+		Page Banner
+	</a>
+	
+	<div id="identity">
+		<a href="http://www.usda.gov">
+			<img src="/images/redesign/USDA-Logo.png" alt="USDA Logo and link" class="USDAlogo">
+		</a>
+		
+		<div class="agencyName">
+			<p style="font-style:Helvetica; font-size:16px; font-weight: bold;">United States Department of Agriculture</p>
+			<p style="font-style:Helvetica; font-size:14px; font-weight: bold;">Agricultural Research Service</p>
+		</div>
+		<div class="deptName clearfloat"></div>
+	</div>
+	
+	<div id="agencyMenu">
+		<div aria-labelledby="navigation_top" role="navigation" id="agencyNav">
+			<ul>
+				<li>
+					<a title="Home" href="/"><b>ARS Home</b></a>
+				</li>
+				<li>|</li>
+				<li>
+					<a title="About ARS" href="/aboutus"><b>About ARS</b></a>
+				</li>
+				<li>|</li>
+				<li>
+					<a title="Contact Us" 
+						href="/contactus/contactus.htm
+							
+							"><b>Contact Us</b>
+					</a>
+				</li>
+			</ul>
+		</div>
+		
+		<div id="agencySearch">
+			<!-- ************ BEGIN Search Box ************ -->
+			<!-- Google Mini -->
+			
+			
+			<!-- USA Search -->
+			<form method="get" action="http://search.usa.gov/search?sort=rel" id="search_form">
+				<table width="250" cellspacing="2" cellpadding="2" class="justright">
+					<tr>
+						<td class="justright">
+							<input name="utf8" type="hidden" value="&#x2713;" />
+						    <input name="affiliate" id="affiliate" type="hidden" value="agriculturalresearchservicears" />
+							
+							<label class="displayNone" for="searchThis">Search for This</label>
+						    <input name="query" id="query" type="text" value="" style="color:#000000" />
+						</td>
+						<td width="20" class="justleft">
+						    <input name="btnG" type="image" value="Go!" alt="Submit Form" src="/images/redesign/search.png">
+						</td>
+					</tr>
+				</table>
+			</form>
+		</div>
+	</div>
+
+
+	<!-- Tabs -->
+	<div id="MenuNavigation">
+		<div id="mainNav">
+			<ul id="nav">
+				
+				<!--[if lt IE 9]>
+					<li class="level1 IEonly">
+						<img src="/images/redesign/leftTab.png" alt="spacer">
+					</li>
+				<![endif]-->
+					
+				<!-- Research Tab -->
+				<li class="level1">
+					<a id="firstTab" href="#" class="level1">
+						
+						Research
+					</a>
+					
+					<div>
+						<ul>
+							
+							<li>
+								<a href="/Research/research.htm">
+									Research Home
+								</a>
+							</li>
+							
+							<li>
+								<a href="/research/programs.htm">
+									National Programs
+								</a>
+							</li>
+							<li>
+								<a href="/research/projects.htm">
+									Research Projects
+								</a>
+							</li>
+							<li>
+								<a href="/services/TekTran.htm">
+									Scientific Manuscripts
+								</a>
+							</li>
+							<li>
+								<a href="/research/docs.htm?docid=1428">
+									International Programs
+								</a>
+							</li>
+							<li>
+								<a href="/Main/docs.htm?docid=23949">
+									Trending Research Topics
+								</a>
+							</li>
+							<li>
+								<a href="/services/software/software.htm">
+									Scientific Software/Models
+								</a>
+							</li>
+							<li>
+								<a href="/services/docs.htm?docid=1328">
+									Databases & Datasets
+								</a>
+							</li>
+							<li>
+								<a href="/Business/Business.htm">
+									Scientific Collaborations
+								</a>
+							</li>
+						</ul>
+					</div>
+				</li>
+				
+				<!-- People & Locations Tab -->
+				<li class="level1">
+					<a href="#" class="level1">
+						
+						People &amp; Locations
+					</a>
+					
+					<div>
+						<ul>
+							<li>
+								<a href="/pandp/people.htm">
+									Find a person
+								</a>
+							</li>
+							<li>
+								<a href="/pandp/locations.htm">
+									Find a location
+								</a>
+							</li>
+							<li>
+								<a href="/main/main.htm#bottomContent">
+									Find an office at headquarters
+								</a>
+							</li>
+							<li>
+								<a href="/pandp/arsorganchart.htm">
+									Organizational chart
+								</a>
+							</li>
+							<li>
+								<a href="/is/agency/ac/">
+									Administrator’s Council
+								</a>
+							</li>
+						</ul>
+					</div>
+				</li>
+				
+				<!-- Newsroom Tab -->
+				<li class="level1">
+					<a href="#" class="level1">
+						
+						Newsroom
+					</a>
+					
+					<div>
+						<ul>
+							<li>
+								<a href="/News/News.htm">
+									News Home
+								</a>
+							</li>
+							<li>
+								<a href="/News/docs.htm?docid=1261">
+									Latest News
+								</a>
+							</li>
+							
+							<li>
+								<a href="http://agresearchmag.ars.usda.gov/">
+									Magazine
+								</a>
+							</li>
+							
+							<li>
+								<a href="/News/docs.htm?docid=23559">
+									Photos
+								</a>
+							</li>
+							<li>
+								<a href="/News/docs.htm?docid=23712">
+									Subscription Lists
+								</a>
+							</li>
+							<li>
+								<a href="/News/docs.htm?docid=1281">
+									Briefing Room
+								</a>
+							</li>
+							<li>
+								<a href="/News/docs.htm?docid=23814">
+									Podcasts
+								</a>
+							</li>
+							<li>
+								<a href="/news/events.htm">
+									Events
+								</a>
+							</li>
+							<li>
+								<a href="/News/docs.htm?docid=1383">
+									Press Room
+								</a>
+							</li>
+							
+							
+							<li>
+								<a href="/News/docs.htm?docid=23818">
+									Video
+								</a>
+							</li>
+						</ul>
+					</div>
+				</li>
+				
+				<!-- Careers Tab -->
+				<li class="level1">
+					<a style="border-right:0px;" id="lastTab" href="#" class="level1">
+						
+						Careers
+					</a>
+					
+					<div>
+						<ul>
+							<li>
+								<a href="http://www.usajobs.gov/JobSearch/Search/GetResults?OrganizationID=AG03">
+									ARS Vacancies at USAJOBS
+								</a>
+							</li>
+							<li>
+								<a href="/Careers/Careers.htm">
+									Careers at ARS Info
+								</a>
+							</li>
+							<li>
+								<a href="https://www.usajobs.gov/Search?Keyword=USDA+ARS+postdoctoral">
+									Post Doctoral Positions
+								</a>
+							</li>
+						</ul>
+					</div>
+				</li>
+				
+				
+				<!--[if lt IE 9]>
+					<li class="level1 IEonly">
+						<img src="/images/redesign/rightTab.png" alt="spacer">
+					</li>
+				<![endif]-->			
+			</ul>
+		</div>
+		
+		<div id="siteNav">
+			<ul>
+				<li>
+					<a href="/ars_sitemap.htm" title="Site Map"><b>Site Map</b></a>
+				</li>
+				<li>|</li>
+				<li>
+					<a href="/azindex.htm" title="A-Z Index"><b>A-Z Index</b></a>
+				</li>
+				
+				<li>|</li>
+				<li>
+					<a href="/Help/help.htm" title="Help"><b>Help</b></a>
+				</li>
+			</ul>
+		</div>
+	</div>
+</div>
+<!-- ARS Header end -->
+
+			<div id="bodyContent">
+						
+	
+    
+    	
+		<!-- top content -->
+        <div id="topContent">
+            <div id="TopicsTips">	<!-- right top content -->
+                
+				<div id="popularTopics">
+                    <a name="popular" class="section508">Popular Topics Content</a>
+                    <h1>Popular Topics</h1>
+					
+					
+					
+					<ul>
+						
+							<li>
+                            	<a href="/News/docs.htm?docid=15572">Bee Health</a>
+	                        </li>
+						
+							<li>
+                            	<a href="http://www.ars.usda.gov/is/np/fnrb/"><em>Food and Nutrition Research Briefs</em></a>
+	                        </li>
+						
+							<li>
+                            	<a href="/News/docs.htm?docid=23559">Image Gallery</a>
+	                        </li>
+						
+							<li>
+                            	<a href="/Services/services.htm?modecode=80-40-05-30">Nutrient Data Tools</a>
+	                        </li>
+						
+							<li>
+                            	<a href="http://planthardiness.ars.usda.gov/PHZMWeb/">Plant Hardiness Zone Map</a>
+	                        </li>
+						
+							<li>
+                            	<a href="http://ndb.nal.usda.gov/">USDA National Nutrient Database</a>
+	                        </li>
+						
+					</ul>
+					
+                    <a href="top" class="section508">Back to Top of Page</a>
+                </div>	<!-- popular topcis -->
+
+				<!-- Stay Connected -->
+                <div id="socialmedia">
+                    <a name="social" class="section508">Social Media Links </a>
+                    <h2>Stay Connected:</h2>
+                    <a href="http://twitter.com/usda_ars">
+                    	<img src="/images/redesign/twitter.png" 	alt="ARS On Twitter" 	title="ARS On Twitter"></a>
+					<a href="/News/docs.htm?docid=23712">
+						<img src="/images/redesign/maillist.png"	alt="Email Lists" 		title="Email Lists"></a>
+					<a href="/News/docs.htm?docid=23814">
+						<img src="/images/redesign/podcast.png"		alt="ARS Podcasts" 		title="ARS Podcasts"></a>
+					<a href="/News/docs.htm?docid=6697">
+						<img src="/images/redesign/rss.png"			alt="ARS RSS Feeds" 	title="ARS RSS Feeds"></a>
+					
+					
+					<!-- AddThis Button BEGIN -->
+					
+					
+					<a 	onmouseover="addthis_open(this, '', '[URL]', '[TITLE]')"
+						onmouseout="addthis_close()"
+						onclick="addthis_sendto()">
+							<img	vspace="0" hspace="4" border="0" 
+									src="/images/redesign/addthis.png"
+									alt="Bookmark This Page">
+							
+							
+							<script type="text/javascript" src="http://s7.addthis.com/js/300/addthis_widget.js#pubid=arsociowb"></script>
+					</a>
+					<!-- AddThis Button END -->
+					
+					
+					
+					<a href="http://agresearchmag.ars.usda.gov">
+						<img src="/images/redesign/armag.png"
+								alt="Agriculture Research Magazine" 
+								title="Agriculture Research Magazine"></a>
+
+					<!-- sign up email box -->
+					<form action="/elists/elists.htm" method="post">
+						<input name="emailAddr" type="text" 	value="Sign up for ARS News updates" 
+								size="28" onfocus="this.value=''" />
+						<input name="listname" 	type="hidden" 	value="arsnews" />
+						<input name="action" 	type="hidden" 	value="Subscribe" />
+						<input name="commit" 	type="submit"	value="Go" />
+					</form>
+					
+					<a href="top" class="section508">Back to Top of Page</a>										
+                </div>	<!-- Stay Connected -->
+            </div>	<!-- right top content -->
+			
+            <!-- photo carousel -->
+			
+			
+				
+				<script type="text/javascript">
+					$(document).ready(function()
+						{
+							$('#slideshow').cycle(
+								{
+									fx:				'fade',
+									speed:   		500, 			// speed of the transition (any valid fx speed value)
+        							timeout: 		6000,			// milliseconds between slide transitions
+									prev:			'#prevPhoto',
+									pause:			'#pausePhoto',
+									next:			'#nextPhoto',
+									after:			onAfter,
+									before:			onBefore
+								}
+							);
+							
+							$('#pausePhoto').click(function() 
+								{
+									$('#slideshow').cycle('pause');
+								}
+							);
+						}
+					);
+					
+					function onBefore(curr, next, opts){
+						var counter = (opts.currSlide + 1) + ' / ' + opts.slideCount;
+						$('#carouselCounter').html(counter);
+						
+						
+						
+						// get the photo carousel caption from the image ALT tag
+						
+						
+						$('#carouselCaption').html(this.children[0].alt);
+					}
+					
+					function onAfter(curr, next, opts){
+						var counter = (opts.currSlide + 1) + ' / ' + opts.slideCount;
+						$('#carouselCounter').html(counter);
+						
+						
+						
+					}
+				</script>
+				
+				<a name="photos" class="section508">Photo Carousel Links</a>
+				
+				<!--Loading display while images load--> 
+						
+				<div id="carousel">
+					<!--Slides--> 
+							
+					<div id="slideshow" style="width:520px;height:320px;float:left;"">
+						
+							
+							
+							
+							
+							<a href="http://www.ars.usda.gov/is/pr/2015/151020.htm" title="Buildings and barns at the former Subtropical Agricultural Research Station. ">
+								<img 	src="/SP2UserFiles/Place/00000000/images/PhotoCarousel/Brooksville.jpg"
+										alt="USDA transfers 3,800 acres in Brooksville to Florida A&M University—one of the largest single land transfers to one of the 19 historically black land-grant universities established under the Second Morrill Act of 1890. " 
+									 	class="carouselPhoto">
+							</a>
+
+						
+							
+							
+							
+							
+							<a href="http://www.ars.usda.gov/is/achievements/lillehoj.htm" title="Dr. Lillehoj and Secretary Vilsack.">
+								<img 	src="/SP2UserFiles/Place/00000000/images/PhotoCarousel/Lillehoj.jpg"
+										alt="Congrats to Hyun Lillehoj who was presented with a Career Achievement Medal for for groundbreaking scientific discoveries to improve poultry health. " 
+									 	class="carouselPhoto">
+							</a>
+
+						
+							
+							
+							
+							
+							<a href="http://agresearchmag.ars.usda.gov/" title="Cover of the October 2015 issue of AgResearch. ">
+								<img 	src="/SP2UserFiles/Place/00000000/images/PhotoCarousel/carousel.jpg"
+										alt="<em>AgResearch</em> magazine, October 2015 is now online. Be sure to subscribe to our <em>AgResearch</em> magazine alerts." 
+									 	class="carouselPhoto">
+							</a>
+
+						
+							
+							
+							
+							
+							<a href="http://www.ars.usda.gov/is/pr/2015/151002.htm" title="Two scientists surveying a map by the Beaver Creek.">
+								<img 	src="/SP2UserFiles/Place/00000000/images/PhotoCarousel/d3472-1_WaterConservationTool.jpg"
+										alt="A free downloadable toolset developed by USDA helps conservation planners, landowners and researchers better manage runoff while supporting agricultural production. " 
+									 	class="carouselPhoto">
+							</a>
+
+						
+							
+							
+							
+							
+							<a href="http://www.ars.usda.gov/sp2UserFiles/Place/00000000/1890LandGrantSabbatical/RCBSF.pdf" title="1890 LGU Sabbatical Fellowships">
+								<img 	src="/SP2UserFiles/Place/00000000/images/PhotoCarousel/ARS1890.png"
+										alt="ARS is committed to enhancing the agricultural research capacity of the 1890s Land-Grant Universities (LGUs) by partnering with them in a new program that offers research and training opportunities to early-career tenure-track faculty at 1890 LGUs through the award of sabbatical fellowships." 
+									 	class="carouselPhoto">
+							</a>
+
+						
+					</div>
+					
+							
+					<div id="carouselCaption" style="width:115px;height:240px;float:right;">
+						phone caption
+					</div>
+					
+											
+					<div id="carouselNavigation" style="width:85px;float:right;">
+						<a href="#" id="prevPhoto"><img src="/images/redesign/prev.png" 	alt="back"></a>
+						<a href="#" id="pausePhoto"><img src="/images/redesign/pause.png" 	alt="pause"></a>
+						<a href="#" id="nextPhoto"><img src="/images/redesign/next.png" 	alt="forward"></a>
+						
+						<div id="carouselCounter"></div>
+					</div>
+				</div>
+			
+			
+        </div>	<!-- top content end -->
+
+
+		<!-- middle content -->
+		<!--[if lt IE 9]>
+			<div style="position: relative; bottom:-33px; z-index:1000;">
+				<img src="/images/redesign/rounded-top.png" alt="spacer">
+			</div>
+		<![endif]-->
+
+        <div id="midContent">
+            <a name="main" class="section508">Main Content</a>
+            
+			<!-- middle left (tabs) -->
+			<div id="rotateContent">
+
+				<div id="AgencyNewsWrapper">
+					<!-- News/Resources/Blogs tab's labels on the left middle -->
+                    <div id="AgencyNewsTop">
+                        <ul>
+                            <li id="AgencyNewsTop_Latest" class="toplink" onMouseOver="displaySelected('Latest');">
+                                News
+                            </li>
+                            <li id="AgencyNewsTop_Topic" class="toplink" onMouseOver="displaySelected('Topic');">
+                                Resources
+                            </li>
+                            <li id="AgencyNewsTop_Blog" class="toplink" onMouseOver="displaySelected('Blog');">
+                                Latest Blogs
+                            </li>
+                        </ul>
+                    </div>
+                    <!-- end of AgencyNewsTop -->
+					
+					<!-- start of AgencyNewsDetail -->
+                    <div id="AgencyNewsDetail">
+                    	<!-- news tab -->
+                        <div class="AbsoluteHiddenBodyText" id="AgencyNewsDetail_Latest">
+                            <h1>News</h1>
+
+							
+							
+							<ul>
+								
+									<li>
+                                   		<a href="/is/pr/2015/151002.htm">
+                                   			Toolset Helps Identify Key Water-Conservation Options
+                                   		</a>
+	                                </li>
+								
+									<li>
+                                   		<a href="/is/pr/2015/150929.htm">
+                                   			Food Toxin Detector Incorporates Camera
+                                   		</a>
+	                                </li>
+								
+									<li>
+                                   		<a href="/is/pr/2015/150923.htm">
+                                   			New Disease Resistant Pea Now Available
+                                   		</a>
+	                                </li>
+								
+									<li>
+                                   		<a href="/is/pr/2015/150917.htm">
+                                   			Wine Grape Flour Reduces Cholesterol in Lab Animal Study
+                                   		</a>
+	                                </li>
+								
+									<li>
+                                   		<a href="/is/pr/2015/150916.htm">
+                                   			Four Scientists Named to Agricultural Research Service Science Hall of Fame
+                                   		</a>
+	                                </li>
+								
+									<li>
+                                   		<a href="/is/pr/2015/150911.htm">
+                                   			A Wash that Reduces Health Risks in Fresh Produce
+                                   		</a>
+	                                </li>
+								
+							</ul>
+
+                            <p class="more">
+                                <a href="/is/pr">>>> More...</a>
+                            </p>
+                        </div>
+						<!-- news tab end -->
+                        
+						<!-- resources tab -->
+                        <div class="AbsoluteHiddenBodyText" id="AgencyNewsDetail_Topic" style="visibility:hidden;">
+                            <h1>Resources</h1>
+                            <!-- RESOURCES SECTION -- CHANGEABLE INFORMATION STARTS HERE  -->
+							
+							
+                            <ul>
+                            	
+                            		<li><a href="/services/software/software.htm">Scientific Software / Models</a></li>
+                            	
+                            		<li><a href="/services/TekTran.htm">Scientific Manuscripts</a></li>
+                            	
+                            		<li><a href="/business/docs.htm?docid=769">Research Success Stories</a></li>
+                            	
+                            		<li><a href="/services/docs.htm?docid=1279">Publications</a></li>
+                            	
+                            		<li><a href="/mapsandtools">Maps and Tools</a></li>
+                            	
+                            		<li><a href="/News/docs.htm?docid=128">Factsheets</a></li>
+                            	
+                            		<li><a href="/services/docs.htm?docid=1328">Databases and Datasets </a></li>
+                            	
+                            		<li><a href="http://iapreview.ars.usda.gov/News/docs.htm?docid=23559">Image Gallery </a></li>
+                            	
+							</ul>	
+                        </div>
+						<!-- resources tab end -->
+                        
+						<!-- latest blogs tab -->
+						<div class="AbsoluteHiddenBodyText" id="AgencyNewsDetail_Blog" style="visibility:hidden;">
+                            <h1>Blogs</h1>
+							
+							
+							
+							
+							
+							<ul>
+								
+									<li>
+										<a href="http://blogs.usda.gov/2015/10/14/new-toolset-helps-identify-key-water-conservation-options/">New Toolset Helps Identify Key Water Conservation Options</a>
+									</li>
+								
+									<li>
+										<a href="http://blogs.usda.gov/2015/10/08/land-grant-universities-make-nfl-natural-turf-grass-better-and-safer/">Land-Grant Universities Make NFL Natural Turf Grass Better and Safer</a>
+									</li>
+								
+									<li>
+										<a href="http://blogs.usda.gov/2015/10/06/a-diet-to-help-conserve-bees-when-food-is-scarce/">A Diet to Help Conserve Bees When Food Is Scarce</a>
+									</li>
+								
+									<li>
+										<a href="http://blogs.usda.gov/2015/10/01/usda-crep-buffers-clean-water-and-help-restore-chesapeake-bay/">USDA CREP Buffers Clean Water and Help Restore Chesapeake Bay</a>
+									</li>
+								
+									<li>
+										<a href="http://blogs.usda.gov/2015/09/29/a-new-online-tool-to-help-growers-select-the-right-cover-crop/">A New Online Tool to Help Growers Select the Right Cover Crop</a>
+									</li>
+								
+									<li>
+										<a href="http://blogs.usda.gov/2015/09/23/southern-plains-climate-hub-helps-land-managers-build-resilience-to-climate-variability/">Southern Plains Climate Hub Helps Land Managers Build Resilience to Climate Variability</a>
+									</li>
+								
+									<li>
+										<a href="http://blogs.usda.gov/2015/09/18/open-data-a-key-to-feeding-9-billion-people-by-2050/">Open Data: a Key to Feeding 9 Billion People by 2050</a>
+									</li>
+								
+									<li>
+										<a href="http://blogs.usda.gov/2015/09/15/preserving-heirloom-collections-microbial-that-is/">Preserving “Heirloom” Collections – Microbial, That Is</a>
+									</li>
+								
+							</ul>
+
+                            <p class="more">
+                                <a href="http://blogs.usda.gov">>>> More...</a>
+                            </p>
+                        </div>	<!-- latest blogs tab end -->
+
+                    </div>	<!-- end of AgencyNewsDetail -->
+					
+                </div>	<!-- end of AgencyNewsWrapper -->
+
+            </div>	<!-- middle left (tabs)  end -->
+
+
+			
+            <div id="centerContent">
+                
+	
+		<!-- display URLs of subpages start -->
+		 
+		<!--  display URLs of subpages end -->
+		
+		<!-- document content start -->
+		<font class="pageHeading"></font>
+		<table cellpadding="0" cellspacing="0" border="0">
+			<tr>
+				<td valign="top">
+					<div class="spDocPageBody">
+						Welcome to the USDA Agricultural Research Service—one of the world's premier scientific organizations. Our nationally-coordinated <A href="/Research/Research.htm">research</A> solves problems that affect Americans daily.  
+<P></P> 
+<P>Learn more about us: </P> 
+<UL style="MARGIN-RIGHT: 0px" dir=ltr> 
+<LI><A href="/AboutUs/AboutUs.htm">About ARS</A>  
+<LI><A href="http://agresearchmag.ars.usda.gov/"><EM>AgResearch</EM> Magazine</A>  
+<LI><A href="/is/np/indexpubs.html">ARS Publications</A>  
+<LI><A href="/business/docs.htm?docid=769">ARS Research Success Stories</A>  
+<LI><A href="http://www.ars.usda.gov/News/Docs.htm?docid=23838">ARS Timeline</A>  
+<LI><A href="/services/TekTran.htm">Scientific Manuscripts</A>  
+<LI><A href="http://www.ars.usda.gov/is/achievements/lillehoj.htm">Scientific Achievements</A> </LI></UL> 
+					</div>
+				</td>
+			</tr>
+		</table>
+
+		
+		
+		
+		
+		<!-- document content end -->
+	
+		
+		<br>
+		
+		
+	
+	<P>
+
+
+            </div>
+
+
+			
+			<div id="spotlightContent">
+                <h1>Quick Links</h1>
+				
+				
+					<div>
+	                    <img src="/SP2UserFiles/Place/00000000/images/QuickLink/science_tuesday_dark.png" 
+							 alt="Science Tuesday Blog" height="37" width="50" />
+	                    <p>
+	                        <a href="http://blogs.usda.gov/tag/science-tuesday/">Science Tuesday Blog</a>
+	                    </p>
+	                </div>
+				
+					<div>
+	                    <img src="/SP2UserFiles/Place/00000000/images/QuickLink/VIVO Icon.png" 
+							 alt="USDA Scientists Profiles" height="37" width="50" />
+	                    <p>
+	                        <a href="http://vivo.usda.gov">USDA Scientists Profiles</a>
+	                    </p>
+	                </div>
+				
+					<div>
+	                    <img src="/SP2UserFiles/Place/00000000/images/QuickLink/employee_tools_dark.png" 
+							 alt="Employee Tools" height="37" width="50" />
+	                    <p>
+	                        <a href="http://www.afm.ars.usda.gov/">Employee Tools</a>
+	                    </p>
+	                </div>
+				
+					<div>
+	                    <img src="/SP2UserFiles/Place/00000000/images/QuickLink/hof.gif" 
+							 alt="ARS Science Hall of Fame" height="37" width="50" />
+	                    <p>
+	                        <a href="http://www.ars.usda.gov/careers/hof/">ARS Science Hall of Fame</a>
+	                    </p>
+	                </div>
+				
+					<div>
+	                    <img src="/SP2UserFiles/Place/00000000/images/QuickLink/NAL_dark.png" 
+							 alt="National Agricultural Library" height="37" width="50" />
+	                    <p>
+	                        <a href="http://www.nal.usda.gov">National Agricultural Library</a>
+	                    </p>
+	                </div>
+				
+
+				<div>
+					<p class="more">
+						<a href="/Main/Docs.htm?docid=23305">>>> More...</a>
+					</p>
+				</div>
+            </div>
+            <!--[if lt IE 9]>
+				<div style="position: relative; top: -25px; z-index:1000;" >
+					<img src="/images/redesign/rounded-bottom.png" alt="spacer">
+				</div>
+			<![endif]-->
+        </div>
+		<!-- middle content end -->
+
+
+		<!-- bottom content -->
+		<!--[if lt IE 9]>
+			<div style="margin:-24px auto;">
+				<img src="/images/redesign/rounded-topTEAL.png" alt="spacer">
+			</div>
+		<![endif]-->
+        <div id="bottomContent">
+            <a name="areas" href="top" class="section508">Research Areas & Locations Content | Click to go Back to Top</a>
+			
+			<h1>Key ARS Offices and Locations</h1>
+			
+			<a name="areas" href="top" class="section508">Research Areas & Locations Content | Click to go Back to Top</a>
+			
+<!-- bottom content left -->
+<div id="bottomContentLeft">
+	<ul>
+	<!-- Office of the Administrator -->
+	<li class="locationLevel2">
+		<a href="/pandp/locations/locations.htm?modecode=01-01-00-00">
+			Office of the Administrator
+		</a>
+	</li>
+
+	<li class="locationLevel3">
+		<a href="http://www.afm.ars.usda.gov/">Administrative and Financial Management</a>
+	</li>
+	
+	<li class="locationLevel3">
+		<a href="/pandp/locations/locations.htm?modecode=01-01-15-00">Budget and Program Management Staff</a>
+	</li>
+
+	<li class="locationLevel3">
+		<a href="/pandp/locations/locations.htm?modecode=04-04-00-00">Information Staff (Public Affairs)</a>
+	</li>
+
+	<li class="locationLevel3">
+		<a href="/pandp/locations/locations.htm?modecode=01-01-10-00">Legislative Affairs</a>
+	</li>
+	
+	<li class="locationLevel3">
+		<a href="/pandp/locations/locations.htm?modecode=04-06-00-00">Office of Chief Information Officer (IT)</a>
+	</li>
+
+	<li class="locationLevel3">
+		<a href="/pandp/locations/locations.htm?modecode=01-01-20-00">Office of Outreach, Diversity, and Equal Opportunity</a>
+	</li>
+
+	<li class="locationLevel3">
+		<a href="/pandp/locations/locations.htm?modecode=04-10-00-00">Office of Scientific Quality Review</a>
+	</li>
+	
+	<li class="locationLevel3">
+		<a href="/pandp/locations/locations.htm?modecode=04-02-00-00">Office of Technology Transfer</a>
+	</li>
+
+
+	<!-- National Program Research Areas -->
+	<li class="locationLevel2">
+		<a href="/research/programs.htm">
+			National Program Research Areas
+		</a>
+	</li>
+
+	<li class="locationLevel3">
+		<a href="/pandp/locations/NPSLocation.htm?modecode=02-08-00-00">Animal Production and Protection</a>
+	</li>
+
+	<li class="locationLevel3">
+		<a href="/pandp/locations/NPSLocation.htm?modecode=02-06-00-00">Crop Production and Protection</a>
+	</li>
+
+	<li class="locationLevel3">
+		<a href="/pandp/locations/NPSLocation.htm?modecode=02-02-00-00">Natural Resources and Sustainable Agricultural Systems</a>	
+	</li>
+
+	<li class="locationLevel3">
+		<a href="/pandp/locations/NPSLocation.htm?modecode=02-04-00-00">Nutrition, Food Safety, and Quality</a>
+	</li>
+
+	<li class="locationLevel3">
+		<a href="/Research/docs.htm?docid=1848">Overseas Biological Control Laboratories</a>
+	</li>
+
+	<li class="locationLevel3">
+		<a href="/research/docs.htm?docid=1428">Office of International Research Programs</a>
+	</li>
+	
+	<li class="locationLevel2">
+		<a href="http://www.nal.usda.gov">National Agricultural Library</a>
+	</li>
+
+</ul>
+</div> 
+
+
+<!-- bottom content right -->
+
+
+<div id="bottomContentRight">
+	<ul>
+        <a href="/pandp/locations.htm">Research Locations (Map)</a>
+
+        
+			
+			<li class="locationLevel3">
+				<a href="/main/site_main.htm?modecode=50-00-00-00">Midwest Area</a>
+			</li>
+
+			
+			<li class="locationLevel4">
+				(IA, IL, IN, KY, MI, MN, MO, OH, WI)
+			</li>
+		
+			
+			<li class="locationLevel3">
+				<a href="/main/site_main.htm?modecode=80-00-00-00">Northeast Area</a>
+			</li>
+
+			
+			<li class="locationLevel4">
+				(DC, DE, MA, MD, ME, NY, PA, WV)
+			</li>
+		
+			
+			<li class="locationLevel3">
+				<a href="/main/site_main.htm?modecode=20-00-00-00">Pacific West Area</a>
+			</li>
+
+			
+			<li class="locationLevel4">
+				(AZ, CA, HI, ID, NV, OR, UT, WA)
+			</li>
+		
+			
+			<li class="locationLevel3">
+				<a href="/main/site_main.htm?modecode=30-00-00-00">Plains Area</a>
+			</li>
+
+			
+			<li class="locationLevel4">
+				(CO, KS, MT, ND, NE, NM, OK, SD, TX, WY)
+			</li>
+		
+			
+			<li class="locationLevel3">
+				<a href="/main/site_main.htm?modecode=60-00-00-00">Southeast Area</a>
+			</li>
+
+			
+			<li class="locationLevel4">
+				(AL, AR, FL, GA, LA, MS, NC, PR, SC)
+			</li>
+		
+	</ul>
+</div>
+
+
+        </div>
+	
+
+
+			</div>
+		<!-- START OF SmartSource Data Collector TAG -->
+<!-- Copyright (c) 1996-2014 Webtrends Inc.  All rights reserved. -->
+<!-- Version: 9.4.0 -->
+<!-- Tag Builder Version: 4.1  -->
+<!-- Created: 10/21/2014 6:53:23 PM -->
+<script src="/incme/handf/WebTrends9.js" type="text/javascript"></script>
+<!-- ----------------------------------------------------------------------------------- -->
+<!-- Warning: The two script blocks below must remain inline. Moving them to an external -->
+<!-- JavaScript include file can cause serious problems with cross-domain tracking.      -->
+<!-- ----------------------------------------------------------------------------------- -->
+<script type="text/javascript">
+//<![CDATA[
+var _tag=new WebTrends();
+_tag.dcsGetId();
+//]]>
+</script>
+<script type="text/javascript">
+//<![CDATA[
+_tag.dcsCustom=function(){
+// Add custom parameters here.
+//_tag.DCSext.param_name=param_value;
+}
+_tag.dcsCollect();
+//]]>
+</script>
+<noscript>
+<div><img alt="DCSIMG" id="DCSIMG" width="1" height="1" src="http://wt-sdc2.arsnet.usda.gov/dcsh0juhninp53gudlhz4e9z4_5z4d/njs.gif?dcsuri=/nojavascript&amp;WT.js=No&amp;WT.tv=9.4.0&amp;dcssip=www.ars.usda.gov"/></div>
+</noscript>
+<!-- END OF SmartSource Data Collector TAG -->
+<script type="text/javascript">
+
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-27627304-6']);
+  _gaq.push(['_setDomainName', 'usda.gov']);
+  _gaq.push(['_setAllowLinker', true]);
+  _gaq.push(['_trackPageview']);
+
+  _gaq.push(['b._setAccount', 'UA-27627304-1']);
+  _gaq.push(['b._setDomainName', 'usda.gov']);
+  _gaq.push(['b._setAllowLinker', true]);
+  _gaq.push(['b._trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+
+</script>
+
+
+
+<!-- footer table -->
+
+
+
+
+	<div class="clearfloat" id="footerContent" style="width:940px">
+        <a class="section508" name="footer">Footer Content</a>
+
+        <!-- Begin Footer content text -->
+		<div id="footer_content_text">
+			<br>
+			
+				<a href="/main/main.htm">ARS Home</a> |
+				<a href="http://www.usda.gov/">USDA.gov</a> |
+				
+				
+					<a href="/ars_sitemap.htm">Site Map</a> |
+				
+				
+				<a href="/disclaim.html">Policies and Links</a>
+				
+				|
+				<a href="http://www.usda.gov/wps/portal/usda/usdahome?navid=PLAIN_WRITING">Plain Writing</a>
+				
+				<br>
+				<a href="/Services/docs.htm?docid=1398">FOIA</a> |
+				<a href="/disclaim.html#access">Accessibility Statement</a> |
+				<a href="/disclaim.html#privacy">Privacy Policy</a> |
+				<a href="/disclaim.html#nondiscrim">Nondiscrimination Statement</a> |
+				<a href="/Main/docs.htm?docid=8040">Information Quality</a> |
+				<a href="http://www.usa.gov" target="_blank">USA.gov</a> |
+				<a href="http://www.whitehouse.gov" target="_blank">White House</a>
+			
+			
+		</div>
+		<!-- End Footer content text -->
+
+        <a class="section508" href="top">Back to Top of Page</a>		
+    </div>
+	
+	
+		<!--[if lt IE 9]>
+			<img class="IErounded" src="/images/redesign/rounded-bottomBLK.png" alt="spacer">
+		<![endif]-->
+
+
+
+</div>	<!-- pageComplete -->
+
+</body>
+</html>
