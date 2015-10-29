@@ -37,19 +37,31 @@ namespace USDA_ARS.Core
             string tablerow3 = DataValues.Tablerow3;
             string tablerow4 = DataValues.Tablerow4;
 
+            //row 5 begin section
+            string tableRow5BeginSection = DataValues.Tablerow5BeginSection;
             //string modificationHistory = WebUtility.HtmlDecode(modificationHistoryHtml);
 
-
+            //tds with queries
             DataTable row5Td1table = DataValues.SetTableRow5Td(1);
+            string tablerow5Td1Html = DataValues.CreateHtmlStringRow5Tds(row5Td1table, 1);
             DataTable row5Td2table = DataValues.SetTableRow5Td(2);
+            string tablerow5Td2Html = DataValues.CreateHtmlStringRow5Tds(row5Td2table, 2);
             DataTable row5Td3table = DataValues.SetTableRow5Td(3);
+            string tablerow5Td3Html = DataValues.CreateHtmlStringRow5Tds(row5Td3table, 3);
             DataTable row5Td4table = DataValues.SetTableRow5Td(4);
-            string tableRow5Section1 = DataValues.CreateHtmlStringRow5Td1(row5Td1table);
-            string tablerow5 = DataValues.CreateHtmlStringRow5Td1(row5Td1table);
+            string tablerow5Td4Html = DataValues.CreateHtmlStringRow5Tds(row5Td4table, 4);
+
+            string tablerow5TdsHtml = tablerow5Td1Html + tablerow5Td2Html + tablerow5Td3Html + tablerow5Td4Html;
+
+            //row5 end section
+            string tableRow5EndSection = DataValues.Tablerow5EndSection;
+            string finalHtmlString = modificationHistoryHtml + headSectionHtml + bodySection1Html + tableRow5BeginSection + tablerow5TdsHtml + tableRow5EndSection;
+            //store this string in db
 
 
-            string finalHtmlString = modificationHistoryHtml + headSectionHtml + bodySection1Html + tablerow5;
             return finalHtmlString;
+
+
         }
 
 

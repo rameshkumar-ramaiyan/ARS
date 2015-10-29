@@ -167,6 +167,25 @@ namespace USDA_ARS.Core
         }
         #endregion
         #region Table row 5
+        private static string tablerow5BeginSection = "<tr bordercolor=\"#FFFFFF\"> "+
+		                                              "< !---Begin local links to review information --->";
+        
+
+        public static string Tablerow5BeginSection
+        {
+            get { return tablerow5BeginSection; }
+            set { tablerow5BeginSection = value; }
+
+        }
+        private static string tablerow5EndSection = "</tr>" +
+                                                    "</ table > ";
+        public static string Tablerow5EndSection
+        {
+            get { return tablerow5EndSection; }
+            set { tablerow5EndSection = value; }
+
+        }
+
         public static DataTable SetTableRow5Td(int tdNumber)
         {
             //1.Set Access connection(using  connection string from App.config).
@@ -219,38 +238,114 @@ namespace USDA_ARS.Core
 
             return getID;
         }
-        public static string CreateHtmlStringRow5Td1(DataTable tablerow5Table)
+        
+        public static string CreateHtmlStringRow5Tds(DataTable tablerow5Table, int tdNumber)
         {
-            StringBuilder htmlTableRow5 = new StringBuilder();
+            StringBuilder htmlTableRow5Tds = new StringBuilder();
 
-            //Building the Header row.
-            htmlTableRow5.Append("<tr bordercolor=\"#FFFFFF\">");
 
-            foreach (DataColumn column in tablerow5Table.Columns)
+            if(tdNumber==1)
             {
-                htmlTableRow5.Append("<th>");
-                htmlTableRow5.Append(column.ColumnName);
-                htmlTableRow5.Append("</th>");
-            }
-            htmlTableRow5.Append("</tr>");
-
-            //Building the Data rows.
-            foreach (DataRow row in tablerow5Table.Rows)
-            {
-                htmlTableRow5.Append("<tr>");
                 foreach (DataColumn column in tablerow5Table.Columns)
                 {
-                    htmlTableRow5.Append("<td width=\"25 % \" valign=\"top\">");
-                    htmlTableRow5.Append("< !---Get Record information -Column 1--->");
-                    htmlTableRow5.Append(row[column.ColumnName]);
-
-                    htmlTableRow5.Append("</td>");
+                    htmlTableRow5Tds.Append("<th>");
+                    htmlTableRow5Tds.Append(column.ColumnName);
+                    htmlTableRow5Tds.Append("</th>");
                 }
-                htmlTableRow5.Append("</tr>");
+
+
+                //Building the Data rows.
+                foreach (DataRow row in tablerow5Table.Rows)
+                {
+
+                    foreach (DataColumn column in tablerow5Table.Columns)
+                    {
+                        htmlTableRow5Tds.Append("<td width=\"25 % \" valign=\"top\">");
+                        htmlTableRow5Tds.Append("< !---Get Record information -Column 1--->");
+                        htmlTableRow5Tds.Append(row[column.ColumnName]);
+
+                        htmlTableRow5Tds.Append("</td>");
+                    }
+
+                }
             }
-            //Table end.
-            //htmlTableRow5.Append("</table>");
-            return htmlTableRow5.ToString();
+            if (tdNumber ==2)
+            {
+                foreach (DataColumn column in tablerow5Table.Columns)
+                {
+                    htmlTableRow5Tds.Append("<th>");
+                    htmlTableRow5Tds.Append(column.ColumnName);
+                    htmlTableRow5Tds.Append("</th>");
+                }
+
+
+                //Building the Data rows.
+                foreach (DataRow row in tablerow5Table.Rows)
+                {
+
+                    foreach (DataColumn column in tablerow5Table.Columns)
+                    {
+                        htmlTableRow5Tds.Append("<td width=\"25 % \" valign=\"top\">");
+                        htmlTableRow5Tds.Append("< !---Get Record information -Column 1--->");
+                        htmlTableRow5Tds.Append(row[column.ColumnName]);
+
+                        htmlTableRow5Tds.Append("</td>");
+                    }
+
+                }
+            }
+            if (tdNumber == 3)
+            {
+                foreach (DataColumn column in tablerow5Table.Columns)
+                {
+                    htmlTableRow5Tds.Append("<th>");
+                    htmlTableRow5Tds.Append(column.ColumnName);
+                    htmlTableRow5Tds.Append("</th>");
+                }
+
+
+                //Building the Data rows.
+                foreach (DataRow row in tablerow5Table.Rows)
+                {
+
+                    foreach (DataColumn column in tablerow5Table.Columns)
+                    {
+                        htmlTableRow5Tds.Append("<td width=\"25 % \" valign=\"top\">");
+                        htmlTableRow5Tds.Append("< !---Get Record information -Column 1--->");
+                        htmlTableRow5Tds.Append(row[column.ColumnName]);
+
+                        htmlTableRow5Tds.Append("</td>");
+                    }
+
+                }
+            }
+            if (tdNumber == 4)
+            {
+                foreach (DataColumn column in tablerow5Table.Columns)
+                {
+                    htmlTableRow5Tds.Append("<th>");
+                    htmlTableRow5Tds.Append(column.ColumnName);
+                    htmlTableRow5Tds.Append("</th>");
+                }
+
+
+                //Building the Data rows.
+                foreach (DataRow row in tablerow5Table.Rows)
+                {
+
+                    foreach (DataColumn column in tablerow5Table.Columns)
+                    {
+                        htmlTableRow5Tds.Append("<td width=\"25 % \" valign=\"top\">");
+                        htmlTableRow5Tds.Append("< !---Get Record information -Column 1--->");
+                        htmlTableRow5Tds.Append(row[column.ColumnName]);
+
+                        htmlTableRow5Tds.Append("</td>");
+                    }
+
+                }
+            }
+
+            return htmlTableRow5Tds.ToString();
 
         }
 
