@@ -19,21 +19,21 @@ namespace USDA_ARS.Core
     public class DataValues
     {
         #region modificationHistory
-        private static string modificationHistory = "< !---"
-                                        + " Author:"
-                                        + " Date:"
-                                        + "Purpose:"
-                                        + " Modification History:"
-                                        + "  Change #	Developer		Date		Remarks												Requestor"
-                                        + "  ---------- - ----------------------------------------------------------------------------------------------- " +
-                                     "   chg - 01      Daniel Lee      7 / 1 / 2008    Added NP 211, 215 and 216 in the query              Chris Woods" +
+        private static string modificationHistory = "< !---" + System.Environment.NewLine
+                                        + " Author:" + System.Environment.NewLine
+                                        + " Date:" + System.Environment.NewLine
+                                        + "Purpose:" + System.Environment.NewLine
+                                        + " Modification History:" + System.Environment.NewLine
+                                        + "  Change #	Developer		Date		Remarks											Requestor" + System.Environment.NewLine 
+                                        + "  ---------- - ----------------------------------------------------------------------------------------------- " + System.Environment.NewLine +
+                                     "   chg - 01      Daniel Lee      7 / 1 / 2008    Added NP 211, 215 and 216 in the query              Chris Woods" + System.Environment.NewLine +
 
-                                     "   chg - 02      Daniel Lee      4 / 25 / 2010   Deleted ApprovedPPOsDuetoAreaAndOSQRFromNPS field Chris Woods" +
+                                     "   chg - 02      Daniel Lee      4 / 25 / 2010   Deleted ApprovedPPOsDuetoAreaAndOSQRFromNPS field Chris Woods" + System.Environment.NewLine +
 
-                                       " chg - 03      Daniel Lee      3 / 20 / 2012   Added NP codes 212, 213, and 214                    Chris Woods" +
+                                       " chg - 03      Daniel Lee      3 / 20 / 2012   Added NP codes 212, 213, and 214                    Chris Woods" + System.Environment.NewLine +
 
-                                       " --->" +
-                                       " < !--- < !DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" > --->";
+                                       " --->" + System.Environment.NewLine +
+                                       " < !--- < !DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\" > --->" + System.Environment.NewLine;
 
 
         public static string ModificationHistory
@@ -45,14 +45,21 @@ namespace USDA_ARS.Core
         #endregion
         #region htmlHeadSection
         private static string htmlHeadSection = "<html>"
-                + " < !--- < !DOCTYPE HTML PUBLIC \" -//W3C//DTD HTML 4.0 Transitional//EN\" > ---> "
+                + System.Environment.NewLine +
+            " < !--- < !DOCTYPE HTML PUBLIC \" -//W3C//DTD HTML 4.0 Transitional//EN\" > ---> "
+             + System.Environment.NewLine 
                 + " <head> "
                 + "      < !-- #BeginEditable \"Doctitle\" --> "
+             + System.Environment.NewLine 
 
-                + " < title > Peer Review Schedules</ title >  "
-                + " meta http - equiv = \"Content-Type\" content = \"text/html; charset=iso-8859-1\" > "
+                + " <title > Peer Review Schedules</title >  "
+             + System.Environment.NewLine 
+                + " <meta http - equiv = \"Content-Type\" content = \"text/html; charset=iso-8859-1\" > "
+            + System.Environment.NewLine
                 + "< !-- #EndEditable -->"
-                + "    </ head > ";
+            + System.Environment.NewLine
+                + "    </head > "
+             + System.Environment.NewLine;
         public static string HtmlHeadSection
         {
             get { return htmlHeadSection; }
@@ -62,9 +69,13 @@ namespace USDA_ARS.Core
         #endregion
         #region bodySection1
         private static string bodySection1 = "<body bgcolor=\"#FFFFFF\" text=\"#000000\">"
+                                            + System.Environment.NewLine
                                             + " < !-- #BeginEditable \"MainContent\" -->"
+                                            + System.Environment.NewLine
                                             + "  < !---Table which holds the quick links to the program titles--->"
-                                            + "    < table border = \"0\" bordercolor = \"#FFFFFF\" > ";
+                                            + System.Environment.NewLine
+                                            + "    <table border = \"0\" bordercolor = \"#FFFFFF\" > "
+                                            + System.Environment.NewLine;
         public static string BodySection1
         {
             get { return bodySection1; }
@@ -73,25 +84,25 @@ namespace USDA_ARS.Core
         }
         #endregion
         #region Table rows 1 to 4
-        private static string tablerow1 = "< tr >"
-                                        + "< td valign=\"top\" align=\"CENTER\" colspan=\"4\">"
-                                        + "   <a href = \"/research/docs.htm?docid=1607\" >"
-                                        + "      < font color=\"#000000\" face=\"Arial, Helvetica, sans-serif\" size=\"3\">"
+        private static string tablerow1 = "<tr>"+ System.Environment.NewLine
+                                        + "< td valign=\"top\" align=\"CENTER\" colspan=\"4\">"+ System.Environment.NewLine
+                                        + "   <a href = \"/research/docs.htm?docid=1607\" >"+ System.Environment.NewLine
+                                        + "      < font color=\"#000000\" face=\"Arial, Helvetica, sans-serif\" size=\"3\">"+ System.Environment.NewLine
                                         + "        Directions for Setting Termination Dates"
-                                        + "   </font>"
-                                        + " </a>"
-                                        + " </td>"
-                                        + "</tr>";
+                                        + "   </font>"+ System.Environment.NewLine
+                                        + " </a>"+ System.Environment.NewLine
+                                        + " </td>"+ System.Environment.NewLine
+                                        + "</tr>"+ System.Environment.NewLine;
         public static string Tablerow1
         {
             get { return tablerow1; }
             set { tablerow1 = value; }
 
         }
-        private static string tablerow2 = "< tr >"
-                                        + "< td valign=\"top\" align=\"CENTER\" colspan=\"4\">"
-                                        + "    <div align = \"left\" >"
-                                        + "       < font size=\"2\" color=\"#000000\" face=\"Arial\">"
+        private static string tablerow2 = "<tr>"+ System.Environment.NewLine
+                                        + "< td valign=\"top\" align=\"CENTER\" colspan=\"4\">"+ System.Environment.NewLine
+                                        + "    <div align = \"left\" >"+ System.Environment.NewLine
+                                        + "       < font size=\"2\" color=\"#000000\" face=\"Arial\">"+ System.Environment.NewLine
                                         + "           The dates listed are projected.Actual dates are announced at the beginning"
                                          + "           of each peer review session.For efficiency, we simply calculate"
                                            + "         the termination date as 6 months beyond the projected implementation"
@@ -99,10 +110,10 @@ namespace USDA_ARS.Core
                                             + "         change it if it&#146;s beyond the projected implementation date."
                                             + "         This method eases our coordination in the event peer review sessions"
                                               + "       are added or postponed."
-                                             + "    </font>"
-                                           + "  </div>"
-                                         + "</td>"
-                                     + "</tr>";
+                                             + "    </font>"+ System.Environment.NewLine
+                                           + "  </div>"+ System.Environment.NewLine
+                                         + "</td>"+ System.Environment.NewLine
+                                     + "</tr>"+ System.Environment.NewLine;
 
         public static string Tablerow2
         {
@@ -110,9 +121,9 @@ namespace USDA_ARS.Core
             set { tablerow2 = value; }
 
         }
-        private static string tablerow3 = "< tr >"
-                                        + "< td colspan=\"4\">&nbsp;<br></td>"
-                                        + "</tr>";
+        private static string tablerow3 = "<tr>"+ System.Environment.NewLine
+                                        + "<td colspan=\"4\">&nbsp;<br></td>"+ System.Environment.NewLine
+                                        + "</tr>"+ System.Environment.NewLine;
 
         public static string Tablerow3
         {
@@ -120,43 +131,43 @@ namespace USDA_ARS.Core
             set { tablerow3 = value; }
 
         }
-        private static string tablerow4 = "< tr bordercolor=\"#FFFFFF\">"
-                                        + "   <td width = \"25%\" >"
-                                         + "       < p >"
-                                      + "              < b >"
-                                           + "             < font face=\"Arial, Helvetica, sans-serif\" size=\"3\">"
+        private static string tablerow4 = "<tr bordercolor=\"#FFFFFF\">"+ System.Environment.NewLine
+                                        + "   <td width = \"25%\" >"+ System.Environment.NewLine
+                                         + "       < p >"+ System.Environment.NewLine
+                                      + "              < b >"+ System.Environment.NewLine
+                                           + "             < font face=\"Arial, Helvetica, sans-serif\" size=\"3\">"+ System.Environment.NewLine
                                         + "                    Animal Production &amp; Protection"
-                                           + "             </font>"
-                                          + "          </b>"
-                                         + "       </p>"
-                                         + "   </td>"
+                                           + "             </font>"+ System.Environment.NewLine
+                                          + "          </b>"+ System.Environment.NewLine
+                                         + "       </p>"+ System.Environment.NewLine
+                                         + "   </td>"+ System.Environment.NewLine
 
-                                          + "  < td width = \"25%\" >"
-                                            + "    < b >"
-                                           + "         < font face=\"Arial, Helvetica, sans-serif\" size=\"3\">"
+                                          + "  <td width = \"25%\" >"+ System.Environment.NewLine
+                                            + "    <b>"+ System.Environment.NewLine
+                                           + "         < font face=\"Arial, Helvetica, sans-serif\" size=\"3\">"+ System.Environment.NewLine
                                               + "          Nutrition, Food Safety/Quality"
-                                            + "        </font>"
-                                             + "   </b></p>"
-                                          + "  </td>"
+                                            + "        </font>"+ System.Environment.NewLine
+                                             + "   </b></p>"+ System.Environment.NewLine
+                                          + "  </td>"+ System.Environment.NewLine
 
-                                          + "  < td width = \"25%\" bordercolor=\"#FFFFFF\">"
-                                           + "     < p>"
-                                             + "       < b>"
-                                             + "           < font face = \"Arial, Helvetica, sans-serif\" size=\"3\">"
+                                          + "  <td width = \"25%\" bordercolor=\"#FFFFFF\">"+ System.Environment.NewLine
+                                           + "     <p>"+ System.Environment.NewLine
+                                             + "       <b>"+ System.Environment.NewLine
+                                             + "           <font face = \"Arial, Helvetica, sans-serif\" size=\"3\">"+ System.Environment.NewLine
                                              + "               Natural Resources and Sustainable Agricultural Systems"
-                                              + "          </font>"
-                                              + "      </b>"
-                                              + "  </p>"
-                                          + "  </td>"
+                                              + "          </font>"+ System.Environment.NewLine
+                                              + "      </b>"+ System.Environment.NewLine
+                                              + "  </p>"+ System.Environment.NewLine
+                                          + "  </td>"+ System.Environment.NewLine
 
-                                           + " < td width = \"25%\" >"
-                                          + "      < b >"
-                                             + "       < font face= \"Arial, Helvetica, sans-serif\" size= \"3\" >"
+                                           + " <td width = \"25%\" >"+ System.Environment.NewLine
+                                          + "      <b>"+ System.Environment.NewLine
+                                             + "       <font face= \"Arial, Helvetica, sans-serif\" size= \"3\" >"+ System.Environment.NewLine
                                              + "           Crop Production &amp; Protection"
-                                             + "       </font>"
-                                             + "   </b></p>"
-                                          + "  </td>"
-                                       + " </tr>";
+                                             + "       </font>"+ System.Environment.NewLine
+                                             + "   </b></p>"+ System.Environment.NewLine
+                                          + "  </td>"+ System.Environment.NewLine
+                                       + " </tr>"+ System.Environment.NewLine;
 
 
         public static string Tablerow4
@@ -167,8 +178,8 @@ namespace USDA_ARS.Core
         }
         #endregion
         #region Table row 5
-        private static string tablerow5BeginSection = "<tr bordercolor=\"#FFFFFF\"> "+
-		                                              "< !---Begin local links to review information --->";
+        private static string tablerow5BeginSection = "<tr bordercolor=\"#FFFFFF\">"+ System.Environment.NewLine+
+		                                              "< !---Begin local links to review information --->"+ System.Environment.NewLine;
         
 
         public static string Tablerow5BeginSection
@@ -177,8 +188,9 @@ namespace USDA_ARS.Core
             set { tablerow5BeginSection = value; }
 
         }
-        private static string tablerow5EndSection = "</tr>" +
-                                                    "</ table > ";
+        private static string tablerow5EndSection = "</tr>"+ System.Environment.NewLine +
+                                                    "</table >" +"</body>"+ System.Environment.NewLine
+           + "</html>" + System.Environment.NewLine;
         public static string Tablerow5EndSection
         {
             get { return tablerow5EndSection; }
@@ -243,108 +255,142 @@ namespace USDA_ARS.Core
         {
             StringBuilder htmlTableRow5Tds = new StringBuilder();
 
+           
 
-            if(tdNumber==1)
+            if (tdNumber==1)
             {
+                //Building the Header row.
+                htmlTableRow5Tds.Append("<tr bordercolor=\"#FFFFFF\">");
+               
                 foreach (DataColumn column in tablerow5Table.Columns)
                 {
                     htmlTableRow5Tds.Append("<th>");
                     htmlTableRow5Tds.Append(column.ColumnName);
                     htmlTableRow5Tds.Append("</th>");
+                   
+
                 }
+                htmlTableRow5Tds.Append(System.Environment.NewLine);
+                
 
 
                 //Building the Data rows.
                 foreach (DataRow row in tablerow5Table.Rows)
                 {
-
+                    htmlTableRow5Tds.Append("<tr>");
                     foreach (DataColumn column in tablerow5Table.Columns)
                     {
+                        
                         htmlTableRow5Tds.Append("<td width=\"25 % \" valign=\"top\">");
-                        htmlTableRow5Tds.Append("< !---Get Record information -Column 1--->");
+                            htmlTableRow5Tds.Append(System.Environment.NewLine);
                         htmlTableRow5Tds.Append(row[column.ColumnName]);
 
                         htmlTableRow5Tds.Append("</td>");
+                        //htmlTableRow5Tds.Append(System.Environment.NewLine);
                     }
-
+                    htmlTableRow5Tds.Append("</tr>");
                 }
             }
-            if (tdNumber ==2)
+            if (tdNumber == 2)
             {
+                //Building the Header row.
+                htmlTableRow5Tds.Append("<tr bordercolor=\"#FFFFFF\">");
+               
                 foreach (DataColumn column in tablerow5Table.Columns)
                 {
                     htmlTableRow5Tds.Append("<th>");
                     htmlTableRow5Tds.Append(column.ColumnName);
                     htmlTableRow5Tds.Append("</th>");
+                   
+
                 }
+                htmlTableRow5Tds.Append(System.Environment.NewLine);
+               
 
 
                 //Building the Data rows.
                 foreach (DataRow row in tablerow5Table.Rows)
                 {
-
+                    htmlTableRow5Tds.Append("<tr>");
                     foreach (DataColumn column in tablerow5Table.Columns)
                     {
+
                         htmlTableRow5Tds.Append("<td width=\"25 % \" valign=\"top\">");
-                        htmlTableRow5Tds.Append("< !---Get Record information -Column 1--->");
+                        htmlTableRow5Tds.Append(System.Environment.NewLine);
                         htmlTableRow5Tds.Append(row[column.ColumnName]);
 
                         htmlTableRow5Tds.Append("</td>");
+                        //htmlTableRow5Tds.Append(System.Environment.NewLine);
                     }
-
+                    htmlTableRow5Tds.Append("</tr>");
                 }
             }
             if (tdNumber == 3)
             {
+                //Building the Header row.
+                htmlTableRow5Tds.Append("<tr bordercolor=\"#FFFFFF\">");
+
                 foreach (DataColumn column in tablerow5Table.Columns)
                 {
                     htmlTableRow5Tds.Append("<th>");
                     htmlTableRow5Tds.Append(column.ColumnName);
                     htmlTableRow5Tds.Append("</th>");
-                }
+                  
 
+                }
+                htmlTableRow5Tds.Append(System.Environment.NewLine);
+               
 
                 //Building the Data rows.
                 foreach (DataRow row in tablerow5Table.Rows)
                 {
-
+                    htmlTableRow5Tds.Append("<tr>");
                     foreach (DataColumn column in tablerow5Table.Columns)
                     {
+
                         htmlTableRow5Tds.Append("<td width=\"25 % \" valign=\"top\">");
-                        htmlTableRow5Tds.Append("< !---Get Record information -Column 1--->");
+                        htmlTableRow5Tds.Append(System.Environment.NewLine);
                         htmlTableRow5Tds.Append(row[column.ColumnName]);
 
                         htmlTableRow5Tds.Append("</td>");
+                        //htmlTableRow5Tds.Append(System.Environment.NewLine);
                     }
-
+                    htmlTableRow5Tds.Append("</tr>");
                 }
             }
             if (tdNumber == 4)
             {
+                //Building the Header row.
+                htmlTableRow5Tds.Append("<tr bordercolor=\"#FFFFFF\">");
+
                 foreach (DataColumn column in tablerow5Table.Columns)
                 {
                     htmlTableRow5Tds.Append("<th>");
                     htmlTableRow5Tds.Append(column.ColumnName);
                     htmlTableRow5Tds.Append("</th>");
-                }
+                   
 
+                }
+                htmlTableRow5Tds.Append(System.Environment.NewLine);
+               
 
                 //Building the Data rows.
                 foreach (DataRow row in tablerow5Table.Rows)
                 {
-
+                    htmlTableRow5Tds.Append("<tr>");
                     foreach (DataColumn column in tablerow5Table.Columns)
                     {
+
                         htmlTableRow5Tds.Append("<td width=\"25 % \" valign=\"top\">");
-                        htmlTableRow5Tds.Append("< !---Get Record information -Column 1--->");
+                        htmlTableRow5Tds.Append(System.Environment.NewLine);
                         htmlTableRow5Tds.Append(row[column.ColumnName]);
 
                         htmlTableRow5Tds.Append("</td>");
+                        //htmlTableRow5Tds.Append(System.Environment.NewLine);
                     }
-
+                    htmlTableRow5Tds.Append("</tr>");
                 }
             }
-
             return htmlTableRow5Tds.ToString();
 
         }

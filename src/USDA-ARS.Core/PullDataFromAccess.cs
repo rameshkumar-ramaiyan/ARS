@@ -55,7 +55,18 @@ namespace USDA_ARS.Core
 
             //row5 end section
             string tableRow5EndSection = DataValues.Tablerow5EndSection;
-            string finalHtmlString = modificationHistoryHtml + headSectionHtml + bodySection1Html + tableRow5BeginSection + tablerow5TdsHtml + tableRow5EndSection;
+            string finalHtmlString = modificationHistoryHtml
+                                   + System.Environment.NewLine
+                                   + headSectionHtml
+                                   + System.Environment.NewLine
+                                   + bodySection1Html
+                                   + tableRow5BeginSection
+                                   + System.Environment.NewLine
+                                   + tablerow5TdsHtml
+                                   + System.Environment.NewLine
+                                   + tableRow5EndSection
+                                   + System.Environment.NewLine
+                                   ;
             //store this string in db
 
 
