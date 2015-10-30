@@ -16,6 +16,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.Umbraco.Extensions
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.CoreClient", "USDA-ARS.CoreClient\USDA-ARS.CoreClient.csproj", "{21137CF1-B967-46FF-9913-80BEDEADB745}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{52AA4E53-4C36-453A-BC9B-2A411891D3FD}"
+	ProjectSection(SolutionItems) = preProject
+		..\..\..\..\Desktop\ColdFusion\OSQR\megascheduleIII.mdb = ..\..\..\..\Desktop\ColdFusion\OSQR\megascheduleIII.mdb
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

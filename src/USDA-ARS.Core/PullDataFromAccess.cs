@@ -33,7 +33,7 @@ namespace USDA_ARS.Core
             string headSectionHtml = DataValues.HtmlHeadSection;
             string bodySection1Html = DataValues.BodySection1;
             string tablerow1 = DataValues.Tablerow1;
-            string tablerow2 = DataValues.Tablerow2;
+            string tablerow2 = DataValues.Tablerow2; 
             string tablerow3 = DataValues.Tablerow3;
             string tablerow4 = DataValues.Tablerow4;
 
@@ -52,9 +52,11 @@ namespace USDA_ARS.Core
             string tablerow5Td4Html = DataValues.CreateHtmlStringRow5Tds(row5Td4table, 4);
 
             string tablerow5TdsHtml = tablerow5Td1Html + tablerow5Td2Html + tablerow5Td3Html + tablerow5Td4Html;
-
+            DataTable mainPortionTable = DataValues.SetMainPortion(1);
+            string htmlTableMainPortion = DataValues.CreateHtmlStringMainPortion(mainPortionTable, 1);
             //row5 end section
             string tableRow5EndSection = DataValues.Tablerow5EndSection;
+
             string finalHtmlString = modificationHistoryHtml
                                    + System.Environment.NewLine
                                    + headSectionHtml
@@ -64,6 +66,8 @@ namespace USDA_ARS.Core
                                    + System.Environment.NewLine
                                    + tablerow5TdsHtml
                                    + System.Environment.NewLine
+                                   +htmlTableMainPortion
+                                   +System.Environment.NewLine
                                    + tableRow5EndSection
                                    + System.Environment.NewLine
                                    ;

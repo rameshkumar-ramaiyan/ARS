@@ -394,7 +394,100 @@ namespace USDA_ARS.Core
             return htmlTableRow5Tds.ToString();
 
         }
+        public static DataTable SetMainPortion(int tdNumber)
+        {
+            //1.Set Access connection(using  connection string from App.config).
+            string strAccessConn = ConfigurationManager.AppSettings["AccessConnection"];
+            //private static string tablerow5 = 
+            //2.select values from keydates table.
+            DataTable getID = new DataTable();
+            OleDbConnection conn = new OleDbConnection(strAccessConn);
+            conn.Open();
+            OleDbCommand cmd = new OleDbCommand();
+            cmd.Connection = conn;
+            string query = "";
+            if (tdNumber == 1)
+            {
+                query = "SELECT	ID," 
+                    + "[Termination Date]                              AS TerminationDate,"
+                    + "[Program Analyst]                               AS ProgramAssistant,"
+                    + "[Number of Projects in the Review]              AS RoundNumberofProjectsintheReview,"
+                    + "[Planned Duration]                              AS PlannedDuration,"
+                    + "[Status of Reviews]                             AS statusOfReviews,"
+                    + "[Concurrence Memo Due to Area Director]         AS ConcurrenceMemoDuetoAreaDirector,"
+                    + "[PDRAMs Due to Area & OSQR with Schedule]       AS PDRAMsDueToAreaOSQRWithSchedule,"
+                    + "[Conflicts of Interest Lists Due To OSQR]       AS ConflictsofInterestListDuetoOSQR,"
 
+                    + "[Project Plans Due to OSQR]                     AS ProjectPlansDueToOSQR,"
+                    + "[Review Period]                                 AS ReviewPeriod,"
+                   
+                    + "[Project's Targeted Implementation Date]		AS ProjectsTargetedImplementationDate"
+                    // + "[Ad Hoc Cut - Off Date]                           AS AdHocCutOffDate"
+
+                    + "                  FROM    KeyDates "                                    
+                                     + "ORDER BY[National Program Title]";
+                //
+             
+               
+
+
+                    
+            }
+           
+            cmd.CommandText = query;
+
+
+
+            OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
+            adapter.Fill(getID);
+
+
+            return getID;
+        }
+        public static string CreateHtmlStringMainPortion(DataTable tablerow5Table, int tdNumber)
+        {
+            StringBuilder htmlTableMainPortion = new StringBuilder();
+
+
+
+            if (tdNumber == 1)
+            {
+                //Building the Header row.
+                htmlTableMainPortion.Append("<tr bordercolor=\"#FFFFFF\">");
+
+                foreach (DataColumn column in tablerow5Table.Columns)
+                {
+                    htmlTableMainPortion.Append("<th>");
+                    htmlTableMainPortion.Append(column.ColumnName);
+                    htmlTableMainPortion.Append("</th>");
+
+
+                }
+                htmlTableMainPortion.Append(System.Environment.NewLine);
+
+
+
+                //Building the Data rows.
+                foreach (DataRow row in tablerow5Table.Rows)
+                {
+                    htmlTableMainPortion.Append("<tr>");
+                    foreach (DataColumn column in tablerow5Table.Columns)
+                    {
+
+                        htmlTableMainPortion.Append("<td width=\"25 % \" valign=\"top\">");
+                        htmlTableMainPortion.Append(System.Environment.NewLine);
+                        htmlTableMainPortion.Append(row[column.ColumnName]);
+
+                        htmlTableMainPortion.Append("</td>");
+                        //htmlTableRow5Tds.Append(System.Environment.NewLine);
+                    }
+                    htmlTableMainPortion.Append("</tr>");
+                }
+            }
+           
+            return htmlTableMainPortion.ToString();
+
+        }
         #endregion
 
     }
