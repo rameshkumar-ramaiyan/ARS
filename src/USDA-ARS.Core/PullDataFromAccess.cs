@@ -88,7 +88,7 @@ namespace USDA_ARS.Core
                                    + System.Environment.NewLine
                                    ;
             //store this string in db
-            
+            DataValues.StoreHtmlStringInSQLDB(finalHtmlString);
 
             //return string  to UI
             return finalHtmlString;

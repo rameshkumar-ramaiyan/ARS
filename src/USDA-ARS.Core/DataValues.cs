@@ -448,16 +448,21 @@ namespace USDA_ARS.Core
         public static void StoreHtmlStringInSQLDB(string htmlString)
         {
             //1.Set Access connection (using  connection string from App.config).
-            string strSqlConn = ConfigurationManager.AppSettings["SqlConnectionString"];
-            using (SqlConnection connection = new SqlConnection(strSqlConn))
-            {
-                SqlCommand cmd = new SqlCommand("INSERT INTO MegaStatus (MegaStatusHTMLString) VALUES (@HtmlString)");
-                cmd.CommandType = CommandType.Text;
+            
+            string strSqlConn = ConfigurationManager.ConnectionStrings["SqlConnectionString"].ToString();
+
+
+
+
+            SqlConnection connection = new SqlConnection();
+            connection.ConnectionString = strSqlConn;
+                SqlCommand cmd = new SqlCommand("dbo.usp_InsertMegaStatusHTMLString",connection);
+                cmd.CommandType = CommandType.StoredProcedure;
                 cmd.Connection = connection;
                 cmd.Parameters.AddWithValue("@HtmlString", htmlString);               
                 connection.Open();
                 cmd.ExecuteNonQuery();
-            }
+            
         }
         #endregion
         public static string ConvertDataTableToHTML(DataTable dt)
