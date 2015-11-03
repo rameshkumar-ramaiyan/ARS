@@ -14,6 +14,8 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Globalization;
 using System.Web;
+using System.Data.SqlClient;
+
 namespace USDA_ARS.Core
 {
     public class DataValues
@@ -46,7 +48,7 @@ namespace USDA_ARS.Core
         #region htmlHeadSection
         private static string htmlHeadSection = "<html>"
                 + System.Environment.NewLine +
-            " < !--- < !DOCTYPE HTML PUBLIC \" -//W3C//DTD HTML 4.0 Transitional//EN\" > ---> "
+            " < !DOCTYPE HTML PUBLIC \" -//W3C//DTD HTML 4.0 Transitional//EN\" > "
              + System.Environment.NewLine 
                 + " <head> "
                 + "      < !-- #BeginEditable \"Doctitle\" --> "
@@ -87,7 +89,7 @@ namespace USDA_ARS.Core
         private static string tablerow1 = "<tr>"+ System.Environment.NewLine
                                         + "< td valign=\"top\" align=\"CENTER\" colspan=\"4\">"+ System.Environment.NewLine
                                         + "   <a href = \"/research/docs.htm?docid=1607\" >"+ System.Environment.NewLine
-                                        + "      < font color=\"#000000\" face=\"Arial, Helvetica, sans-serif\" size=\"3\">"+ System.Environment.NewLine
+                                        + "      <font color=\"#000000\" face=\"Arial, Helvetica, sans-serif\" size=\"3\">"+ System.Environment.NewLine
                                         + "        Directions for Setting Termination Dates"
                                         + "   </font>"+ System.Environment.NewLine
                                         + " </a>"+ System.Environment.NewLine
@@ -100,9 +102,9 @@ namespace USDA_ARS.Core
 
         }
         private static string tablerow2 = "<tr>"+ System.Environment.NewLine
-                                        + "< td valign=\"top\" align=\"CENTER\" colspan=\"4\">"+ System.Environment.NewLine
+                                        + "<td valign=\"top\" align=\"CENTER\" colspan=\"4\">"+ System.Environment.NewLine
                                         + "    <div align = \"left\" >"+ System.Environment.NewLine
-                                        + "       < font size=\"2\" color=\"#000000\" face=\"Arial\">"+ System.Environment.NewLine
+                                        + "       <font size=\"2\" color=\"#000000\" face=\"Arial\">"+ System.Environment.NewLine
                                         + "           The dates listed are projected.Actual dates are announced at the beginning"
                                          + "           of each peer review session.For efficiency, we simply calculate"
                                            + "         the termination date as 6 months beyond the projected implementation"
@@ -133,9 +135,9 @@ namespace USDA_ARS.Core
         }
         private static string tablerow4 = "<tr bordercolor=\"#FFFFFF\">"+ System.Environment.NewLine
                                         + "   <td width = \"25%\" >"+ System.Environment.NewLine
-                                         + "       < p >"+ System.Environment.NewLine
-                                      + "              < b >"+ System.Environment.NewLine
-                                           + "             < font face=\"Arial, Helvetica, sans-serif\" size=\"3\">"+ System.Environment.NewLine
+                                         + "       <p>"+ System.Environment.NewLine
+                                      + "              <b>"+ System.Environment.NewLine
+                                           + "             <font face=\"Arial, Helvetica, sans-serif\" size=\"3\">"+ System.Environment.NewLine
                                         + "                    Animal Production &amp; Protection"
                                            + "             </font>"+ System.Environment.NewLine
                                           + "          </b>"+ System.Environment.NewLine
@@ -144,7 +146,7 @@ namespace USDA_ARS.Core
 
                                           + "  <td width = \"25%\" >"+ System.Environment.NewLine
                                             + "    <b>"+ System.Environment.NewLine
-                                           + "         < font face=\"Arial, Helvetica, sans-serif\" size=\"3\">"+ System.Environment.NewLine
+                                           + "         <font face=\"Arial, Helvetica, sans-serif\" size=\"3\">"+ System.Environment.NewLine
                                               + "          Nutrition, Food Safety/Quality"
                                             + "        </font>"+ System.Environment.NewLine
                                              + "   </b></p>"+ System.Environment.NewLine
@@ -212,7 +214,7 @@ namespace USDA_ARS.Core
             string query = "";
             if (tdNumber == 1)
             {
-                query = "SELECT	ID,[National Program Title]  AS NationalProgramTitle"
+                query = "SELECT	[National Program Title]  "
                                      + "                    FROM    KeyDates"
                                      + " WHERE   mid([National Program Title], 4, 3) in ('101','103','104','105','106')"
                                      + "ORDER BY[National Program Title]";
@@ -221,21 +223,21 @@ namespace USDA_ARS.Core
             {
 
 
-                query = "SELECT	ID,[National Program Title]  AS NationalProgramTitle"
+                query = "SELECT	[National Program Title]  "
                                      + "                    FROM    KeyDates"
                                      + " WHERE   mid([National Program Title], 4, 3) in ('107','108','306')"
                                      + "ORDER BY[National Program Title]";
             }
             if (tdNumber == 3)
             {
-                query = "SELECT	ID,[National Program Title]  AS NationalProgramTitle"
+                query = "SELECT	[National Program Title]  "
                                      + "                    FROM    KeyDates"
                                      + " WHERE   mid([National Program Title], 4, 3) in ('201', '202', '203', '204', '205', '206', '207', '211', '212', '213', '214', '215', '216', '307')"
                                      + "ORDER BY[National Program Title]";
             }
             if (tdNumber == 4)
             {
-                query = "SELECT	ID,[National Program Title]  AS NationalProgramTitle"
+                query = "SELECT	[National Program Title]  "
                                      + "                    FROM    KeyDates"
                                      + " WHERE   mid([National Program Title], 4, 3) in ('301', '302','303','304','305','308')"
                                      + "ORDER BY[National Program Title]";
@@ -255,23 +257,12 @@ namespace USDA_ARS.Core
         {
             StringBuilder htmlTableRow5Tds = new StringBuilder();
 
-           
+            //Building the Header row.
+            htmlTableRow5Tds.Append("<tr bordercolor=\"#FFFFFF\">");
 
             if (tdNumber==1)
             {
-                //Building the Header row.
-                htmlTableRow5Tds.Append("<tr bordercolor=\"#FFFFFF\">");
                
-                foreach (DataColumn column in tablerow5Table.Columns)
-                {
-                    htmlTableRow5Tds.Append("<th>");
-                    htmlTableRow5Tds.Append(column.ColumnName);
-                    htmlTableRow5Tds.Append("</th>");
-                   
-
-                }
-                htmlTableRow5Tds.Append(System.Environment.NewLine);
-                
 
 
                 //Building the Data rows.
@@ -286,26 +277,14 @@ namespace USDA_ARS.Core
                         htmlTableRow5Tds.Append(row[column.ColumnName]);
 
                         htmlTableRow5Tds.Append("</td>");
-                        //htmlTableRow5Tds.Append(System.Environment.NewLine);
+                        htmlTableRow5Tds.Append(System.Environment.NewLine);
                     }
                     htmlTableRow5Tds.Append("</tr>");
                 }
             }
             if (tdNumber == 2)
             {
-                //Building the Header row.
-                htmlTableRow5Tds.Append("<tr bordercolor=\"#FFFFFF\">");
-               
-                foreach (DataColumn column in tablerow5Table.Columns)
-                {
-                    htmlTableRow5Tds.Append("<th>");
-                    htmlTableRow5Tds.Append(column.ColumnName);
-                    htmlTableRow5Tds.Append("</th>");
-                   
-
-                }
-                htmlTableRow5Tds.Append(System.Environment.NewLine);
-               
+              
 
 
                 //Building the Data rows.
@@ -320,27 +299,14 @@ namespace USDA_ARS.Core
                         htmlTableRow5Tds.Append(row[column.ColumnName]);
 
                         htmlTableRow5Tds.Append("</td>");
-                        //htmlTableRow5Tds.Append(System.Environment.NewLine);
+                        htmlTableRow5Tds.Append(System.Environment.NewLine);
                     }
                     htmlTableRow5Tds.Append("</tr>");
                 }
             }
             if (tdNumber == 3)
             {
-                //Building the Header row.
-                htmlTableRow5Tds.Append("<tr bordercolor=\"#FFFFFF\">");
-
-                foreach (DataColumn column in tablerow5Table.Columns)
-                {
-                    htmlTableRow5Tds.Append("<th>");
-                    htmlTableRow5Tds.Append(column.ColumnName);
-                    htmlTableRow5Tds.Append("</th>");
-                  
-
-                }
-                htmlTableRow5Tds.Append(System.Environment.NewLine);
                
-
                 //Building the Data rows.
                 foreach (DataRow row in tablerow5Table.Rows)
                 {
@@ -353,28 +319,14 @@ namespace USDA_ARS.Core
                         htmlTableRow5Tds.Append(row[column.ColumnName]);
 
                         htmlTableRow5Tds.Append("</td>");
-                        //htmlTableRow5Tds.Append(System.Environment.NewLine);
+                        htmlTableRow5Tds.Append(System.Environment.NewLine);
                     }
                     htmlTableRow5Tds.Append("</tr>");
                 }
             }
             if (tdNumber == 4)
             {
-                //Building the Header row.
-                htmlTableRow5Tds.Append("<tr bordercolor=\"#FFFFFF\">");
-
-                foreach (DataColumn column in tablerow5Table.Columns)
-                {
-                    htmlTableRow5Tds.Append("<th>");
-                    htmlTableRow5Tds.Append(column.ColumnName);
-                    htmlTableRow5Tds.Append("</th>");
-                   
-
-                }
-                htmlTableRow5Tds.Append(System.Environment.NewLine);
-               
-
-                //Building the Data rows.
+                     //Building the Data rows.
                 foreach (DataRow row in tablerow5Table.Rows)
                 {
                     htmlTableRow5Tds.Append("<tr>");
@@ -386,11 +338,13 @@ namespace USDA_ARS.Core
                         htmlTableRow5Tds.Append(row[column.ColumnName]);
 
                         htmlTableRow5Tds.Append("</td>");
-                        //htmlTableRow5Tds.Append(System.Environment.NewLine);
+                        htmlTableRow5Tds.Append(System.Environment.NewLine);
                     }
                     htmlTableRow5Tds.Append("</tr>");
                 }
             }
+            //Building the Header row.
+            htmlTableRow5Tds.Append("</tr>");
             return htmlTableRow5Tds.ToString();
 
         }
@@ -408,7 +362,8 @@ namespace USDA_ARS.Core
             string query = "";
             if (tdNumber == 1)
             {
-                query = "SELECT	ID," 
+                query = "SELECT	ID,"
+                    + "[National Program Title]                        AS NationalProgramTitle,"
                     + "[Termination Date]                              AS TerminationDate,"
                     + "[Program Analyst]                               AS ProgramAssistant,"
                     + "[Number of Projects in the Review]              AS RoundNumberofProjectsintheReview,"
@@ -460,6 +415,7 @@ namespace USDA_ARS.Core
                     htmlTableMainPortion.Append("<th>");
                     htmlTableMainPortion.Append(column.ColumnName);
                     htmlTableMainPortion.Append("</th>");
+                    
 
 
                 }
@@ -488,8 +444,41 @@ namespace USDA_ARS.Core
             return htmlTableMainPortion.ToString();
 
         }
-        #endregion
 
+        public static void StoreHtmlStringInSQLDB(string htmlString)
+        {
+            //1.Set Access connection (using  connection string from App.config).
+            string strSqlConn = ConfigurationManager.AppSettings["SqlConnectionString"];
+            using (SqlConnection connection = new SqlConnection(strSqlConn))
+            {
+                SqlCommand cmd = new SqlCommand("INSERT INTO MegaStatus (MegaStatusHTMLString) VALUES (@HtmlString)");
+                cmd.CommandType = CommandType.Text;
+                cmd.Connection = connection;
+                cmd.Parameters.AddWithValue("@HtmlString", htmlString);               
+                connection.Open();
+                cmd.ExecuteNonQuery();
+            }
+        }
+        #endregion
+        public static string ConvertDataTableToHTML(DataTable dt)
+    {
+        string html = "<table>";
+        //add header row
+        html += "<tr>";
+        for(int i=0;i<dt.Columns.Count;i++)
+            html+="<td>"+dt.Columns[i].ColumnName+"</td>";
+        html += "</tr>";
+        //add rows
+        for (int i = 0; i < dt.Rows.Count; i++)
+        {
+            html += "<tr>";
+            for (int j = 0; j< dt.Columns.Count; j++)
+                html += "<td>" + dt.Rows[i][j].ToString() + "</td>";
+            html += "</tr>";
+        }
+        html += "</table>";
+        return html;
+    }
     }
 }
 
