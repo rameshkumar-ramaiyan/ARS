@@ -64,10 +64,10 @@
     <Content Include="AccessDB\megascheduleIII.mdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="SQLDB\CreateMegaStatusHTMLTable.sql" />
+    <Content Include="SQLDB\usp_InsertMegaStatusHTMLString.sql" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="SQLDB\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

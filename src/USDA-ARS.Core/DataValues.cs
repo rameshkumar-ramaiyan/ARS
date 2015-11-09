@@ -180,6 +180,32 @@ namespace USDA_ARS.Core
         }
         #endregion
         #region Table row 5
+        private static string tablerow5 = "<tr bordercolor=\"#FFFFFF\">" + System.Environment.NewLine
+                                        + "   <td width = \"25%\" >" + System.Environment.NewLine
+                                        +ConvertDataTableToHTML( SetTableRow5Td(1))
+                                        + "   </td>" + System.Environment.NewLine
+                                        + "  <td width = \"25%\" >" + System.Environment.NewLine
+                                        + ConvertDataTableToHTML(SetTableRow5Td(2))
+                                        + "  </td>" + System.Environment.NewLine
+                                        + "   <td width = \"25%\" >" + System.Environment.NewLine
+                                        + ConvertDataTableToHTML(SetTableRow5Td(3))
+                                        + "   </td>" + System.Environment.NewLine
+                                        + "  <td width = \"25%\" >" + System.Environment.NewLine
+                                        + ConvertDataTableToHTML(SetTableRow5Td(4))
+                                        + "  </td>" + System.Environment.NewLine
+                                        + " </tr>" + System.Environment.NewLine;
+
+
+        public static string Tablerow5
+        {
+            get { return tablerow5; }
+            set { tablerow5 = value; }
+
+        }
+
+
+
+
         private static string tablerow5BeginSection = "<tr bordercolor=\"#FFFFFF\">"+ System.Environment.NewLine+
 		                                              "< !---Begin local links to review information --->"+ System.Environment.NewLine;
         
@@ -262,9 +288,8 @@ namespace USDA_ARS.Core
 
             if (tdNumber==1)
             {
-               
-
-
+                
+                htmlTableRow5Tds.Append("<td width=\"25 % \" valign=\"top\">");
                 //Building the Data rows.
                 foreach (DataRow row in tablerow5Table.Rows)
                 {
@@ -275,18 +300,19 @@ namespace USDA_ARS.Core
                         htmlTableRow5Tds.Append("<td width=\"25 % \" valign=\"top\">");
                             htmlTableRow5Tds.Append(System.Environment.NewLine);
                         htmlTableRow5Tds.Append(row[column.ColumnName]);
-
+                        htmlTableRow5Tds.Append(System.Environment.NewLine);
                         htmlTableRow5Tds.Append("</td>");
                         htmlTableRow5Tds.Append(System.Environment.NewLine);
                     }
                     htmlTableRow5Tds.Append("</tr>");
                 }
+                htmlTableRow5Tds.Append("</td>");
             }
             if (tdNumber == 2)
             {
-              
 
 
+                htmlTableRow5Tds.Append("<td width=\"25 % \" valign=\"top\">");
                 //Building the Data rows.
                 foreach (DataRow row in tablerow5Table.Rows)
                 {
@@ -297,12 +323,13 @@ namespace USDA_ARS.Core
                         htmlTableRow5Tds.Append("<td width=\"25 % \" valign=\"top\">");
                         htmlTableRow5Tds.Append(System.Environment.NewLine);
                         htmlTableRow5Tds.Append(row[column.ColumnName]);
-
+                        htmlTableRow5Tds.Append(System.Environment.NewLine);
                         htmlTableRow5Tds.Append("</td>");
                         htmlTableRow5Tds.Append(System.Environment.NewLine);
                     }
                     htmlTableRow5Tds.Append("</tr>");
                 }
+                htmlTableRow5Tds.Append("<td width=\"25 % \" valign=\"top\">");
             }
             if (tdNumber == 3)
             {
@@ -469,10 +496,10 @@ namespace USDA_ARS.Core
     {
         string html = "<table>";
         //add header row
-        html += "<tr>";
-        for(int i=0;i<dt.Columns.Count;i++)
-            html+="<td>"+dt.Columns[i].ColumnName+"</td>";
-        html += "</tr>";
+        //html += "<tr>";
+        //for(int i=0;i<dt.Columns.Count;i++)
+        //    html+="<td>"+dt.Columns[i].ColumnName+"</td>";
+        //html += "</tr>";
         //add rows
         for (int i = 0; i < dt.Rows.Count; i++)
         {
@@ -480,6 +507,7 @@ namespace USDA_ARS.Core
             for (int j = 0; j< dt.Columns.Count; j++)
                 html += "<td>" + dt.Rows[i][j].ToString() + "</td>";
             html += "</tr>";
+                
         }
         html += "</table>";
         return html;

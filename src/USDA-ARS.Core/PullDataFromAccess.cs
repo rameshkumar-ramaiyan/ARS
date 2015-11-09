@@ -36,7 +36,7 @@ namespace USDA_ARS.Core
             string tablerow2 = DataValues.Tablerow2; 
             string tablerow3 = DataValues.Tablerow3;
             string tablerow4 = DataValues.Tablerow4;
-
+            string tablerow5 = DataValues.Tablerow5;
             //row 5 begin section
             string tableRow5BeginSection = DataValues.Tablerow5BeginSection;
             //string modificationHistory = WebUtility.HtmlDecode(modificationHistoryHtml);
@@ -78,14 +78,14 @@ namespace USDA_ARS.Core
                                      + tablerow4
                                     + System.Environment.NewLine
 
-                                   + tableRow5BeginSection
-                                   + System.Environment.NewLine
-                                   + tablerow5TdsHtml
+                                 //  + tableRow5BeginSection
+                                 //  + System.Environment.NewLine
+                                   + tablerow5
                                    + System.Environment.NewLine
                                    +htmlTableMainPortion
                                    +System.Environment.NewLine
-                                   + tableRow5EndSection
-                                   + System.Environment.NewLine
+                                //   + tableRow5EndSection
+                                 //  + System.Environment.NewLine
                                    ;
             //store this string in db
             DataValues.StoreHtmlStringInSQLDB(finalHtmlString);
