@@ -71,15 +71,23 @@ namespace USDA_ARS.Core
         private static string bodySection1 = "<body bgcolor=\"#FFFFFF\" text=\"#000000\">"
                                             + System.Environment.NewLine
                                             + " < !-- #BeginEditable \"MainContent\" -->"
-                                            + System.Environment.NewLine
-                                            + "  < !---Table which holds the quick links to the program titles--->"
-                                            + System.Environment.NewLine
-                                            + "    <table border = \"0\" bordercolor = \"#FFFFFF\" > "
                                             + System.Environment.NewLine;
         public static string BodySection1
         {
             get { return bodySection1; }
             set { bodySection1 = value; }
+
+        }
+        #endregion
+        #region tableBegin
+        private static string tableBegin = "<!---Table which holds the quick links to the program titles--->"
+                                            + System.Environment.NewLine
+                                            + "    <table border = \"0\" bordercolor = \"#FFFFFF\" > "
+                                            + System.Environment.NewLine;
+        public static string TableBegin
+        {
+            get { return tableBegin; }
+            set { tableBegin = value; }
 
         }
         #endregion
@@ -198,10 +206,10 @@ namespace USDA_ARS.Core
 
         }
 
-        public static DataTable SetTableRow5Td(int tdNumber)
+        public static DataTable SetTableRow5Td(int tdNumber, string connectionString = null)
         {
             //1.Set Access connection(using  connection string from App.config).
-            string strAccessConn = ConfigurationManager.AppSettings["AccessConnection"];
+            string strAccessConn = connectionString ?? ConfigurationManager.AppSettings["AccessConnection"];
             //private static string tablerow5 = 
             //2.select values from keydates table.
             DataTable getID = new DataTable();
@@ -247,6 +255,10 @@ namespace USDA_ARS.Core
             OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
             adapter.Fill(getID);
 
+            adapter.Dispose();
+            cmd.Dispose();
+            conn.Close();
+            conn.Dispose();
 
             return getID;
         }
@@ -394,10 +406,10 @@ namespace USDA_ARS.Core
             return htmlTableRow5Tds.ToString();
 
         }
-        public static DataTable SetMainPortion(int tdNumber)
+        public static DataTable SetMainPortion(int tdNumber, string connectionString = null)
         {
             //1.Set Access connection(using  connection string from App.config).
-            string strAccessConn = ConfigurationManager.AppSettings["AccessConnection"];
+            string strAccessConn = connectionString ?? ConfigurationManager.AppSettings["AccessConnection"];
             //private static string tablerow5 = 
             //2.select values from keydates table.
             DataTable getID = new DataTable();
@@ -441,6 +453,10 @@ namespace USDA_ARS.Core
             OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
             adapter.Fill(getID);
 
+            adapter.Dispose();
+            cmd.Dispose();
+            conn.Close();
+            conn.Dispose();
 
             return getID;
         }
