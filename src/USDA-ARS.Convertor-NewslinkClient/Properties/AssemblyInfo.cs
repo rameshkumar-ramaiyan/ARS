@@ -5,11 +5,11 @@ using System.Runtime.InteropServices;
 // General Information about an assembly is controlled through the following 
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("USDA-ARS.Convertor-NewslinkClient")]
+[assembly: AssemblyTitle("USDA-ARS.Convertor-NewsLinkClient")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("USDA-ARS.Convertor-NewslinkClient")]
+[assembly: AssemblyProduct("USDA-ARS.Convertor-NewsLinkClient")]
 [assembly: AssemblyCopyright("Copyright ©  2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("dc1d3602-67cd-41ca-87d5-f776b6f1f284")]
+[assembly: Guid("08829473-3258-4051-83fd-651d7b5ff733")]
 
 // Version information for an assembly consists of the following four values:
 //

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace USDA_ARS.Convertor_NewslinkClient.Properties
+namespace USDA_ARS.Convertor_NewsLinkClient.Properties
 {
 
 

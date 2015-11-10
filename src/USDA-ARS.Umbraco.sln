@@ -16,6 +16,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.Umbraco.Extensions
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.CoreClient", "USDA-ARS.CoreClient\USDA-ARS.CoreClient.csproj", "{21137CF1-B967-46FF-9913-80BEDEADB745}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.Convertor-NewsLink", "USDA-ARS.Convertor-NewsLink\USDA-ARS.Convertor-NewsLink.csproj", "{FA99379B-D560-4FE3-9EAD-E7876E71A585}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.Convertor-NewsLinkClient", "USDA-ARS.Convertor-NewsLinkClient\USDA-ARS.Convertor-NewsLinkClient.csproj", "{08829473-3258-4051-83FD-651D7B5FF733}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -38,6 +42,14 @@ Global
 		{21137CF1-B967-46FF-9913-80BEDEADB745}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{21137CF1-B967-46FF-9913-80BEDEADB745}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{21137CF1-B967-46FF-9913-80BEDEADB745}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA99379B-D560-4FE3-9EAD-E7876E71A585}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA99379B-D560-4FE3-9EAD-E7876E71A585}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA99379B-D560-4FE3-9EAD-E7876E71A585}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA99379B-D560-4FE3-9EAD-E7876E71A585}.Release|Any CPU.Build.0 = Release|Any CPU
+		{08829473-3258-4051-83FD-651D7B5FF733}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{08829473-3258-4051-83FD-651D7B5FF733}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{08829473-3258-4051-83FD-651D7B5FF733}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{08829473-3258-4051-83FD-651D7B5FF733}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

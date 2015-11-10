@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace USDA_ARS.Convertor_NewslinkClient.Properties
+namespace USDA_ARS.Convertor_NewsLinkClient.Properties
 {
 
 
@@ -44,7 +44,7 @@ namespace USDA_ARS.Convertor_NewslinkClient.Properties
             {
                 if ((resourceMan == null))
                 {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("USDA_ARS.Convertor_NewslinkClient.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("USDA_ARS.Convertor_NewsLinkClient.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace USDA_ARS.Convertor_NewslinkClient
+namespace USDA_ARS.Convertor_NewsLinkClient
 {
     static class Program
     {

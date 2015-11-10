@@ -1,4 +1,4 @@
-﻿namespace USDA_ARS.Convertor_NewslinkClient
+﻿namespace USDA_ARS.Convertor_NewsLinkClient
 {
     partial class Form1
     {
