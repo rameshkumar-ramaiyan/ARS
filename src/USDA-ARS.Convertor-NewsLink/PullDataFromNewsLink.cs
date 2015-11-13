@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace USDA_ARS.Convertor_NewsLink
 {
-    public class Class1
+    class PullDataFromNewsLink
     {
     }
 }

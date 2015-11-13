@@ -1,6 +1,6 @@
 ﻿namespace USDA_ARS.Convertor_NewsLinkClient
 {
-    partial class Form1
+    partial class NewsLinkTest
     {
         /// <summary>
         /// Required designer variable.

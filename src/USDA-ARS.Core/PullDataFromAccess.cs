@@ -78,14 +78,14 @@ namespace USDA_ARS.Core
                                      + tablerow4
                                     + System.Environment.NewLine
 
-                                 //  + tableRow5BeginSection
-                                 //  + System.Environment.NewLine
+                                 + tableRow5BeginSection
+                                   + System.Environment.NewLine
                                    + tablerow5
                                    + System.Environment.NewLine
                                    +htmlTableMainPortion
                                    +System.Environment.NewLine
-                                //   + tableRow5EndSection
-                                 //  + System.Environment.NewLine
+                                  + tableRow5EndSection
+                                  + System.Environment.NewLine
                                    ;
             //store this string in db
             DataValues.StoreHtmlStringInSQLDB(finalHtmlString);
