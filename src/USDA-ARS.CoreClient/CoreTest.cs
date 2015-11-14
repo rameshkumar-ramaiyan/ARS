@@ -26,7 +26,8 @@ namespace USDA_ARS.CoreClient
         private void btnPullDataFromAccess_Click(object sender, EventArgs e)
         {
             PullDataFromAccess pulldata = new PullDataFromAccess();
-            string finalHtmlString= pulldata.SetValues();
+            string connectionStr = txtConnectionString.Text;
+            string finalHtmlString= pulldata.SetValues(connectionStr);
             //Create DataTable
             txtResult.Text= finalHtmlString;
 
