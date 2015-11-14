@@ -1,0 +1,408 @@
+﻿@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = null;
+
+    IPublishedContent currentPage = Model.Content;
+    IPublishedContent siteSettings = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.SiteSettings();
+    IPublishedContent rootNode = currentPage.AncestorOrSelf(1);
+
+    string siteTitle = siteSettings.GetPropertyValue<string>("siteTitle");
+    string htmlTitleSiteName = siteSettings.GetPropertyValue<string>("siteName");
+    string htmlTitlePageName = currentPage.GetPropertyValue<string>("htmlTitle", currentPage.Name);
+
+    string modeCode = rootNode.GetPropertyValue<string>("modeCode");
+
+    string pageHeaderScripts = currentPage.GetPropertyValue<string>("pageHeaderScripts");
+    string pageFooterScripts = currentPage.GetPropertyValue<string>("pageFooterScripts");
+
+    IEnumerable<IPublishedContent> mainNavList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.MainNavigationList();
+
+    MultiUrls secondNavigation = siteSettings.GetPropertyValue<MultiUrls>("secondNavigation");
+    MultiUrls thirdNavigation = siteSettings.GetPropertyValue<MultiUrls>("thirdNavigation");
+    MultiUrls footerNavigationLineOne = siteSettings.GetPropertyValue<MultiUrls>("footerNavigationLineOne");
+    MultiUrls footerNavigationLineTwo = siteSettings.GetPropertyValue<MultiUrls>("thirdNavigation");
+}
+<!DOCTYPE HTML>
+
+<HEAD>
+    <title>@htmlTitlePageName @htmlTitleSiteName</title>
+
+    <meta http-equiv='Content-Type:text/html; charset=UTF-8' />
+    <meta http-equiv="X-UA-Compatible" content="IE=8" />			<!-- disable IE compatibility view -->
+
+    <link href="/css/layout.css" rel="stylesheet" type="text/css" />
+    <link href="/css/ARSbranding.css" rel="stylesheet" type="text/css" />
+    <link href="/css/ie8-and-down.css" rel="stylesheet" type="text/css" />
+
+    <script id="_fed_an_ua_tag" src="/incme/handf/Universal-Federated-Analytics-Min.js?agency=USDA&subagency=ARS"></script>
+
+    <!-- include jQuery library -->
+
+    <script src="/jQuery/jquery.min.js"></script>
+    <script src="/jQuery/jquery.cycle.all.min.js"></script>
+    <script src="/jQuery/jquery.corner.js"></script>			<!-- Corner Plugin -->
+
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+
+    <script src="http://code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+
+    <!-- jQuery validation -->
+    <script src="http://ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
+
+    <!-- for the tabs in the middle section in the home page -->
+    <script type="text/javascript">
+        function displaySelected(field) {
+            var DetailObj_Latest = document.getElementById("AgencyNewsDetail_Latest");
+            var DetailObj_Topic = document.getElementById("AgencyNewsDetail_Topic");
+            var DetailObj_Blog = document.getElementById("AgencyNewsDetail_Blog");
+
+            var TopObj_Latest = document.getElementById("AgencyNewsTop_Latest");
+            var TopObj_Topic = document.getElementById("AgencyNewsTop_Topic");
+            var TopObj_Blog = document.getElementById("AgencyNewsTop_Blog");
+
+            DetailObj_Latest.style.visibility = "hidden";
+            DetailObj_Topic.style.visibility = "hidden";
+            DetailObj_Blog.style.visibility = "hidden";
+
+            TopObj_Latest.className = "toplink";
+            TopObj_Topic.className = "toplink";
+            TopObj_Blog.className = "toplink";
+
+            if (field == "") {
+                field = "Latest";
+            }
+            var selectedObj_Top = document.getElementById("AgencyNewsTop_" + field);
+            var selectedObj_Detail = document.getElementById("AgencyNewsDetail_" + field);
+
+            selectedObj_Top.className = "selectedTab";
+            selectedObj_Detail.style.visibility = "visible";
+        }
+    </script>
+
+
+
+    <script type="text/javascript">
+        $(function () {
+            $("#tabs").tabs()
+					  .tabs('select', 1)					// activate second tab
+					  .removeClass('ui-widget-content');	// change the white background to teal
+
+            $("#middleTabs").tabs();
+
+            // Popular Topic Links Menu
+
+            $("#popularLinksMoreMenu").menu({
+                position: {
+                    my: "right top",
+                    at: "right bottom"
+                }
+            });
+        });
+    </script>
+
+    <style>
+        .ui-menu {
+            width: auto;
+        }
+
+        .ui-widget-content {
+            border: none;
+            bgColorHoever: #FFFFFF;
+        }
+        /* remove the border */
+    </style>
+    <meta name='bbsect' content='Main'>
+    <meta name='modestem' content='00a00b00c00d'>
+    <meta name='modestem1' content='00a'>
+    <meta name='modestem2' content='00b'>
+    <meta name='modestem3' content='00c'>
+    <meta name='modestem4' content='00d'>
+    <meta name='site_code' content='@modeCode'>
+
+    @Html.Raw(pageHeaderScripts)
+</HEAD>
+
+<body onload="displaySelected('Latest');">
+
+
+    <div id="pageComplete">
+
+
+
+
+
+
+
+
+        <!-- ARS Header start -->
+        <div id="masthead">
+            <a class="section508" name="masthead">
+                Page Banner
+            </a>
+
+            <div id="identity">
+                <a href="http://www.usda.gov">
+                    <img src="/images/redesign/USDA-Logo.png" alt="USDA Logo and link" class="USDAlogo">
+                </a>
+
+                <div class="agencyName">
+                    @Html.Raw(siteTitle)
+                </div>
+                <div class="deptName clearfloat"></div>
+            </div>
+
+            <div id="agencyMenu">
+                <div aria-labelledby="navigation_top" role="navigation" id="agencyNav">
+                    @{
+                        // Second Navigation
+                        int secondMenuCount = 0;
+
+                        if (secondNavigation.Any())
+                        {
+                            <ul>
+                                @foreach (var item in secondNavigation)
+                                {
+                                    if (secondMenuCount > 0)
+                                    {
+                                        <li>|</li>
+                                    }
+                                    <li><a title="@item.Name" href="@item.Url" target="@item.Target"><b>@item.Name</b></a></li>
+
+                                    secondMenuCount++;
+                                }
+                            </ul>
+                        }
+                    }
+                </div>
+
+                <div id="agencySearch">
+                    <!-- ************ BEGIN Search Box ************ -->
+                    <!-- Google Mini -->
+                    <!-- USA Search -->
+                    <form method="get" action="http://search.usa.gov/search?sort=rel" id="search_form">
+                        <table width="250" cellspacing="2" cellpadding="2" class="justright">
+                            <tr>
+                                <td class="justright">
+                                    <input name="utf8" type="hidden" value="&#x2713;" />
+                                    <input name="affiliate" id="affiliate" type="hidden" value="agriculturalresearchservicears" />
+
+                                    <label class="displayNone" for="searchThis">Search for This</label>
+                                    <input name="query" id="query" type="text" value="" style="color:#000000" />
+                                </td>
+                                <td width="20" class="justleft">
+                                    <input name="btnG" type="image" value="Go!" alt="Submit Form" src="/images/redesign/search.png">
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                </div>
+            </div>
+
+
+            <!-- Tabs -->
+            <div id="MenuNavigation">
+                <div id="mainNav">
+                    <ul id="nav">
+
+                        <!--[if lt IE 9]>
+                            <li class="level1 IEonly">
+                                <img src="/images/redesign/leftTab.png" alt="spacer">
+                            </li>
+                        <![endif]-->
+
+                        @{
+                            int mainNavCount = 0;
+                            foreach (IPublishedContent navItem in mainNavList)
+                            {
+                                string linkAttr = "";
+
+                                if (mainNavCount == 0)
+                                {
+                                    linkAttr = " id=\"firstTab\"";
+                                }
+                                else if (mainNavCount == (mainNavList.Count() - 1))
+                                {
+                                    linkAttr = " style=\"border-right: 0px;\" id=\"lastTab\"";
+                                }
+
+                                <!-- @navItem.Name Tab -->
+                                <li class="level1">
+                                    <a @Html.Raw(linkAttr) href="#" class="level1">@navItem.Name</a>
+                                    <div>
+                                        <ul>
+                                            @foreach (IPublishedContent subItem in navItem.Children)
+                                            {
+                                                Link navLink = subItem.GetPropertyValue<MultiUrls>("navigationLink").FirstOrDefault();
+
+                                                <li><a href="@navLink.Url" target="@navLink.Target">@subItem.Name</a></li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                mainNavCount++;
+                            }
+                        }
+
+                        <!--[if lt IE 9]>
+                            <li class="level1 IEonly">
+                                <img src="/images/redesign/rightTab.png" alt="spacer">
+                            </li>
+                        <![endif]-->
+                    </ul>
+                </div>
+
+                <div id="siteNav">
+                    @{
+                        // Third Navigation
+                        int thirdMenuCount = 0;
+
+                        if (thirdNavigation.Any())
+                        {
+                            <ul>
+                                @foreach (var item in thirdNavigation)
+                                {
+                                    if (thirdMenuCount > 0)
+                                    {
+                                        <li>|</li>
+                                    }
+                                    <li><a title="@item.Name" href="@item.Url" target="@item.Target"><b>@item.Name</b></a></li>
+
+                                    thirdMenuCount++;
+                                }
+                            </ul>
+                        }
+                    }
+
+                </div>
+            </div>
+        </div>
+        <!-- ARS Header end -->
+
+
+        @RenderBody()
+
+
+    </div>
+    <!-- START OF SmartSource Data Collector TAG -->
+    <!-- Copyright (c) 1996-2014 Webtrends Inc.  All rights reserved. -->
+    <!-- Version: 9.4.0 -->
+    <!-- Tag Builder Version: 4.1  -->
+    <!-- Created: 10/21/2014 6:53:23 PM -->
+    <script src="/incme/handf/WebTrends9.js" type="text/javascript"></script>
+    <!-- ----------------------------------------------------------------------------------- -->
+    <!-- Warning: The two script blocks below must remain inline. Moving them to an external -->
+    <!-- JavaScript include file can cause serious problems with cross-domain tracking.      -->
+    <!-- ----------------------------------------------------------------------------------- -->
+    <script type="text/javascript">
+        //<![CDATA[
+        var _tag = new WebTrends();
+        _tag.dcsGetId();
+        //]]>
+    </script>
+    <script type="text/javascript">
+        //<![CDATA[
+        _tag.dcsCustom = function () {
+            // Add custom parameters here.
+            //_tag.DCSext.param_name=param_value;
+        }
+        _tag.dcsCollect();
+        //]]>
+    </script>
+    <noscript>
+        <div><img alt="DCSIMG" id="DCSIMG" width="1" height="1" src="http://wt-sdc2.arsnet.usda.gov/dcsh0juhninp53gudlhz4e9z4_5z4d/njs.gif?dcsuri=/nojavascript&amp;WT.js=No&amp;WT.tv=9.4.0&amp;dcssip=www.ars.usda.gov" /></div>
+    </noscript>
+    <!-- END OF SmartSource Data Collector TAG -->
+    <script type="text/javascript">
+
+        var _gaq = _gaq || [];
+        _gaq.push(['_setAccount', 'UA-27627304-6']);
+        _gaq.push(['_setDomainName', 'usda.gov']);
+        _gaq.push(['_setAllowLinker', true]);
+        _gaq.push(['_trackPageview']);
+
+        _gaq.push(['b._setAccount', 'UA-27627304-1']);
+        _gaq.push(['b._setDomainName', 'usda.gov']);
+        _gaq.push(['b._setAllowLinker', true]);
+        _gaq.push(['b._trackPageview']);
+
+        (function () {
+            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+        })();
+
+    </script>
+
+
+
+    <!-- footer table -->
+
+
+
+
+    <div class="clearfloat" id="footerContent" style="width:940px">
+        <a class="section508" name="footer">Footer Content</a>
+
+        <!-- Begin Footer content text -->
+        <div id="footer_content_text">
+            <br>
+            @{
+                int footerOneCount = 0;
+
+                if (footerNavigationLineOne.Any())
+                {
+                    <ul>
+                        @foreach (var item in footerNavigationLineOne)
+                        {
+                            <a href="@item.Url" target="@item.Target">@item.Name</a>
+                            if (footerOneCount < footerNavigationLineOne.Count() - 1)
+                            {
+                                @Html.Raw(" | ");
+                            }
+
+                            footerOneCount++;
+                        }
+                    </ul>
+                }
+            }
+
+            <br>
+            @{
+                int footerTwoCount = 0;
+
+                if (footerNavigationLineTwo.Any())
+                {
+                    <ul>
+                        @foreach (var item in footerNavigationLineTwo)
+                        {
+                            <a href="@item.Url" target="@item.Target">@item.Name</a>
+                            if (footerTwoCount < footerNavigationLineTwo.Count() - 1)
+                            {
+                                @Html.Raw(" | ");
+                            }
+
+                            footerTwoCount++;
+                        }
+                    </ul>
+                }
+            }
+
+
+        </div>
+        <!-- End Footer content text -->
+
+        <a class="section508" href="top">Back to Top of Page</a>
+    </div>
+
+
+    <!--[if lt IE 9]>
+        <img class="IErounded" src="/images/redesign/rounded-bottomBLK.png" alt="spacer">
+    <![endif]-->
+    </div>	<!-- pageComplete -->
+
+    @Html.Raw(pageFooterScripts)
+</body>
+</html>

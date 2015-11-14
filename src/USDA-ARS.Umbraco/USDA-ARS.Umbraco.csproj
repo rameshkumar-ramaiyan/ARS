@@ -44,6 +44,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Archetype, Version=1.11.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Archetype.1.11.1\lib\net40\Archetype.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="AutoMapper, Version=3.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\AutoMapper.3.0.0\lib\net40\AutoMapper.dll</HintPath>
       <Private>True</Private>
@@ -165,8 +169,16 @@
       <HintPath>..\packages\Newtonsoft.Json.6.0.8\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Our.Umbraco.PropertyEditorConverters, Version=2.1.5.35, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Our.Umbraco.CoreValueConverters.2.1.5\lib\net45\Our.Umbraco.PropertyEditorConverters.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="RJP.MultiUrlPicker, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\RJP.UmbracoMultiUrlPicker.1.3.1\lib\net45\RJP.MultiUrlPicker.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Semver, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
@@ -297,6 +309,39 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Plugins\Archetype\assets\logo_50.png" />
+    <Content Include="App_Plugins\Archetype\assets\twitter.png" />
+    <Content Include="App_Plugins\Archetype\css\archetype.css" />
+    <Content Include="App_Plugins\Archetype\js\archetype.js" />
+    <Content Include="App_Plugins\Archetype\langs\da-dk.js" />
+    <Content Include="App_Plugins\Archetype\langs\da.js" />
+    <Content Include="App_Plugins\Archetype\langs\de-de.js" />
+    <Content Include="App_Plugins\Archetype\langs\de.js" />
+    <Content Include="App_Plugins\Archetype\langs\en-gb.js" />
+    <Content Include="App_Plugins\Archetype\langs\en-us.js" />
+    <Content Include="App_Plugins\Archetype\langs\en.js" />
+    <Content Include="App_Plugins\Archetype\langs\es-es.js" />
+    <Content Include="App_Plugins\Archetype\langs\es.js" />
+    <Content Include="App_Plugins\Archetype\langs\fr-fr.js" />
+    <Content Include="App_Plugins\Archetype\langs\he-il.js" />
+    <Content Include="App_Plugins\Archetype\langs\it-it.js" />
+    <Content Include="App_Plugins\Archetype\langs\ja-jp.js" />
+    <Content Include="App_Plugins\Archetype\langs\ko-kr.js" />
+    <Content Include="App_Plugins\Archetype\langs\nb-no.js" />
+    <Content Include="App_Plugins\Archetype\langs\nl-nl.js" />
+    <Content Include="App_Plugins\Archetype\langs\pl-pl.js" />
+    <Content Include="App_Plugins\Archetype\langs\pt-br.js" />
+    <Content Include="App_Plugins\Archetype\langs\ru-ru.js" />
+    <Content Include="App_Plugins\Archetype\langs\sv-se.js" />
+    <Content Include="App_Plugins\Archetype\langs\zh-cn.js" />
+    <Content Include="App_Plugins\Archetype\views\archetype.config.developer.dialog.html" />
+    <Content Include="App_Plugins\Archetype\views\archetype.config.fieldset.dialog.html" />
+    <Content Include="App_Plugins\Archetype\views\archetype.config.html" />
+    <Content Include="App_Plugins\Archetype\views\archetype.config.stylescript.dialog.html" />
+    <Content Include="App_Plugins\Archetype\views\archetype.default.html" />
+    <Content Include="App_Plugins\Archetype\views\archetype.html" />
+    <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.html" />
+    <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.js" />
     <Content Include="App_Plugins\UsdaDataImporter\css\usda.data.importer.css" />
     <Content Include="App_Plugins\UsdaDataImporter\js\usda.data.importer.js" />
     <Content Include="App_Plugins\UsdaDataImporter\upload.file.aspx" />
@@ -320,8 +365,14 @@
     <Content Include="Config\Lang\ru-RU.user.xml" />
     <Content Include="Config\Lang\sv-SE.user.xml" />
     <Content Include="Config\Lang\zh-CN.user.xml" />
+    <Content Include="css\ARSbranding.css" />
+    <Content Include="css\ie8-and-down.css" />
+    <Content Include="css\layout.css" />
     <Content Include="default.aspx" />
     <Content Include="Global.asax" />
+    <Content Include="JQuery\jquery.corner.js" />
+    <Content Include="JQuery\jquery.cycle.all.min.js" />
+    <Content Include="JQuery\jquery.min.js" />
     <Content Include="umbraco\Actions\delete.aspx" />
     <Content Include="umbraco\Actions\editContent.aspx" />
     <Content Include="umbraco\Actions\preview.aspx" />
@@ -2832,6 +2883,7 @@
     <Content Include="Config\404handlers.config" />
     <Content Include="App_Plugins\UsdaDataImporter\package.manifest" />
     <Content Include="App_Plugins\UsdaDataImporter\js\usda.data.importer.resource.js" />
+    <Content Include="App_Plugins\RJP.MultiUrlPicker\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Partials\Grid\Editors\Textstring.cshtml" />
     <Content Include="Views\Partials\Grid\Editors\Rte.cshtml" />
@@ -2840,6 +2892,10 @@
     <Content Include="Views\Partials\Grid\Editors\Embed.cshtml" />
     <Content Include="Views\Partials\Grid\Editors\Base.cshtml" />
     <Content Include="Views\Partials\Grid\Bootstrap2.cshtml" />
+    <Content Include="Views\Homepage.cshtml" />
+    <Content Include="Views\SubpageStandard.cshtml" />
+    <Content Include="Views\_Master.cshtml" />
+    <Content Include="Views\Partials\Archetype\Carousel.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2852,6 +2908,7 @@
     <Folder Include="App_Start\" />
     <Folder Include="Controllers\" />
     <Folder Include="Models\" />
+    <Folder Include="Views\MacroPartials\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\USDA-ARS.Core\USDA-ARS.Core.csproj">
