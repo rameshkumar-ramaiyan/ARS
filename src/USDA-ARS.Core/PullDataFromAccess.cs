@@ -22,7 +22,7 @@ namespace USDA_ARS.Core
 
         // Setting environment values
         public string SetValues(string connectionStr)
-        {
+        { 
             //1.Set Access connection (using  connection string from App.config).
             string strAccessConn=string.Empty;
            

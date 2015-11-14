@@ -55,7 +55,7 @@
             // 
             // txtConnectionString
             // 
-            this.txtConnectionString.Location = new System.Drawing.Point(4, 32);
+            this.txtConnectionString.Location = new System.Drawing.Point(12, 32);
             this.txtConnectionString.Multiline = true;
             this.txtConnectionString.Name = "txtConnectionString";
             this.txtConnectionString.ScrollBars = System.Windows.Forms.ScrollBars.Both;
