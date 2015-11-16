@@ -480,7 +480,7 @@ namespace USDA_ARS.Core
                     htmlTableMainPortion.Append(" <div class=\"table\" cellpadding=\"2\" width=\"100%\" border=\"0\" >");
                     htmlTableMainPortion.Append(" <div class=\"tablerow\" bgcolor=\"BFBFBF\">  ");
 
-                    htmlTableMainPortion.Append(" <div class=\"tablecell\" colspan=\"2\" bgcolor=\"red\" > ");
+                    htmlTableMainPortion.Append(" <div class=\"tablecell\" colspan=\"2\"  > ");
                     htmlTableMainPortion.Append(" <b>");
                     htmlTableMainPortion.Append("Review Title  ");
                     htmlTableMainPortion.Append("<a name=\"95\">");
@@ -548,6 +548,8 @@ namespace USDA_ARS.Core
 
                     //  }
                     htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("<br>");
+                    htmlTableMainPortion.Append("<br>");
                 }
             }
 
