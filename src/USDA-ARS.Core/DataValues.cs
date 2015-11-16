@@ -533,7 +533,7 @@ namespace USDA_ARS.Core
         #endregion
         public static string ConvertDataTableToHTML(DataTable dt)
         {
-            string html = "<table>";
+            string html = "<div class=\"table\">";
             //add header row
             //html += "<tr>";
             //for(int i=0;i<dt.Columns.Count;i++)
