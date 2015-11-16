@@ -20,15 +20,21 @@ namespace USDA_ARS.Core
     {
 
 
-
         // Setting environment values
-        public string SetValues()
-        {
-
-
-            //1.Set Access connection (using  access connection string from App.config).
-            string strAccessConn = ConfigurationManager.AppSettings["AccessConnection"];
-
+        public string SetValues(string connectionStr)
+        { 
+            //1.Set Access connection (using  connection string from App.config).
+            string strAccessConn=string.Empty;
+           
+            if (false == string.IsNullOrWhiteSpace(connectionStr))
+            {
+                strAccessConn = connectionStr;
+            }
+            else
+            {
+                strAccessConn = ConfigurationManager.AppSettings["AccessConnection"];
+                
+            }
             string modificationHistoryHtml = DataValues.ModificationHistory;
             string headSectionHtml = DataValues.HtmlHeadSection;
             string bodySection1Html = DataValues.BodySection1;
