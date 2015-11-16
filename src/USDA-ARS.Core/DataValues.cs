@@ -539,7 +539,7 @@ namespace USDA_ARS.Core
 
                     htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
                     htmlTableMainPortion.Append("<b> Project's Targeted Implementation Date:&nbsp;&nbsp;</b>");
-                    htmlTableMainPortion.Append(row[tablerow5Table.Columns[11].ColumnName]);
+                    htmlTableMainPortion.Append(row[tablerow5Table.Columns[12].ColumnName]);
 
                     //htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
                     //htmlTableMainPortion.Append("<b> Ad Hoc Cut - Off Date:&nbsp;&nbsp;</b>");
