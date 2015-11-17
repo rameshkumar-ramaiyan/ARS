@@ -217,7 +217,7 @@ namespace USDA_ARS.Core
                                         + "  <div class=\"tablecell\"  width = \"25%\" >" + System.Environment.NewLine
                                         + ConvertDataTableToHTML(SetTableRow5Td(4),4)
                                         + "  </div>" + System.Environment.NewLine
-                                        + " </div class=\"tablerow\" >" + System.Environment.NewLine;
+                                        + " </div>" + System.Environment.NewLine;
 
 
         public static string Tablerow5
@@ -485,7 +485,7 @@ namespace USDA_ARS.Core
                     htmlTableMainPortion.Append(" <div class=\"table\" cellpadding=\"2\" width=\"100%\" border=\"0\" >");
                     htmlTableMainPortion.Append(" <div class=\"tablerow\" bgcolor=\"BFBFBF\">  ");
 
-                    htmlTableMainPortion.Append(" <div class=\"tablecell\" colspan=\"2\"  > ");
+                    htmlTableMainPortion.Append(" <div class=\"tablecell\" colspan=\"2\"  style=\"display:inline; background-color:BFBFBF; width:100%\"  > ");
                     htmlTableMainPortion.Append(" <b>");
                     htmlTableMainPortion.Append("Review Title  ");
                   
@@ -588,7 +588,7 @@ namespace USDA_ARS.Core
             string columnHeader = "";
             string html = "<div class=\"table\">";
             //add header row
-            html += "<tr>";
+            html += "<div class=\"tablerow\">";
             for (int i = 0; i < dt.Columns.Count; i++)     
 
                 if (columnNumber == 1)
@@ -608,19 +608,19 @@ namespace USDA_ARS.Core
                 {
                     columnHeader = "Crop Production & Protection";
                 }
-            html += "<td>" 
-                
+            html += "<div class=\"tablecell\">"
+
                                          + "       <p>" + System.Environment.NewLine
                                       + "              <b>" + System.Environment.NewLine
-                                           + "             <font face=\"Arial, Helvetica, sans-serif\" size=\"3\">" + System.Environment.NewLine
+                                           + "             <font face=\"Arial, Helvetica, sans-serif\" size=\"2\">" + System.Environment.NewLine
                                        + columnHeader
                                            + "             </font>" + System.Environment.NewLine
                                           + "          </b>" + System.Environment.NewLine
                                          + "       </p>" + System.Environment.NewLine
 
-                 + "</td>";
+                 + "</div>";
 
-            html += "</tr>";
+            html += "</div>";
             //add rows
             for (int i = 0; i < dt.Rows.Count; i++)
             {
