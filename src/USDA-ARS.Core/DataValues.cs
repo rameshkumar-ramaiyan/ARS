@@ -157,7 +157,7 @@ namespace USDA_ARS.Core
 
         }
         private static string tablerow4 = "<div class=\"tablerow\" bordercolor=\"#FFFFFF\">" + System.Environment.NewLine
-                                        + "   <div class=\"tablecell\"   width = \"25%\" >" + System.Environment.NewLine
+                                        + "   <div class=\"tablecell\"   width = \"15%\" >" + System.Environment.NewLine
                                          + "       <p>" + System.Environment.NewLine
                                       + "              <b>" + System.Environment.NewLine
                                            + "             <font face=\"Arial, Helvetica, sans-serif\" size=\"3\">" + System.Environment.NewLine
@@ -206,16 +206,16 @@ namespace USDA_ARS.Core
         #region Table row 5
         private static string tablerow5 = "<div class=\"tablerow\"  bordercolor=\"#FFFFFF\">" + System.Environment.NewLine
                                         + "   <div class=\"tablecell\"  width = \"25%\" >" + System.Environment.NewLine
-                                        + ConvertDataTableToHTML(SetTableRow5Td(1))
+                                        + ConvertDataTableToHTML(SetTableRow5Td(1),1)
                                         + "   </div>" + System.Environment.NewLine
                                         + "  <div class=\"tablecell\"  width = \"25%\" >" + System.Environment.NewLine
-                                        + ConvertDataTableToHTML(SetTableRow5Td(2))
+                                        + ConvertDataTableToHTML(SetTableRow5Td(2),2)
                                         + "  </div>" + System.Environment.NewLine
                                         + "   <div class=\"tablecell\"  width = \"25%\" >" + System.Environment.NewLine
-                                        + ConvertDataTableToHTML(SetTableRow5Td(3))
+                                        + ConvertDataTableToHTML(SetTableRow5Td(3),3)
                                         + "   </div>" + System.Environment.NewLine
                                         + "  <div class=\"tablecell\"  width = \"25%\" >" + System.Environment.NewLine
-                                        + ConvertDataTableToHTML(SetTableRow5Td(4))
+                                        + ConvertDataTableToHTML(SetTableRow5Td(4),4)
                                         + "  </div>" + System.Environment.NewLine
                                         + " </div class=\"tablerow\" >" + System.Environment.NewLine;
 
@@ -243,7 +243,7 @@ namespace USDA_ARS.Core
 
         }
         private static string tablerow5EndSection = "</div>" + System.Environment.NewLine +
-                                                    "</div >" + "</body>" + System.Environment.NewLine
+                                                    "</div>" + "</body>" + System.Environment.NewLine
            + "</html>" + System.Environment.NewLine;
         public static string Tablerow5EndSection
         {
@@ -305,102 +305,107 @@ namespace USDA_ARS.Core
             return getID;
         }
 
-        public static string CreateHtmlStringRow5Tds(DataTable tablerow5Table, int tdNumber)
-        {
-            StringBuilder htmlTableRow5Tds = new StringBuilder();
+        //public static string CreateHtmlStringRow5Tds(DataTable tablerow5Table, int tdNumber)
+        //{
+        //    StringBuilder htmlTableRow5Tds = new StringBuilder();
 
-            //Building the Header row.
-            htmlTableRow5Tds.Append("<div class=\"tablerow\"  bordercolor=\"#FFFFFF\">");
+        //    //Building the Header row.
+        //    htmlTableRow5Tds.Append("<div class=\"tablerow\"  bordercolor=\"#FFFFFF\">");
 
-            if (tdNumber == 1)
-            {
+        //    if (tdNumber == 1)
+        //    {
 
-                htmlTableRow5Tds.Append("<div class=\"tablecell\"  width=\"25 % \" valign=\"top\">");
-                //Building the Data rows.
-                foreach (DataRow row in tablerow5Table.Rows)
-                {
-                    htmlTableRow5Tds.Append("<div class=\"tablerow\" >");
-                    foreach (DataColumn column in tablerow5Table.Columns)
-                    {
+        //        htmlTableRow5Tds.Append("<div class=\"tablecell\"  width=\"25 % \" valign=\"top\">");
+        //        //Building the Data rows.
+        //        foreach (DataRow row in tablerow5Table.Rows)
+        //        {
+        //            htmlTableRow5Tds.Append("<div class=\"tablerow\" >");
+        //            foreach (DataColumn column in tablerow5Table.Columns)
+        //            {
 
-                        htmlTableRow5Tds.Append("<div class=\"tablecell\"  width=\"25 % \" valign=\"top\">");
-                        htmlTableRow5Tds.Append(System.Environment.NewLine);
-                        htmlTableRow5Tds.Append(row[column.ColumnName]);
-                        htmlTableRow5Tds.Append(System.Environment.NewLine);
-                        htmlTableRow5Tds.Append("</div>");
-                        htmlTableRow5Tds.Append(System.Environment.NewLine);
-                    }
-                    htmlTableRow5Tds.Append("</div>");
-                }
-                htmlTableRow5Tds.Append("</div>");
-            }
-            if (tdNumber == 2)
-            {
+        //                htmlTableRow5Tds.Append("<div class=\"tablecell\"  width=\"25 % \" valign=\"top\">");
+                       
+        //                htmlTableRow5Tds.Append(System.Environment.NewLine);
+                       
+        //                 //htmlTableRow5Tds.Append("<a href=\"#C4\">");
+        //                htmlTableRow5Tds.Append("<a href =\"#C4\">"+row[column.ColumnName]+"</a>");
+        //               // htmlTableRow5Tds.Append("</a>");
+        //                htmlTableRow5Tds.Append(System.Environment.NewLine);
+                        
+        //                htmlTableRow5Tds.Append("</div>");
+        //                htmlTableRow5Tds.Append(System.Environment.NewLine);
+        //            }
+        //            htmlTableRow5Tds.Append("</div>");
+        //        }
+        //        htmlTableRow5Tds.Append("</div>");
+        //    }
+        //        if (tdNumber == 2)
+        //    {
 
 
-                htmlTableRow5Tds.Append("<div class=\"tablecell\"  width=\"25 % \" valign=\"top\">");
-                //Building the Data rows.
-                foreach (DataRow row in tablerow5Table.Rows)
-                {
-                    htmlTableRow5Tds.Append("<div class=\"tablerow\" >");
-                    foreach (DataColumn column in tablerow5Table.Columns)
-                    {
+        //        htmlTableRow5Tds.Append("<div class=\"tablecell\"  width=\"25 % \" valign=\"top\">");
+        //        //Building the Data rows.
+        //        foreach (DataRow row in tablerow5Table.Rows)
+        //        {
+        //            htmlTableRow5Tds.Append("<div class=\"tablerow\" >");
+        //            foreach (DataColumn column in tablerow5Table.Columns)
+        //            {
 
-                        htmlTableRow5Tds.Append("<div class=\"tablecell\"  width=\"25 % \" valign=\"top\">");
-                        htmlTableRow5Tds.Append(System.Environment.NewLine);
-                        htmlTableRow5Tds.Append(row[column.ColumnName]);
-                        htmlTableRow5Tds.Append(System.Environment.NewLine);
-                        htmlTableRow5Tds.Append("</div>");
-                        htmlTableRow5Tds.Append(System.Environment.NewLine);
-                    }
-                    htmlTableRow5Tds.Append("</div>");
-                }
-                htmlTableRow5Tds.Append("<div class=\"tablecell\"  width=\"25 % \" valign=\"top\">");
-            }
-            if (tdNumber == 3)
-            {
+        //                htmlTableRow5Tds.Append("<div class=\"tablecell\"  width=\"25 % \" valign=\"top\">");
+        //                htmlTableRow5Tds.Append(System.Environment.NewLine);
+        //                htmlTableRow5Tds.Append(row[column.ColumnName]);
+        //                htmlTableRow5Tds.Append(System.Environment.NewLine);
+        //                htmlTableRow5Tds.Append("</div>");
+        //                htmlTableRow5Tds.Append(System.Environment.NewLine);
+        //            }
+        //            htmlTableRow5Tds.Append("</div>");
+        //        }
+        //        htmlTableRow5Tds.Append("<div class=\"tablecell\"  width=\"25 % \" valign=\"top\">");
+        //    }
+        //    if (tdNumber == 3)
+        //    {
 
-                //Building the Data rows.
-                foreach (DataRow row in tablerow5Table.Rows)
-                {
-                    htmlTableRow5Tds.Append("<div class=\"tablerow\" >");
-                    foreach (DataColumn column in tablerow5Table.Columns)
-                    {
+        //        //Building the Data rows.
+        //        foreach (DataRow row in tablerow5Table.Rows)
+        //        {
+        //            htmlTableRow5Tds.Append("<div class=\"tablerow\" >");
+        //            foreach (DataColumn column in tablerow5Table.Columns)
+        //            {
 
-                        htmlTableRow5Tds.Append("<div class=\"tablecell\"  width=\"25 % \" valign=\"top\">");
-                        htmlTableRow5Tds.Append(System.Environment.NewLine);
-                        htmlTableRow5Tds.Append(row[column.ColumnName]);
+        //                htmlTableRow5Tds.Append("<div class=\"tablecell\"  width=\"25 % \" valign=\"top\">");
+        //                htmlTableRow5Tds.Append(System.Environment.NewLine);
+        //                htmlTableRow5Tds.Append(row[column.ColumnName]);
 
-                        htmlTableRow5Tds.Append("</div>");
-                        htmlTableRow5Tds.Append(System.Environment.NewLine);
-                    }
-                    htmlTableRow5Tds.Append("</div>");
-                }
-            }
-            if (tdNumber == 4)
-            {
-                //Building the Data rows.
-                foreach (DataRow row in tablerow5Table.Rows)
-                {
-                    htmlTableRow5Tds.Append("<div class=\"tablerow\" >");
-                    foreach (DataColumn column in tablerow5Table.Columns)
-                    {
+        //                htmlTableRow5Tds.Append("</div>");
+        //                htmlTableRow5Tds.Append(System.Environment.NewLine);
+        //            }
+        //            htmlTableRow5Tds.Append("</div>");
+        //        }
+        //    }
+        //    if (tdNumber == 4)
+        //    {
+        //        //Building the Data rows.
+        //        foreach (DataRow row in tablerow5Table.Rows)
+        //        {
+        //            htmlTableRow5Tds.Append("<div class=\"tablerow\" >");
+        //            foreach (DataColumn column in tablerow5Table.Columns)
+        //            {
 
-                        htmlTableRow5Tds.Append("<div class=\"tablecell\"  width=\"25 % \" valign=\"top\">");
-                        htmlTableRow5Tds.Append(System.Environment.NewLine);
-                        htmlTableRow5Tds.Append(row[column.ColumnName]);
+        //                htmlTableRow5Tds.Append("<div class=\"tablecell\"  width=\"25 % \" valign=\"top\">");
+        //                htmlTableRow5Tds.Append(System.Environment.NewLine);
+        //                htmlTableRow5Tds.Append(row[column.ColumnName]);
 
-                        htmlTableRow5Tds.Append("</div>");
-                        htmlTableRow5Tds.Append(System.Environment.NewLine);
-                    }
-                    htmlTableRow5Tds.Append("</div>");
-                }
-            }
-            //Building the Header row.
-            htmlTableRow5Tds.Append("</div>");
-            return htmlTableRow5Tds.ToString();
+        //                htmlTableRow5Tds.Append("</div>");
+        //                htmlTableRow5Tds.Append(System.Environment.NewLine);
+        //            }
+        //            htmlTableRow5Tds.Append("</div>");
+        //        }
+        //    }
+        //    //Building the Header row.
+        //    htmlTableRow5Tds.Append("</div>");
+        //    return htmlTableRow5Tds.ToString();
 
-        }
+        //}
         public static DataTable SetMainPortion(int tdNumber)
         {
             //1.Set Access connection(using  connection string from App.config).
@@ -483,7 +488,8 @@ namespace USDA_ARS.Core
                     htmlTableMainPortion.Append(" <div class=\"tablecell\" colspan=\"2\"  > ");
                     htmlTableMainPortion.Append(" <b>");
                     htmlTableMainPortion.Append("Review Title  ");
-                    htmlTableMainPortion.Append("<a name=\"95\">");
+                  
+                    htmlTableMainPortion.Append("<a href=\"#\" name =\"#" + row[tablerow5Table.Columns[1].ColumnName].ToString() + "\"" + ">");
                     //NP 103 Animal Health Panel Review
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[1].ColumnName]);
 
@@ -577,22 +583,51 @@ namespace USDA_ARS.Core
 
         }
         #endregion
-        public static string ConvertDataTableToHTML(DataTable dt)
+        public static string ConvertDataTableToHTML(DataTable dt,int columnNumber)
         {
+            string columnHeader = "";
             string html = "<div class=\"table\">";
             //add header row
-            //html += "<tr>";
-            //for(int i=0;i<dt.Columns.Count;i++)
-            //    html+="<td>"+dt.Columns[i].ColumnName+"</td>";
-            //html += "</tr>";
+            html += "<tr>";
+            for (int i = 0; i < dt.Columns.Count; i++)     
+
+                if (columnNumber == 1)
+                {
+                     columnHeader = "Animal Production & Protection";
+                }
+                if (columnNumber == 2)
+                {
+                    columnHeader = "Nutrition, Food Safety/ Quality";
+                }
+                if (columnNumber == 3)
+                {
+                    columnHeader = "Natural Resources and Sustainable Agricultural Systems";
+                }
+                if (columnNumber == 4)
+                {
+                    columnHeader = "Crop Production & Protection";
+                }
+            html += "<td>" 
+                
+                                         + "       <p>" + System.Environment.NewLine
+                                      + "              <b>" + System.Environment.NewLine
+                                           + "             <font face=\"Arial, Helvetica, sans-serif\" size=\"3\">" + System.Environment.NewLine
+                                       + columnHeader
+                                           + "             </font>" + System.Environment.NewLine
+                                          + "          </b>" + System.Environment.NewLine
+                                         + "       </p>" + System.Environment.NewLine
+
+                 + "</td>";
+
+            html += "</tr>";
             //add rows
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 html += " <div class=\"tablerow\">";
                 for (int j = 0; j < dt.Columns.Count; j++)
-                    html += " <div class=\"tablecell\">" + dt.Rows[i][j].ToString() + "</div>";
+                    html += " <div class=\"tablecell\">"+ "<a href=\"#"+dt.Rows[i][j].ToString()+"\">" + dt.Rows[i][j].ToString() +"</a>"+"</div>";
                 html += "</div>";
-
+                
             }
             html += "</div>";
             return html;
