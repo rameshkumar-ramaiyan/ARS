@@ -489,7 +489,7 @@ namespace USDA_ARS.Core
                     htmlTableMainPortion.Append(" <b>");
                     htmlTableMainPortion.Append("Review Title  ");
                   
-                    htmlTableMainPortion.Append("<a href=\"#\" name =\"#" + row[tablerow5Table.Columns[1].ColumnName].ToString() + "\"" + ">");
+                    htmlTableMainPortion.Append("<a href=\"#\" id =\"" + row[tablerow5Table.Columns[1].ColumnName].ToString().Replace(" ", string.Empty) + "\"" + ">");
                     //NP 103 Animal Health Panel Review
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[1].ColumnName]);
 
@@ -594,6 +594,7 @@ namespace USDA_ARS.Core
                 if (columnNumber == 1)
                 {
                      columnHeader = "Animal Production & Protection";
+                     
                 }
                 if (columnNumber == 2)
                 {
@@ -625,7 +626,7 @@ namespace USDA_ARS.Core
             {
                 html += " <div class=\"tablerow\">";
                 for (int j = 0; j < dt.Columns.Count; j++)
-                    html += " <div class=\"tablecell\">"+ "<a href=\"#"+dt.Rows[i][j].ToString()+"\">" + dt.Rows[i][j].ToString() +"</a>"+"</div>";
+                    html += " <div class=\"tablecell\">"+ "<a href=\"#"+dt.Rows[i][j].ToString().Replace(" ",string.Empty)+"\">" + dt.Rows[i][j].ToString() +"</a>"+"</div>";
                 html += "</div>";
                 
             }
