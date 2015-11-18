@@ -18,11 +18,17 @@
     string pageFooterScripts = currentPage.GetPropertyValue<string>("pageFooterScripts");
 
     IEnumerable<IPublishedContent> mainNavList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.MainNavigationList();
+    string navPrefix = "";
+
+    if (rootNode.DocumentTypeAlias != "Homepage")
+    {
+        navPrefix = "ARS ";
+    }
 
     MultiUrls secondNavigation = siteSettings.GetPropertyValue<MultiUrls>("secondNavigation");
     MultiUrls thirdNavigation = siteSettings.GetPropertyValue<MultiUrls>("thirdNavigation");
     MultiUrls footerNavigationLineOne = siteSettings.GetPropertyValue<MultiUrls>("footerNavigationLineOne");
-    MultiUrls footerNavigationLineTwo = siteSettings.GetPropertyValue<MultiUrls>("thirdNavigation");
+    MultiUrls footerNavigationLineTwo = siteSettings.GetPropertyValue<MultiUrls>("footerNavigationLineTwo");
 }
 <!DOCTYPE HTML>
 
@@ -227,114 +233,113 @@
                                     linkAttr = " style=\"border-right: 0px;\" id=\"lastTab\"";
                                 }
 
-                                <!-- @navItem.Name Tab -->
                                 <li class="level1">
-                                    <a @Html.Raw(linkAttr) href="#" class="level1">@navItem.Name</a>
+                                    <a @Html.Raw(linkAttr) href="#" class="level1">@(navPrefix + navItem.Name)</a>
                                     <div>
                                         <ul>
                                             @foreach (IPublishedContent subItem in navItem.Children)
                                             {
                                                 Link navLink = subItem.GetPropertyValue<MultiUrls>("navigationLink").FirstOrDefault();
 
-                                                <li><a href="@navLink.Url" target="@navLink.Target">@subItem.Name</a></li>
+                                                <li><a href="@navLink.Url" target="@navLink.Target">@(subItem.Name)</a></li>
                                             }
                                         </ul>
                                     </div>
                                 </li>
 
                                 mainNavCount++;
-                            }
-                        }
-
-                        <!--[if lt IE 9]>
-                            <li class="level1 IEonly">
-                                <img src="/images/redesign/rightTab.png" alt="spacer">
-                            </li>
-                        <![endif]-->
-                    </ul>
-                </div>
-
-                <div id="siteNav">
-                    @{
-                        // Third Navigation
-                        int thirdMenuCount = 0;
-
-                        if (thirdNavigation.Any())
-                        {
-                            <ul>
-                                @foreach (var item in thirdNavigation)
-                                {
-                                    if (thirdMenuCount > 0)
-                                    {
-                                        <li>|</li>
-                                    }
-                                    <li><a title="@item.Name" href="@item.Url" target="@item.Target"><b>@item.Name</b></a></li>
-
-                                    thirdMenuCount++;
                                 }
-                            </ul>
-                        }
-                    }
+                                }
 
+                                <!--[if lt IE 9]>
+                                    <li class="level1 IEonly">
+                                        <img src="/images/redesign/rightTab.png" alt="spacer">
+                                    </li>
+                                <![endif]-->
+                            </ul>
+                        </div>
+
+                        <div id="siteNav">
+                            @{
+                                // Third Navigation
+                                int thirdMenuCount = 0;
+
+                                if (thirdNavigation.Any())
+                                {
+                                    <ul>
+                                        @foreach (var item in thirdNavigation)
+                                        {
+                                            if (thirdMenuCount > 0)
+                                            {
+                                                <li>|</li>
+                                            }
+                                            <li><a title="@item.Name" href="@item.Url" target="@item.Target"><b>@item.Name</b></a></li>
+
+                                            thirdMenuCount++;
+                                        }
+                                    </ul>
+                                }
+                            }
+
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
         <!-- ARS Header end -->
 
 
-        @RenderBody()
+                                @RenderBody()
 
 
-    </div>
+                            </div>
     <!-- START OF SmartSource Data Collector TAG -->
     <!-- Copyright (c) 1996-2014 Webtrends Inc.  All rights reserved. -->
     <!-- Version: 9.4.0 -->
     <!-- Tag Builder Version: 4.1  -->
     <!-- Created: 10/21/2014 6:53:23 PM -->
-    <script src="/incme/handf/WebTrends9.js" type="text/javascript"></script>
+                                <script src="/incme/handf/WebTrends9.js" type="text/javascript"></script>
     <!-- ----------------------------------------------------------------------------------- -->
     <!-- Warning: The two script blocks below must remain inline. Moving them to an external -->
     <!-- JavaScript include file can cause serious problems with cross-domain tracking.      -->
     <!-- ----------------------------------------------------------------------------------- -->
-    <script type="text/javascript">
-        //<![CDATA[
-        var _tag = new WebTrends();
-        _tag.dcsGetId();
-        //]]>
-    </script>
-    <script type="text/javascript">
-        //<![CDATA[
-        _tag.dcsCustom = function () {
-            // Add custom parameters here.
-            //_tag.DCSext.param_name=param_value;
-        }
-        _tag.dcsCollect();
-        //]]>
-    </script>
-    <noscript>
-        <div><img alt="DCSIMG" id="DCSIMG" width="1" height="1" src="http://wt-sdc2.arsnet.usda.gov/dcsh0juhninp53gudlhz4e9z4_5z4d/njs.gif?dcsuri=/nojavascript&amp;WT.js=No&amp;WT.tv=9.4.0&amp;dcssip=www.ars.usda.gov" /></div>
-    </noscript>
+                                <script type="text/javascript">
+                                    //<![CDATA[
+                                    var _tag = new WebTrends();
+                                    _tag.dcsGetId();
+                                    //]]>
+                                </script>
+                                <script type="text/javascript">
+                                    //<![CDATA[
+                                    _tag.dcsCustom = function () {
+                                        // Add custom parameters here.
+                                        //_tag.DCSext.param_name=param_value;
+                                    }
+                                    _tag.dcsCollect();
+                                    //]]>
+                                </script>
+                                <noscript>
+                                    <div><img alt="DCSIMG" id="DCSIMG" width="1" height="1" src="http://wt-sdc2.arsnet.usda.gov/dcsh0juhninp53gudlhz4e9z4_5z4d/njs.gif?dcsuri=/nojavascript&amp;WT.js=No&amp;WT.tv=9.4.0&amp;dcssip=www.ars.usda.gov" /></div>
+                                </noscript>
     <!-- END OF SmartSource Data Collector TAG -->
-    <script type="text/javascript">
+                                <script type="text/javascript">
 
-        var _gaq = _gaq || [];
-        _gaq.push(['_setAccount', 'UA-27627304-6']);
-        _gaq.push(['_setDomainName', 'usda.gov']);
-        _gaq.push(['_setAllowLinker', true]);
-        _gaq.push(['_trackPageview']);
+                                    var _gaq = _gaq || [];
+                                    _gaq.push(['_setAccount', 'UA-27627304-6']);
+                                    _gaq.push(['_setDomainName', 'usda.gov']);
+                                    _gaq.push(['_setAllowLinker', true]);
+                                    _gaq.push(['_trackPageview']);
 
-        _gaq.push(['b._setAccount', 'UA-27627304-1']);
-        _gaq.push(['b._setDomainName', 'usda.gov']);
-        _gaq.push(['b._setAllowLinker', true]);
-        _gaq.push(['b._trackPageview']);
+                                    _gaq.push(['b._setAccount', 'UA-27627304-1']);
+                                    _gaq.push(['b._setDomainName', 'usda.gov']);
+                                    _gaq.push(['b._setAllowLinker', true]);
+                                    _gaq.push(['b._trackPageview']);
 
-        (function () {
-            var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-            ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-            var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-        })();
+                                    (function () {
+                                        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+                                        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+                                        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+                                    })();
 
-    </script>
+                                </script>
 
 
 
@@ -343,66 +348,62 @@
 
 
 
-    <div class="clearfloat" id="footerContent" style="width:940px">
-        <a class="section508" name="footer">Footer Content</a>
+                                <div class="clearfloat" id="footerContent" style="width:940px">
+                                    <a class="section508" name="footer">Footer Content</a>
 
-        <!-- Begin Footer content text -->
-        <div id="footer_content_text">
-            <br>
-            @{
-                int footerOneCount = 0;
+                                    <!-- Begin Footer content text -->
+                                    <div id="footer_content_text">
+                                        <br>
+                                        @{
+                                            int footerOneCount = 0;
 
-                if (footerNavigationLineOne.Any())
-                {
-                    <ul>
-                        @foreach (var item in footerNavigationLineOne)
-                        {
-                            <a href="@item.Url" target="@item.Target">@item.Name</a>
-                            if (footerOneCount < footerNavigationLineOne.Count() - 1)
-                            {
-                                @Html.Raw(" | ");
-                            }
-
-                            footerOneCount++;
+                                            if (footerNavigationLineOne.Any())
+                                            {
+                                                foreach (var item in footerNavigationLineOne)
+                                                {
+                                                    <a href="@item.Url" target="@item.Target">@item.Name</a>
+                                                    if (footerOneCount < footerNavigationLineOne.Count() - 1)
+                                                    {
+                                                        @Html.Raw(" | ");
                         }
-                    </ul>
+
+                        footerOneCount++;
+                    }
                 }
-            }
+                                        }
 
-            <br>
-            @{
-                int footerTwoCount = 0;
+                                        <br>
+                                        @{
+                                            int footerTwoCount = 0;
 
-                if (footerNavigationLineTwo.Any())
-                {
-                    <ul>
-                        @foreach (var item in footerNavigationLineTwo)
-                        {
-                            <a href="@item.Url" target="@item.Target">@item.Name</a>
-                            if (footerTwoCount < footerNavigationLineTwo.Count() - 1)
-                            {
-                                @Html.Raw(" | ");
-                            }
-
-                            footerTwoCount++;
+                                            if (footerNavigationLineTwo.Any())
+                                            {
+                                                foreach (var item in footerNavigationLineTwo)
+                                                {
+                                                    <a href="@item.Url" target="@item.Target">@item.Name</a>
+                                                    if (footerTwoCount < footerNavigationLineTwo.Count() - 1)
+                                                    {
+                                                        @Html.Raw(" | ");
                         }
-                    </ul>
+
+                        footerTwoCount++;
+                    }
                 }
-            }
+                                        }
 
 
-        </div>
-        <!-- End Footer content text -->
+                                    </div>
+                                    <!-- End Footer content text -->
 
-        <a class="section508" href="top">Back to Top of Page</a>
-    </div>
+                                    <a class="section508" href="top">Back to Top of Page</a>
+                                </div>
 
 
-    <!--[if lt IE 9]>
-        <img class="IErounded" src="/images/redesign/rounded-bottomBLK.png" alt="spacer">
-    <![endif]-->
+                                <!--[if lt IE 9]>
+                                    <img class="IErounded" src="/images/redesign/rounded-bottomBLK.png" alt="spacer">
+                                <![endif]-->
     </div>	<!-- pageComplete -->
 
-    @Html.Raw(pageFooterScripts)
-</body>
-</html>
+                                            @Html.Raw(pageFooterScripts)
+                                        </body>
+                                        </html>

@@ -1,0 +1,904 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+    IPublishedContent siteSettings = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.SiteSettings();
+
+    ArchetypeModel carouselSlides = currentPage.GetPropertyValue<ArchetypeModel>("carouselSlides");
+    ArchetypeModel socialLinks = siteSettings.GetPropertyValue<ArchetypeModel>("socialLinks");
+
+    string rightArea = currentPage.GetPropertyValue<string>("quickLinks");
+}
+<div id="bodyContent">
+
+
+
+
+    <!-- top content -->
+    <div id="topContent">
+        <div id="TopicsTips">
+            <!-- right top content -->
+
+            <div id="popularTopics">
+                <a name="popular" class="section508">Popular Topics Content</a>
+                <h1>Popular Topics</h1>
+
+                <ul>
+
+                    <li>
+                        <a href="/News/docs.htm?docid=15572">Bee Health</a>
+                    </li>
+
+                    <li>
+                        <a href="http://www.ars.usda.gov/is/np/fnrb/"><em>Food and Nutrition Research Briefs</em></a>
+                    </li>
+
+                    <li>
+                        <a href="/News/docs.htm?docid=23559">Image Gallery</a>
+                    </li>
+
+                    <li>
+                        <a href="/Services/services.htm?modecode=80-40-05-30">Nutrient Data Tools</a>
+                    </li>
+
+                    <li>
+                        <a href="http://planthardiness.ars.usda.gov/PHZMWeb/">Plant Hardiness Zone Map</a>
+                    </li>
+
+                    <li>
+                        <a href="http://ndb.nal.usda.gov/">USDA National Nutrient Database</a>
+                    </li>
+
+                </ul>
+
+                <a href="top" class="section508">Back to Top of Page</a>
+            </div>	<!-- popular topcis -->
+            <!-- Stay Connected -->
+            <div id="socialmedia">
+                <a name="social" class="section508">Social Media Links </a>
+
+                <h2>Stay Connected:</h2>
+                @if (socialLinks != null && socialLinks.Any())
+                {
+                    foreach (var socialLink in socialLinks)
+                    {
+                        if (socialLink.HasValue("socialHtmlOverride"))
+                        {
+                            @Html.Raw(socialLink.GetValue("socialHtmlOverride"))
+                        }
+                        else
+                        {
+                            Link navLink = socialLink.GetValue<MultiUrls>("socialLink").FirstOrDefault();
+
+                            <a href="@navLink.Url">
+                                <img src="@socialLink.GetValue("socialIcon")" title="@socialLink.GetValue("socialAltText")" alt="@socialLink.GetValue("socialAltText")" />
+                            </a>
+                        }
+                    }
+                }
+
+                <!-- sign up email box -->
+                <form action="/elists/elists.htm" method="post">
+                    <input name="emailAddr" type="text" value="Sign up for ARS News updates"
+                           size="28" onfocus="this.value=''" />
+                    <input name="listname" type="hidden" value="arsnews" />
+                    <input name="action" type="hidden" value="Subscribe" />
+                    <input name="commit" type="submit" value="Go" />
+                </form>
+
+                <a href="top" class="section508">Back to Top of Page</a>
+            </div>	<!-- Stay Connected -->
+        </div>	<!-- right top content -->
+        <!-- photo carousel -->
+
+
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#slideshow').cycle(
+                    {
+                        fx: 'fade',
+                        speed: 500, 			// speed of the transition (any valid fx speed value)
+                        timeout: 6000,			// milliseconds between slide transitions
+                        prev: '#prevPhoto',
+                        pause: '#pausePhoto',
+                        next: '#nextPhoto',
+                        after: onAfter,
+                        before: onBefore
+                    }
+                );
+
+                $('#pausePhoto').click(function () {
+                    $('#slideshow').cycle('pause');
+                }
+                );
+            }
+            );
+
+            function onBefore(curr, next, opts) {
+                var counter = (opts.currSlide + 1) + ' / ' + opts.slideCount;
+                $('#carouselCounter').html(counter);
+
+
+
+                // get the photo carousel caption from the image ALT tag
+
+
+                $('#carouselCaption').html(this.children[0].alt);
+            }
+
+            function onAfter(curr, next, opts) {
+                var counter = (opts.currSlide + 1) + ' / ' + opts.slideCount;
+                $('#carouselCounter').html(counter);
+
+
+
+            }
+        </script>
+
+        <a name="photos" class="section508">Photo Carousel Links</a>
+
+        <!--Loading display while images load-->
+
+        <div id="carousel">
+            <!--Slides-->
+
+            <div id="slideshow" style="width:520px;height:320px;float:left;">
+
+
+                @foreach (var slide in carouselSlides)
+                {
+                    <a href="@slide.GetValue("slideUrl")" title="@slide.GetValue("slideText")">
+                        <img src="@slide.GetValue("slideImage")" class="carouselPhoto" alt="@slide.GetValue("slideAltText")" />
+                    </a>
+                }
+
+            </div>
+
+
+            <div id="carouselCaption" style="width:115px;height:240px;float:right;">
+                phone caption
+            </div>
+
+
+            <div id="carouselNavigation" style="width:85px;float:right;">
+                <a href="#" id="prevPhoto"><img src="/images/redesign/prev.png" alt="back"></a>
+                <a href="#" id="pausePhoto"><img src="/images/redesign/pause.png" alt="pause"></a>
+                <a href="#" id="nextPhoto"><img src="/images/redesign/next.png" alt="forward"></a>
+
+                <div id="carouselCounter"></div>
+            </div>
+        </div>
+
+
+    </div>	<!-- top content end -->
+    <!-- middle content -->
+    <!--[if lt IE 9]>
+        <div style="position: relative; bottom:-33px; z-index:1000;">
+            <img src="/images/redesign/rounded-top.png" alt="spacer">
+        </div>
+    <![endif]-->
+
+    <div id="middleContent">
+        <!-- middle left (tabs) -->
+        <div id="middleLeft">
+
+            <div id="middleTabs">
+
+
+                <ul style="border: 0px; margin:-4px;">
+                    <li style="border-top-left-radius: 23px; margin:0px; text-align: center; width:98px; height:36px;">
+                        <a href="#tab1" style="margin-top: 3px; margin-left: 10px;">Research</a>
+                    </li>
+                    <li style="margin:0px; width:100px; height:36px;">
+                        <a href="#tab2" style="margin-top: 3px; margin-left: 20px;">News</a>
+                    </li>
+                    <li style="margin:0px; width:100px; height:36px;">
+                        <a href="#tab3" style="margin-top: 3px;">Publications</a>
+                    </li>
+                </ul>
+
+                <div id="tab1">
+
+                    <ul>
+
+                        <li>
+                            <a href="/research/projects/projects.htm?accn_no=420971">
+                                A Systems Biology Approach to Understanding the Salmonella-Host Interactome in Poultry and Swine
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="/research/projects/projects.htm?accn_no=422669">
+                                Adapting Soil and Water Conservation to Meet the Challenges of a Changing Climate
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="/research/projects/projects.htm?accn_no=424156">
+                                Adaptive Rangeland Management of Livestock Grazing, Disturbance, and Climatic Variation
+                            </a>
+                        </li>
+
+                        <li class="textAlignRight">
+                            <a href="/research/projects_programs.htm?modecode=30-00-00-00">>>>More</a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+                <div id="tab2">
+
+                    <ul>
+
+                        <li class="textAlignRight">
+                            <a href="/news/news.htm?modecode=30-00-00-00">>>>More</a>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+
+                <div id="tab3">
+
+                    <ul>
+
+                        <li>
+                            <A href="/research/publications/publications.htm?seq_no_115=323543"
+                               title="Publication">Comparative analysis of genome-wide divergence, domestication footprints and genome-wide association study of root traits for Gossypium hirsutum and Gossypium barbadense</A>
+                        </li>
+
+                        <li>
+                            <A href="/research/publications/publications.htm?seq_no_115=321113"
+                               title="Publication">Genome wide association study of liver abscess in beef cattle</A>
+                        </li>
+
+                        <li>
+                            <A href="/research/publications/publications.htm?seq_no_115=306541"
+                               title="Publication">Uterine and placental characteristics during early vascular development in the pig from day 22 to 42 of gestation</A>
+                        </li>
+
+                        <li class="textAlignRight">
+                            <a href="/services/services.htm?modecode=30-00-00-00">>>>More</a>
+                        </li>
+
+                    </ul>
+
+                </div>
+            </div>
+        </div>
+
+
+
+        <div id="middleCenter">
+
+            <h2>TODO: Pull data from [aris_public_web] Datbase</h2>
+            <!-- _locBlurb start -->
+
+
+            <font size="2">
+
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" summary="This table displays information about this location">
+                    <tbody>
+                        <tr>
+                            <td>
+
+                                <a href="/pandp/people/people.htm?personid=947" id="anch_81">Chandler, Laurence D</a><br>
+                                Area Director<br>
+
+                                <a href="/contactus/feedback.htm?email=7C4EEC9B8609AFD17653B3529AAE8F528761E0E6A480AC18919059" id="anch_82">
+                                    larry.chandler@ars.usda.gov
+                                </a>
+
+                                <br>
+
+                                970-492-7057<br>
+                                USDA-ARS-PA-NRRC, Office of the Director<br>2150 Centre Avenue, Building D, Suite 300<br>Fort Collins CO 80526
+                                <p>
+
+                                    <!-- MapQuest info here.  query_string= modecode=30-00-00-00-->
+
+                                </p><p>
+
+
+                                    <strong>Mission:</strong><br>
+                                    The mission of the Plains Area is to conduct research in support of ARS goals to develop and transfer solutions to agricultural problems of high national priority with emphasis on the agricultural and nutritional challenges of stakeholders and agricultural producers.
+
+                                </p><p></p>
+
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- _locBlurb end -->
+
+            </font>
+
+        </div>
+
+
+
+        <div id="middleRight">
+
+            @Html.Raw(rightArea)
+
+        </div>
+
+        <!--[if lt IE 9]>
+            <div style="position: relative; top: -10px; z-index:1000;" >
+                <img src="/images/redesign/rounded-bottom.png" alt="spacer">
+            </div>
+        <![endif]-->
+    </div>
+    <!-- middle content end -->
+    <!-- bottom content -->
+    <!--[if lt IE 9]>
+
+
+        <div style="position: relative; bottom:-33px; z-index:1000;">
+            <img src="/images/redesign/rounded-top.png" alt="spacer">
+        </div>
+    <![endif]-->
+    <div id="bottomContent">
+        <a name="areas" href="top" class="section508">Research Areas & Locations Content | Click to go Back to Top</a>
+
+        <div id="tabs">
+            <ul>
+                <li>
+                    <a href="#keyOfficeTab">Key ARS Offices and Locations</a>
+                </li>
+                <li>
+                    <a href="#areaLocationTab">
+                        Plains Area Locations
+
+                    </a>
+                </li>
+            </ul>
+
+            <div id="keyOfficeTab">
+                <a name="areas" href="top" class="section508">Research Areas & Locations Content | Click to go Back to Top</a>
+
+                <!-- bottom content left -->
+                <div id="bottomContentLeft">
+                    <ul>
+                        <!-- Office of the Administrator -->
+                        <li class="locationLevel2">
+                            <a href="/pandp/locations/locations.htm?modecode=01-01-00-00">
+                                Office of the Administrator
+                            </a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="http://www.afm.ars.usda.gov/">Administrative and Financial Management</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/pandp/locations/locations.htm?modecode=01-01-15-00">Budget and Program Management Staff</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/pandp/locations/locations.htm?modecode=04-04-00-00">Information Staff (Public Affairs)</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/pandp/locations/locations.htm?modecode=01-01-10-00">Legislative Affairs</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/pandp/locations/locations.htm?modecode=04-06-00-00">Office of Chief Information Officer (IT)</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/pandp/locations/locations.htm?modecode=01-01-20-00">Office of Outreach, Diversity, and Equal Opportunity</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/pandp/locations/locations.htm?modecode=04-10-00-00">Office of Scientific Quality Review</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/pandp/locations/locations.htm?modecode=04-02-00-00">Office of Technology Transfer</a>
+                        </li>
+
+
+                        <!-- National Program Research Areas -->
+                        <li class="locationLevel2">
+                            <a href="/research/programs.htm">
+                                National Program Research Areas
+                            </a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/pandp/locations/NPSLocation.htm?modecode=02-08-00-00">Animal Production and Protection</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/pandp/locations/NPSLocation.htm?modecode=02-06-00-00">Crop Production and Protection</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/pandp/locations/NPSLocation.htm?modecode=02-02-00-00">Natural Resources and Sustainable Agricultural Systems</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/pandp/locations/NPSLocation.htm?modecode=02-04-00-00">Nutrition, Food Safety, and Quality</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/Research/docs.htm?docid=1848">Overseas Biological Control Laboratories</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/research/docs.htm?docid=1428">Office of International Research Programs</a>
+                        </li>
+
+                        <li class="locationLevel2">
+                            <a href="http://www.nal.usda.gov">National Agricultural Library</a>
+                        </li>
+
+                    </ul>
+                </div>
+
+
+                <!-- bottom content right -->
+
+
+                <div id="bottomContentRight">
+                    <ul>
+                        <a href="/pandp/locations.htm">Research Locations (Map)</a>
+
+
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=50-00-00-00">MIDWEST AREA</a>
+                        </li>
+
+
+                        <li class="locationLevel4">
+                            (IA, IL, IN, KY, MI, MN, MO, OH, WI)
+                        </li>
+
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=80-00-00-00">NORTHEAST AREA</a>
+                        </li>
+
+
+                        <li class="locationLevel4">
+                            (DC, DE, MA, MD, ME, NY, PA, WV)
+                        </li>
+
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=20-00-00-00">PACIFIC WEST AREA</a>
+                        </li>
+
+
+                        <li class="locationLevel4">
+                            (AZ, CA, HI, ID, NV, OR, UT, WA)
+                        </li>
+
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-00-00-00">PLAINS AREA</a>
+                        </li>
+
+
+                        <li class="locationLevel4">
+                            (CO, KS, MT, ND, NE, NM, OK, SD, TX, WY)
+                        </li>
+
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=60-00-00-00">SOUTHEAST AREA</a>
+                        </li>
+
+
+                        <li class="locationLevel4">
+                            (AL, AR, FL, GA, LA, MS, NC, PR, SC)
+                        </li>
+
+                    </ul>
+                </div>
+
+            </div>
+
+            <div id="areaLocationTab">
+
+                <div id="bottomContentLeft">
+                    <ul>
+
+                        <li>
+
+                            <a href="/main/site_main.htm?modecode=30-00-00-00">PLAINS AREA Office</a>
+
+                        </li>
+
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-12-30-10">PLANT GERMPLASM PRESERVATION RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-12-30-15">SOIL MANAGEMENT AND SUGARBEET RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-12-30-20">WATER MANAGEMENT SYSTEMS RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-10-00-00">AKRON, CO</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-10-05-00">CENTRAL PLAINS RESOURCES MANAGEMENT RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-12-00-00">FORT COLLINS, CO</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-12-03-00">CROPS LABORATORY SUPPORT</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-12-05-00">NATIONAL CENTER FOR GENETIC RESOURCES PRESERVATION</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-12-05-05">PLANT AND ANIMAL GENETIC RESOURCES PRESERVATION</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-12-05-10">PLANT GERMPLASM PRESERVATION RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-12-10-00">SOIL, PLANT AND NUTRIENT RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-12-15-00">WATER MANAGEMENT RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-12-20-00">AGRICULTURAL SYSTEMS RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-12-25-00">SUGARBEET RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-12-30-00">CENTER FOR AGRICULTURAL RESOURCES RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-12-30-05">PLANT AND ANIMAL GENETIC RESOURCES PRESERVATION</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-20-00-00">MANHATTAN, KS</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-20-05-00">CENTER FOR GRAIN AND ANIMAL HEALTH RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-20-05-05">ARTHROPOD-BORNE ANIMAL DISEASES RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-20-05-10">GRAIN QUALITY AND STRUCTURE RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-20-05-15">HARD WINTER WHEAT GENETICS RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-20-05-20">STORED PRODUCT INSECT AND ENGINEERING RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-30-00-00">MILES CITY, MT</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-30-05-00">RANGE AND LIVESTOCK RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-32-00-00">SIDNEY, MT</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-32-05-00">NORTHERN PLAINS AGRICULTURAL RESEARCH LABORATORY</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-32-05-05">PEST MANAGEMENT RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-32-05-10">AGRICULTURAL SYSTEMS RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-60-00-00">FARGO, ND</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-60-05-00">RED RIVER VALLEY AGRICULTURAL RESEARCH CENTER</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-60-05-05">ANIMAL METABOLISM-AGRICULTURAL CHEMICALS RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-60-05-10">INSECT GENETICS AND BIOCHEMISTRY RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-60-05-15">SUNFLOWER AND PLANT BIOLOGY RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-60-05-20">CEREAL CROPS RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-60-05-25">SUGARBEET AND POTATO RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-62-00-00">GRAND FORKS, ND</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-62-05-00">GRAND FORKS HUMAN NUTRITION RESEARCH CENTER</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-62-05-05">HEALTHY BODY WEIGHT RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-62-05-10">DIETARY PREVENTION OF OBESITY-RELATED DISEASE RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-64-00-00">MANDAN, ND</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-64-05-00">NATURAL RESOURCE MANAGEMENT RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-40-00-00">CLAY CENTER, NE</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-40-05-00">U.S. MEAT ANIMAL RESEARCH CENTER</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-40-05-05">GENETICS, BREEDING, AND ANIMAL HEALTH RESEARCH</a>
+                        </li>
+
+
+                    </ul>
+                </div>
+
+                <div id="bottomContentRight">
+                    <ul>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-40-05-10">MEATS SAFETY & QUALITY RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-40-05-15">REPRODUCTION RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-40-05-20">NUTRITION AND ENVIRONMENTAL MANAGEMENT RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-42-00-00">LINCOLN, NE</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-42-05-00">AGROECOSYSTEM MANAGEMENT RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-42-10-00">GRAIN, FORAGE, AND BIOENERGY RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-50-00-00">LAS CRUCES, NM</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-50-05-00">COTTON GINNING RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-50-10-00">RANGE MANAGEMENT RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-70-00-00">EL RENO, OK</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-70-05-00">GRAZINGLANDS RESEARCH LABORATORY</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-70-05-05">FORAGE AND LIVESTOCK PRODUCTION RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-70-05-10">GREAT PLAINS AGROCLIMATE AND NATURAL RESOURCES RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-72-00-00">STILLWATER, OK</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-72-05-00">HYDRAULIC ENGINEERING RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-72-10-00">WHEAT, PEANUT, AND OTHER FIELD CROPS RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-74-00-00">WOODWARD, OK</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-74-05-00">RANGELAND AND PASTURE RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-80-00-00">BROOKINGS, SD</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-80-05-00">INTEGRATED CROPPING SYSTEMS RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-90-00-00">BUSHLAND, TX</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-90-05-00">CONSERVATION AND PRODUCTION RESEARCH LABORATORY</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-90-05-05">SOIL AND WATER MANAGEMENT RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-90-05-10">LIVESTOCK NUTRIENT MANAGEMENT RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-91-00-00">COLLEGE STATION, TX</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-91-05-00">SOUTHERN PLAINS AGRICULTURAL RESEARCH CENTER</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-91-05-05">CROP GERMPLASM RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-91-05-10">FOOD AND FEED SAFETY RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-91-05-15">AERIAL APPLICATION TECHNOLOGY RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-91-05-20">INSECT CONTROL AND COTTON DISEASE RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-92-00-00">HOUSTON, TX</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-92-05-00">CHILDREN'S NUTRITION RESEARCH CENTER</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-94-00-00">KERRVILLE, TX</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-94-05-00">KNIPLING-BUSHLAND U.S. LIVESTOCK INSECTS RESEARCH LABORATORY</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-94-05-05">TICK AND BITING FLY RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-94-05-10">SCREWWORM RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-96-00-00">LUBBOCK, TX</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-96-05-00">CROPPING SYSTEMS RESEARCH LABORATORY</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-96-05-05">COTTON PRODUCTION AND PROCESSING RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-96-05-10">PLANT STRESS AND GERMPLASM DEVELOPMENT RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-96-05-15">WIND EROSION AND WATER CONSERVATION RESEARCH</a>
+                        </li>
+
+                        <li class="locationLevel4">
+                            <a href="/main/site_main.htm?modecode=30-96-05-20">LIVESTOCK ISSUES RESEARCH</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-98-00-00">TEMPLE, TX</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-98-05-00">GRASSLAND, SOIL AND WATER RESEARCH LABORATORY</a>
+                        </li>
+
+                        <li>
+                            <a href="/PandP/locations/cityPeopleList.cfm?modecode=30-18-00-00">CHEYENNE, WY</a>
+                        </li>
+
+                        <li class="locationLevel3">
+                            <a href="/main/site_main.htm?modecode=30-18-05-00">RANGELAND RESOURCES RESEARCH</a>
+                        </li>
+
+
+                    </ul>
+                </div>
+
+
+            </div>
+        </div>
+
+
+    </div>
+    <!-- bottom content end -->

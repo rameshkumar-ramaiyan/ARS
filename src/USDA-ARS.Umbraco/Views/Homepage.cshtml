@@ -9,8 +9,9 @@
     IPublishedContent currentPage = Model.Content;
     IPublishedContent siteSettings = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.SiteSettings();
 
-    ArchetypeModel carouselSlides = currentPage.GetPropertyValue<ArchetypeModel>("carouselSlides");
     ArchetypeModel socialLinks = siteSettings.GetPropertyValue<ArchetypeModel>("socialLinks");
+    ArchetypeModel carouselSlides = currentPage.GetPropertyValue<ArchetypeModel>("carouselSlides");
+    ArchetypeModel quickLinks = currentPage.GetPropertyValue<ArchetypeModel>("quickLinks");
 
     string middleArea = currentPage.GetPropertyValue<string>("middleArea");
 }
@@ -356,53 +357,21 @@
         <div id="spotlightContent">
             <h1>Quick Links</h1>
 
+            @if (quickLinks != null && quickLinks.Any())
+            {
+                foreach (var quickLink in quickLinks)
+                {
+                    Link navLink = quickLink.GetValue<MultiUrls>("link").FirstOrDefault();
 
-            <div>
-                <img src="/SP2UserFiles/Place/00000000/images/QuickLink/NEW-Science-Today-10-22-15.png"
-                     alt="Science Tuesday Blog" height="37" width="50" />
-                <p>
-                    <a href="http://blogs.usda.gov/tag/science-tuesday/">Science Tuesday Blog</a>
-                </p>
-            </div>
-
-            <div>
-                <img src="/SP2UserFiles/Place/00000000/images/QuickLink/VIVOIcon.png"
-                     alt="USDA Scientists Profiles" height="37" width="50" />
-                <p>
-                    <a href="http://vivo.usda.gov">USDA Scientists Profiles</a>
-                </p>
-            </div>
-
-            <div>
-                <img src="/SP2UserFiles/Place/00000000/images/QuickLink/Employee-Tools-10-22-15.png"
-                     alt="Employee Tools" height="37" width="50" />
-                <p>
-                    <a href="http://www.afm.ars.usda.gov/">Employee Tools</a>
-                </p>
-            </div>
-
-            <div>
-                <img src="/SP2UserFiles/Place/00000000/images/QuickLink/50-x-37-canvas-Hall-of-Fame.png"
-                     alt="ARS Science Hall of Fame" height="37" width="50" />
-                <p>
-                    <a href="http://www.ars.usda.gov/careers/hof/">ARS Science Hall of Fame</a>
-                </p>
-            </div>
-
-            <div>
-                <img src="/SP2UserFiles/Place/00000000/images/QuickLink/NEW-NAL-10-22-15.png"
-                     alt="National Agricultural Library" height="37" width="50" />
-                <p>
-                    <a href="http://www.nal.usda.gov">National Agricultural Library</a>
-                </p>
-            </div>
-
-
-            <div>
-                <p class="more">
-                    <a href="/Main/Docs.htm?docid=23305">>>> More...</a>
-                </p>
-            </div>
+                    <div>
+                        <img src="@quickLink.GetValue("icon")"
+                             alt="@quickLink.GetValue("label")" />
+                        <p>
+                            <a href="@quickLink.GetValue("link")">@quickLink.GetValue("label")</a>
+                        </p>
+                    </div>
+                }
+            }
         </div>
         <!--[if lt IE 9]>
             <div style="position: relative; top: -25px; z-index:1000;" >
