@@ -18,23 +18,32 @@ namespace USDA_ARS.Core
 {
     public class PullDataFromAccess
     {
+        private static string accessConnectionString ="";
+        public static string AccessConnectionString
+        {
+            get { return accessConnectionString; }
+            set { accessConnectionString = value; }
 
+        }
 
         // Setting environment values
         public string SetValues(string connectionStr)
         { 
             //1.Set Access connection (using  connection string from App.config).
-            string strAccessConn=string.Empty;
+           //string strAccessConn=string.Empty;
            
             if (false == string.IsNullOrWhiteSpace(connectionStr))
             {
-                strAccessConn = connectionStr;
+                accessConnectionString = connectionStr;
+                
             }
             else
             {
-                strAccessConn = ConfigurationManager.AppSettings["AccessConnection"];
+                accessConnectionString = ConfigurationManager.AppSettings["AccessConnection"];
                 
             }
+           
+
             string modificationHistoryHtml = DataValues.ModificationHistory;
             string headSectionHtml = DataValues.HtmlHeadSection;
             string bodySection1Html = DataValues.BodySection1;

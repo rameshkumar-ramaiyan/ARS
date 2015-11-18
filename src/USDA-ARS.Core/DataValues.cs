@@ -19,6 +19,8 @@ namespace USDA_ARS.Core
 {
     public class DataValues
     {
+
+       
         #region modificationHistory
         private static string modificationHistory = "< !---" + System.Environment.NewLine
                                         + " Author:" + System.Environment.NewLine
@@ -255,7 +257,8 @@ namespace USDA_ARS.Core
         public static DataTable SetTableRow5Td(int tdNumber)
         {
             //1.Set Access connection(using  connection string from App.config).
-            string strAccessConn = ConfigurationManager.AppSettings["AccessConnection"];
+            // string strAccessConn = ConfigurationManager.AppSettings["AccessConnection"];
+            string strAccessConn = PullDataFromAccess.AccessConnectionString;
             //private static string tablerow5 = 
             //2.select values from keydates table.
             DataTable getID = new DataTable();
@@ -409,7 +412,8 @@ namespace USDA_ARS.Core
         public static DataTable SetMainPortion(int tdNumber)
         {
             //1.Set Access connection(using  connection string from App.config).
-            string strAccessConn = ConfigurationManager.AppSettings["AccessConnection"];
+            //string strAccessConn = ConfigurationManager.AppSettings["AccessConnection"];
+            string strAccessConn =PullDataFromAccess.AccessConnectionString;
             //private static string tablerow5 = 
             //2.select values from keydates table.
             DataTable getID = new DataTable();
