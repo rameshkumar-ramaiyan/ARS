@@ -5,6 +5,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Http;
@@ -69,7 +70,11 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                     {
                         PullDataFromAccess pullDataFromAccess = new PullDataFromAccess();
 
-                        string html = pullDataFromAccess.SetValues("Provider=Microsoft.ACE.OLEDB.12.0;data source=" + fileInfo.FullName, false);
+                        string html = pullDataFromAccess.SetValues("Provider=Microsoft.ACE.OLEDB.12.0;data source=" + fileInfo.FullName, false, true);
+
+                        html = Regex.Replace(html, "<body[^>]*>", "");
+                        html = Regex.Replace(html, "</body>", "");
+                        html = Regex.Replace(html, "</html>", "");
 
                         IContent content = _contentService.GetById(Convert.ToInt32(result.FormData["nodeId"]));
 
