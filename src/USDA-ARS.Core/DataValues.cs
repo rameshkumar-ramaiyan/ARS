@@ -93,9 +93,9 @@ namespace USDA_ARS.Core
                                                "display: table-cell;" + System.Environment.NewLine +
                                             "}" + System.Environment.NewLine +
                                             "</style>" + System.Environment.NewLine
-                                            + " < !-- #BeginEditable \"MainContent\" -->"
+                                            + " <!-- #BeginEditable \"MainContent\" -->"
                                             + System.Environment.NewLine
-                                            + "  < !---Table which holds the quick links to the program titles--->"
+                                            + "  <!---Table which holds the quick links to the program titles--->"
                                             + System.Environment.NewLine
 
                                             + "    <div class=\"table\" border = \"0\" bordercolor = \"#FFFFFF\" > "
