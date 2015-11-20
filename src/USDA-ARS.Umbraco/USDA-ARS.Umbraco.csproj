@@ -345,6 +345,11 @@
     <Content Include="App_Plugins\FilePicker\filepickerdialog.html" />
     <Content Include="App_Plugins\FilePicker\folderpicker.html" />
     <Content Include="App_Plugins\FilePicker\folderpickerdialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-dialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.controller.js" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.html" />
+    <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker-dialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.js" />
     <Content Include="App_Plugins\UsdaDataImporter\css\usda.data.importer.css" />
@@ -2890,6 +2895,7 @@
     <Content Include="App_Plugins\UsdaDataImporter\js\usda.data.importer.resource.js" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\package.manifest" />
     <Content Include="App_Plugins\FilePicker\package.manifest" />
+    <Content Include="App_Plugins\FileSystemPicker\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Partials\Grid\Editors\Textstring.cshtml" />
     <Content Include="Views\Partials\Grid\Editors\Rte.cshtml" />
@@ -2902,6 +2908,12 @@
     <Content Include="Views\SubpageStandard.cshtml" />
     <Content Include="Views\_Master.cshtml" />
     <Content Include="Views\Partials\Archetype\Carousel.cshtml" />
+    <Content Include="Views\Region.cshtml" />
+    <Content Include="Views\ScheduleOfPeerReviews.cshtml" />
+    <Content Include="Views\Partials\Modules\SocialLinks.cshtml" />
+    <Content Include="Views\Partials\Modules\MainOfficeList.cshtml" />
+    <Content Include="Views\Partials\Modules\ResearchLocationsList.cshtml" />
+    <Content Include="Views\Partials\Modules\RegionLocationsList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

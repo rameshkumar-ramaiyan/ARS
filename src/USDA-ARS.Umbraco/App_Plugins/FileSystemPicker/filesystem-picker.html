@@ -1,0 +1,18 @@
+<div ng-controller="Umbraco.FileSystemPickerController" class="umb-editor">
+    <ul class="unstyled" ng-show="model.value.length !== 0">
+        <li>
+            <a href="#" prevent-default ng-click="remove()">
+                <i class="icon icon-delete red"></i> {{model.value}}
+            </a>
+            <div><img src="/umbraco/backoffice/FileSystemPicker/FileSystemThumbnailApi/GetThumbnail?width=150&imagePath={{model.value}}" /></div>
+        </li>
+    </ul>
+    <ul class="unstyled list-icons" ng-show="model.value.length === 0">
+        <li>
+            <i class="icon icon-add blue"></i>
+            <a href="#" ng-click="openPicker()" prevent-default="">
+                <localize key="general_add">Add</localize>
+            </a>
+        </li>
+    </ul>
+</div>

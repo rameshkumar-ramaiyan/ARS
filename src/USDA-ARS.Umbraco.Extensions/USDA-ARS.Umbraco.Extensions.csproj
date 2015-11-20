@@ -272,7 +272,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\DataImporterController.cs" />
+    <Compile Include="Helpers\LinqExtensions.cs" />
     <Compile Include="Helpers\Nodes.cs" />
+    <Compile Include="Models\ResearchUnit.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

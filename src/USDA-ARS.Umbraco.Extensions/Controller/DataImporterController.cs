@@ -69,14 +69,11 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                     {
                         PullDataFromAccess pullDataFromAccess = new PullDataFromAccess();
 
-                        pullDataFromAccess.FilePath = fullSavePath + "\\" + file.Name;
-                        pullDataFromAccess.BodyOnly = true;
-
-                        string html = pullDataFromAccess.SetValues();
+                        string html = pullDataFromAccess.SetValues("Provider=Microsoft.ACE.OLEDB.12.0;data source=" + fileInfo.FullName);
 
                         IContent content = _contentService.GetById(Convert.ToInt32(result.FormData["nodeId"]));
 
-                        content.SetValue("bodyText", html);
+                        content.SetValue("contentTable", html);
 
                         _contentService.Save(content);
 

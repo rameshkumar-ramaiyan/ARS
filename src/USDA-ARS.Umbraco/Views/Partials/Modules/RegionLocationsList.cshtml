@@ -1,0 +1,49 @@
+﻿@using Umbraco.Core.Models
+@using USDA_ARS.Umbraco.Extensions.Models
+@model IPublishedContent
+@{
+    List<ResearchUnitDisplay> researchUnits = new List<ResearchUnitDisplay>();
+
+    USDA_ARS.Umbraco.Extensions.Helpers.Nodes.CityResearchUnitList(ref researchUnits, Model, 2);
+
+    List<ResearchUnitDisplay> researchUnitsLeft = new List<ResearchUnitDisplay>();
+    List<ResearchUnitDisplay> researchUnitsRight = new List<ResearchUnitDisplay>();
+
+    List<List<ResearchUnitDisplay>> researchUnitsSplit = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.ResearchUnitsSplit(researchUnits);
+
+    if (researchUnitsSplit.Count() > 0)
+    {
+        researchUnitsLeft = researchUnitsSplit[0];
+    }
+    if (researchUnitsSplit.Count() == 2)
+    {
+        researchUnitsRight = researchUnitsSplit[1];
+    }
+}
+
+<div id="bottomContentLeft">
+    <ul>
+
+        <li>
+            <a href="@Model.Url">@Model.Name Office</a>
+        </li>
+
+        @foreach (ResearchUnitDisplay unit in researchUnitsLeft)
+        {
+            <li class="locationLevel@(unit.Level)">
+                <a href="@(unit.ResearchUnit.Url)">@(unit.ResearchUnit.GetPropertyValue<string>("navigationTitle", unit.ResearchUnit.Name))</a>
+            </li>
+        }
+    </ul>
+</div>
+
+<div id="bottomContentRight">
+    <ul>
+        @foreach (ResearchUnitDisplay unit in researchUnitsRight)
+        {
+            <li class="locationLevel@(unit.Level)">
+                <a href="@(unit.ResearchUnit.Url)">@(unit.ResearchUnit.GetPropertyValue<string>("navigationTitle", unit.ResearchUnit.Name))</a>
+            </li>
+        }
+    </ul>
+</div>
