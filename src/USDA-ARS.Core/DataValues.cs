@@ -219,8 +219,8 @@ namespace USDA_ARS.Core
                                         + "  <div class=\"tablecell\"  width = \"25%\" >" + System.Environment.NewLine
                                         + ConvertDataTableToHTML(SetTableRow5Td(4), 4)
                                         + "  </div>" + System.Environment.NewLine
+                                        + " </div>" + System.Environment.NewLine
                                         + " </div>" + System.Environment.NewLine;
-
 
         public static string Tablerow5
         {
@@ -565,6 +565,20 @@ namespace USDA_ARS.Core
 
 
                     //  }
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("</div>");
+
+
                     htmlTableMainPortion.Append("</div>");
                     htmlTableMainPortion.Append("<br>");
                     htmlTableMainPortion.Append("<br>");
