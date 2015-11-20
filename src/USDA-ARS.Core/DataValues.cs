@@ -20,7 +20,7 @@ namespace USDA_ARS.Core
     public class DataValues
     {
 
-       
+
         #region modificationHistory
         private static string modificationHistory = "< !---" + System.Environment.NewLine
                                         + " Author:" + System.Environment.NewLine
@@ -208,16 +208,16 @@ namespace USDA_ARS.Core
         #region Table row 5
         private static string tablerow5 = "<div class=\"tablerow\"  bordercolor=\"#FFFFFF\">" + System.Environment.NewLine
                                         + "   <div class=\"tablecell\"  width = \"25%\" >" + System.Environment.NewLine
-                                        + ConvertDataTableToHTML(SetTableRow5Td(1),1)
+                                        + ConvertDataTableToHTML(SetTableRow5Td(1), 1)
                                         + "   </div>" + System.Environment.NewLine
                                         + "  <div class=\"tablecell\"  width = \"25%\" >" + System.Environment.NewLine
-                                        + ConvertDataTableToHTML(SetTableRow5Td(2),2)
+                                        + ConvertDataTableToHTML(SetTableRow5Td(2), 2)
                                         + "  </div>" + System.Environment.NewLine
                                         + "   <div class=\"tablecell\"  width = \"25%\" >" + System.Environment.NewLine
-                                        + ConvertDataTableToHTML(SetTableRow5Td(3),3)
+                                        + ConvertDataTableToHTML(SetTableRow5Td(3), 3)
                                         + "   </div>" + System.Environment.NewLine
                                         + "  <div class=\"tablecell\"  width = \"25%\" >" + System.Environment.NewLine
-                                        + ConvertDataTableToHTML(SetTableRow5Td(4),4)
+                                        + ConvertDataTableToHTML(SetTableRow5Td(4), 4)
                                         + "  </div>" + System.Environment.NewLine
                                         + " </div>" + System.Environment.NewLine;
 
@@ -232,8 +232,8 @@ namespace USDA_ARS.Core
 
 
 
-        private static string tablerow5BeginSection = "<div class=\"tablerow\"  bordercolor=\"#FFFFFF\">" + System.Environment.NewLine 
-            //+
+        private static string tablerow5BeginSection = "<div class=\"tablerow\"  bordercolor=\"#FFFFFF\">" + System.Environment.NewLine
+                                                      //+
                                                       //"< !---Begin local links to review information --->" + System.Environment.NewLine
                                                       ;
 
@@ -304,6 +304,10 @@ namespace USDA_ARS.Core
             OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
             adapter.Fill(getID);
 
+            adapter.Dispose();
+            cmd.Dispose();
+            conn.Close();
+            conn.Dispose();
 
             return getID;
         }
@@ -327,14 +331,14 @@ namespace USDA_ARS.Core
         //            {
 
         //                htmlTableRow5Tds.Append("<div class=\"tablecell\"  width=\"25 % \" valign=\"top\">");
-                       
+
         //                htmlTableRow5Tds.Append(System.Environment.NewLine);
-                       
+
         //                 //htmlTableRow5Tds.Append("<a href=\"#C4\">");
         //                htmlTableRow5Tds.Append("<a href =\"#C4\">"+row[column.ColumnName]+"</a>");
         //               // htmlTableRow5Tds.Append("</a>");
         //                htmlTableRow5Tds.Append(System.Environment.NewLine);
-                        
+
         //                htmlTableRow5Tds.Append("</div>");
         //                htmlTableRow5Tds.Append(System.Environment.NewLine);
         //            }
@@ -413,7 +417,7 @@ namespace USDA_ARS.Core
         {
             //1.Set Access connection(using  connection string from App.config).
             //string strAccessConn = ConfigurationManager.AppSettings["AccessConnection"];
-            string strAccessConn =PullDataFromAccess.AccessConnectionString;
+            string strAccessConn = PullDataFromAccess.AccessConnectionString;
             //private static string tablerow5 = 
             //2.select values from keydates table.
             DataTable getID = new DataTable();
@@ -458,6 +462,10 @@ namespace USDA_ARS.Core
             OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
             adapter.Fill(getID);
 
+            adapter.Dispose();
+            cmd.Dispose();
+            conn.Close();
+            conn.Dispose();
 
             return getID;
         }
@@ -492,7 +500,7 @@ namespace USDA_ARS.Core
                     htmlTableMainPortion.Append(" <div class=\"tablecell\" colspan=\"2\"  style=\"display:inline; background-color:BFBFBF; width:100%\"  > ");
                     htmlTableMainPortion.Append(" <b>");
                     htmlTableMainPortion.Append("Review Title  ");
-                  
+
                     htmlTableMainPortion.Append("<a href=\"#\" id =\"" + row[tablerow5Table.Columns[1].ColumnName].ToString().Replace(" ", string.Empty) + "\"" + ">");
                     //NP 103 Animal Health Panel Review
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[1].ColumnName]);
@@ -554,7 +562,7 @@ namespace USDA_ARS.Core
                     //htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
                     //htmlTableMainPortion.Append("<b> Ad Hoc Cut - Off Date:&nbsp;&nbsp;</b>");
                     //htmlTableMainPortion.Append(row[tablerow5Table.Columns[11].ColumnName]);
-                    
+
 
                     //  }
                     htmlTableMainPortion.Append("</div>");
@@ -587,31 +595,31 @@ namespace USDA_ARS.Core
 
         }
         #endregion
-        public static string ConvertDataTableToHTML(DataTable dt,int columnNumber)
+        public static string ConvertDataTableToHTML(DataTable dt, int columnNumber)
         {
             string columnHeader = "";
             string html = "<div class=\"table\">";
             //add header row
             html += "<div class=\"tablerow\">";
-            for (int i = 0; i < dt.Columns.Count; i++)     
+            for (int i = 0; i < dt.Columns.Count; i++)
 
                 if (columnNumber == 1)
                 {
-                     columnHeader = "Animal Production & Protection";
-                     
+                    columnHeader = "Animal Production & Protection";
+
                 }
-                if (columnNumber == 2)
-                {
-                    columnHeader = "Nutrition, Food Safety/ Quality";
-                }
-                if (columnNumber == 3)
-                {
-                    columnHeader = "Natural Resources and Sustainable Agricultural Systems";
-                }
-                if (columnNumber == 4)
-                {
-                    columnHeader = "Crop Production & Protection";
-                }
+            if (columnNumber == 2)
+            {
+                columnHeader = "Nutrition, Food Safety/ Quality";
+            }
+            if (columnNumber == 3)
+            {
+                columnHeader = "Natural Resources and Sustainable Agricultural Systems";
+            }
+            if (columnNumber == 4)
+            {
+                columnHeader = "Crop Production & Protection";
+            }
             html += "<div class=\"tablecell\">"
 
                                          + "       <p>" + System.Environment.NewLine
@@ -630,9 +638,9 @@ namespace USDA_ARS.Core
             {
                 html += " <div class=\"tablerow\">";
                 for (int j = 0; j < dt.Columns.Count; j++)
-                    html += " <div class=\"tablecell\">"+ "<a href=\"#"+dt.Rows[i][j].ToString().Replace(" ",string.Empty)+"\">" + dt.Rows[i][j].ToString() +"</a>"+"</div>";
+                    html += " <div class=\"tablecell\">" + "<a href=\"#" + dt.Rows[i][j].ToString().Replace(" ", string.Empty) + "\">" + dt.Rows[i][j].ToString() + "</a>" + "</div>";
                 html += "</div>";
-                
+
             }
             html += "</div>";
             return html;
