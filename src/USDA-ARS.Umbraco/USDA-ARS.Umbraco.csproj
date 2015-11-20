@@ -2910,6 +2910,10 @@
     <Content Include="Views\Partials\Archetype\Carousel.cshtml" />
     <Content Include="Views\Region.cshtml" />
     <Content Include="Views\ScheduleOfPeerReviews.cshtml" />
+    <Content Include="Views\Partials\Modules\SocialLinks.cshtml" />
+    <Content Include="Views\Partials\Modules\MainOfficeList.cshtml" />
+    <Content Include="Views\Partials\Modules\ResearchLocationsList.cshtml" />
+    <Content Include="Views\Partials\Modules\RegionLocationsList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
