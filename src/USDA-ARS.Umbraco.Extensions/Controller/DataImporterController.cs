@@ -63,13 +63,13 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                 foreach (FileInfo file in uploadFolder.GetFiles())
                 {
-                    FileInfo fileInfo = new FileInfo(file.Name);
+                    FileInfo fileInfo = new FileInfo(fullSavePath + "\\" + file.Name);
 
                     if (fileInfo != null && fileInfo.Extension == ".mdb")
                     {
                         PullDataFromAccess pullDataFromAccess = new PullDataFromAccess();
 
-                        string html = pullDataFromAccess.SetValues("Provider=Microsoft.ACE.OLEDB.12.0;data source=" + fileInfo.FullName);
+                        string html = pullDataFromAccess.SetValues("Provider=Microsoft.ACE.OLEDB.12.0;data source=" + fileInfo.FullName, false);
 
                         IContent content = _contentService.GetById(Convert.ToInt32(result.FormData["nodeId"]));
 
