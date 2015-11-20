@@ -27,28 +27,28 @@ namespace USDA_ARS.Core
         }
 
         // Setting environment values
-        public string SetValues(string connectionStr, bool storeInDB = true)
-        { 
+        public string SetValues(string connectionStr, bool storeInDB = true, bool bodyHtmlOnly = false)
+        {
             //1.Set Access connection (using  connection string from App.config).
-           //string strAccessConn=string.Empty;
-           
+            //string strAccessConn=string.Empty;
+
             if (false == string.IsNullOrWhiteSpace(connectionStr))
             {
                 accessConnectionString = connectionStr;
-                
+
             }
             else
             {
                 accessConnectionString = ConfigurationManager.AppSettings["AccessConnection"];
-                
+
             }
-           
+
 
             string modificationHistoryHtml = DataValues.ModificationHistory;
             string headSectionHtml = DataValues.HtmlHeadSection;
             string bodySection1Html = DataValues.BodySection1;
             string tablerow1 = DataValues.Tablerow1;
-            string tablerow2 = DataValues.Tablerow2; 
+            string tablerow2 = DataValues.Tablerow2;
             string tablerow3 = DataValues.Tablerow3;
             string tablerow4 = DataValues.Tablerow4;
             string tablerow5 = DataValues.Tablerow5;
@@ -71,15 +71,19 @@ namespace USDA_ARS.Core
             //table.Columns.Add(tablerow5Td2Html);
             //table.Columns.Add(tablerow5Td3Html);
             //table.Columns.Add(tablerow5Td4Html);
-            
+
             //string tablerow5TdsHtml = tablerow5Td1Html + tablerow5Td2Html + tablerow5Td3Html + tablerow5Td4Html;
-          //  string tablerow5TdsHtml = DataValues.ConvertDataTableToHTML(table);
+            //  string tablerow5TdsHtml = DataValues.ConvertDataTableToHTML(table);
             DataTable mainPortionTable = DataValues.SetMainPortion(1);
             string htmlTableMainPortion = DataValues.CreateHtmlStringMainPortion(mainPortionTable, 1);
             //row5 end section
             string tableRow5EndSection = DataValues.Tablerow5EndSection;
 
-            string finalHtmlString = modificationHistoryHtml
+            string finalHtmlString = null;
+
+            if (false == bodyHtmlOnly)
+            {
+                finalHtmlString = modificationHistoryHtml
                                    + System.Environment.NewLine
                                    + headSectionHtml
                                    + System.Environment.NewLine
@@ -90,18 +94,43 @@ namespace USDA_ARS.Core
                                     + System.Environment.NewLine
                                      + tablerow3
                                     + System.Environment.NewLine
-                                    // + tablerow4
-                                    //+ System.Environment.NewLine
+                                 // + tablerow4
+                                 //+ System.Environment.NewLine
 
                                  + tableRow5BeginSection
                                    + System.Environment.NewLine
                                    + tablerow5
                                    + System.Environment.NewLine
-                                   +htmlTableMainPortion
-                                   +System.Environment.NewLine
+                                   + htmlTableMainPortion
+                                   + System.Environment.NewLine
                                   + tableRow5EndSection
                                   + System.Environment.NewLine
                                    ;
+            }
+            else
+            {
+                finalHtmlString = bodySection1Html
+                                   + tablerow1
+                                    + System.Environment.NewLine
+                                     + tablerow2
+                                    + System.Environment.NewLine
+                                     + tablerow3
+                                    + System.Environment.NewLine
+                                 // + tablerow4
+                                 //+ System.Environment.NewLine
+
+                                 + tableRow5BeginSection
+                                   + System.Environment.NewLine
+                                   + tablerow5
+                                   + System.Environment.NewLine
+                                   + htmlTableMainPortion
+                                   + System.Environment.NewLine
+                                  + tableRow5EndSection
+                                  + System.Environment.NewLine
+                                   ;
+            }
+
+
             //store this string in db
             if (true == storeInDB)
             {
