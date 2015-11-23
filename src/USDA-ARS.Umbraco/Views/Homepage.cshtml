@@ -11,6 +11,10 @@
     ArchetypeModel carouselSlides = currentPage.GetPropertyValue<ArchetypeModel>("carouselSlides");
     ArchetypeModel quickLinks = currentPage.GetPropertyValue<ArchetypeModel>("quickLinks");
 
+    IEnumerable<IPublishedContent> newsList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("newsList");
+    var resourceList = currentPage.GetPropertyValue<MultiUrls>("resources");
+    IEnumerable<IPublishedContent> latestBlogList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("latestBlog");
+
     string middleArea = currentPage.GetPropertyValue<string>("middleArea");
 }
 <div id="bodyContent">
@@ -183,50 +187,22 @@
                     <div class="AbsoluteHiddenBodyText" id="AgencyNewsDetail_Latest">
                         <h1>News</h1>
 
-
-
-                        <ul>
-
-                            <li>
-                                <a href="/is/pr/2015/151029.htm">
-                                    Ag Utilization Centers Celebrate 75 Years of Innovation
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="/is/pr/2015/151021.htm">
-                                    ACS Names Beltsville Agricultural Research Center as National Historic Chemical Landmark
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="/is/pr/2015/151020.htm">
-                                    USDA Transfers 3,800 Acres in Brooksville to Florida A&M University
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="/is/pr/2015/151002.htm">
-                                    Toolset Helps Identify Key Water-Conservation Options
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="/is/pr/2015/150929.htm">
-                                    Food Toxin Detector Incorporates Camera
-                                </a>
-                            </li>
-
-                            <li>
-                                <a href="/is/pr/2015/150923.htm">
-                                    New Disease Resistant Pea Now Available
-                                </a>
-                            </li>
-
-                        </ul>
+                        @if (newsList != null && newsList.Any())
+                        {
+                            <ul>
+                                @foreach (IPublishedContent item in newsList)
+                                {
+                                    <li>
+                                        <a href="@item.Url">
+                                            @item.Name
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
 
                         <p class="more">
-                            <a href="/is/pr">>>> More...</a>
+                            <a href="/is/pr">&gt;&gt;&gt; More...</a>
                         </p>
                     </div>
                     <!-- news tab end -->
@@ -235,74 +211,48 @@
                         <h1>Resources</h1>
                         <!-- RESOURCES SECTION -- CHANGEABLE INFORMATION STARTS HERE  -->
 
-
+                        @if (resourceList.Any())
+                        {
                         <ul>
-
-                            <li><a href="/services/software/software.htm">Scientific Software / Models</a></li>
-
-                            <li><a href="/services/TekTran.htm">Scientific Manuscripts</a></li>
-
-                            <li><a href="/business/docs.htm?docid=769">Research Success Stories</a></li>
-
-                            <li><a href="/services/docs.htm?docid=1279">Publications</a></li>
-
-                            <li><a href="/mapsandtools">Maps and Tools</a></li>
-
-                            <li><a href="/News/docs.htm?docid=128">Factsheets</a></li>
-
-                            <li><a href="/services/docs.htm?docid=1328">Databases and Datasets </a></li>
-
-                            <li><a href="http://iapreview.ars.usda.gov/News/docs.htm?docid=23559">Image Gallery </a></li>
-
+                            @foreach (var item in resourceList)
+                            {
+                                <li><a href="@item.Url" target="@item.Target">@item.Name</a></li>
+                            }
                         </ul>
+                        }
                     </div>
                     <!-- resources tab end -->
                     <!-- latest blogs tab -->
                     <div class="AbsoluteHiddenBodyText" id="AgencyNewsDetail_Blog" style="visibility:hidden;">
                         <h1>Blogs</h1>
 
+                        @if (latestBlogList != null && latestBlogList.Any())
+                        {
+                            <ul>
+                                @foreach (IPublishedContent item in latestBlogList)
+                                {
+                                    string linkUrl = "#";
+                                    if (item.HasValue("externalRedirect"))
+                                    {
+                                        Link navLink = item.GetPropertyValue<MultiUrls>("externalRedirect").FirstOrDefault();
 
-
-
-
-                        <ul>
-
-                            <li>
-                                <a href="http://blogs.usda.gov/2015/11/03/helping-farmers-in-pakistan-and-the-u-s/">Helping Farmers in Pakistan and the U.S.</a>
-                            </li>
-
-                            <li>
-                                <a href="http://blogs.usda.gov/2015/10/27/smart-phones-the-latest-tool-for-sustainable-farming/">Smart Phones: The Latest Tool for Sustainable Farming</a>
-                            </li>
-
-                            <li>
-                                <a href="http://blogs.usda.gov/2015/10/14/new-toolset-helps-identify-key-water-conservation-options/">New Toolset Helps Identify Key Water Conservation Options</a>
-                            </li>
-
-                            <li>
-                                <a href="http://blogs.usda.gov/2015/10/08/land-grant-universities-make-nfl-natural-turf-grass-better-and-safer/">Land-Grant Universities Make NFL Natural Turf Grass Better and Safer</a>
-                            </li>
-
-                            <li>
-                                <a href="http://blogs.usda.gov/2015/10/06/a-diet-to-help-conserve-bees-when-food-is-scarce/">A Diet to Help Conserve Bees When Food Is Scarce</a>
-                            </li>
-
-                            <li>
-                                <a href="http://blogs.usda.gov/2015/10/01/usda-crep-buffers-clean-water-and-help-restore-chesapeake-bay/">USDA CREP Buffers Clean Water and Help Restore Chesapeake Bay</a>
-                            </li>
-
-                            <li>
-                                <a href="http://blogs.usda.gov/2015/09/29/a-new-online-tool-to-help-growers-select-the-right-cover-crop/">A New Online Tool to Help Growers Select the Right Cover Crop</a>
-                            </li>
-
-                            <li>
-                                <a href="http://blogs.usda.gov/2015/09/23/southern-plains-climate-hub-helps-land-managers-build-resilience-to-climate-variability/">Southern Plains Climate Hub Helps Land Managers Build Resilience to Climate Variability</a>
-                            </li>
-
-                        </ul>
+                                        linkUrl = navLink.Url;
+                                    }
+                                    else
+                                    {
+                                        linkUrl = item.Url;
+                                    }
+                                    <li>
+                                        <a href="@linkUrl">
+                                            @item.Name
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
 
                         <p class="more">
-                            <a href="http://blogs.usda.gov">>>> More...</a>
+                            <a href="http://blogs.usda.gov">&gt;&gt;&gt; More...</a>
                         </p>
                     </div>	<!-- latest blogs tab end -->
 

@@ -153,22 +153,19 @@
 
         <table border="0" width="100%">
             <tr>
-                <td class="pageHeading">@currentPage.Name                                                                                                                                                                                               </td>
+                <td class="pageHeading">@currentPage.Name</td>
             </tr>
             <tr>
                 <td>
-
                     <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
                 </td>
             </tr>
+            <tr>
+                <td>
+                    @Html.Raw(currentPage.GetPropertyValue<string>("contentTable"))
+                </td>
+            </tr>
         </table>
-
-
-        <!-- display URLs of subpages start -->
-        <!--  display URLs of subpages end -->
-        <!-- document content start -->
-
-        @Html.Raw(currentPage.GetPropertyValue<string>("contentTable"))
 
         <!-- document content end -->
 
