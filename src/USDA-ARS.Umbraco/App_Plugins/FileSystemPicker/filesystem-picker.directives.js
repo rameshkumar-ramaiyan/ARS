@@ -485,7 +485,7 @@ angular.module("umbraco.directives")
 
                 var dialogTitle = node.metaData.startfolder.replace('/SP2UserFiles/Place', '');
 
-                $('.root-link').html(dialogTitle);
+                $('a[href*="/dummy"]').html(dialogTitle);
 
                 //get the first div element
                 element.children(":first")
