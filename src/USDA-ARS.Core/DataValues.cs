@@ -244,8 +244,7 @@ namespace USDA_ARS.Core
             set { tablerow5BeginSection = value; }
 
         }
-        private static string tablerow5EndSection = "</div>" + System.Environment.NewLine +
-                                                    "</div>" + "</body>" + System.Environment.NewLine
+        private static string tablerow5EndSection = "</body>" + System.Environment.NewLine
            + "</html>" + System.Environment.NewLine;
         public static string Tablerow5EndSection
         {
@@ -484,7 +483,7 @@ namespace USDA_ARS.Core
                 //Building the Data rows.
                 foreach (DataRow row in tablerow5Table.Rows)
                 {
-                    htmlTableMainPortion.Append(" <div class=\"tablerow\">");
+                    htmlTableMainPortion.Append(" <div class=\"tablerow\" >");
                     // 1.first create a table with to tds
                     //use for loop for entering values
                     DataColumn column = new DataColumn();
@@ -494,10 +493,11 @@ namespace USDA_ARS.Core
                     //Building the Data rows.
                     htmlTableMainPortion.Append(" <div class=\"tablerow\"> ");
                     htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
-                    htmlTableMainPortion.Append(" <div class=\"table\" cellpadding=\"2\" width=\"100%\" border=\"0\" >");
-                    htmlTableMainPortion.Append(" <div class=\"tablerow\" bgcolor=\"BFBFBF\">  ");
+                   // htmlTableMainPortion.Append(" <div class=\"table\" cellpadding=\"2\" width=\"100%\" border=\"0\" >");
+                    htmlTableMainPortion.Append(" <div class=\"tablerow\" >  ");
 
-                    htmlTableMainPortion.Append(" <div class=\"tablecell\" colspan=\"2\"  style=\"display:inline; background-color:BFBFBF; width:100%\"  > ");
+                    htmlTableMainPortion.Append(" <div class=\"tablecell\" colspan=\"2\"  style=\"display:inline; background-color:#BFBFBF; width:100%;\"  > ");
+                    //htmlTableMainPortion.Append(" <div class=\"tablecell\" colspan=\"2\"  > ");
                     htmlTableMainPortion.Append(" <b>");
                     htmlTableMainPortion.Append("Review Title  ");
 
@@ -508,18 +508,18 @@ namespace USDA_ARS.Core
                     htmlTableMainPortion.Append("</a>");
                     htmlTableMainPortion.Append(" </b>");
 
-                    htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
-                    htmlTableMainPortion.Append(" <div class=\"tablerow\"> ");
-                    htmlTableMainPortion.Append(" <div class=\"tablerow\"> ");
+                    // htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    //htmlTableMainPortion.Append(" <div class=\"tablerow\"> ");
+                    ////htmlTableMainPortion.Append(" <div class=\"tablerow\"> ");
+                     htmlTableMainPortion.Append(" <br>");
 
-
                     htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
-                    htmlTableMainPortion.Append(" <b>Termination Date &nbsp;</b>");
+                    htmlTableMainPortion.Append(" <b>Termination Date: &nbsp;</b>");
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[2].ColumnName]);
 
+                    htmlTableMainPortion.Append(" &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>");
 
-
-                    htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                   //// htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
                     htmlTableMainPortion.Append("<b>Program Analyst:&nbsp;&nbsp;</b>");
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[3].ColumnName]);
 
@@ -561,10 +561,14 @@ namespace USDA_ARS.Core
 
                     //htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
                     //htmlTableMainPortion.Append("<b> Ad Hoc Cut - Off Date:&nbsp;&nbsp;</b>");
-                    //htmlTableMainPortion.Append(row[tablerow5Table.Columns[11].ColumnName]);
+                    //htmlTableMainPortion.Append(row[tablerow5Table.Columns[13].ColumnName]);
 
 
                     //  }
+                   //// htmlTableMainPortion.Append("</div>");
+                  ////  htmlTableMainPortion.Append("</div>");
+                   //// htmlTableMainPortion.Append("</div>");
+                 ////   htmlTableMainPortion.Append("</div>");
                     htmlTableMainPortion.Append("</div>");
                     htmlTableMainPortion.Append("</div>");
                     htmlTableMainPortion.Append("</div>");
@@ -577,9 +581,11 @@ namespace USDA_ARS.Core
                     htmlTableMainPortion.Append("</div>");
                     htmlTableMainPortion.Append("</div>");
                     htmlTableMainPortion.Append("</div>");
-
-
                     htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("</div>");
+                   
+                    ////htmlTableMainPortion.Append("</div>");
                     htmlTableMainPortion.Append("<br>");
                     htmlTableMainPortion.Append("<br>");
                 }
