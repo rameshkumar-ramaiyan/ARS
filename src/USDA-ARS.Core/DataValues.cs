@@ -96,10 +96,9 @@ namespace USDA_ARS.Core
                                             + " < !-- #BeginEditable \"MainContent\" -->"
                                             + System.Environment.NewLine
                                             + "  < !---Table which holds the quick links to the program titles--->"
-                                            + System.Environment.NewLine
-
-                                            + "    <div class=\"table\" border = \"0\" bordercolor = \"#FFFFFF\" > "
                                             + System.Environment.NewLine;
+
+                                           
         public static string BodySection1
         {
             get { return bodySection1; }
@@ -506,72 +505,84 @@ namespace USDA_ARS.Core
                      htmlTableMainPortion.Append(" <br>");
 
                     htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                   
                     htmlTableMainPortion.Append(" <b>Termination Date: &nbsp;</b>");
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[2].ColumnName]);
 
-                    htmlTableMainPortion.Append(" &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>");
+                    htmlTableMainPortion.Append("&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 
                    //// htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
                     htmlTableMainPortion.Append("<b>Program Analyst:&nbsp;&nbsp;</b>");
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[3].ColumnName]);
-
-                    htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    htmlTableMainPortion.Append("<br>");
                     htmlTableMainPortion.Append("<b>Number of Projects in the Review:&nbsp;&nbsp;</b>");
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[4].ColumnName]);
 
-                    htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                   //// htmlTableMainPortion.Append("<br>");
+                    htmlTableMainPortion.Append(" &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
                     htmlTableMainPortion.Append("<b>Planned Duration:&nbsp;&nbsp;</b>");
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[5].ColumnName]);
 
-                    htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    htmlTableMainPortion.Append("<br>");
                     htmlTableMainPortion.Append("<b>Status of Reviews:&nbsp;&nbsp;</b>");
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[6].ColumnName]);
 
-                    htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
-                    htmlTableMainPortion.Append("<b>Concurrence Memo Due to Area Director:&nbsp;&nbsp;</b>");
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    htmlTableMainPortion.Append("<br>");
+                    htmlTableMainPortion.Append("<b>Concurrence Memo Due to Area Director:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  </b>");
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[7].ColumnName]);
 
-                    htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
-                    htmlTableMainPortion.Append("<b>PDRAMs Due to Area & OSQR with Schedule:&nbsp;&nbsp;</b>");
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    htmlTableMainPortion.Append("<br>");
+                    htmlTableMainPortion.Append("<b>PDRAMs Due to Area & OSQR with Schedule:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>");
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[8].ColumnName]);
 
-                    htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
-                    htmlTableMainPortion.Append("<b>Conflicts of Interest Lists Due To OSQR:&nbsp;&nbsp;</b>");
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    htmlTableMainPortion.Append("<br>");
+                    htmlTableMainPortion.Append("<b>Conflicts of Interest Lists Due To OSQR:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>");
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[9].ColumnName]);
 
-                    htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
-                    htmlTableMainPortion.Append("<b>Project Plans Due to OSQR:&nbsp;&nbsp;</b>");
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    htmlTableMainPortion.Append("<br>");
+                    htmlTableMainPortion.Append("<b>Project Plans Due to OSQR:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>");
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[10].ColumnName]);
 
-                    htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
-                    htmlTableMainPortion.Append("<b>Review Period:&nbsp;&nbsp;</b>");
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    htmlTableMainPortion.Append("<br>");
+                    htmlTableMainPortion.Append("<b>Review Period:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>");
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[11].ColumnName]);
 
-                    htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
-                    htmlTableMainPortion.Append("<b> Project's Targeted Implementation Date:&nbsp;&nbsp;</b>");
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    htmlTableMainPortion.Append("<br>");
+                    htmlTableMainPortion.Append("<b> Project's Targeted Implementation Date:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</b>");
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[12].ColumnName]);
-
+                    htmlTableMainPortion.Append("<br>");
                     //htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
-                    //htmlTableMainPortion.Append("<b> Ad Hoc Cut - Off Date:&nbsp;&nbsp;</b>");
+                    htmlTableMainPortion.Append("<b> Ad Hoc Cut - Off Date:&nbsp;&nbsp;</b>");
+                    htmlTableMainPortion.Append("<br>");
                     //htmlTableMainPortion.Append(row[tablerow5Table.Columns[13].ColumnName]);
 
 
                     //  }
-                   //// htmlTableMainPortion.Append("</div>");
-                  ////  htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("</div>");
                    //// htmlTableMainPortion.Append("</div>");
                  ////   htmlTableMainPortion.Append("</div>");
-                    htmlTableMainPortion.Append("</div>");
-                    htmlTableMainPortion.Append("</div>");
-                    htmlTableMainPortion.Append("</div>");
-                    htmlTableMainPortion.Append("</div>");
-                    htmlTableMainPortion.Append("</div>");
-                    htmlTableMainPortion.Append("</div>");
-                    htmlTableMainPortion.Append("</div>");
-                    htmlTableMainPortion.Append("</div>");
-                    htmlTableMainPortion.Append("</div>");
-                    htmlTableMainPortion.Append("</div>");
-                    htmlTableMainPortion.Append("</div>");
+                    //////htmlTableMainPortion.Append("</div>");
+                    //////htmlTableMainPortion.Append("</div>");
+                    //////htmlTableMainPortion.Append("</div>");
+                    //////htmlTableMainPortion.Append("</div>");
+                    //////htmlTableMainPortion.Append("</div>");
+                    //////htmlTableMainPortion.Append("</div>");
+                    //////htmlTableMainPortion.Append("</div>");
+                    //////htmlTableMainPortion.Append("</div>");
+                    //////htmlTableMainPortion.Append("</div>");
+                    //////htmlTableMainPortion.Append("</div>");
+                    //////htmlTableMainPortion.Append("</div>");
                     htmlTableMainPortion.Append("</div>");
                     htmlTableMainPortion.Append("</div>");
                     htmlTableMainPortion.Append("</div>");
