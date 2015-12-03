@@ -2,18 +2,37 @@
 @using Archetype.Models
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
+@using Umbraco.Core.Persistence
+@using USDA_ARS.Umbraco.Extensions.Models
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
     Layout = "_Master.cshtml";
 
     IPublishedContent currentPage = Model.Content;
     IPublishedContent rootPage = currentPage.AncestorOrSelf(1);
+    string modeCode = currentPage.GetPropertyValue<string>("modeCode");
 
     ArchetypeModel defaultPopularTopics = rootPage.GetPropertyValue<ArchetypeModel>("popularTopics");
+
+    ArchetypeModel softwareDownloads = currentPage.GetPropertyValue<ArchetypeModel>("software");
+
     ArchetypeModel popularTopics = currentPage.GetPropertyValue<ArchetypeModel>("popularTopics");
     ArchetypeModel carouselSlides = currentPage.GetPropertyValue<ArchetypeModel>("carouselSlides");
 
+    IEnumerable<UsdaArsNews> newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNews(5, modeCode);
+
     string rightArea = currentPage.GetPropertyValue<string>("quickLinks");
+
+    USDA_ARS.Umbraco.Extensions.Helpers.SiteInfo siteInfo = new USDA_ARS.Umbraco.Extensions.Helpers.SiteInfo(modeCode);
+
+    string missionStatement = "";
+    string adminDetails = "";
+
+    if (siteInfo != null)
+    {
+        missionStatement = siteInfo.MissionStatement;
+        adminDetails = siteInfo.AdminDetails;
+    }
 }
 <div id="bodyContent">
 
@@ -34,16 +53,29 @@
                     <ul>
                         @foreach (var topic in defaultPopularTopics)
                         {
-                            string navLinkUrl = "#";
-                            if (topic.HasValue("link"))
-                            {
-                                Link navLink = topic.GetValue<MultiUrls>("link").FirstOrDefault();
+                            bool showTopic = true;
 
-                                navLinkUrl = navLink.Url;
+                            if (topic.GetValue("label") == "Software")
+                            {
+                                if (softwareDownloads == null || softwareDownloads.Count() <= 0)
+                                {
+                                    showTopic = false;
+                                }
                             }
-                            <li>
-                                <a href="@navLinkUrl">@Html.Raw(topic.GetValue("label"))</a>
-                            </li>
+
+                            if (true == showTopic)
+                            {
+                                string navLinkUrl = "#";
+                                if (topic.HasValue("link"))
+                                {
+                                    Link navLink = topic.GetValue<MultiUrls>("link").FirstOrDefault();
+
+                                    navLinkUrl = navLink.Url;
+                                }
+                                <li>
+                                    <a href="@(navLinkUrl + "?mc=" + modeCode)">@Html.Raw(topic.GetValue("label"))</a>
+                                </li>
+                            }
                         }
 
                         @if (popularTopics != null && popularTopics.Any())
@@ -62,7 +94,7 @@
                                                 navLinkUrl = navLink.Url;
                                             }
                                             <li>
-                                                <a href="@navLinkUrl">@Html.Raw(topic.GetValue("label"))</a>
+                                                <a href="@(navLinkUrl + "?mc=" + modeCode)">@Html.Raw(topic.GetValue("label"))</a>
                                             </li>
                                         }
                                     </ul>
@@ -204,41 +236,28 @@
 
                 <div id="tab1">
 
-                    <ul>
-
-                        <li>
-                            <a href="/research/projects/projects.htm?accn_no=420971">
-                                A Systems Biology Approach to Understanding the Salmonella-Host Interactome in Poultry and Swine
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="/research/projects/projects.htm?accn_no=422669">
-                                Adapting Soil and Water Conservation to Meet the Challenges of a Changing Climate
-                            </a>
-                        </li>
-
-                        <li>
-                            <a href="/research/projects/projects.htm?accn_no=424156">
-                                Adaptive Rangeland Management of Livestock Grazing, Disturbance, and Climatic Variation
-                            </a>
-                        </li>
-
-                        <li class="textAlignRight">
-                            <a href="/research/projects_programs.htm?modecode=30-00-00-00">>>>More</a>
-                        </li>
-
-                    </ul>
+                    <strong>[TODO]</strong>
 
                 </div>
 
 
                 <div id="tab2">
-
                     <ul>
 
+                        @if (newsList != null && newsList.Any())
+                        {
+                            foreach (UsdaArsNews item in newsList)
+                            {
+                                <li>
+                                    <a href="/news/news-item/@item.NewsID">
+                                        @item.SubjectField
+                                    </a>
+                                </li>
+                            }
+                        }
+
                         <li class="textAlignRight">
-                            <a href="/news/news.htm?modecode=30-00-00-00">>>>More</a>
+                            <a href="/news/news.htm?modecode=@modeCode">>>>More</a>
                         </li>
 
                     </ul>
@@ -248,28 +267,7 @@
 
                 <div id="tab3">
 
-                    <ul>
-
-                        <li>
-                            <A href="/research/publications/publications.htm?seq_no_115=323543"
-                               title="Publication">Comparative analysis of genome-wide divergence, domestication footprints and genome-wide association study of root traits for Gossypium hirsutum and Gossypium barbadense</A>
-                        </li>
-
-                        <li>
-                            <A href="/research/publications/publications.htm?seq_no_115=321113"
-                               title="Publication">Genome wide association study of liver abscess in beef cattle</A>
-                        </li>
-
-                        <li>
-                            <A href="/research/publications/publications.htm?seq_no_115=306541"
-                               title="Publication">Uterine and placental characteristics during early vascular development in the pig from day 22 to 42 of gestation</A>
-                        </li>
-
-                        <li class="textAlignRight">
-                            <a href="/services/services.htm?modecode=30-00-00-00">>>>More</a>
-                        </li>
-
-                    </ul>
+                    <strong>[TODO]</strong>
 
                 </div>
             </div>
@@ -279,47 +277,25 @@
 
         <div id="middleCenter">
 
-            <h2>TODO: Pull data from [aris_public_web] Datbase</h2>
-            <!-- _locBlurb start -->
-
-
             <font size="2">
-
                 <table border="0" cellpadding="0" cellspacing="0" width="100%" summary="This table displays information about this location">
                     <tbody>
                         <tr>
                             <td>
-
-                                <a href="/pandp/people/people.htm?personid=947" id="anch_81">Chandler, Laurence D</a><br>
-                                Area Director<br>
-
-                                <a href="/contactus/feedback.htm?email=7C4EEC9B8609AFD17653B3529AAE8F528761E0E6A480AC18919059" id="anch_82">
-                                    larry.chandler@ars.usda.gov
-                                </a>
-
-                                <br>
-
-                                970-492-7057<br>
-                                USDA-ARS-PA-NRRC, Office of the Director<br>2150 Centre Avenue, Building D, Suite 300<br>Fort Collins CO 80526
+                                @Html.Raw(adminDetails)
                                 <p>
+                                    <!-- MapQuest info here.  query_string= modecode=@(modeCode) -->
+                                </p>
 
-                                    <!-- MapQuest info here.  query_string= modecode=30-00-00-00-->
-
-                                </p><p>
-
-
+                                <p>
                                     <strong>Mission:</strong><br>
-                                    The mission of the Plains Area is to conduct research in support of ARS goals to develop and transfer solutions to agricultural problems of high national priority with emphasis on the agricultural and nutritional challenges of stakeholders and agricultural producers.
-
-                                </p><p></p>
-
+                                    @missionStatement
+                                </p>
+                                <p></p>
                             </td>
                         </tr>
                     </tbody>
                 </table>
-
-                <!-- _locBlurb end -->
-
             </font>
 
         </div>
@@ -357,7 +333,7 @@
                 </li>
                 <li>
                     <a href="#areaLocationTab">
-                        Plains Area Locations
+                        @currentPage.Name Locations
 
                     </a>
                 </li>

@@ -1,6 +1,8 @@
 ﻿@using Archetype.Models
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
+@using Umbraco.Core.Persistence
+@using USDA_ARS.Umbraco.Extensions.Models
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
     Layout = "_Master.cshtml";
@@ -11,10 +13,15 @@
     ArchetypeModel carouselSlides = currentPage.GetPropertyValue<ArchetypeModel>("carouselSlides");
     ArchetypeModel quickLinks = currentPage.GetPropertyValue<ArchetypeModel>("quickLinks");
 
-    IEnumerable<IPublishedContent> newsList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("newsList");
     var resourceList = currentPage.GetPropertyValue<MultiUrls>("resources");
-    IEnumerable<IPublishedContent> latestBlogList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("latestBlog");
+    
 
+    //IEnumerable<IPublishedContent> newsList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("newsList");
+    IEnumerable<UsdaArsNews> newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNews(6);
+
+    //IEnumerable<IPublishedContent> latestBlogList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("latestBlog");
+    List<BlogItem> latestBlogList = USDA_ARS.Umbraco.Extensions.Helpers.Blogs.GetBlogFeed().Take(10).ToList();
+    
     string middleArea = currentPage.GetPropertyValue<string>("middleArea");
 }
 <div id="bodyContent">
@@ -190,11 +197,11 @@
                         @if (newsList != null && newsList.Any())
                         {
                             <ul>
-                                @foreach (IPublishedContent item in newsList)
+                                @foreach (UsdaArsNews item in newsList)
                                 {
                                     <li>
-                                        <a href="@item.Url">
-                                            @item.Name
+                                        <a href="/news/news-item/@item.NewsID">
+                                            @item.SubjectField
                                         </a>
                                     </li>
                                 }
@@ -229,22 +236,11 @@
                         @if (latestBlogList != null && latestBlogList.Any())
                         {
                             <ul>
-                                @foreach (IPublishedContent item in latestBlogList)
+                                @foreach (BlogItem item in latestBlogList)
                                 {
-                                    string linkUrl = "#";
-                                    if (item.HasValue("externalRedirect"))
-                                    {
-                                        Link navLink = item.GetPropertyValue<MultiUrls>("externalRedirect").FirstOrDefault();
-
-                                        linkUrl = navLink.Url;
-                                    }
-                                    else
-                                    {
-                                        linkUrl = item.Url;
-                                    }
                                     <li>
-                                        <a href="@linkUrl">
-                                            @item.Name
+                                        <a href="@item.Url">
+                                            @item.Title
                                         </a>
                                     </li>
                                 }
