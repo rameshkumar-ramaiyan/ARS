@@ -20,7 +20,7 @@ namespace USDA_ARS.Core
     public class DataValues
     {
 
-
+       
         #region modificationHistory
         private static string modificationHistory = "< !---" + System.Environment.NewLine
                                         + " Author:" + System.Environment.NewLine
@@ -78,6 +78,13 @@ namespace USDA_ARS.Core
             +
 
                                                          " <style>" + System.Environment.NewLine +
+                                            ".table - main { width: 100%; } "+ System.Environment.NewLine+
+                                            ".table-main-row { width: 100%; clear: both; } "+ System.Environment.NewLine+
+                                            ".table-main-header { background-color: #ddd; padding: 3px; }" + System.Environment.NewLine+
+                                            ".table-main-cell-left { width: 55%; float: left; padding: 3px; }" + System.Environment.NewLine+
+                                            ".table-main-cell-right { width: 40%; float: left; padding: 3px; }" + System.Environment.NewLine+
+                                            ".table-main-cell-full { width: 100%; float: left; padding: 3px; }" + System.Environment.NewLine+
+                                             
                                             ".table" + System.Environment.NewLine +
                                             "{" + System.Environment.NewLine +
                                               " display: table;" + System.Environment.NewLine +
@@ -93,9 +100,9 @@ namespace USDA_ARS.Core
                                                "display: table-cell;" + System.Environment.NewLine +
                                             "}" + System.Environment.NewLine +
                                             "</style>" + System.Environment.NewLine
-                                            + " <!-- #BeginEditable \"MainContent\" -->"
+                                            + " < !-- #BeginEditable \"MainContent\" -->"
                                             + System.Environment.NewLine
-                                            + "  <!---Table which holds the quick links to the program titles--->"
+                                            + "  < !---Table which holds the quick links to the program titles--->"
                                             + System.Environment.NewLine;
 
                                            
@@ -108,7 +115,7 @@ namespace USDA_ARS.Core
         #endregion
         #region Table rows 1 to 4
         private static string tablerow1 =
-                                                "<div class=\"tablerow\">" + System.Environment.NewLine
+                                                "<div class=\"table-main-row\">" + System.Environment.NewLine
                                         + "<div class=\"tablecell\" valign=\"top\" align=\"CENTER\" colspan=\"4\">" + System.Environment.NewLine
                                         + "   <a href = \"/research/docs.htm?docid=1607\" >" + System.Environment.NewLine
                                         + "      <font color=\"#000000\" face=\"Arial, Helvetica, sans-serif\" size=\"3\">" + System.Environment.NewLine
@@ -124,7 +131,7 @@ namespace USDA_ARS.Core
 
         }
         private static string tablerow2 =
-                                             "<div class=\"tablerow\">" + System.Environment.NewLine
+                                             "<div class=\"table-main-row\">" + System.Environment.NewLine
                                         + "<div class=\"tablecell\" valign=\"top\" align=\"CENTER\" colspan=\"4\">" + System.Environment.NewLine
                                         + "    <div align = \"left\" >" + System.Environment.NewLine
                                         + "       <font size=\"2\" color=\"#000000\" face=\"Arial\">" + System.Environment.NewLine
@@ -147,7 +154,7 @@ namespace USDA_ARS.Core
             set { tablerow2 = value; }
 
         }
-        private static string tablerow3 = "<div class=\"tablerow\">" + System.Environment.NewLine
+        private static string tablerow3 = "<div class=\"table-main-row\">" + System.Environment.NewLine
                                         + "<div class=\"tablecell\" colspan=\"4\">&nbsp;<br></div>" + System.Environment.NewLine
                                         + "</div>" + System.Environment.NewLine;
 
@@ -157,7 +164,7 @@ namespace USDA_ARS.Core
             set { tablerow3 = value; }
 
         }
-        private static string tablerow4 = "<div class=\"tablerow\" bordercolor=\"#FFFFFF\">" + System.Environment.NewLine
+        private static string tablerow4 = "<div class=\"table-main-row\" bordercolor=\"#FFFFFF\">" + System.Environment.NewLine
                                         + "   <div class=\"tablecell\"   width = \"15%\" >" + System.Environment.NewLine
                                          + "       <p>" + System.Environment.NewLine
                                       + "              <b>" + System.Environment.NewLine
@@ -205,18 +212,18 @@ namespace USDA_ARS.Core
         }
         #endregion
         #region Table row 5
-        private static string tablerow5 = "<div class=\"tablerow\"  bordercolor=\"#FFFFFF\">" + System.Environment.NewLine
+        private static string tablerow5 = "<div class=\"table-main-row\"  bordercolor=\"#FFFFFF\">" + System.Environment.NewLine
                                         + "   <div class=\"tablecell\"  width = \"25%\" >" + System.Environment.NewLine
-                                        + ConvertDataTableToHTML(SetTableRow5Td(1), 1)
+                                        + ConvertDataTableToHTML(SetTableRow5Td(1),1)
                                         + "   </div>" + System.Environment.NewLine
                                         + "  <div class=\"tablecell\"  width = \"25%\" >" + System.Environment.NewLine
-                                        + ConvertDataTableToHTML(SetTableRow5Td(2), 2)
+                                        + ConvertDataTableToHTML(SetTableRow5Td(2),2)
                                         + "  </div>" + System.Environment.NewLine
                                         + "   <div class=\"tablecell\"  width = \"25%\" >" + System.Environment.NewLine
-                                        + ConvertDataTableToHTML(SetTableRow5Td(3), 3)
+                                        + ConvertDataTableToHTML(SetTableRow5Td(3),3)
                                         + "   </div>" + System.Environment.NewLine
                                         + "  <div class=\"tablecell\"  width = \"25%\" >" + System.Environment.NewLine
-                                        + ConvertDataTableToHTML(SetTableRow5Td(4), 4)
+                                        + ConvertDataTableToHTML(SetTableRow5Td(4),4)
                                         + "  </div>" + System.Environment.NewLine
                                         + " </div>" + System.Environment.NewLine
                                         + " </div>" + System.Environment.NewLine;
@@ -231,8 +238,8 @@ namespace USDA_ARS.Core
 
 
 
-        private static string tablerow5BeginSection = "<div class=\"tablerow\"  bordercolor=\"#FFFFFF\">" + System.Environment.NewLine
-                                                      //+
+        private static string tablerow5BeginSection = "<div class=\"table-main-row\"  bordercolor=\"#FFFFFF\">" + System.Environment.NewLine 
+            //+
                                                       //"< !---Begin local links to review information --->" + System.Environment.NewLine
                                                       ;
 
@@ -243,7 +250,7 @@ namespace USDA_ARS.Core
             set { tablerow5BeginSection = value; }
 
         }
-        private static string tablerow5EndSection = "</body>" + System.Environment.NewLine
+        private static string tablerow5EndSection = "</div></div></body>" + System.Environment.NewLine
            + "</html>" + System.Environment.NewLine;
         public static string Tablerow5EndSection
         {
@@ -302,10 +309,6 @@ namespace USDA_ARS.Core
             OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
             adapter.Fill(getID);
 
-            adapter.Dispose();
-            cmd.Dispose();
-            conn.Close();
-            conn.Dispose();
 
             return getID;
         }
@@ -315,7 +318,7 @@ namespace USDA_ARS.Core
         //    StringBuilder htmlTableRow5Tds = new StringBuilder();
 
         //    //Building the Header row.
-        //    htmlTableRow5Tds.Append("<div class=\"tablerow\"  bordercolor=\"#FFFFFF\">");
+        //    htmlTableRow5Tds.Append("<div class=\"table-main-row\"  bordercolor=\"#FFFFFF\">");
 
         //    if (tdNumber == 1)
         //    {
@@ -324,19 +327,19 @@ namespace USDA_ARS.Core
         //        //Building the Data rows.
         //        foreach (DataRow row in tablerow5Table.Rows)
         //        {
-        //            htmlTableRow5Tds.Append("<div class=\"tablerow\" >");
+        //            htmlTableRow5Tds.Append("<div class=\"table-main-row\" >");
         //            foreach (DataColumn column in tablerow5Table.Columns)
         //            {
 
         //                htmlTableRow5Tds.Append("<div class=\"tablecell\"  width=\"25 % \" valign=\"top\">");
-
+                       
         //                htmlTableRow5Tds.Append(System.Environment.NewLine);
-
+                       
         //                 //htmlTableRow5Tds.Append("<a href=\"#C4\">");
         //                htmlTableRow5Tds.Append("<a href =\"#C4\">"+row[column.ColumnName]+"</a>");
         //               // htmlTableRow5Tds.Append("</a>");
         //                htmlTableRow5Tds.Append(System.Environment.NewLine);
-
+                        
         //                htmlTableRow5Tds.Append("</div>");
         //                htmlTableRow5Tds.Append(System.Environment.NewLine);
         //            }
@@ -352,7 +355,7 @@ namespace USDA_ARS.Core
         //        //Building the Data rows.
         //        foreach (DataRow row in tablerow5Table.Rows)
         //        {
-        //            htmlTableRow5Tds.Append("<div class=\"tablerow\" >");
+        //            htmlTableRow5Tds.Append("<div class=\"table-main-row\" >");
         //            foreach (DataColumn column in tablerow5Table.Columns)
         //            {
 
@@ -373,7 +376,7 @@ namespace USDA_ARS.Core
         //        //Building the Data rows.
         //        foreach (DataRow row in tablerow5Table.Rows)
         //        {
-        //            htmlTableRow5Tds.Append("<div class=\"tablerow\" >");
+        //            htmlTableRow5Tds.Append("<div class=\"table-main-row\" >");
         //            foreach (DataColumn column in tablerow5Table.Columns)
         //            {
 
@@ -392,7 +395,7 @@ namespace USDA_ARS.Core
         //        //Building the Data rows.
         //        foreach (DataRow row in tablerow5Table.Rows)
         //        {
-        //            htmlTableRow5Tds.Append("<div class=\"tablerow\" >");
+        //            htmlTableRow5Tds.Append("<div class=\"table-main-row\" >");
         //            foreach (DataColumn column in tablerow5Table.Columns)
         //            {
 
@@ -415,7 +418,7 @@ namespace USDA_ARS.Core
         {
             //1.Set Access connection(using  connection string from App.config).
             //string strAccessConn = ConfigurationManager.AppSettings["AccessConnection"];
-            string strAccessConn = PullDataFromAccess.AccessConnectionString;
+            string strAccessConn =PullDataFromAccess.AccessConnectionString;
             //private static string tablerow5 = 
             //2.select values from keydates table.
             DataTable getID = new DataTable();
@@ -460,14 +463,10 @@ namespace USDA_ARS.Core
             OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
             adapter.Fill(getID);
 
-            adapter.Dispose();
-            cmd.Dispose();
-            conn.Close();
-            conn.Dispose();
 
             return getID;
         }
-        public static string CreateHtmlStringMainPortion(DataTable tablerow5Table, int tdNumber)
+        public static string CreateHtmlStringMainPortion1(DataTable tablerow5Table, int tdNumber)
         {
             StringBuilder htmlTableMainPortion = new StringBuilder();
 
@@ -482,7 +481,7 @@ namespace USDA_ARS.Core
                 //Building the Data rows.
                 foreach (DataRow row in tablerow5Table.Rows)
                 {
-                    htmlTableMainPortion.Append(" <div class=\"tablerow\" >");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-row\" >");
                     // 1.first create a table with to tds
                     //use for loop for entering values
                     DataColumn column = new DataColumn();
@@ -490,16 +489,16 @@ namespace USDA_ARS.Core
                     //foreach (DataColumn column in tablerow5Table.Columns)
                     //  {
                     //Building the Data rows.
-                    htmlTableMainPortion.Append(" <div class=\"tablerow\"> ");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-row\"> ");
                     htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
                    // htmlTableMainPortion.Append(" <div class=\"table\" cellpadding=\"2\" width=\"100%\" border=\"0\" >");
-                    htmlTableMainPortion.Append(" <div class=\"tablerow\" >  ");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-row\" >  ");
 
                     htmlTableMainPortion.Append(" <div class=\"tablecell\" colspan=\"2\"  style=\"display:inline; background-color:#BFBFBF; width:100%;\"  > ");
                     //htmlTableMainPortion.Append(" <div class=\"tablecell\" colspan=\"2\"  > ");
                     htmlTableMainPortion.Append(" <b>");
                     htmlTableMainPortion.Append("Review Title  ");
-
+                  
                     htmlTableMainPortion.Append("<a href=\"#\" id =\"" + row[tablerow5Table.Columns[1].ColumnName].ToString().Replace(" ", string.Empty) + "\"" + ">");
                     //NP 103 Animal Health Panel Review
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[1].ColumnName]);
@@ -508,9 +507,9 @@ namespace USDA_ARS.Core
                     htmlTableMainPortion.Append(" </b>");
 
                     // htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
-                    //htmlTableMainPortion.Append(" <div class=\"tablerow\"> ");
-                    ////htmlTableMainPortion.Append(" <div class=\"tablerow\"> ");
-                     htmlTableMainPortion.Append(" <br>");
+                    //htmlTableMainPortion.Append(" <div class=\"table-main-row\"> ");
+                    ////htmlTableMainPortion.Append(" <div class=\"table-main-row\"> ");
+                     
 
                     htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
                    
@@ -605,7 +604,164 @@ namespace USDA_ARS.Core
             return htmlTableMainPortion.ToString();
 
         }
+        public static string CreateHtmlStringMainPortion(DataTable tablerow5Table, int tdNumber)
+        {
+            StringBuilder htmlTableMainPortion = new StringBuilder();
 
+
+
+            if (tdNumber == 1)
+            {
+
+                htmlTableMainPortion.Append(" <div class=\"table-main\" >");
+                htmlTableMainPortion.Append(" <div class=\"table-main-body\" >");
+                 
+
+                //Building the Data rows.
+                foreach (DataRow row in tablerow5Table.Rows)
+                {
+                    htmlTableMainPortion.Append(" <div class=\"table-main-row\" >");
+                    // 1.first create a table with to tds
+                    //use for loop for entering values
+                    DataColumn column = new DataColumn();
+                    // for (int i=0;i<= tablerow5Table.Columns.Count;i++)
+                    //foreach (DataColumn column in tablerow5Table.Columns)
+                    //  {
+                    //Building the Data rows.
+                    htmlTableMainPortion.Append(" <div class=\"table-main-row\"> ");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-full\"> ");
+                    // htmlTableMainPortion.Append(" <div class=\"table\" cellpadding=\"2\" width=\"100%\" border=\"0\" >");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-row\" >  ");
+
+                    htmlTableMainPortion.Append(" <div class=\"table-main-header\" colspan=\"2\"  style=\"display:inline; background-color:#BFBFBF; width:100%;\"  > ");
+                    //htmlTableMainPortion.Append(" <div class=\"tablecell\" colspan=\"2\"  > ");
+                    htmlTableMainPortion.Append(" <b>");
+                    htmlTableMainPortion.Append("Review Title  ");
+
+                    htmlTableMainPortion.Append("<a href=\"#\" id =\"" + row[tablerow5Table.Columns[1].ColumnName].ToString().Replace(" ", string.Empty) + "\"" + ">");
+                    //NP 103 Animal Health Panel Review
+                    htmlTableMainPortion.Append(row[tablerow5Table.Columns[1].ColumnName]);
+
+                    htmlTableMainPortion.Append("</a>");
+                    htmlTableMainPortion.Append(" </b>");
+
+                    // htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-row\"> ");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-left\"> ");
+
+                    htmlTableMainPortion.Append(" <b>Termination Date: &nbsp;</b>");
+                    htmlTableMainPortion.Append(row[tablerow5Table.Columns[2].ColumnName]);
+
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-right\"> ");
+
+                    //// htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    htmlTableMainPortion.Append("<b>Program Analyst:&nbsp;&nbsp;</b>");
+                    htmlTableMainPortion.Append(row[tablerow5Table.Columns[3].ColumnName]);
+                    htmlTableMainPortion.Append("</div>");
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-row\"> ");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-left\"> ");
+                    htmlTableMainPortion.Append("<b>Number of Projects in the Review:&nbsp;&nbsp;</b>");
+                    htmlTableMainPortion.Append(row[tablerow5Table.Columns[4].ColumnName]);
+                    htmlTableMainPortion.Append("</div>");
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-right\"> ");
+                    htmlTableMainPortion.Append("<b>Planned Duration:&nbsp;&nbsp;</b>");
+                    htmlTableMainPortion.Append(row[tablerow5Table.Columns[5].ColumnName]);
+
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                   ; htmlTableMainPortion.Append("</div>"); htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-row\"> ");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-full\"> ");
+                    htmlTableMainPortion.Append("<b>Status of Reviews:&nbsp;&nbsp;</b>");
+                    htmlTableMainPortion.Append(row[tablerow5Table.Columns[6].ColumnName]);
+
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-row\"> ");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-left\"> ");
+                    htmlTableMainPortion.Append("<b>Concurrence Memo Due to Area Director: </b>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-right\"> ");
+                    htmlTableMainPortion.Append(row[tablerow5Table.Columns[7].ColumnName]);
+                    htmlTableMainPortion.Append("</div>"); htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-row\"> ");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-left\"> ");
+                    htmlTableMainPortion.Append("<b>PDRAMs Due to Area & OSQR with Schedule:</b>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-right\"> ");
+                    htmlTableMainPortion.Append(row[tablerow5Table.Columns[8].ColumnName]);
+                    htmlTableMainPortion.Append("</div>");
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-row\"> ");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-left\"> ");
+                    htmlTableMainPortion.Append("<b>Conflicts of Interest Lists Due To OSQR:</b>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-right\"> ");
+                    htmlTableMainPortion.Append(row[tablerow5Table.Columns[9].ColumnName]);
+                    htmlTableMainPortion.Append("</div>");
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-row\"> ");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-left\"> ");
+                    htmlTableMainPortion.Append("<b>Project Plans Due to OSQR:&nbsp;</b>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-right\"> ");
+                    htmlTableMainPortion.Append(row[tablerow5Table.Columns[10].ColumnName]);
+                    htmlTableMainPortion.Append("</div>");
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-row\"> ");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-left\"> ");
+                    htmlTableMainPortion.Append("<b>Review Period:&nbsp;</b>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-right\"> ");
+                    htmlTableMainPortion.Append(row[tablerow5Table.Columns[11].ColumnName]);
+                    htmlTableMainPortion.Append("</div>");
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-row\"> ");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-left\"> ");
+                    htmlTableMainPortion.Append("<b> Project's Targeted Implementation Date:&nbsp;</b>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-right\"> ");
+
+                    htmlTableMainPortion.Append(row[tablerow5Table.Columns[12].ColumnName]);
+                    htmlTableMainPortion.Append("</div>");
+                    ////htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-row\"> ");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-left\"> ");
+                    //htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
+                    htmlTableMainPortion.Append("<b> Ad Hoc Cut - Off Date:&nbsp;&nbsp;</b>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("<br>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append("</div>");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-row\"> ");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-cell-left\"> ");
+                    htmlTableMainPortion.Append("</div>");
+                    //htmlTableMainPortion.Append(row[tablerow5Table.Columns[13].ColumnName]);
+
+
+                    //  }
+
+              
+                    htmlTableMainPortion.Append("<br>");
+                    htmlTableMainPortion.Append("<br>");
+                   
+                }
+            }
+
+            return htmlTableMainPortion.ToString();
+
+        }
         public static void StoreHtmlStringInSQLDB(string htmlString)
         {
             //1.Set Access connection (using  connection string from App.config).
@@ -626,31 +782,31 @@ namespace USDA_ARS.Core
 
         }
         #endregion
-        public static string ConvertDataTableToHTML(DataTable dt, int columnNumber)
+        public static string ConvertDataTableToHTML(DataTable dt,int columnNumber)
         {
             string columnHeader = "";
             string html = "<div class=\"table\">";
             //add header row
-            html += "<div class=\"tablerow\">";
-            for (int i = 0; i < dt.Columns.Count; i++)
+            html += "<div class=\"table-main-row\">";
+            for (int i = 0; i < dt.Columns.Count; i++)     
 
                 if (columnNumber == 1)
                 {
-                    columnHeader = "Animal Production & Protection";
-
+                     columnHeader = "Animal Production & Protection";
+                     
                 }
-            if (columnNumber == 2)
-            {
-                columnHeader = "Nutrition, Food Safety/ Quality";
-            }
-            if (columnNumber == 3)
-            {
-                columnHeader = "Natural Resources and Sustainable Agricultural Systems";
-            }
-            if (columnNumber == 4)
-            {
-                columnHeader = "Crop Production & Protection";
-            }
+                if (columnNumber == 2)
+                {
+                    columnHeader = "Nutrition, Food Safety/ Quality";
+                }
+                if (columnNumber == 3)
+                {
+                    columnHeader = "Natural Resources and Sustainable Agricultural Systems";
+                }
+                if (columnNumber == 4)
+                {
+                    columnHeader = "Crop Production & Protection";
+                }
             html += "<div class=\"tablecell\">"
 
                                          + "       <p>" + System.Environment.NewLine
@@ -667,11 +823,11 @@ namespace USDA_ARS.Core
             //add rows
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                html += " <div class=\"tablerow\">";
+                html += " <div class=\"table-main-row\">";
                 for (int j = 0; j < dt.Columns.Count; j++)
-                    html += " <div class=\"tablecell\">" + "<a href=\"#" + dt.Rows[i][j].ToString().Replace(" ", string.Empty) + "\">" + dt.Rows[i][j].ToString() + "</a>" + "</div>";
+                    html += " <div class=\"tablecell\">"+ "<a href=\"#"+dt.Rows[i][j].ToString().Replace(" ",string.Empty)+"\">" + dt.Rows[i][j].ToString() +"</a>"+"</div>";
                 html += "</div>";
-
+                
             }
             html += "</div>";
             return html;
