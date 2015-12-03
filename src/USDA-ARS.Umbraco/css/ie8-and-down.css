@@ -1,0 +1,41 @@
+/********		CSS SPECIFIC to IE8 and BELOW 			*******************/
+
+/*
+#nav {margin-top:-5px;}
+#topContent { margin-bottom:20px;}
+#midContent { height:320px; margin-top:0 !important; border-top:none !important; border-bottom:none; padding-bottom:-15px !important;}
+	#centerContent {padding-top:10px;}
+#bottomContent {height:400px; padding-bottom:20px; border:1px solid #999; border-top:none !important; margin-top:0px;}
+#footerContent { border:1px solid #999; height:54px; text-align:center; border-bottom:none;}
+#AgencyNewsWrapper { width:304px; height:315px; position:relative; background:transparent; z-index:1; border-left:1px #999 solid;}
+*/
+
+.IErounded 
+{
+	/*
+	clear:both; 
+	display: block; 
+	height:15px; 
+	width:940px; 
+	z-index:1000;
+	*/
+	margin:-1px 30px;
+}
+
+/*
+.IErounded-sidetop {z-index:1000;}
+.IErounded-sidebot {display:block; height:10px; width:250px;}
+*/
+
+/********			TOP NAVIGATION MENU 		*********************/
+/*
+.level1 div.menu2{
+	display:none; 
+	padding:15px !important; 
+	width:220px !important; 
+	position:absolute; top:36px; left:0; 
+	border:2px solid #CCC; 
+	background-color:#FFF; 
+	line-height:2; z-index:200;}
+.level1:hover div.menu2{display:block !important;}
+*/

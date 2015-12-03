@@ -1,0 +1,22 @@
+﻿{   
+    //you can define multiple editors   
+    propertyEditors: [      
+        {
+            /*this must be a unique alias*/ 
+            alias: "UsdaDataImporter",
+            /*the name*/
+            name: "Data Importer",
+			
+            /*the html file we will load for the editor*/
+            editor: {
+                view: "~/App_Plugins/UsdaDataImporter/views/usda.data.importer.html"
+            }
+        }
+    ]
+    ,
+    //array of files we want to inject into the application on app_start
+    javascript: [
+        '~/App_Plugins/UsdaDataImporter/js/usda.data.importer.resource.js',
+		'~/App_Plugins/UsdaDataImporter/js/usda.data.importer.js'
+    ]
+}
