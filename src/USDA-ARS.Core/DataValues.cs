@@ -81,9 +81,9 @@ namespace USDA_ARS.Core
                                             ".table - main { width: 100%; } "+ System.Environment.NewLine+
                                             ".table-main-row { width: 100%; clear: both; } "+ System.Environment.NewLine+
                                             ".table-main-header { background-color: #ddd; padding: 3px; }" + System.Environment.NewLine+
-                                            ".table-main-cell-left { width: 55%; float: left; padding: 3px; }" + System.Environment.NewLine+
-                                            ".table-main-cell-right { width: 40%; float: left; padding: 3px; }" + System.Environment.NewLine+
-                                            ".table-main-cell-full { width: 100%; float: left; padding: 3px; }" + System.Environment.NewLine+
+                                            ".table-main-cell-left { width: 55%; float: left; padding-top: 3px;padding-bottom: 3px; }" + System.Environment.NewLine+
+                                            ".table-main-cell-right { width: 40%; float: left;  padding-top: 3px;padding-bottom: 3px; }" + System.Environment.NewLine+
+                                            ".table-main-cell-full { width: 100%; float: left;  padding-bottom: 3px; }" + System.Environment.NewLine+
                                              
                                             ".table" + System.Environment.NewLine +
                                             "{" + System.Environment.NewLine +
