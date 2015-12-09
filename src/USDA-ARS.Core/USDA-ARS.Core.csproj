@@ -65,6 +65,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="SQLDB\CreateMegaStatusHTMLTable.sql" />
+    <Content Include="SQLDB\usp_InsertNewMessagesToNews.sql" />
     <Content Include="SQLDB\usp_InsertMegaStatusHTMLString.sql" />
   </ItemGroup>
   <ItemGroup />
