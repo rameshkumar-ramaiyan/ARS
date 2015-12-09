@@ -5,9 +5,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Core;
 using Umbraco.Core.Persistence;
-using USDA_ARS.Umbraco.Extensions.Models;
+using USDA_ARS.Umbraco.Extensions.Models.Aris;
 
-namespace USDA_ARS.Umbraco.Extensions.Helpers
+namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 {
     public class SiteInfo
     {
@@ -52,10 +52,10 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
                     if (peopleInfo != null)
                     {
-                        this.AdminDetails = "<a href=\"/pandp/people/people.htm?personid=" + peopleInfo.PersonId + "\">";
+                        this.AdminDetails = "<a href=\"/people-locations/person/?person-id=" + peopleInfo.PersonId + "\">";
                         this.AdminDetails += peopleInfo.LastName + ", " + peopleInfo.FirstName + " " + peopleInfo.MiddleName + "</a><br />\r\n";
                         this.AdminDetails += peopleInfo.TitleWorking + "<br />\r\n";
-                        this.AdminDetails += "<a href=\"/contactus/feedback.htm?personid=" + peopleInfo.PersonId + "\">";
+                        this.AdminDetails += "<a href=\"/contactus/feedback.htm?person-id=" + peopleInfo.PersonId + "\">";
                         this.AdminDetails += peopleInfo.Email + "</a><br />\r\n";
                         this.AdminDetails += "(" + peopleInfo.PhoneAreaCode + ") " + peopleInfo.Phone.Substring(0, 3) + "-" + peopleInfo.Phone.Substring(3,4) + "<br />\r\n";
                         this.AdminDetails += refModeCode.RsAddress1 + "<br />\r\n";

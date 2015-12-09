@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Umbraco.Core.Persistence;
+﻿using Umbraco.Core.Persistence;
 using Umbraco.Core.Persistence.DatabaseAnnotations;
 
-namespace USDA_ARS.Umbraco.Extensions.Models
+namespace USDA_ARS.Umbraco.Extensions.Models.Aris
 {
     [TableName("w_people_info")]
     public class PeopleInfo
@@ -17,6 +12,15 @@ namespace USDA_ARS.Umbraco.Extensions.Models
 
         [Column("PERSONID")]
         public string PersonId { get; set; }
+
+        [Column("modecode_1")]
+        public int ModeCode1 { get; set; }
+        [Column("modecode_2")]
+        public int ModeCode2 { get; set; }
+        [Column("modecode_3")]
+        public int ModeCode3 { get; set; }
+        [Column("modecodeE_4")]
+        public int ModeCode4 { get; set; }
 
         [Column("perfname")]
         [NullSetting(NullSetting = NullSettings.Null)]
@@ -81,6 +85,7 @@ namespace USDA_ARS.Umbraco.Extensions.Models
         [Column("deskzip4")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public string PostalCode { get; set; }
-        
+
     }
+
 }

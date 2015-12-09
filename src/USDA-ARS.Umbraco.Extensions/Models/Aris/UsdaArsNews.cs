@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Umbraco.Core.Persistence;
 using Umbraco.Core.Persistence.DatabaseAnnotations;
 
-namespace USDA_ARS.Umbraco.Extensions.Models
+namespace USDA_ARS.Umbraco.Extensions.Models.Aris
 {
     [TableName("usdaArsNews")]
     public class UsdaArsNews

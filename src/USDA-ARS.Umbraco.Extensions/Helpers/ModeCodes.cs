@@ -24,9 +24,9 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             {
                 string modeCodeOut = modeCode.Substring(0, 2);
 
-                modeCodeOut += modeCode.Substring(2, 2);
-                modeCodeOut += modeCode.Substring(4, 2);
-                modeCodeOut += modeCode.Substring(6, 2);
+                modeCodeOut += "-" + modeCode.Substring(2, 2);
+                modeCodeOut += "-" + modeCode.Substring(4, 2);
+                modeCodeOut += "-" + modeCode.Substring(6, 2);
 
                 return modeCodeOut;
             }
@@ -39,6 +39,11 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
         public static List<string> ModeCodeArray(string modeCode)
         {
+            if (true == string.IsNullOrWhiteSpace(modeCode))
+            {
+                throw new Exception("Mode Code is empty or invalid.");
+            }
+
             modeCode = ModeCodeAddDashes(modeCode);
 
             return modeCode.Split('-').ToList();

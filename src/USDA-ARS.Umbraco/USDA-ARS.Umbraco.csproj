@@ -2914,6 +2914,10 @@
     <Content Include="Views\Partials\Modules\MainOfficeList.cshtml" />
     <Content Include="Views\Partials\Modules\ResearchLocationsList.cshtml" />
     <Content Include="Views\Partials\Modules\RegionLocationsList.cshtml" />
+    <Content Include="Views\RSS.cshtml" />
+    <Content Include="Views\Partials\Modules\RelatedTopicsList.cshtml" />
+    <Content Include="Views\ResearchUnit.cshtml" />
+    <Content Include="Views\Person.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
