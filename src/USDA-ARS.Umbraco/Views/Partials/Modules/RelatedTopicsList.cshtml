@@ -1,0 +1,71 @@
+﻿@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Models
+@model IPublishedContent
+@{
+    bool bypassParentTopics = Model.GetPropertyValue<bool>("bypassParentTopics");
+
+    ArchetypeModel parentRelatedTopics = null;
+
+    ArchetypeModel currentRelatedTopics = Model.GetPropertyValue<ArchetypeModel>("topicsList");
+
+    if (false == bypassParentTopics)
+    {
+        IPublishedContent parentNode = Model.Parent;
+
+        if (parentNode != null)
+        {
+            parentRelatedTopics = parentNode.GetPropertyValue<ArchetypeModel>("topicsList");
+        }
+    }
+
+
+}
+
+@if (parentRelatedTopics != null && parentRelatedTopics.Any())
+{
+    foreach (var item in parentRelatedTopics)
+    {
+        @Html.Raw(OutputTopic(item))
+    }
+}
+
+@if (currentRelatedTopics != null && currentRelatedTopics.Any())
+{
+    foreach (var item in currentRelatedTopics)
+    {
+        @Html.Raw(OutputTopic(item))
+    }
+}
+
+@functions
+{
+    string OutputTopic(ArchetypeFieldsetModel item)
+    {
+        string html = null;
+
+        if (item.Alias == "topicsItem")
+        {
+            string urlLink = "#";
+
+            if (item.HasValue("location"))
+            {
+                Link navLink = item.GetValue<MultiUrls>("location").FirstOrDefault();
+
+                urlLink = navLink.Url;
+            }
+
+            html = "<li><a href=\""+ urlLink + "\">"+ item.GetValue<string>("title") + "</a></li>";
+        }
+        else if (item.Alias == "topicsHeader")
+        {
+            html = "<h2 class=\"related_topics\">" + item.GetValue<string>("sectionTitle") + "</h2>";
+        }
+
+        html += "\r\n";
+
+        return html;
+    }
+
+}

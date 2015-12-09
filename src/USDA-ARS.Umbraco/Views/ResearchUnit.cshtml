@@ -9,6 +9,7 @@
     Layout = "_Master.cshtml";
 
     IPublishedContent currentPage = Model.Content;
+    IPublishedContent regionPage = currentPage.AncestorOrSelf(2);
     IPublishedContent rootPage = currentPage.AncestorOrSelf(1);
     string modeCode = currentPage.GetPropertyValue<string>("modeCode");
 
@@ -45,7 +46,7 @@
                 rightArea += person.LastName + ", " + person.FirstName;
                 if (false == string.IsNullOrEmpty(person.CommonName))
                 {
-                    rightArea += " - <em>"+ person.CommonName +"</em>";
+                    rightArea += " - <em>" + person.CommonName + "</em>";
                 }
                 rightArea += "</a></li>\r\n";
             }
@@ -390,7 +391,7 @@
                 </li>
                 <li>
                     <a href="#areaLocationTab">
-                        @currentPage.Name Locations
+                        @regionPage.Name Locations
 
                     </a>
                 </li>
@@ -415,7 +416,7 @@
             </div>
 
             <div id="areaLocationTab">
-                @Html.Partial("~/Views/Partials/Modules/RegionLocationsList.cshtml", currentPage)
+                @Html.Partial("~/Views/Partials/Modules/RegionLocationsList.cshtml", regionPage)
             </div>
         </div>
 

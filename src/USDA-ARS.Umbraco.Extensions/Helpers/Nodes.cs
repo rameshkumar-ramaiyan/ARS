@@ -116,6 +116,21 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
         }
 
 
+        public static IPublishedContent GetNodeByModeCode(string modeCode)
+        {
+            IPublishedContent node = null;
+            modeCode = Helpers.ModeCodes.ModeCodeAddDashes(modeCode);
+
+            foreach (IPublishedContent root in UmbHelper.TypedContentAtRoot())
+            {
+                if (node == null)
+                {
+                    node = root.Descendants().FirstOrDefault(n => n.GetPropertyValue<string>("modeCode") == modeCode);
+                }
+            }
+
+            return node;
+        }
 
     }
 }
