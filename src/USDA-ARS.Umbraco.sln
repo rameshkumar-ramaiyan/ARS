@@ -22,6 +22,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.Convertor-NewsLink
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.LocationsApp", "USDA-ARS.LocationsApp\USDA-ARS.LocationsApp.csproj", "{131E7263-BC61-430C-AFE7-EEF4DE8E38E4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.LocationsWebApp", "USDA-ARS.LocationsWebApp\USDA-ARS.LocationsWebApp.csproj", "{E8278061-B9F4-4158-9EE7-5BC4B8F22482}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,10 @@ Global
 		{131E7263-BC61-430C-AFE7-EEF4DE8E38E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{131E7263-BC61-430C-AFE7-EEF4DE8E38E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{131E7263-BC61-430C-AFE7-EEF4DE8E38E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8278061-B9F4-4158-9EE7-5BC4B8F22482}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8278061-B9F4-4158-9EE7-5BC4B8F22482}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8278061-B9F4-4158-9EE7-5BC4B8F22482}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8278061-B9F4-4158-9EE7-5BC4B8F22482}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
