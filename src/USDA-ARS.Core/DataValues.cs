@@ -494,16 +494,16 @@ namespace USDA_ARS.Core
                    // htmlTableMainPortion.Append(" <div class=\"table\" cellpadding=\"2\" width=\"100%\" border=\"0\" >");
                     htmlTableMainPortion.Append(" <div class=\"table-main-row\" >  ");
 
-                    htmlTableMainPortion.Append(" <div class=\"tablecell\" colspan=\"2\"  style=\"display:inline; background-color:#BFBFBF; width:100%;\"  > ");
-                    //htmlTableMainPortion.Append(" <div class=\"tablecell\" colspan=\"2\"  > ");
+                    //htmlTableMainPortion.Append(" <div class=\"tablecell\" colspan=\"2\"  style=\"display:inline; background-color:#BFBFBF; width:100%;\"  > ");
+                    htmlTableMainPortion.Append(" <div class=\"tablecell\" colspan=\"2\"  > ");
                     htmlTableMainPortion.Append(" <b>");
                     htmlTableMainPortion.Append("Review Title  ");
                   
-                    htmlTableMainPortion.Append("<a href=\"#\" id =\"" + row[tablerow5Table.Columns[1].ColumnName].ToString().Replace(" ", string.Empty) + "\"" + ">");
+                    htmlTableMainPortion.Append("<a id =\"" + row[tablerow5Table.Columns[1].ColumnName].ToString().Replace(" ", string.Empty) + "\"" + "></a>");
                     //NP 103 Animal Health Panel Review
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[1].ColumnName]);
 
-                    htmlTableMainPortion.Append("</a>");
+                    //htmlTableMainPortion.Append("</a>");
                     htmlTableMainPortion.Append(" </b>");
 
                     // htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
@@ -633,16 +633,16 @@ namespace USDA_ARS.Core
                     // htmlTableMainPortion.Append(" <div class=\"table\" cellpadding=\"2\" width=\"100%\" border=\"0\" >");
                     htmlTableMainPortion.Append(" <div class=\"table-main-row\" >  ");
 
-                    htmlTableMainPortion.Append(" <div class=\"table-main-header\" colspan=\"2\"  style=\"display:inline; background-color:#BFBFBF; width:100%;\"  > ");
+                    htmlTableMainPortion.Append(" <div class=\"table-main-header\" colspan=\"2\"> ");
                     //htmlTableMainPortion.Append(" <div class=\"tablecell\" colspan=\"2\"  > ");
                     htmlTableMainPortion.Append(" <b>");
                     htmlTableMainPortion.Append("Review Title  ");
 
-                    htmlTableMainPortion.Append("<a href=\"#\" id =\"" + row[tablerow5Table.Columns[1].ColumnName].ToString().Replace(" ", string.Empty) + "\"" + ">");
+                    htmlTableMainPortion.Append("<a href=\"#\" id =\"" + row[tablerow5Table.Columns[1].ColumnName].ToString().Replace(" ", string.Empty) + "\"" + "></a>");
                     //NP 103 Animal Health Panel Review
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[1].ColumnName]);
 
-                    htmlTableMainPortion.Append("</a>");
+                    //htmlTableMainPortion.Append("</a>");
                     htmlTableMainPortion.Append(" </b>");
 
                     // htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
