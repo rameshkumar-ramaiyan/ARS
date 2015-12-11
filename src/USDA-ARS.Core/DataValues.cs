@@ -48,19 +48,19 @@ namespace USDA_ARS.Core
         #endregion
         #region htmlHeadSection
         private static string htmlHeadSection = "<html>"
-            //    + System.Environment.NewLine +
-            //" < !DOCTYPE HTML PUBLIC \" -//W3C//DTD HTML 4.0 Transitional//EN\" > "
+             //    + System.Environment.NewLine +
+             //" < !DOCTYPE HTML PUBLIC \" -//W3C//DTD HTML 4.0 Transitional//EN\" > "
              + System.Environment.NewLine
                 + " <head> "
-             //   + "      < !-- #BeginEditable \"Doctitle\" --> "
-             //+ System.Environment.NewLine
+                //   + "      < !-- #BeginEditable \"Doctitle\" --> "
+                //+ System.Environment.NewLine
 
                 + " <title > Peer Review Schedules</title >  "
              + System.Environment.NewLine
                 + " <meta http - equiv = \"Content-Type\" content = \"text/html; charset=iso-8859-1\" > "
             + System.Environment.NewLine
-            //    + "< !-- #EndEditable -->"
-            //+ System.Environment.NewLine
+                //    + "< !-- #EndEditable -->"
+                //+ System.Environment.NewLine
 
 
                 + "    </head > "
@@ -502,11 +502,11 @@ namespace USDA_ARS.Core
                     htmlTableMainPortion.Append("Review Title  ");
 
                     htmlTableMainPortion.Append("<d id =\"" + row[tablerow5Table.Columns[1].ColumnName].ToString().Replace(" ", string.Empty) + "\"" + ">");
-                   // htmlTableMainPortion.Append("<a href=\"#\" id =\"" + row[tablerow5Table.Columns[1].ColumnName].ToString().Replace(" ", string.Empty) + "\"" + ">");
+                    // htmlTableMainPortion.Append("<a href=\"#\" id =\"" + row[tablerow5Table.Columns[1].ColumnName].ToString().Replace(" ", string.Empty) + "\"" + ">");
                     //NP 103 Animal Health Panel Review
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[1].ColumnName]);
 
-                   // htmlTableMainPortion.Append("</a>");
+                    // htmlTableMainPortion.Append("</a>");
                     htmlTableMainPortion.Append(" </b>");
 
                     // htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
@@ -616,12 +616,12 @@ namespace USDA_ARS.Core
             if (tdNumber == 1)
             {
 
-              
+
 
                 //Building the Data rows.
                 foreach (DataRow row in tablerow5Table.Rows)
                 {
-                    
+
                     htmlTableMainPortion.Append(" <div class=\"table-main-row\" >  ");
 
                     htmlTableMainPortion.Append(" <div class=\"table-main-header\" colspan=\"2\"   > ");
@@ -634,7 +634,7 @@ namespace USDA_ARS.Core
                     //NP 103 Animal Health Panel Review
                     htmlTableMainPortion.Append(row[tablerow5Table.Columns[1].ColumnName]);
 
-                   
+
                     htmlTableMainPortion.Append(" </b>");
 
                     // htmlTableMainPortion.Append(" <div class=\"tablecell\"> ");
@@ -820,7 +820,7 @@ namespace USDA_ARS.Core
             {
                 html += " <div class=\"table-main-row\">";
                 for (int j = 0; j < dt.Columns.Count; j++)
-                    html += " <div class=\"tablecell\">" + "<a href=\"#" + dt.Rows[i][j].ToString().Replace(" ", string.Empty) + "\">" + dt.Rows[i][j].ToString().Replace("NP","").Replace("Panel Review","")+ "</a>" + "</div>";
+                    html += " <div class=\"tablecell\">" + "<a href=\"#" + dt.Rows[i][j].ToString().Replace(" ", string.Empty) + "\">" + dt.Rows[i][j].ToString().Replace("NP", "").Replace("Panel Review", "") + "</a>" + "</div>";
                 html += "</div>";
 
             }
