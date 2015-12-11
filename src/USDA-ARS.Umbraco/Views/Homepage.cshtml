@@ -1,0 +1,325 @@
+﻿@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using Umbraco.Core.Persistence
+@using USDA_ARS.Umbraco.Extensions.Models
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+    ArchetypeModel popularTopics = currentPage.GetPropertyValue<ArchetypeModel>("popularTopics");
+    ArchetypeModel carouselSlides = currentPage.GetPropertyValue<ArchetypeModel>("carouselSlides");
+    ArchetypeModel quickLinks = currentPage.GetPropertyValue<ArchetypeModel>("quickLinks");
+
+    var resourceList = currentPage.GetPropertyValue<MultiUrls>("resources");
+    
+
+    //IEnumerable<IPublishedContent> newsList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("newsList");
+    IEnumerable<UsdaArsNews> newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNews(6);
+
+    //IEnumerable<IPublishedContent> latestBlogList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("latestBlog");
+    List<BlogItem> latestBlogList = USDA_ARS.Umbraco.Extensions.Helpers.Blogs.GetBlogFeed().Take(10).ToList();
+    
+    string middleArea = currentPage.GetPropertyValue<string>("middleArea");
+}
+<div id="bodyContent">
+
+
+    <!-- top content -->
+    <div id="topContent">
+        <div id="TopicsTips">
+            <!-- right top content -->
+
+            <div id="popularTopics">
+                <a name="popular" class="section508">Popular Topics Content</a>
+                <h1>Popular Topics</h1>
+
+                @if (popularTopics != null && popularTopics.Any())
+                {
+                    <ul>
+                        @foreach (var topic in popularTopics)
+                        {
+                            string navLinkUrl = "#";
+                            if (topic.HasValue("link"))
+                            {
+                                Link navLink = topic.GetValue<MultiUrls>("link").FirstOrDefault();
+
+                                navLinkUrl = navLink.Url;
+                            }
+                            <li>
+                                <a href="@navLinkUrl">@Html.Raw(topic.GetValue("label"))</a>
+                            </li>
+                        }
+                    </ul>
+                }
+
+                <a href="top" class="section508">Back to Top of Page</a>
+            </div>	<!-- popular topcis -->
+            <!-- Stay Connected -->
+            <div id="socialmedia">
+                <a name="social" class="section508">Social Media Links </a>
+
+                <h2>Stay Connected:</h2>
+                @Html.Partial("~/Views/Partials/Modules/SocialLinks.cshtml")
+
+                <!-- sign up email box -->
+                <form action="/elists/elists.htm" method="post">
+                    <input name="emailAddr" type="text" value="Sign up for ARS News updates"
+                           size="28" onfocus="this.value=''" />
+                    <input name="listname" type="hidden" value="arsnews" />
+                    <input name="action" type="hidden" value="Subscribe" />
+                    <input name="commit" type="submit" value="Go" />
+                </form>
+
+                <a href="top" class="section508">Back to Top of Page</a>
+            </div>	<!-- Stay Connected -->
+        </div>	<!-- right top content -->
+        <!-- photo carousel -->
+
+
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#slideshow').cycle(
+                    {
+                        fx: 'fade',
+                        speed: 500, 			// speed of the transition (any valid fx speed value)
+                        timeout: 6000,			// milliseconds between slide transitions
+                        prev: '#prevPhoto',
+                        pause: '#pausePhoto',
+                        next: '#nextPhoto',
+                        after: onAfter,
+                        before: onBefore
+                    }
+                );
+
+                $('#pausePhoto').click(function () {
+                    $('#slideshow').cycle('pause');
+                }
+                );
+            }
+            );
+
+            function onBefore(curr, next, opts) {
+                var counter = (opts.currSlide + 1) + ' / ' + opts.slideCount;
+                $('#carouselCounter').html(counter);
+
+
+
+                // get the photo carousel caption from the image ALT tag
+
+
+                $('#carouselCaption').html(this.children[0].alt);
+            }
+
+            function onAfter(curr, next, opts) {
+                var counter = (opts.currSlide + 1) + ' / ' + opts.slideCount;
+                $('#carouselCounter').html(counter);
+
+
+
+            }
+        </script>
+
+        <a name="photos" class="section508">Photo Carousel Links</a>
+
+        <!--Loading display while images load-->
+
+        <div id="carousel">
+            <!--Slides-->
+
+            <div id="slideshow" style="width:520px;height:320px;float:left;">
+
+
+                @foreach (var slide in carouselSlides)
+                {
+                    <a href="@slide.GetValue("slideUrl")" title="@slide.GetValue("slideText")">
+                        <img src="@slide.GetValue("slideImage")" class="carouselPhoto" alt="@slide.GetValue("slideAltText")" />
+                    </a>
+                }
+
+            </div>
+
+
+            <div id="carouselCaption" style="width:115px;height:240px;float:right;">
+                phone caption
+            </div>
+
+
+            <div id="carouselNavigation" style="width:85px;float:right;">
+                <a href="#" id="prevPhoto"><img src="/images/redesign/prev.png" alt="back"></a>
+                <a href="#" id="pausePhoto"><img src="/images/redesign/pause.png" alt="pause"></a>
+                <a href="#" id="nextPhoto"><img src="/images/redesign/next.png" alt="forward"></a>
+
+                <div id="carouselCounter"></div>
+            </div>
+        </div>
+
+
+    </div>	<!-- top content end -->
+    <!-- middle content -->
+    <!--[if lt IE 9]>
+        <div style="position: relative; bottom:-33px; z-index:1000;">
+            <img src="/images/redesign/rounded-top.png" alt="spacer">
+        </div>
+    <![endif]-->
+
+    <div id="midContent">
+        <a name="main" class="section508">Main Content</a>
+
+        <!-- middle left (tabs) -->
+        <div id="rotateContent">
+
+            <div id="AgencyNewsWrapper">
+                <!-- News/Resources/Blogs tab's labels on the left middle -->
+                <div id="AgencyNewsTop">
+                    <ul>
+                        <li id="AgencyNewsTop_Latest" class="toplink" onMouseOver="displaySelected('Latest');">
+                            News
+                        </li>
+                        <li id="AgencyNewsTop_Topic" class="toplink" onMouseOver="displaySelected('Topic');">
+                            Resources
+                        </li>
+                        <li id="AgencyNewsTop_Blog" class="toplink" onMouseOver="displaySelected('Blog');">
+                            Latest Blogs
+                        </li>
+                    </ul>
+                </div>
+                <!-- end of AgencyNewsTop -->
+                <!-- start of AgencyNewsDetail -->
+                <div id="AgencyNewsDetail">
+                    <!-- news tab -->
+                    <div class="AbsoluteHiddenBodyText" id="AgencyNewsDetail_Latest">
+                        <h1>News</h1>
+
+                        @if (newsList != null && newsList.Any())
+                        {
+                            <ul>
+                                @foreach (UsdaArsNews item in newsList)
+                                {
+                                    <li>
+                                        <a href="/news/news-item/@item.NewsID">
+                                            @item.SubjectField
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+
+                        <p class="more">
+                            <a href="/is/pr">&gt;&gt;&gt; More...</a>
+                        </p>
+                    </div>
+                    <!-- news tab end -->
+                    <!-- resources tab -->
+                    <div class="AbsoluteHiddenBodyText" id="AgencyNewsDetail_Topic" style="visibility:hidden;">
+                        <h1>Resources</h1>
+                        <!-- RESOURCES SECTION -- CHANGEABLE INFORMATION STARTS HERE  -->
+
+                        @if (resourceList.Any())
+                        {
+                        <ul>
+                            @foreach (var item in resourceList)
+                            {
+                                <li><a href="@item.Url" target="@item.Target">@item.Name</a></li>
+                            }
+                        </ul>
+                        }
+                    </div>
+                    <!-- resources tab end -->
+                    <!-- latest blogs tab -->
+                    <div class="AbsoluteHiddenBodyText" id="AgencyNewsDetail_Blog" style="visibility:hidden;">
+                        <h1>Blogs</h1>
+
+                        @if (latestBlogList != null && latestBlogList.Any())
+                        {
+                            <ul>
+                                @foreach (BlogItem item in latestBlogList)
+                                {
+                                    <li>
+                                        <a href="@item.Url">
+                                            @item.Title
+                                        </a>
+                                    </li>
+                                }
+                            </ul>
+                        }
+
+                        <p class="more">
+                            <a href="http://blogs.usda.gov">&gt;&gt;&gt; More...</a>
+                        </p>
+                    </div>	<!-- latest blogs tab end -->
+
+                </div>	<!-- end of AgencyNewsDetail -->
+
+            </div>	<!-- end of AgencyNewsWrapper -->
+
+        </div>	<!-- middle left (tabs)  end -->
+
+
+
+        <div id="centerContent">
+            <!-- display URLs of subpages start -->
+            <!--  display URLs of subpages end -->
+            <!-- document content start -->
+
+            @Html.Raw(middleArea)
+        </div>
+
+
+
+        <div id="spotlightContent">
+            <h1>Quick Links</h1>
+
+            @if (quickLinks != null && quickLinks.Any())
+            {
+                foreach (var quickLink in quickLinks)
+                {
+                    Link navLink = quickLink.GetValue<MultiUrls>("link").FirstOrDefault();
+
+                    <div>
+                        <img src="@quickLink.GetValue("icon")"
+                             alt="@quickLink.GetValue("label")" />
+                        <p>
+                            <a href="@quickLink.GetValue("link")">@quickLink.GetValue("label")</a>
+                        </p>
+                    </div>
+                }
+            }
+        </div>
+        <!--[if lt IE 9]>
+            <div style="position: relative; top: -25px; z-index:1000;" >
+                <img src="/images/redesign/rounded-bottom.png" alt="spacer">
+            </div>
+        <![endif]-->
+    </div>
+    <!-- middle content end -->
+    <!-- bottom content -->
+    <!--[if lt IE 9]>
+        <div style="margin:-24px auto;">
+            <img src="/images/redesign/rounded-topTEAL.png" alt="spacer">
+        </div>
+    <![endif]-->
+    <div id="bottomContent">
+        <a name="areas" href="top" class="section508">Research Areas & Locations Content | Click to go Back to Top</a>
+
+        <h1>Key ARS Offices and Locations</h1>
+
+        <a name="areas" href="top" class="section508">Research Areas & Locations Content | Click to go Back to Top</a>
+
+        <!-- bottom content left -->
+        <div id="bottomContentLeft">
+            @Html.Partial("~/Views/Partials/Modules/MainOfficeList.cshtml")
+        </div>
+
+
+        <!-- bottom content right -->
+        <div id="bottomContentRight">
+            @Html.Partial("~/Views/Partials/Modules/ResearchLocationsList.cshtml")
+        </div>
+
+
+    </div>

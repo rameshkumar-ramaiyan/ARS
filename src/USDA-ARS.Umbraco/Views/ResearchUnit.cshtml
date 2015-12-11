@@ -1,0 +1,425 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using Umbraco.Core.Persistence
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+    IPublishedContent regionPage = currentPage.AncestorOrSelf(2);
+    IPublishedContent rootPage = currentPage.AncestorOrSelf(1);
+    string modeCode = currentPage.GetPropertyValue<string>("modeCode");
+
+    ArchetypeModel defaultPopularTopics = rootPage.GetPropertyValue<ArchetypeModel>("popularTopics");
+
+    ArchetypeModel softwareDownloads = currentPage.GetPropertyValue<ArchetypeModel>("software");
+
+    ArchetypeModel popularTopics = currentPage.GetPropertyValue<ArchetypeModel>("popularTopics");
+    ArchetypeModel carouselSlides = currentPage.GetPropertyValue<ArchetypeModel>("carouselSlides");
+
+    List<UsdaProject> researchList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.Projects.ListProjects(modeCode, 3);
+    IEnumerable<IPublishedContent> newsList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("newsList");
+
+    if (newsList != null && newsList.Any())
+    {
+        newsList = newsList.Take(5);
+    }
+
+    List<UsdaPublication> publicationList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.Publications.ListPublications(modeCode, 3);
+
+    string rightArea = currentPage.GetPropertyValue<string>("quickLinks");
+
+    if (true == string.IsNullOrWhiteSpace(rightArea))
+    {
+        List<PeopleInfo> peopleList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeople(modeCode);
+
+        rightArea = "<h1>People</h1>\r\n";
+        if (peopleList != null && peopleList.Count > 0)
+        {
+            rightArea += "<ul>\r\n";
+            foreach (PeopleInfo person in peopleList)
+            {
+                rightArea += "<li><a href=\"/people-locations/person/?person-id=" + person.PersonId + "\">";
+                rightArea += person.LastName + ", " + person.FirstName;
+                if (false == string.IsNullOrEmpty(person.CommonName))
+                {
+                    rightArea += " - <em>" + person.CommonName + "</em>";
+                }
+                rightArea += "</a></li>\r\n";
+            }
+            rightArea += "</ul>\r\n";
+        }
+    }
+
+    USDA_ARS.Umbraco.Extensions.Helpers.Aris.SiteInfo siteInfo = new USDA_ARS.Umbraco.Extensions.Helpers.Aris.SiteInfo(modeCode);
+
+    string missionStatement = "";
+    string adminDetails = "";
+
+    if (siteInfo != null)
+    {
+        missionStatement = siteInfo.MissionStatement;
+        adminDetails = siteInfo.AdminDetails;
+    }
+}
+<div id="bodyContent">
+
+
+
+
+    <!-- top content -->
+    <div id="topContent">
+        <div id="TopicsTips">
+            <!-- right top content -->
+
+            <div id="popularTopics">
+                <a name="popular" class="section508">Popular Topics Content</a>
+                <h1>Popular Topics</h1>
+
+                @if (defaultPopularTopics != null && defaultPopularTopics.Any())
+                {
+                    <ul>
+                        @foreach (var topic in defaultPopularTopics)
+                        {
+                            bool showTopic = true;
+
+                            if (topic.GetValue("label") == "Software")
+                            {
+                                if (softwareDownloads == null || softwareDownloads.Count() <= 0)
+                                {
+                                    showTopic = false;
+                                }
+                            }
+
+                            if (true == showTopic)
+                            {
+                                string navLinkUrl = "#";
+                                if (topic.HasValue("link"))
+                                {
+                                    Link navLink = topic.GetValue<MultiUrls>("link").FirstOrDefault();
+
+                                    navLinkUrl = navLink.Url;
+                                }
+                                <li>
+                                    <a href="@(navLinkUrl + "?mc=" + modeCode)">@Html.Raw(topic.GetValue("label"))</a>
+                                </li>
+                            }
+                        }
+
+                        @if (popularTopics != null && popularTopics.Any())
+                        {
+                            <div id="popularLinksMoreMenu" style="z-index: 1; position: relative">
+                                <li>
+                                    <a href="#" class="more" title="See more of popular topics">More</a>
+                                    <ul>
+                                        @foreach (var topic in popularTopics)
+                                        {
+                                            string navLinkUrl = "#";
+                                            if (topic.HasValue("link"))
+                                            {
+                                                Link navLink = topic.GetValue<MultiUrls>("link").FirstOrDefault();
+
+                                                navLinkUrl = navLink.Url;
+                                            }
+                                            <li>
+                                                <a href="@(navLinkUrl + "?mc=" + modeCode)">@Html.Raw(topic.GetValue("label"))</a>
+                                            </li>
+                                        }
+                                    </ul>
+                                </li>
+                            </div>
+                        }
+                    </ul>
+                }
+
+                <a href="top" class="section508">Back to Top of Page</a>
+            </div>	<!-- popular topcis -->
+            <!-- Stay Connected -->
+            <div id="socialmedia">
+                <a name="social" class="section508">Social Media Links </a>
+
+                <h2>Stay Connected:</h2>
+                @Html.Partial("~/Views/Partials/Modules/SocialLinks.cshtml")
+
+                <!-- sign up email box -->
+                <form action="/elists/elists.htm" method="post">
+                    <input name="emailAddr" type="text" value="Sign up for ARS News updates"
+                           size="28" onfocus="this.value=''" />
+                    <input name="listname" type="hidden" value="arsnews" />
+                    <input name="action" type="hidden" value="Subscribe" />
+                    <input name="commit" type="submit" value="Go" />
+                </form>
+
+                <a href="top" class="section508">Back to Top of Page</a>
+            </div>	<!-- Stay Connected -->
+        </div>	<!-- right top content -->
+        <!-- photo carousel -->
+
+
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $('#slideshow').cycle(
+                    {
+                        fx: 'fade',
+                        speed: 500, 			// speed of the transition (any valid fx speed value)
+                        timeout: 6000,			// milliseconds between slide transitions
+                        prev: '#prevPhoto',
+                        pause: '#pausePhoto',
+                        next: '#nextPhoto',
+                        after: onAfter,
+                        before: onBefore
+                    }
+                );
+
+                $('#pausePhoto').click(function () {
+                    $('#slideshow').cycle('pause');
+                }
+                );
+            }
+            );
+
+            function onBefore(curr, next, opts) {
+                var counter = (opts.currSlide + 1) + ' / ' + opts.slideCount;
+                $('#carouselCounter').html(counter);
+
+
+
+                // get the photo carousel caption from the image ALT tag
+
+
+                $('#carouselCaption').html(this.children[0].alt);
+            }
+
+            function onAfter(curr, next, opts) {
+                var counter = (opts.currSlide + 1) + ' / ' + opts.slideCount;
+                $('#carouselCounter').html(counter);
+
+
+
+            }
+        </script>
+
+        <a name="photos" class="section508">Photo Carousel Links</a>
+
+        <!--Loading display while images load-->
+
+        <div id="carousel">
+            <!--Slides-->
+
+            <div id="slideshow" style="width:520px;height:320px;float:left;">
+
+
+                @foreach (var slide in carouselSlides)
+                {
+                    <a href="@slide.GetValue("slideUrl")" title="@slide.GetValue("slideText")">
+                        <img src="@slide.GetValue("slideImage")" class="carouselPhoto" alt="@slide.GetValue("slideAltText")" />
+                    </a>
+                }
+
+            </div>
+
+
+            <div id="carouselCaption" style="width:115px;height:240px;float:right;">
+                phone caption
+            </div>
+
+
+            <div id="carouselNavigation" style="width:85px;float:right;">
+                <a href="#" id="prevPhoto"><img src="/images/redesign/prev.png" alt="back"></a>
+                <a href="#" id="pausePhoto"><img src="/images/redesign/pause.png" alt="pause"></a>
+                <a href="#" id="nextPhoto"><img src="/images/redesign/next.png" alt="forward"></a>
+
+                <div id="carouselCounter"></div>
+            </div>
+        </div>
+
+
+    </div>	<!-- top content end -->
+    <!-- middle content -->
+    <!--[if lt IE 9]>
+        <div style="position: relative; bottom:-33px; z-index:1000;">
+            <img src="/images/redesign/rounded-top.png" alt="spacer">
+        </div>
+    <![endif]-->
+
+    <div id="middleContent">
+        <!-- middle left (tabs) -->
+        <div id="middleLeft">
+
+            <div id="middleTabs">
+
+
+                <ul style="border: 0px; margin:-4px;">
+                    <li style="border-top-left-radius: 23px; margin:0px; text-align: center; width:98px; height:36px;">
+                        <a href="#tab1" style="margin-top: 3px; margin-left: 10px;">Research</a>
+                    </li>
+                    <li style="margin:0px; width:100px; height:36px;">
+                        <a href="#tab2" style="margin-top: 3px; margin-left: 20px;">News</a>
+                    </li>
+                    <li style="margin:0px; width:100px; height:36px;">
+                        <a href="#tab3" style="margin-top: 3px;">Publications</a>
+                    </li>
+                </ul>
+
+                <div id="tab1">
+                    <ul>
+
+                        @if (researchList != null && researchList.Any())
+                        {
+                            foreach (UsdaProject item in researchList)
+                            {
+                                <li>
+                                    <a href="/research/projects-programs/project/?account-no=@item.AccountNo">
+                                        @item.Title
+                                    </a>
+                                </li>
+                            }
+                        }
+
+                        <li class="textAlignRight">
+                            <a href="/research/projects-programs/?modecode=@modeCode">&gt;&gt;&gt;More</a>
+                        </li>
+
+                    </ul>
+                </div>
+
+
+                <div id="tab2">
+                    <ul>
+                        @if (newsList != null && newsList.Any())
+                        {
+                            foreach (IPublishedContent item in newsList)
+                            {
+                                <li>
+                                    <a href="/news/news-item/@(item.GetPropertyValue<string>("newsId"))">
+                                        @(item.GetPropertyValue<string>("title"))
+                                    </a>
+                                </li>
+                            }
+                        }
+
+                        <li class="textAlignRight">
+                            <a href="/news/news.htm?modecode=@modeCode">&gt;&gt;&gt;More</a>
+                        </li>
+                    </ul>
+                </div>
+
+
+                <div id="tab3">
+                    <ul>
+                        @if (publicationList != null && publicationList.Any())
+                        {
+                            foreach (UsdaPublication item in publicationList)
+                            {
+                                <li>
+                                    <a href="/research/publications/publication/?seq-no-155=@item.SeqNo115">
+                                        @item.Title
+                                    </a>
+                                </li>
+                            }
+                        }
+
+                        <li class="textAlignRight">
+                            <a href="/research/publications/?modecode=@modeCode">&gt;&gt;&gt;More</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+
+
+        <div id="middleCenter">
+
+            <font size="2">
+                <table border="0" cellpadding="0" cellspacing="0" width="100%" summary="This table displays information about this location">
+                    <tbody>
+                        <tr>
+                            <td>
+                                @Html.Raw(adminDetails)
+                                <p>
+                                    <!-- MapQuest info here.  query_string= modecode=@(modeCode) -->
+                                </p>
+
+                                <p>
+                                    <strong>Mission:</strong><br>
+                                    @missionStatement
+                                </p>
+                                <p></p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </font>
+
+        </div>
+
+
+
+        <div id="middleRight">
+
+            @Html.Raw(rightArea)
+
+        </div>
+
+        <!--[if lt IE 9]>
+            <div style="position: relative; top: -10px; z-index:1000;" >
+                <img src="/images/redesign/rounded-bottom.png" alt="spacer">
+            </div>
+        <![endif]-->
+    </div>
+    <!-- middle content end -->
+    <!-- bottom content -->
+    <!--[if lt IE 9]>
+
+
+        <div style="position: relative; bottom:-33px; z-index:1000;">
+            <img src="/images/redesign/rounded-top.png" alt="spacer">
+        </div>
+    <![endif]-->
+    <div id="bottomContent">
+        <a name="areas" href="top" class="section508">Research Areas & Locations Content | Click to go Back to Top</a>
+
+        <div id="tabs">
+            <ul>
+                <li>
+                    <a href="#keyOfficeTab">Key ARS Offices and Locations</a>
+                </li>
+                <li>
+                    <a href="#areaLocationTab">
+                        @regionPage.Name Locations
+
+                    </a>
+                </li>
+            </ul>
+
+            <div id="keyOfficeTab">
+                <a name="areas" href="top" class="section508">Research Areas & Locations Content | Click to go Back to Top</a>
+
+                <!-- bottom content left -->
+                <div id="bottomContentLeft">
+                    @Html.Partial("~/Views/Partials/Modules/MainOfficeList.cshtml")
+                </div>
+
+
+                <!-- bottom content right -->
+
+
+                <div id="bottomContentRight">
+                    @Html.Partial("~/Views/Partials/Modules/ResearchLocationsList.cshtml")
+                </div>
+
+            </div>
+
+            <div id="areaLocationTab">
+                @Html.Partial("~/Views/Partials/Modules/RegionLocationsList.cshtml", regionPage)
+            </div>
+        </div>
+
+
+    </div>
+    <!-- bottom content end -->
