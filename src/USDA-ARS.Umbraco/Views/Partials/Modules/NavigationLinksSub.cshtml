@@ -1,0 +1,25 @@
+﻿@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@model IPublishedContent
+@{
+    IEnumerable<IPublishedContent> mainOfficeList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.MainOfficeList();
+}
+<div id="navigationLinks">
+    <div id="breadcrumb">
+        You are here:
+
+        <a href="/">ARS Home</a>
+        / <a href="@Model.Url">@(Model.GetPropertyValue<string>("breadcrumbLabel", Model.Name))</a>
+
+    </div>
+
+    <div id="navigationStayConnected">
+        @Html.Partial("~/Views/Partials/Modules/SocialLinks.cshtml")
+    </div>
+
+    <div style="clear:both;">
+        <hr />
+    </div>
+
+</div>

@@ -1,0 +1,91 @@
+﻿@using USDA_ARS.Umbraco.Extensions.Models
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+    int currentYear = DateTime.Now.Year;
+    int selectedYear = currentYear;
+
+    if (false == string.IsNullOrWhiteSpace(Request.QueryString["year"]))
+    {
+        int.TryParse(Request.QueryString["year"], out selectedYear);
+
+        if (selectedYear < 1900 || selectedYear > DateTime.Now.AddYears(1).Year)
+        {
+            selectedYear = currentYear;
+        }
+    }
+
+    DateTime dateStart = DateTime.Parse("1/1/" + selectedYear);
+    DateTime dateEnd = dateStart.AddYears(1).AddMinutes(-1);
+
+    List<UsdaArsNews> newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNews(999999999, null, dateStart, dateEnd);
+
+
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+        <!--newsheader-->
+        <table border="0" cellpadding="5" cellspacing="5" width="100%" align="CENTER">
+            <tbody>
+                <tr valign="TOP">
+                    <td colspan="2" height="101">
+                        <h2>@(selectedYear) News Archive</h2>
+                        <p>
+                            <a href="http://www.ars.usda.gov/News/docs.htm?docid=1261" id="anch_76">Latest News</a> | <a href="http://www.ars.usda.gov/News/docs.htm?docid=23712" id="anch_77">Subscribe</a> | <a href="archives.htm" id="anch_78">
+                                More Archives
+                                (1996-@(currentYear - 1))
+                            </a>
+                        </p>
+                    </td>
+                </tr>
+
+                @{
+                    int currentMonth = 0;
+
+                    if (newsList != null && newsList.Count > 0)
+                    {
+                        currentMonth = newsList[0].DateField.Month;
+
+                        foreach (UsdaArsNews item in newsList)
+                        {
+                            string pageUrl = umbraco.cms.helpers.url.FormatUrl(item.SubjectField);
+
+                            if (pageUrl.Length > 50)
+                            {
+                                pageUrl = pageUrl.Substring(0, 50).TrimEnd('-');
+                            }
+
+                            if (currentMonth != item.DateField.Month)
+                            {
+                                <tr valign="TOP">
+                                    <td align="LEFT" valign="TOP" nowrap="NOWRAP">&nbsp;</td>
+                                    <td valign="TOP" align="LEFT">&nbsp;</td>
+                                </tr>
+                            }
+
+                            <tr valign="TOP">
+                                <td align="LEFT" valign="TOP" nowrap="NOWRAP">@(item.DateField.ToString("MMMM d"))</td>
+                                <td valign="TOP" align="LEFT"><a href="/news-events/news-article/@(item.DateField.Year)/@(item.NewsID)/@(pageUrl)" id="anch_79">@(item.SubjectField)</a></td>
+                            </tr>
+
+                            currentMonth = item.DateField.Month;
+                        }
+                    }
+                }
+            </tbody>
+        </table>
+        <!--footer-->
+        <p></p>
+    </div>
+
+</div>

@@ -239,9 +239,16 @@
                                         <ul>
                                             @foreach (IPublishedContent subItem in navItem.Children)
                                             {
-                                                Link navLink = subItem.GetPropertyValue<MultiUrls>("navigationLink").FirstOrDefault();
+                                                if (subItem.HasValue("navigationLink"))
+                                                {
+                                                    Link navLink = subItem.GetPropertyValue<MultiUrls>("navigationLink").FirstOrDefault();
 
                                                 <li><a href="@navLink.Url" target="@navLink.Target">@(subItem.Name)</a></li>
+                                                }
+                                                else
+                                                {
+                                                    <li><a href="#">@(subItem.Name)</a></li>
+                                                }
                                             }
                                         </ul>
                                     </div>
@@ -287,10 +294,9 @@
         <!-- ARS Header end -->
 
 
-                                @RenderBody()
+    @RenderBody()
 
-
-                            </div>
+                            
     <!-- START OF SmartSource Data Collector TAG -->
     <!-- Copyright (c) 1996-2014 Webtrends Inc.  All rights reserved. -->
     <!-- Version: 9.4.0 -->

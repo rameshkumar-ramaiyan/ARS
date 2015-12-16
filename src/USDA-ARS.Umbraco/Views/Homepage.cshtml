@@ -210,7 +210,7 @@
                         }
 
                         <p class="more">
-                            <a href="/is/pr">&gt;&gt;&gt; More...</a>
+                            <a href="/news-events/news-archive/">&gt;&gt;&gt; More...</a>
                         </p>
                     </div>
                     <!-- news tab end -->
@@ -221,12 +221,12 @@
 
                         @if (resourceList.Any())
                         {
-                        <ul>
-                            @foreach (var item in resourceList)
-                            {
-                                <li><a href="@item.Url" target="@item.Target">@item.Name</a></li>
-                            }
-                        </ul>
+                            <ul>
+                                @foreach (var item in resourceList)
+                                {
+                                    <li><a href="@item.Url" target="@item.Target">@item.Name</a></li>
+                                }
+                            </ul>
                         }
                     </div>
                     <!-- resources tab end -->
@@ -323,3 +323,5 @@
 
 
     </div>
+
+</div>

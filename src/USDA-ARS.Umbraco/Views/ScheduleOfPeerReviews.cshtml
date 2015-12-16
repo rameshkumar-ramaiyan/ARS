@@ -10,156 +10,30 @@
     IPublishedContent siteSettings = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.SiteSettings();
 
     ArchetypeModel socialLinks = siteSettings.GetPropertyValue<ArchetypeModel>("socialLinks");
+    bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
 }
 
-
-
-<div id="navigationLinks">
-    <div id="breadcrumb">
-        You are here:
-
-        <a href="/">ARS Home</a>
-        / <a href="@currentPage.Url">@(currentPage.GetPropertyValue<string>("breadcrumbLabel", currentPage.Name))</a>
-
-    </div>
-
-    <div id="navigationStayConnected">
-        @if (socialLinks != null && socialLinks.Any())
-        {
-            foreach (var socialLink in socialLinks)
-            {
-                if (socialLink.HasValue("socialHtmlOverride"))
-                {
-                    @Html.Raw(socialLink.GetValue("socialHtmlOverride"))
-                }
-                else
-                {
-                    Link navLink = socialLink.GetValue<MultiUrls>("socialLink").FirstOrDefault();
-
-                    <a href="@navLink.Url">
-                        <img src="@socialLink.GetValue("socialIcon")" title="@socialLink.GetValue("socialAltText")" alt="@socialLink.GetValue("socialAltText")" />
-                    </a>
-                }
-            }
-        }
-    </div>
-
-    <div style="clear:both;">
-        <hr />
-    </div>
-
-</div>
-
-
-
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
 
 <div id="fullPage">
 
-
-    <!--[if lt IE 9]>
-        <div class="IErounded-sidetop"
-             style="display:block; height:20px; width:250px; position:relative; left:25px; top:5px;">
-            <img src="/images/redesign/rounded-sidetop.png" alt="spacing">
-        </div>
-        <style>#relatedTopics {margin-top:-10px !important; z-index:300 !important;}</style>
-    <![endif]-->
-
-    <div id="relatedTopics">
-
-
-
-        <h1 class="related_topics">Related Topics</h1>
-
-
-
-        <!--LT:navid:0-->
-        <!--RT:navid:5507-->
-
-
-        <ul>
-
-
-            <h2 class="related_topics">
-
-
-                <div id="rightNavigation">I Want To...</div>
-
-            </h2>
-
-
-            <li>
-                <a href="/pandp/locations.htm" title="Find an ARS location">
-                    Find an ARS location
-                </a>
-            </li>
-
-
-            <li>
-                <a href="/pandp/people.htm" title="Find a person">
-                    Find a person
-                </a>
-            </li>
-
-
-            <li>
-                <a href="/research/projects.htm" title="Search for a research project">
-                    Search for a research project
-                </a>
-            </li>
-
-
-            <li>
-                <a href="/Services/docs.htm?docid=1279" title="Search for a publication">
-                    Search for a publication
-                </a>
-            </li>
-
-
-            <li>
-                <a href="/News/docs.htm?docid=1261" title="See the latest news">
-                    See the latest news
-                </a>
-            </li>
-
-
-            <li>
-                <a href="/Help/docs.htm?docid=6284" title="Understand the website navigation">
-                    Understand the website navigation
-                </a>
-            </li>
-
-
-            <li>
-                <a href="/ContactUs/" title="Ask a question">
-                    Ask a question
-                </a>
-            </li>
-
-        </ul>
-
-
-    </div>
-
-
-    <!--[if lt IE 9]>
-        <div class="IErounded-sidebot"
-                style="display:block; height:20px; width:250px; position:relative; left:25px; top:-12px;">
-            <img src="/images/redesign/rounded-sidebottom.png" alt="spacing">
-        </div>
-    <![endif]-->
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
 
     <div id="pageContent">
 
-
         <table border="0" width="100%">
-            <tr>
-                <td class="pageHeading">@currentPage.Name</td>
-            </tr>
-            <tr>
-                <td>
-                    <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
-                </td>
-            </tr>
+            @if (false == hideHeaderTitle)
+            {
+                <tr>
+                    <td class="pageHeading">@currentPage.Name                                                                                                                                                                                               </td>
+                </tr>
+                    <tr>
+                        <td>
+
+                            <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
+                        </td>
+                    </tr>
+            }
             <tr>
                 <td>
                     @Html.Raw(currentPage.GetPropertyValue<string>("contentTable"))
@@ -168,13 +42,10 @@
         </table>
 
         <!-- document content end -->
-
-
         <br>
-
-
-
-        <P>
+        <p></p>
 
 
     </div>
+
+</div>

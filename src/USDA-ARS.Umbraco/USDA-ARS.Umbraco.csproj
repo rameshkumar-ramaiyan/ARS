@@ -2918,6 +2918,13 @@
     <Content Include="Views\Partials\Grid\Editors\Base.cshtml" />
     <Content Include="Views\Partials\Grid\Bootstrap3.cshtml" />
     <Content Include="Views\Partials\Grid\Bootstrap2.cshtml" />
+    <Content Include="Views\NewsArchive.cshtml" />
+    <Content Include="Views\NewsItem.cshtml" />
+    <Content Include="Views\NationalPrograms.cshtml" />
+    <Content Include="Views\ResearchProjects.cshtml" />
+    <Content Include="Views\Publications.cshtml" />
+    <Content Include="Views\Partials\Modules\NavigationLinksSub.cshtml" />
+    <Content Include="Views\FindAPublication.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

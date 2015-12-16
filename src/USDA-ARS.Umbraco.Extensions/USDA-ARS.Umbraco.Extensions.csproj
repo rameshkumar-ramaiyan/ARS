@@ -287,7 +287,11 @@
     <Compile Include="Helpers\Nodes.cs" />
     <Compile Include="Models\Aris\ModeCodeNew.cs" />
     <Compile Include="Models\Aris\PeopleInfo.cs" />
+    <Compile Include="Models\Aris\PeoplePublication.cs" />
+    <Compile Include="Models\Aris\SearchPublicationView.cs" />
+    <Compile Include="Models\Aris\SearchPublication.cs" />
     <Compile Include="Models\Aris\UsdaPublication.cs" />
+    <Compile Include="Models\Aris\UsdaPublicationSearch.cs" />
     <Compile Include="Models\BlogItem.cs" />
     <Compile Include="Models\Aris\RefModeCode.cs" />
     <Compile Include="Models\ResearchUnit.cs" />

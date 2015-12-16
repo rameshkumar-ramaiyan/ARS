@@ -1,0 +1,140 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@using RJP.MultiUrlPicker.Models
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+    List<UsdaProject> projectList = null;
+    string query = null;
+    string type = "all";
+    string sliceType = null;
+
+    if (false == string.IsNullOrWhiteSpace(Request.QueryString["q"]))
+    {
+        query = Request.QueryString.Get("q");
+    }
+    if (false == string.IsNullOrWhiteSpace(Request.QueryString["type"]))
+    {
+        type = Request.QueryString.Get("type");
+    }
+    if (false == string.IsNullOrWhiteSpace(Request.QueryString["slicetype"]))
+    {
+        sliceType = Request.QueryString.Get("slicetype");
+    }
+
+    if (false == string.IsNullOrWhiteSpace(query))
+    {
+        projectList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.Projects.SearchProjects(query, type);
+    }
+
+
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+
+        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+        
+
+        <form action="" method="get">
+            <table width="100%" border="0" cellspacing="0" cellpadding="0">
+
+                <tbody>
+                    <tr>
+                        <td width="100">
+                            <font face="verdana,arial,helvetica" size="-1" color="Navy">
+
+                                Search for:
+                            </font>
+                        </td>
+                        <td>
+                            <input type="text" name="q" value="@(query)">
+
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><font face="verdana,arial,helvetica" size="-1" color="Navy">in:</font></td>
+                        <td>
+                            <select name="type">
+                                <option value="all"@(type == "all" ? " selected=\"selected\"" : "")>All Fields</option>
+                                <option value="title"@(type == "title" ? " selected=\"selected\"" : "")>Title</option>
+                                <option value="approach"@(type == "approach" ? " selected=\"selected\"" : "")>Approach</option>
+                                <option value="objective"@(type == "objective" ? " selected=\"selected\"" : "")>Objective</option>
+                                <option value="project_number"@(type == "project_number" ? " selected=\"selected\"" : "")>Project Number</option>
+                            </select>
+
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td>&nbsp;</td>
+                        <td><input type="submit" value="Search"></td>
+                    </tr>
+
+                </tbody>
+            </table>
+        </form>
+
+        @if (projectList != null && projectList.Any())
+        {
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td bgcolor="white" width="100%">
+                            <ul>
+                                <font class="hdrBlackBold">
+                                    Results:
+                                    @(string.Format("{0:n0}", projectList.Count)) research projects found.
+                                </font>
+                                <br>
+                                <br>
+
+                                @foreach (UsdaProject project in projectList)
+                                {
+                                    <li>
+                                        <a href="/research/projects/projects.htm?ACCN_NO=@(project.AccountNo)" class="projectNav" id="anch_52">@(project.Title)</a> (TODO)
+                                        <br><br>
+                                    </li>
+                                }
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        else if (false == string.IsNullOrWhiteSpace(query))
+        {
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        <td bgcolor="white" width="100%">
+                            <ul>
+                                <font class="hdrBlackBold">
+                                    Results:
+                                    0 research projects found.
+                                </font>
+                                <br>
+                                <br>
+                            </ul>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+
+
+        @Html.Raw(currentPage.GetPropertyValue<string>("bodyTextBelow"))
+
+    </div>
+</div>
