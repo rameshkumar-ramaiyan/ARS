@@ -19,25 +19,43 @@
             parentRelatedTopics = parentNode.GetPropertyValue<ArchetypeModel>("topicsList");
         }
     }
-
-
 }
 
-@if (parentRelatedTopics != null && parentRelatedTopics.Any())
-{
-    foreach (var item in parentRelatedTopics)
-    {
-        @Html.Raw(OutputTopic(item))
-    }
-}
+<!--[if lt IE 9]>
+    <div class="IErounded-sidetop"
+         style="display:block; height:20px; width:250px; position:relative; left:25px; top:5px;">
+        <img src="/images/redesign/rounded-sidetop.png" alt="spacing">
+    </div>
+    <style>#relatedTopics {margin-top:-10px !important; z-index:300 !important;}</style>
+<![endif]-->
+<div id="relatedTopics">
+    <h1 class="related_topics">Related Topics</h1>
+    <ul>
+        @if (parentRelatedTopics != null && parentRelatedTopics.Any())
+        {
+            foreach (var item in parentRelatedTopics)
+            {
+                @Html.Raw(OutputTopic(item))
+            }
+        }
 
-@if (currentRelatedTopics != null && currentRelatedTopics.Any())
-{
-    foreach (var item in currentRelatedTopics)
-    {
-        @Html.Raw(OutputTopic(item))
-    }
-}
+        @if (currentRelatedTopics != null && currentRelatedTopics.Any())
+        {
+            foreach (var item in currentRelatedTopics)
+            {
+                @Html.Raw(OutputTopic(item))
+            }
+        }
+    </ul>
+</div>
+<!--[if lt IE 9]>
+    <div class="IErounded-sidebot"
+            style="display:block; height:20px; width:250px; position:relative; left:25px; top:-12px;">
+        <img src="/images/redesign/rounded-sidebottom.png" alt="spacing">
+    </div>
+<![endif]-->
+
+
 
 @functions
 {
@@ -56,7 +74,7 @@
                 urlLink = navLink.Url;
             }
 
-            html = "<li><a href=\""+ urlLink + "\">"+ item.GetValue<string>("title") + "</a></li>";
+            html = "<li><a href=\"" + urlLink + "\">" + item.GetValue<string>("title") + "</a></li>";
         }
         else if (item.Alias == "topicsHeader")
         {

@@ -1,0 +1,196 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+    SearchPublicationView publicationListView = null;
+
+    string query = "";
+    string type = "all";
+    int startList = 0;
+    int displayCount = 10;
+
+    if (currentPage.HasValue("resultsPerPage"))
+    {
+        displayCount = currentPage.GetPropertyValue<int>("resultsPerPage");
+    }
+
+    if (false == string.IsNullOrWhiteSpace(Request.QueryString["q"]))
+    {
+        query = Request.QueryString.Get("q");
+    }
+    if (false == string.IsNullOrWhiteSpace(Request.QueryString["field"]))
+    {
+        type = Request.QueryString.Get("field");
+    }
+    if (false == string.IsNullOrWhiteSpace(Request.QueryString["start"]))
+    {
+        startList = Convert.ToInt32(Request.QueryString.Get("start"));
+    }
+
+    if (false == string.IsNullOrWhiteSpace(query))
+    {
+        publicationListView = USDA_ARS.Umbraco.Extensions.Helpers.Aris.Publications.SearchPublicationsMain(query: query, type: type, count: displayCount, skip: startList);
+    }
+
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+
+
+        <script>
+            $(function () {
+                $("#searchForm").validate({
+
+                    rules: {
+                        criteria: "required"
+                    },
+
+                    messages: {
+                        criteria: " Please enter your search string"
+                    },
+
+                    submitHandler: function (form) {
+                        form.submit();
+                    }
+                });
+            });
+        </script>
+
+        <!-- highlight invalid input fields -->
+        <style type="text/css">
+            input.error {
+                border: 1px solid #FF2323;
+            }
+        </style>
+
+
+
+        <form id="searchForm" action="" method="get" novalidate="novalidate">
+            <table width="100%" border="0">
+                <tbody>
+                    <tr width="30%">
+                        <td align="right">Search For:</td>
+
+                        <td width="70%">
+                            <input type="text" name="q" value="@(query)">
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td align="right">In:</td>
+
+                        <td>
+                            <select name="field">
+                                <option value="all" @(type == "all" ? " selected=\"selected\"" : "" )>All Fields</option>
+                                <option value="title" @(type == "title" ? " selected=\"selected\"" : "" )>Title</option>
+                                <option value="author" @(type == "author" ? " selected=\"selected\"" : "" )>Author</option>
+                                <option value="abstract" @(type == "abstract" ? " selected=\"selected\"" : "" )>Abstract</option>
+                            </select>
+
+                            <input type="submit" name="search" value="Search">
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </form>
+
+        <br>
+
+        @if (publicationListView == null)
+        {
+            @Html.Raw(currentPage.GetPropertyValue<string>("bodyTextBelow"))
+        }
+        else if (publicationListView.PublicationList != null)
+        {
+
+            <table width="100%" border="0" bgcolor="#FFFFFF">
+                <tbody>
+                    <tr>
+                        <td>
+
+
+
+
+                            <font size="-1">
+                                Results:
+                                @(string.Format("{0:n0}", publicationListView.Count)) publication requests found.<br>
+
+                                <ul>
+
+                                    @foreach (SearchPublication publication in publicationListView.PublicationList)
+                                    {
+                                        string str_abstract = "";
+
+                                        if (false == string.IsNullOrWhiteSpace(publication.Abstract))
+                                        {
+                                            str_abstract = publication.Abstract;
+                                        }
+
+                                        str_abstract = str_abstract + "...";
+
+                                        <li>
+                                            <a href="/research/publications/publication/?seq_no_115=@(publication.Key)" id="anch_56">@(publication.Title)</a>
+                                            <br />@(str_abstract)
+                                            <br /><br />
+                                        </li>
+                                    }
+
+                                </ul>
+
+
+                                <table border="0" cellspacing="0" width="100%" cellpadding="15" align="right">
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                @if (startList >= displayCount)
+                                                {
+                                                    <form action="" method="get" name="prevpage" id="prevpage">
+                                                        <input type="hidden" name="field" id="field" value="@(type)">
+                                                        <input type="hidden" name="start" id="start" value="@(startList - displayCount)">
+                                                        <input type="hidden" name="q" value="@(query)">
+                                                        <input type="submit" name="prev" id="prev" value="Previous @(displayCount)">
+                                                    </form>
+                                                }
+                                            </td>
+
+                                            <td align="right">
+                                                @if ((startList + displayCount) < publicationListView.Count)
+                                                {
+                                                    <form action="" method="get" name="nextpage" id="nextpage">
+                                                        <input type="hidden" name="field" id="field" value="@(type)">
+                                                        <input type="hidden" name="start" id="start" value="@(startList + displayCount)">
+                                                        <input type="hidden" name="q" value="@(query)">
+                                                        <input type="submit" name="next" id="next" value="Next @(displayCount)">
+                                                    </form>
+                                                }
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+
+                            </font>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+
+
+
+    </div>
+</div>

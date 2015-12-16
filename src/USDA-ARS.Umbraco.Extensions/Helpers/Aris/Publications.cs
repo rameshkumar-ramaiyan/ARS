@@ -42,7 +42,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                     where = where.Substring(0, where.LastIndexOf(" AND "));
                 }
 
-                where += " AND LEFT(DATEPART(yyyy,journal_accpt_date), 4) = '"+ DateTime.Now.Year +"'";
+                where += " AND LEFT(DATEPART(yyyy,journal_accpt_date), 4) = '" + DateTime.Now.Year + "'";
 
                 sql = new Sql()
                  .Select("*")
@@ -53,7 +53,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
             }
 
 
-            
+
             List<ModeCodeNew> modeCodeList = Helpers.Aris.ModeCodesNew.GetOldModeCode(modeCode);
 
             foreach (ModeCodeNew modeCodeItem in modeCodeList)
@@ -103,7 +103,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                         publicationList.AddRange(publicationList2);
                     }
                 }
-            
+
             }
 
             if (publicationList != null && publicationList.Count > 0)
@@ -119,5 +119,245 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             return publicationList;
         }
+
+
+        public static SearchPublicationView SearchPublicationsMain(string query = "", string type = "", int count = 0, int skip = 0)
+        {
+            SearchPublicationView publicationListView = new SearchPublicationView();
+            List<SearchPublication> publicationList = null;
+
+            publicationListView.Count = 0;
+
+            var db = new Database("arisPublicWebDbDSN");
+            string where = null;
+            Sql sql = null;
+
+            query = query.Replace(";", "").Replace("'", "''");
+
+            if (type == "all")
+            {
+                where = "authors + '  ' +  title  + '  ' +  abstract like '%" + query + "%'";
+            }
+            else if (type == "author")
+            {
+                where = "authors like '%" + query + "%'";
+            }
+            else if (type == "title")
+            {
+                where = "title like '%" + query + "%'";
+            }
+            else if (type == "abstract")
+            {
+                where = "abstract like '%" + query + "%'";
+            }
+
+            sql = new Sql()
+                 .Select("*")
+                 .From("V_PUBLICATION_SEARCH")
+                 .Where(where);
+
+            publicationList = db.Query<SearchPublication>(sql).ToList();
+
+            if (publicationList != null && publicationList.Count > 0)
+            {
+                publicationListView.Count = publicationList.Count;
+
+                publicationList = publicationList.OrderByDescending(p => p.Key).ToList();
+
+                if (count > 0 && skip > 0)
+                {
+                    publicationList = publicationList.Skip(skip).Take(count).ToList();
+                }
+                else if (count > 0)
+                {
+                    publicationList = publicationList.Take(count).ToList();
+                }
+
+                publicationListView.PublicationList = publicationList;
+            }
+
+            return publicationListView;
+        }
+
+
+        public static UsdaPublicationSearch SearchPublications(string modeCode, int count = -1, int skip = 0, int filterYear = 0, string show = "")
+        {
+            UsdaPublicationSearch publicationSearch = new UsdaPublicationSearch();
+            publicationSearch.Count = 0;
+
+            List<UsdaPublication> publicationList = null;
+
+            List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
+
+            if (filterYear == 0)
+            {
+                filterYear = DateTime.Now.Year;
+            }
+
+            var db = new Database("arisPublicWebDbDSN");
+
+            Sql sql = null;
+
+            if (modeCodeArray != null && modeCodeArray.Count == 4)
+            {
+                string where = "MODECODE_1 = '" + modeCodeArray[0] + "' AND ";
+
+                if (modeCodeArray[1] != "00")
+                {
+                    where += "MODECODE_2 = '" + modeCodeArray[1] + "' AND ";
+                }
+                if (modeCodeArray[2] != "00")
+                {
+                    where += "MODECODE_3 = '" + modeCodeArray[2] + "' AND ";
+                }
+                if (modeCodeArray[3] != "00")
+                {
+                    where += "MODECODE_4 = '" + modeCodeArray[3] + "' AND ";
+                }
+
+                if (where.EndsWith(" AND "))
+                {
+                    where = where.Substring(0, where.LastIndexOf(" AND "));
+                }
+
+                where += " AND LEFT(DATEPART(yyyy,journal_accpt_date), 4) = '" + filterYear + "'";
+
+                if (show == "pubtype")
+                {
+                    where += " AND PUB_TYPE_CODE = 'J'";
+                }
+
+                sql = new Sql()
+                 .Select("*")
+                 .From("gen_public_115s")
+                 .Where(where);
+
+                publicationList = db.Query<UsdaPublication>(sql).ToList();
+
+                if (publicationList != null && publicationList.Count > 0)
+                {
+                    publicationSearch.Count = publicationList.Count;
+
+                    publicationList = publicationList.OrderByDescending(p => p.JournalAcceptDate).ToList();
+
+                    if (count > 0 && skip > 0)
+                    {
+                        publicationList = publicationList.Skip(skip).Take(count).ToList();
+                    }
+                    else if (count > 0)
+                    {
+                        publicationList = publicationList.Take(count).ToList();
+                    }
+
+                    publicationSearch.PublicationList = publicationList;
+                }
+            }
+
+
+
+            List<ModeCodeNew> modeCodeList = Helpers.Aris.ModeCodesNew.GetOldModeCode(modeCode);
+
+            foreach (ModeCodeNew modeCodeItem in modeCodeList)
+            {
+                Sql sql2 = null;
+                List<UsdaPublication> publicationList2 = null;
+
+                List<string> modeCodeArray2 = Helpers.ModeCodes.ModeCodeArray(modeCodeItem.ModecodeOld);
+
+                if (modeCodeArray2 != null && modeCodeArray2.Count == 4)
+                {
+                    string where = "MODECODE_1 = '" + modeCodeArray2[0] + "' AND ";
+
+                    if (modeCodeArray2[1] != "00")
+                    {
+                        where += "MODECODE_2 = '" + modeCodeArray2[1] + "' AND ";
+                    }
+                    if (modeCodeArray2[2] != "00")
+                    {
+                        where += "MODECODE_3 = '" + modeCodeArray2[2] + "' AND ";
+                    }
+                    if (modeCodeArray2[3] != "00")
+                    {
+                        where += "MODECODE_4 = '" + modeCodeArray2[3] + "' AND ";
+                    }
+
+                    if (where.EndsWith(" AND "))
+                    {
+                        where = where.Substring(0, where.LastIndexOf(" AND "));
+                    }
+
+                    where += " AND LEFT(DATEPART(yyyy,journal_accpt_date), 4) = '" + filterYear + "'";
+
+                    if (show == "pubtype")
+                    {
+                        where += " AND PUB_TYPE_CODE = 'J'";
+                    }
+
+                    sql2 = new Sql()
+                     .Select("*")
+                     .From("gen_public_115s")
+                     .Where(where);
+
+                    publicationList2 = db.Query<UsdaPublication>(sql2).ToList();
+
+                    if (publicationList == null)
+                    {
+                        publicationList = publicationList2;
+                    }
+                    else
+                    {
+                        publicationList.AddRange(publicationList2);
+                    }
+                }
+
+            }
+
+            if (publicationList != null && publicationList.Count > 0)
+            {
+                publicationSearch.Count = publicationList.Count;
+
+                publicationList = publicationList.OrderByDescending(p => p.JournalAcceptDate).ToList();
+
+                if (count > 0 && skip > 0)
+                {
+                    publicationList = publicationList.Skip(skip).Take(count).ToList();
+                }
+                else if (count > 0)
+                {
+                    publicationList = publicationList.Take(count).ToList();
+                }
+
+                publicationSearch.PublicationList = publicationList;
+            }
+
+
+            return publicationSearch;
+        }
+
+
+        public static List<PeoplePublication> PublicationsByPerson(int personId)
+        {
+            List<PeoplePublication> peoplePublicationsList = null;
+
+            PeopleInfo peopleInfo = Helpers.Aris.People.GetPerson(personId);
+
+            if (peopleInfo != null)
+            {
+                var db = new Database("arisPublicWebDbDSN");
+
+                Sql sql = null;
+
+                sql = new Sql()
+                 .Select("*")
+                 .From("V_PERSON_115S")
+                 .Where("EMP_ID = '"+ peopleInfo.EmpId +"'");
+
+                peoplePublicationsList = db.Query<PeoplePublication>(sql).ToList();
+            }
+
+
+            return peoplePublicationsList;
+        }
+
     }
 }
