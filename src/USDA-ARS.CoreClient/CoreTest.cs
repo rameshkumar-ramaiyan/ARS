@@ -27,7 +27,10 @@ namespace USDA_ARS.CoreClient
         {
             PullDataFromAccess pulldata = new PullDataFromAccess();
             string connectionStr = txtConnectionString.Text;
-            string finalHtmlString= pulldata.SetValues(connectionStr) ;
+            string accessTableName = txtAccessTableName.Text;
+            string finalHtmlString= pulldata.SetValues(connectionStr,accessTableName) ;
+
+
             //Create DataTable
             txtResult.Text= finalHtmlString;
 
@@ -35,6 +38,9 @@ namespace USDA_ARS.CoreClient
 
         }
 
-       
+        private void txtConnectionString_TextChanged(object sender, EventArgs e)
+        {
+
+        }
     }
 }

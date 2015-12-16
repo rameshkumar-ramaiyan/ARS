@@ -25,9 +25,17 @@ namespace USDA_ARS.Core
             set { accessConnectionString = value; }
 
         }
+        private static string accessTableName = "";
+        public static string AccessTableName
+        {
+            get { return accessTableName; }
+            set { accessTableName = value; }
+
+        }
+        
 
         // Setting environment values
-        public string SetValues(string connectionStr, bool storeInDB = true, bool bodyHtmlOnly = false)
+        public string SetValues(string connectionStr, string tableName,bool storeInDB = true, bool bodyHtmlOnly = false)
         {
             //1.Set Access connection (using  connection string from App.config).
             //string strAccessConn=string.Empty;
@@ -35,16 +43,18 @@ namespace USDA_ARS.Core
             if (false == string.IsNullOrWhiteSpace(connectionStr))
             {
                 accessConnectionString = connectionStr;
+                accessTableName = tableName;
 
             }
             else
             {
                 accessConnectionString = ConfigurationManager.AppSettings["AccessConnection"];
+                accessTableName = ConfigurationManager.AppSettings["AccessTableName"];
 
             }
 
 
-            string modificationHistoryHtml = DataValues.ModificationHistory;
+            //string modificationHistoryHtml = DataValues.ModificationHistory;
             string headSectionHtml = DataValues.HtmlHeadSection;
             string bodySection1Html = DataValues.BodySection1;
             string tablerow1 = DataValues.Tablerow1;
@@ -83,9 +93,10 @@ namespace USDA_ARS.Core
 
             if (false == bodyHtmlOnly)
             {
-                finalHtmlString = modificationHistoryHtml
-                                   + System.Environment.NewLine
-                                   + headSectionHtml
+                finalHtmlString =// modificationHistoryHtml
+                                  // + System.Environment.NewLine
+                                   //+ 
+                                   headSectionHtml
                                    + System.Environment.NewLine
                                    + bodySection1Html
                                    + tablerow1

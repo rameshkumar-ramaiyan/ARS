@@ -266,8 +266,10 @@ namespace USDA_ARS.Core
             //1.Set Access connection(using  connection string from App.config).
             // string strAccessConn = ConfigurationManager.AppSettings["AccessConnection"];
             string strAccessConn = PullDataFromAccess.AccessConnectionString;
+            string strTableName = PullDataFromAccess.AccessTableName;
+            
             //private static string tablerow5 = 
-            //2.select values from keydates table.
+            //2.select values from Schedule Table table.
             DataTable getID = new DataTable();
             OleDbConnection conn = new OleDbConnection(strAccessConn);
             conn.Open();
@@ -277,7 +279,7 @@ namespace USDA_ARS.Core
             if (tdNumber == 1)
             {
                 query = "SELECT	[National Program Title]  "
-                                     + "                    FROM    KeyDates"
+                                   + "                    FROM  [" + strTableName + "]"
                                      + " WHERE   mid([National Program Title], 4, 3) in ('101','103','104','105','106')"
                                      + "ORDER BY[National Program Title]";
             }
@@ -286,21 +288,21 @@ namespace USDA_ARS.Core
 
 
                 query = "SELECT	[National Program Title]  "
-                                     + "                    FROM    KeyDates"
+                                    + "                    FROM  [" + strTableName + "]"
                                      + " WHERE   mid([National Program Title], 4, 3) in ('107','108','306')"
                                      + "ORDER BY[National Program Title]";
             }
             if (tdNumber == 3)
             {
                 query = "SELECT	[National Program Title]  "
-                                     + "                    FROM    KeyDates"
+                                   + "                    FROM  [" + strTableName + "]"
                                      + " WHERE   mid([National Program Title], 4, 3) in ('201', '202', '203', '204', '205', '206', '207', '211', '212', '213', '214', '215', '216', '307')"
                                      + "ORDER BY[National Program Title]";
             }
             if (tdNumber == 4)
             {
                 query = "SELECT	[National Program Title]  "
-                                     + "                    FROM    KeyDates"
+                                   + "                    FROM  [" + strTableName + "]"
                                      + " WHERE   mid([National Program Title], 4, 3) in ('301', '302','303','304','305','308')"
                                      + "ORDER BY[National Program Title]";
             }
@@ -421,8 +423,9 @@ namespace USDA_ARS.Core
             //1.Set Access connection(using  connection string from App.config).
             //string strAccessConn = ConfigurationManager.AppSettings["AccessConnection"];
             string strAccessConn = PullDataFromAccess.AccessConnectionString;
+            string strTableName = PullDataFromAccess.AccessTableName;
             //private static string tablerow5 = 
-            //2.select values from keydates table.
+            //2.select values from Schedule Table table.
             DataTable getID = new DataTable();
             OleDbConnection conn = new OleDbConnection(strAccessConn);
             conn.Open();
@@ -448,7 +451,7 @@ namespace USDA_ARS.Core
                     + "[Project's Targeted Implementation Date]		AS ProjectsTargetedImplementationDate"
                     + ",[Ad Hoc Cut-Off Date]                           AS AdHocCutOffDate"
 
-                    + "                  FROM    KeyDates "
+                    + "                    FROM  [" + strTableName+"]"
                                      + "ORDER BY[National Program Title]";
                 //
 

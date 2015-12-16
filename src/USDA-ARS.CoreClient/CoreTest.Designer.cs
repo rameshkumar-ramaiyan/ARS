@@ -32,11 +32,13 @@
             this.txtResult = new System.Windows.Forms.TextBox();
             this.txtConnectionString = new System.Windows.Forms.TextBox();
             this.lblConnectionString = new System.Windows.Forms.Label();
+            this.txtAccessTableName = new System.Windows.Forms.Label();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnPullDataFromAccess
             // 
-            this.btnPullDataFromAccess.Location = new System.Drawing.Point(12, 130);
+            this.btnPullDataFromAccess.Location = new System.Drawing.Point(28, 183);
             this.btnPullDataFromAccess.Name = "btnPullDataFromAccess";
             this.btnPullDataFromAccess.Size = new System.Drawing.Size(124, 49);
             this.btnPullDataFromAccess.TabIndex = 0;
@@ -55,12 +57,13 @@
             // 
             // txtConnectionString
             // 
-            this.txtConnectionString.Location = new System.Drawing.Point(12, 32);
+            this.txtConnectionString.Location = new System.Drawing.Point(13, 32);
             this.txtConnectionString.Multiline = true;
             this.txtConnectionString.Name = "txtConnectionString";
             this.txtConnectionString.ScrollBars = System.Windows.Forms.ScrollBars.Both;
             this.txtConnectionString.Size = new System.Drawing.Size(212, 82);
             this.txtConnectionString.TabIndex = 2;
+            this.txtConnectionString.TextChanged += new System.EventHandler(this.txtConnectionString_TextChanged);
             // 
             // lblConnectionString
             // 
@@ -71,11 +74,31 @@
             this.lblConnectionString.TabIndex = 3;
             this.lblConnectionString.Text = "Connection String";
             // 
+            // txtAccessTableName
+            // 
+            this.txtAccessTableName.AutoSize = true;
+            this.txtAccessTableName.Location = new System.Drawing.Point(9, 117);
+            this.txtAccessTableName.Name = "txtAccessTableName";
+            this.txtAccessTableName.Size = new System.Drawing.Size(94, 20);
+            this.txtAccessTableName.TabIndex = 5;
+            this.txtAccessTableName.Text = "Table Name";
+            // 
+            // textBox1
+            // 
+            this.textBox1.Location = new System.Drawing.Point(21, 140);
+            this.textBox1.Multiline = true;
+            this.textBox1.Name = "textBox1";
+            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.textBox1.Size = new System.Drawing.Size(189, 19);
+            this.textBox1.TabIndex = 4;
+            // 
             // CoreTest
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(664, 244);
+            this.Controls.Add(this.txtAccessTableName);
+            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.lblConnectionString);
             this.Controls.Add(this.txtConnectionString);
             this.Controls.Add(this.txtResult);
@@ -93,6 +116,8 @@
         private System.Windows.Forms.TextBox txtResult;
         private System.Windows.Forms.TextBox txtConnectionString;
         private System.Windows.Forms.Label lblConnectionString;
+        private System.Windows.Forms.Label txtAccessTableName;
+        private System.Windows.Forms.TextBox textBox1;
     }
 }
 

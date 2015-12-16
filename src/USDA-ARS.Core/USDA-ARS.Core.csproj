@@ -64,7 +64,16 @@
     <Content Include="AccessDB\megascheduleIII.mdb">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <Content Include="AccessDB\Schedule Database_150803.mdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="AccessDB\Schedule Database_150821.mdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SQLDB\CreateMegaStatusHTMLTable.sql" />
+    <Content Include="AccessDB\Schedule Database.mdb">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="SQLDB\usp_InsertNewMessagesToNews.sql" />
     <Content Include="SQLDB\usp_InsertMegaStatusHTMLString.sql" />
   </ItemGroup>
