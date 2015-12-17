@@ -30,6 +30,10 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
         public async Task<HttpResponseMessage> Post()
         {
             bool success = false;
+            int nodeId = 0;
+            string tableNameDefault = "KeyDates";
+            string tableName = "";
+            string fullSavePath = null;
 
             try
             {
@@ -39,7 +43,8 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                 }
 
                 string savePath = ConfigurationManager.AppSettings.Get("Usda:FileUploadPath");
-                string fullSavePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/" + savePath);
+                fullSavePath = System.Web.HttpContext.Current.Server.MapPath("~/App_Data/" + savePath);
+                
 
                 if (false == System.IO.Directory.Exists(fullSavePath))
                 {
@@ -55,11 +60,18 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                 var provider = new MultipartFormDataStreamProvider(fullSavePath);
                 var result = await Request.Content.ReadAsMultipartAsync(provider);
 
+                nodeId = Convert.ToInt32(result.FormData["nodeId"]);
+
                 var fileName = result.FileData.Aggregate(string.Empty, (current, file) => current + ("," + file.Headers.ContentDisposition.FileName));
+
+                if (result.FormData["tableName"] != null && result.FormData.Get("tableName").Length > 0)
+                {
+                    tableName = result.FormData.Get("tableName");
+                }
 
                 foreach (FileInfo file in uploadFolder.GetFiles())
                 {
-                    System.IO.File.Move(file.FullName, fullSavePath + "\\megascheduleIII.mdb");
+                    System.IO.File.Move(file.FullName, fullSavePath + "\\data-import-file.mdb");
                 }
 
                 foreach (FileInfo file in uploadFolder.GetFiles())
@@ -70,13 +82,13 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                     {
                         PullDataFromAccess pullDataFromAccess = new PullDataFromAccess();
 
-                        string html = pullDataFromAccess.SetValues("Provider=Microsoft.ACE.OLEDB.12.0;data source=" + fileInfo.FullName, false, true);
+                        string html = pullDataFromAccess.SetValues("Provider=Microsoft.ACE.OLEDB.12.0;data source=" + fileInfo.FullName, tableName, false, true);
 
                         html = Regex.Replace(html, "<body[^>]*>", "");
                         html = Regex.Replace(html, "</body>", "");
                         html = Regex.Replace(html, "</html>", "");
 
-                        IContent content = _contentService.GetById(Convert.ToInt32(result.FormData["nodeId"]));
+                        IContent content = _contentService.GetById(nodeId);
 
                         content.SetValue("contentTable", html);
 
@@ -94,6 +106,42 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
             catch (Exception ex)
             {
                 LogHelper.Error<DataImporterController>("Data Import Post Error", ex);
+
+                string errorMessage = "Unknown error. Trust me, we tried finding an error.";
+
+                if (ex.InnerException != null && ex.InnerException.Message != null)
+                {
+                    errorMessage = ex.InnerException.Message;
+                }
+                else if (ex.Message != null)
+                {
+                    errorMessage = ex.Message;
+                }
+
+                errorMessage += " || Input Table Name: " + tableName;
+
+                string redirectScript = "window.parent.location.reload();";
+
+                //if (nodeId > 0)
+                //{
+                //    redirectScript = "self.location.href='/App_Plugins/UsdaDataImporter/upload.file.aspx?id="+ nodeId +"&ch="+ DateTime.Now.ToString("yyMMddhhmmss") +"';";
+                //}
+
+                string htmlResponse = "<html><script>window.parent.alert('ERROR:"+ errorMessage.Replace("'","\"") + "');"+ redirectScript + "</script></html>";
+
+                if (false == string.IsNullOrEmpty(fullSavePath))
+                {
+                    System.IO.DirectoryInfo uploadFolder = new DirectoryInfo(fullSavePath);
+                    foreach (FileInfo file in uploadFolder.GetFiles())
+                    {
+                        file.Delete();
+                    }
+                }
+
+                var resp = new HttpResponseMessage(HttpStatusCode.OK);
+                resp.Content = new StringContent(htmlResponse, System.Text.Encoding.UTF8, "text/html");
+
+                return resp;
             }
 
             return Request.CreateResponse(HttpStatusCode.BadRequest, "");
