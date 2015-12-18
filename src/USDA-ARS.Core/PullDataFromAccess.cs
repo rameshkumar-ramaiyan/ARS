@@ -21,7 +21,7 @@ namespace USDA_ARS.Core
         private static string accessConnectionString = "";
         public static string AccessConnectionString
         {
-            get { return accessConnectionString; } 
+            get { return accessConnectionString; }
             set { accessConnectionString = value; }
 
         }
@@ -35,7 +35,7 @@ namespace USDA_ARS.Core
         
 
         // Setting environment values
-        public string SetValues(string connectionStr, string tableName,bool storeInDB = true,     bool bodyHtmlOnly = false)
+        public string SetValues(string connectionStr, string tableName,bool storeInDB = true, bool bodyHtmlOnly = false)
         {
             //1.Set Access connection (using  connection string from App.config).
             //string strAccessConn=string.Empty;
