@@ -103,7 +103,7 @@
                                     navLinkUrl = navLink.Url;
                                 }
                                 <li>
-                                    <a href="@(navLinkUrl + "?mc=" + modeCode)">@Html.Raw(topic.GetValue("label"))</a>
+                                    <a href="@(navLinkUrl + "?modeCode=" + modeCode)">@Html.Raw(topic.GetValue("label"))</a>
                                 </li>
                             }
                         }
@@ -323,7 +323,7 @@
                         }
 
                         <li class="textAlignRight">
-                            <a href="/research/publications/?modecode=@modeCode">&gt;&gt;&gt;More</a>
+                            <a href="/services/publications/?modecode=@modeCode">&gt;&gt;&gt;More</a>
                         </li>
                     </ul>
                 </div>
@@ -422,3 +422,5 @@
 
     </div>
     <!-- bottom content end -->
+
+</div>
