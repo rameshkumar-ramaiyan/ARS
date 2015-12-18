@@ -273,46 +273,58 @@ namespace USDA_ARS.Core
             DataTable getID = new DataTable();
             OleDbConnection conn = new OleDbConnection(strAccessConn);
             conn.Open();
-            OleDbCommand cmd = new OleDbCommand();
-            cmd.Connection = conn;
-            string query = "";
-            if (tdNumber == 1)
+            try
             {
-                query = "SELECT	[National Program Title]  "
-                                   + "                    FROM  [" + strTableName + "]"
-                                     + " WHERE   mid([National Program Title], 4, 3) in ('101','103','104','105','106')"
-                                     + "ORDER BY[National Program Title]";
+                OleDbCommand cmd = new OleDbCommand();
+                cmd.Connection = conn;
+                string query = "";
+                if (tdNumber == 1)
+                {
+                    query = "SELECT	[National Program Title]  "
+                                       + "                    FROM  [" + strTableName + "]"
+                                         + " WHERE   mid([National Program Title], 4, 3) in ('101','103','104','105','106')"
+                                         + "ORDER BY[National Program Title]";
+                }
+                if (tdNumber == 2)
+                {
+
+
+                    query = "SELECT	[National Program Title]  "
+                                        + "                    FROM  [" + strTableName + "]"
+                                         + " WHERE   mid([National Program Title], 4, 3) in ('107','108','306')"
+                                         + "ORDER BY[National Program Title]";
+                }
+                if (tdNumber == 3)
+                {
+                    query = "SELECT	[National Program Title]  "
+                                       + "                    FROM  [" + strTableName + "]"
+                                         + " WHERE   mid([National Program Title], 4, 3) in ('201', '202', '203', '204', '205', '206', '207', '211', '212', '213', '214', '215', '216', '307')"
+                                         + "ORDER BY[National Program Title]";
+                }
+                if (tdNumber == 4)
+                {
+                    query = "SELECT	[National Program Title]  "
+                                       + "                    FROM  [" + strTableName + "]"
+                                         + " WHERE   mid([National Program Title], 4, 3) in ('301', '302','303','304','305','308')"
+                                         + "ORDER BY[National Program Title]";
+                }
+                cmd.CommandText = query;
+
+
+
+                OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
+                adapter.Fill(getID);
             }
-            if (tdNumber == 2)
+            catch (Exception ex)
             {
-
-
-                query = "SELECT	[National Program Title]  "
-                                    + "                    FROM  [" + strTableName + "]"
-                                     + " WHERE   mid([National Program Title], 4, 3) in ('107','108','306')"
-                                     + "ORDER BY[National Program Title]";
+               
+                throw new Exception(" Internal Error.  " + ex.Message.ToString());
+                return getID;
             }
-            if (tdNumber == 3)
+            finally
             {
-                query = "SELECT	[National Program Title]  "
-                                   + "                    FROM  [" + strTableName + "]"
-                                     + " WHERE   mid([National Program Title], 4, 3) in ('201', '202', '203', '204', '205', '206', '207', '211', '212', '213', '214', '215', '216', '307')"
-                                     + "ORDER BY[National Program Title]";
+                conn.Close();
             }
-            if (tdNumber == 4)
-            {
-                query = "SELECT	[National Program Title]  "
-                                   + "                    FROM  [" + strTableName + "]"
-                                     + " WHERE   mid([National Program Title], 4, 3) in ('301', '302','303','304','305','308')"
-                                     + "ORDER BY[National Program Title]";
-            }
-            cmd.CommandText = query;
-
-
-
-            OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
-            adapter.Fill(getID);
-
 
             return getID;
         }
@@ -429,45 +441,56 @@ namespace USDA_ARS.Core
             DataTable getID = new DataTable();
             OleDbConnection conn = new OleDbConnection(strAccessConn);
             conn.Open();
-            OleDbCommand cmd = new OleDbCommand();
-            cmd.Connection = conn;
-            string query = "";
-            if (tdNumber == 1)
-            {
-                query = "SELECT	ID,"
-                    + "[National Program Title]                        AS NationalProgramTitle,"
-                    + "[Termination Date]                              AS TerminationDate,"
-                    + "[Program Analyst]                               AS ProgramAssistant,"
-                    + "[Number of Projects in the Review]              AS RoundNumberofProjectsintheReview,"
-                    + "[Planned Duration]                              AS PlannedDuration,"
-                    + "[Status of Reviews]                             AS statusOfReviews,"
-                    + "[Concurrence Memo Due to Area Director]         AS ConcurrenceMemoDuetoAreaDirector,"
-                    + "[PDRAMs Due to Area & OSQR with Schedule]       AS PDRAMsDueToAreaOSQRWithSchedule,"
-                    + "[Conflicts of Interest Lists Due To OSQR]       AS ConflictsofInterestListDuetoOSQR,"
+            try {
+                OleDbCommand cmd = new OleDbCommand();
+                cmd.Connection = conn;
+                string query = "";
+                if (tdNumber == 1)
+                {
+                    query = "SELECT	ID,"
+                        + "[National Program Title]                        AS NationalProgramTitle,"
+                        + "[Termination Date]                              AS TerminationDate,"
+                        + "[Program Analyst]                               AS ProgramAssistant,"
+                        + "[Number of Projects in the Review]              AS RoundNumberofProjectsintheReview,"
+                        + "[Planned Duration]                              AS PlannedDuration,"
+                        + "[Status of Reviews]                             AS statusOfReviews,"
+                        + "[Concurrence Memo Due to Area Director]         AS ConcurrenceMemoDuetoAreaDirector,"
+                        + "[PDRAMs Due to Area & OSQR with Schedule]       AS PDRAMsDueToAreaOSQRWithSchedule,"
+                        + "[Conflicts of Interest Lists Due To OSQR]       AS ConflictsofInterestListDuetoOSQR,"
 
-                    + "[Project Plans Due to OSQR]                     AS ProjectPlansDueToOSQR,"
-                    + "[Review Period]                                 AS ReviewPeriod,"
+                        + "[Project Plans Due to OSQR]                     AS ProjectPlansDueToOSQR,"
+                        + "[Review Period]                                 AS ReviewPeriod,"
 
-                    + "[Project's Targeted Implementation Date]		AS ProjectsTargetedImplementationDate"
-                    + ",[Ad Hoc Cut-Off Date]                           AS AdHocCutOffDate"
+                        + "[Project's Targeted Implementation Date]		AS ProjectsTargetedImplementationDate"
+                        + ",[Ad Hoc Cut-Off Date]                           AS AdHocCutOffDate"
 
-                    + "                    FROM  [" + strTableName+"]"
-                                     + "ORDER BY[National Program Title]";
-                //
-
-
-
+                        + "                    FROM  [" + strTableName + "]"
+                                         + "ORDER BY[National Program Title]";
+                    //
 
 
+
+
+
+                }
+
+                cmd.CommandText = query;
+
+
+
+                OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
+                adapter.Fill(getID);
             }
-
-            cmd.CommandText = query;
-
-
-
-            OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
-            adapter.Fill(getID);
-
+             catch (Exception ex)
+            {
+               
+                throw new Exception(" Internal Error.  " + ex.Message.ToString());
+                return getID;
+            }
+            finally
+            {
+                conn.Close();
+            }
 
             return getID;
         }

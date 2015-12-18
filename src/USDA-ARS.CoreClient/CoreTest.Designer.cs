@@ -32,8 +32,8 @@
             this.txtResult = new System.Windows.Forms.TextBox();
             this.txtConnectionString = new System.Windows.Forms.TextBox();
             this.lblConnectionString = new System.Windows.Forms.Label();
-            this.txtAccessTableName = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.lblAccessTableName = new System.Windows.Forms.Label();
+            this.txtAccessTableName = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
             // btnPullDataFromAccess
@@ -74,31 +74,31 @@
             this.lblConnectionString.TabIndex = 3;
             this.lblConnectionString.Text = "Connection String";
             // 
+            // lblAccessTableName
+            // 
+            this.lblAccessTableName.AutoSize = true;
+            this.lblAccessTableName.Location = new System.Drawing.Point(9, 117);
+            this.lblAccessTableName.Name = "lblAccessTableName";
+            this.lblAccessTableName.Size = new System.Drawing.Size(94, 20);
+            this.lblAccessTableName.TabIndex = 5;
+            this.lblAccessTableName.Text = "Table Name";
+            // 
             // txtAccessTableName
             // 
-            this.txtAccessTableName.AutoSize = true;
-            this.txtAccessTableName.Location = new System.Drawing.Point(9, 117);
+            this.txtAccessTableName.Location = new System.Drawing.Point(21, 140);
+            this.txtAccessTableName.Multiline = true;
             this.txtAccessTableName.Name = "txtAccessTableName";
-            this.txtAccessTableName.Size = new System.Drawing.Size(94, 20);
-            this.txtAccessTableName.TabIndex = 5;
-            this.txtAccessTableName.Text = "Table Name";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(21, 140);
-            this.textBox1.Multiline = true;
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox1.Size = new System.Drawing.Size(189, 19);
-            this.textBox1.TabIndex = 4;
+            this.txtAccessTableName.ScrollBars = System.Windows.Forms.ScrollBars.Both;
+            this.txtAccessTableName.Size = new System.Drawing.Size(189, 19);
+            this.txtAccessTableName.TabIndex = 4;
             // 
             // CoreTest
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(664, 244);
+            this.Controls.Add(this.lblAccessTableName);
             this.Controls.Add(this.txtAccessTableName);
-            this.Controls.Add(this.textBox1);
             this.Controls.Add(this.lblConnectionString);
             this.Controls.Add(this.txtConnectionString);
             this.Controls.Add(this.txtResult);
@@ -116,8 +116,8 @@
         private System.Windows.Forms.TextBox txtResult;
         private System.Windows.Forms.TextBox txtConnectionString;
         private System.Windows.Forms.Label lblConnectionString;
-        private System.Windows.Forms.Label txtAccessTableName;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.Label lblAccessTableName;
+        private System.Windows.Forms.TextBox txtAccessTableName;
     }
 }
 
