@@ -38,9 +38,6 @@ namespace USDA_ARS.CoreClient
 
         }
 
-        private void txtConnectionString_TextChanged(object sender, EventArgs e)
-        {
-
-        }
+      
     }
 }
