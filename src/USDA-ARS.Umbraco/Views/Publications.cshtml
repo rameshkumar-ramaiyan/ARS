@@ -1,0 +1,242 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+    UsdaPublicationSearch publicationSearch = null;
+
+    string modeCode = "";
+    int filterYear = DateTime.Now.Year;
+    string show = "";
+    int startList = 0;
+    int displayCount = 20;
+
+    if (currentPage.HasValue("resultsPerPage"))
+    {
+        displayCount = currentPage.GetPropertyValue<int>("resultsPerPage");
+    }
+
+    if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
+    {
+        modeCode = Request.QueryString.Get("modeCode");
+    }
+    else
+    {
+        Response.Redirect("/services/");
+    }
+    if (false == string.IsNullOrWhiteSpace(Request.QueryString["filterYear"]))
+    {
+        filterYear = Convert.ToInt32(Request.QueryString.Get("filterYear"));
+    }
+    if (false == string.IsNullOrWhiteSpace(Request.QueryString["show"]))
+    {
+        show = Request.QueryString.Get("show");
+    }
+    if (false == string.IsNullOrWhiteSpace(Request.QueryString["start"]))
+    {
+        startList = Convert.ToInt32(Request.QueryString.Get("start"));
+    }
+
+    if (false == string.IsNullOrEmpty(modeCode))
+    {
+        publicationSearch = USDA_ARS.Umbraco.Extensions.Helpers.Aris.Publications.SearchPublications(modeCode: modeCode, count: displayCount, skip: startList, filterYear: filterYear, show: show);
+    }
+
+}
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+        
+        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+
+        @{
+            int startYear = DateTime.Now.Year;
+            int endYear = 1992;
+
+            for (int i = startYear; i >= endYear; i--)
+            {
+                <a href="/services/publications/?modecode=@(modeCode)&locpubs=yes&filterYear=@(i)" id="anch_51">@(i)</a>@Html.Raw(" | ")
+            }
+
+        }
+
+        <br />
+        <br />
+
+        <table align="center">
+            <tbody>
+                <tr>
+                    <td>
+                        <div align="center">
+                            <font face="verdana,arial,helvetica" size="2" color="FF6600">
+                                <strong>
+                                    @(filterYear) Publications <br>
+                                    (listed by order of acceptance date)
+                                </strong>
+                            </font>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br>
+
+        <b>Current View: <font color="FF3300">@(show == "pubtype" ? "Peer Reviewed Publications Only" : "All Publications")</font></b>
+
+        <br><br>
+
+        <b>
+            Show <a href="/services/publications/?modecode=@(modeCode)&filteryear=@(filterYear)" id="anch_75">All Publications</a> ||
+            <a href="/services/publications/?modecode=@(modeCode)&show=pubtype&filteryear=@(filterYear)" id="anch_76">Peer Reviewed Journal Publications Only</a>
+        </b>
+
+        <br>
+        <br>
+
+        <table align="center">
+            <tbody>
+                <tr>
+                    <td>
+                        <font face="verdana,arial,helvetica" size="2" color="FF6600">
+                            <strong>
+                                @if (publicationSearch == null || publicationSearch.Count <= 0)
+                                {
+                                    @Html.Raw("No records found");
+                                }
+                                else
+                                {
+                                    int endCount = displayCount + startList;
+
+                                    if (endCount > publicationSearch.Count)
+                                    {
+                                        endCount = publicationSearch.Count;
+                                    }
+
+                                    @Html.Raw("Displaying " + ((int)startList + 1) + " to " + endCount + " of " + string.Format("{0:n0}", publicationSearch.Count) + " Records");
+                                }
+                            </strong>
+                        </font>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <table align="center" width="200">
+            <tbody>
+                <tr>
+
+                    <td>
+                        @{
+                            if (startList >= displayCount)
+                            {
+                                <a href="/services/publications/?modecode=@(modeCode)&start=@(startList - displayCount)&display=@(displayCount)&filterYear=@(filterYear)&show=@(show)" class="nextNRecords" id="anch_77">&lt;&lt;-Previous</a>
+                            }
+                        }
+                    </td>
+
+                    <td>
+                        @{
+                            if ((displayCount + startList) < publicationSearch.Count)
+                            {
+                                <a href="/services/publications/?modecode=@(modeCode)&start=@(startList + displayCount)&display=@(displayCount)&filterYear=@(filterYear)&show=@(show)" class="nextNRecords" id="anch_78">Next-&gt;&gt;</a>
+                            }
+                        }
+                    </td>
+
+                </tr>
+            </tbody>
+        </table>
+
+        <br><font face="verdana,arial" size="-1">
+            <div align="left">
+                <table border="0" cellspacing="0" cellpadding="6">
+
+                    <tbody>
+
+                        @if (publicationSearch != null && publicationSearch.PublicationList != null && publicationSearch.PublicationList.Any())
+                        {
+                            foreach (UsdaPublication publication in publicationSearch.PublicationList)
+                            {
+                                <tr>
+                                    <td valign="middle"><img src="/incme/images/bullet.gif" width="16" height="18" align="bullet"></td>
+                                    <td>
+                                        <a href="/research/publications/publication/?seq_no_115=@(publication.SeqNo115)" class="projectNav" title="Publication" id="anch_79">
+                                            @(publication.Title)
+                                        </a>
+                                        <br />
+                                        @{
+                                            string publicationType = "";
+
+                                            if (publication.PubTypeCode == "J")
+                                            {
+                                                publicationType = "Peer Reviewed Journal";
+                                            }
+                                            else if (publication.PubTypeCode == "A")
+                                            {
+                                                publicationType = "Abstract Only";
+                                            }
+                                            else if (publication.PubTypeCode == "P")
+                                            {
+                                                publicationType = "Proceedings";
+                                            }
+                                            else
+                                            {
+                                                publicationType = "Other";
+                                            }
+
+                                            @Html.Raw("(" + publicationType + ")");
+                                        }
+                                    </td>
+
+                                    <td width="70" valign="top" style="font-size:11px;">
+                                        @("(" + publication.JournalAcceptDate.ToString("d-MMM-yy") + ")")
+                                    </td>
+                                </tr>
+                                                }
+                                            }
+
+                    </tbody>
+                </table>
+
+
+                <table align="center" width="200">
+
+                    <tbody>
+                        <tr>
+
+                            <td>
+                                @if (startList >= displayCount)
+                                {
+                                    <a href="/services/publications/?modecode=@(modeCode)&start=@(startList - displayCount)&display=@(displayCount)&filterYear=@(filterYear)&show=@(show)" class="nextNRecords" id="anch_101">&lt;&lt;-Previous</a>
+                                }
+                            </td>
+
+                            <td>
+                                @{
+                                    if ((displayCount + startList) < publicationSearch.Count)
+                                    {
+                                        <a href="/services/publications/?modecode=@(modeCode)&start=@(startList + displayCount)&display=@(displayCount)&filterYear=@(filterYear)&show=@(show)" class="nextNRecords" id="anch_78">Next-&gt;&gt;</a>
+                                    }
+                                }
+                            </td>
+
+                        </tr>
+
+                    </tbody>
+                </table>
+
+            </div>
+        </font>
+    </div>
+
+</div>

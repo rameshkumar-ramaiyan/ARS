@@ -1,0 +1,95 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+    IEnumerable<IPublishedContent> nationalProgramsList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.NationalProgramsList();
+
+    bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        @if (false == hideHeaderTitle)
+        {
+            <table border="0" width="100%">
+                <tr>
+                    <td class="pageHeading">@currentPage.Name                                                                                                                                                                                               </td>
+                </tr>
+                <tr>
+                    <td>
+
+                        <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
+                    </td>
+                </tr>
+            </table>
+        }
+
+        <!-- display URLs of subpages start -->
+        <!--  display URLs of subpages end -->
+        <!-- document content start -->
+
+        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+
+        <!-- document content end -->
+
+
+        <br>
+
+
+        <p></p>
+
+        <table>
+            <tbody>
+
+                @if (nationalProgramsList != null && nationalProgramsList.Any())
+                {
+                    foreach (IPublishedContent item in nationalProgramsList)
+                    {
+                        <tr>
+                            <td class="HdrBlackBold">
+                                <a href="/pandp/locations/NPSLocation.htm?modecode=02-04-00-00" id="anch_69">
+                                    @(item.Name)
+                                </a>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td>
+                                <img name="Divider line" alt="divider line" src="/images/content-divider.gif" width="368" height="10">
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td class="BodyTextBlack">
+                                @foreach (IPublishedContent itemSub in item.Children)
+                                {
+                                    string npCode = itemSub.GetPropertyValue<string>("npCode");
+                                    <li><a href="/research/programs/programs.htm?NP_CODE=@npCode" id="anch_70">@(itemSub.Name)</a> (NP #@(npCode))</li>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+
+                <tr>
+                    <td><br></td>
+                </tr>
+
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
