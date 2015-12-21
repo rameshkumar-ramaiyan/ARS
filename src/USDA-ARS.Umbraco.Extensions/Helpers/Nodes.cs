@@ -44,6 +44,13 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             return ArsLocations.Children;
         }
 
+        public static IEnumerable<IPublishedContent> AllLocationsList()
+        {
+            IPublishedContent ArsLocations = UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("ARSLocations"));
+
+            return ArsLocations.Descendants();
+        }
+
         public static IEnumerable<IPublishedContent> NationalProgramsList()
         {
             IPublishedContent ArsLocations = UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("NationalPrograms"));

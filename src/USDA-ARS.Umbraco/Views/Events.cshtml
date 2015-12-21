@@ -1,0 +1,73 @@
+﻿@using Umbraco.Core.Models
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+    IEnumerable<IPublishedContent> eventsList = currentPage.Children.OrderByDescending(p => p.GetProperty("eventDate").Value);
+    bool archiveEvents = false;
+
+    if (false == string.IsNullOrEmpty(Request.QueryString["archived"]))
+    {
+        archiveEvents = Request.QueryString.Get("archived") == "1" ? true : false;
+    }
+
+    eventsList = eventsList.Where(p => p.GetPropertyValue<bool>("archiveEvent") == archiveEvents);
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        <table cellspacing="0" cellpadding="3">
+            <tbody>
+                <tr>
+                    <td class="hdrBlackBold">ARS Events</td>
+                </tr>
+                <tr>
+                    <td><a href="?archived=1" id="anch_76">Archived Events</a></td>
+                    <td>|</td>
+                    <td><a href="?" id="anch_77">Upcoming Events</a></td>
+                </tr>
+            </tbody>
+        </table>
+        <table cellspacing="0" cellpadding="3">
+            <tbody>
+                <tr>
+                    <td><img src="/images/incme/dividerline.gif" width="368"></td>
+                </tr>
+            </tbody>
+        </table>
+        <table cellspacing="0" cellpadding="3">
+
+            <tbody>
+                <tr>
+                    <td class="hdrBlackBold">@(false == archiveEvents ? "Upcoming Events" : "Archived Events")</td>
+                </tr>
+
+                @if (eventsList != null && eventsList.Any())
+                {
+                    foreach (IPublishedContent node in eventsList)
+                    {
+                        <tr>
+                            <td class="bodyTextBlackSmall"><a href="@node.Url" class="projectNav" id="anch_78">@node.Name</a> (@(node.GetPropertyValue<DateTime>("eventDate").ToString("MM/dd/yy")))</td>
+                        </tr>
+                        <tr>
+                            <td><img src="/images/content-divider.gif" width="368" height="10"></td>
+                        </tr>
+                    }
+                }
+
+
+            </tbody>
+        </table>
+
+
+    </div>
+
+
+</div>
