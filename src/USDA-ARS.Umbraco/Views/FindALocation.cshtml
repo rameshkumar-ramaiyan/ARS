@@ -1,0 +1,218 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+    IEnumerable<IPublishedContent> regionSiteList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.RegionSiteList();
+    IEnumerable<IPublishedContent> allLocationsList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.AllLocationsList();
+
+    List<string> alphaList = null;
+
+    string listRegionContent = "";
+    string bodyTextBottom = currentPage.GetPropertyValue<string>("bodyTextBelow");
+
+    string slice = "";
+    string query = "";
+    string criteriaType = "";
+
+    List<RefModeCode> locationList = null;
+
+    if (false == string.IsNullOrEmpty(Request.QueryString["slice"]))
+    {
+        slice = Request.QueryString.Get("slice").Trim();
+    }
+
+    if (false == string.IsNullOrEmpty(Request.QueryString["query"]))
+    {
+        query = Request.QueryString.Get("query").Trim();
+    }
+
+    if (false == string.IsNullOrEmpty(Request.QueryString["criteriaType"]))
+    {
+        criteriaType = Request.QueryString.Get("criteriaType").Trim();
+    }
+
+
+    if (regionSiteList != null && regionSiteList.Any())
+    {
+        foreach (var region in regionSiteList)
+        {
+            if (false == region.GetPropertyValue<bool>("hideFromLocationsList"))
+            {
+                listRegionContent += "<a href=\"" + region.Url + "\">" + region.Name + "</a>\r\n";
+                listRegionContent += " || ";
+            }
+        }
+
+        if (true == listRegionContent.EndsWith(" || "))
+        {
+            listRegionContent = listRegionContent.Substring(0, listRegionContent.LastIndexOf(" || "));
+        }
+
+        bodyTextBottom = bodyTextBottom.Replace("{{LIST_REGIONS}}", listRegionContent);
+    }
+
+    if (false == string.IsNullOrWhiteSpace(query) && false == string.IsNullOrWhiteSpace(criteriaType))
+    {
+        locationList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.SiteInfo.SearchLocation(query, criteriaType);
+    }
+
+    if (slice == "" || slice == "alpha")
+    {
+        alphaList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.SiteInfo.GetAlphaList();
+
+        if (slice == "alpha")
+        {
+            locationList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.SiteInfo.SearchLocation(query, "alpha");
+        }
+    }
+
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+
+    <div id="pageContent">
+
+        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+
+        @if (slice == "")
+        {
+            <img src="/images/incme/usmap.jpg" border="0" usemap="#usmap" alt="map of areas">
+            <map name="usmap">
+                <area alt="Headquarters" title="Headquarters" href="/" coords="506,183,5" shape="circle">
+                <area alt="Pacific West Area" title="Pacific West Area" href="/pacific-west-area/" coords="51,9,5" shape="circle">
+                <area alt="Plains Area" title="Plains Area" href="/plains-area/" coords="169,304,5" shape="circle">
+
+                <area alt="Reno, NV Worksite" title="Reno, NV Worksite" href="http://www.ars.usda.gov/PandP/docs.htm?docid=12691" coords=",5" shape="circle">
+                <area alt="Palmer, AK Worksite" title="Palmer, AK Worksite" href="http://www.ars.usda.gov/PandP/docs.htm?docid=12692" coords=",5" shape="circle">
+                <area alt="Parma, ID Worksite" title="Parma, ID Worksite" href="http://www.ars.usda.gov/PandP/docs.htm?docid=12695" coords=",5" shape="circle">
+                <area alt="Hagerman, ID Worksite" title="Hagerman, ID Worksite" href="" coords=",5" shape="circle">
+                <area alt="Newport, OR Worksite" title="Newport, OR Worksite" href="" coords=",5" shape="circle">
+                <area alt="Honolulu, HI Worksite " title="Honolulu, HI Worksite " href="" coords=",5" shape="circle">
+                <area alt="Aiea, HI Worksite " title="Aiea, HI Worksite " href="" coords=",5" shape="circle">
+            </map>
+
+            <hr />
+
+            @Html.Raw(bodyTextBottom)
+        }
+
+        @if (slice == "" || slice == "search")
+        {
+            <table>
+                <form action="" method="get">
+                    <input type="hidden" name="mt" value="places">
+                    <input type="hidden" name="slice" value="search">
+
+                    <tr><td align="right">Search for:</td><td><input type="text" name="query" value="@query"></td></tr>
+                    <tr>
+                        <td align="right">in:</td>
+                        <td>
+                            <select name="criteriaType">
+                                <option value="title"><p>Location Title</p>
+                                <option value="mission-statement"><p>Mission Statement</p>
+
+                            </select>&nbsp;&nbsp;<input type="submit" value="Search">
+                        </td>
+                    </tr>
+                </form>
+            </table>
+        }
+
+        @if (slice == "search")
+        {
+            <hr size="1" noshade="">
+            <p>Places matched:</p>
+
+            if (locationList != null && locationList.Any())
+            {
+                foreach (RefModeCode location in locationList)
+                {
+                    string url = "javascript:alert('Location site not found.')";
+
+                    IPublishedContent locationNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(location.ModeCodeConcat);
+
+                    if (locationNode != null)
+                    {
+                        url = locationNode.Url;
+                    }
+
+                    <table span="p">
+                        <tbody>
+                            <tr>
+                                <td valign="top"><img src="/images/incme/bullet.gif" border="0" alt="item"></td>
+                                <td valign="top" align="left">
+                                    <a href="@url" id="anch_51">@location.WebLabel</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+            }
+        }
+
+        @if (slice == "" || slice == "alpha")
+        {
+            if (slice == "")
+            {
+                <hr />
+                <p>Alternatively, browse for locations by clicking on a letter to see all locations starting with a specific letter:</p>
+            }
+
+            <p>
+                &nbsp;
+                @foreach (string letter in alphaList)
+                {
+                    if (query == letter)
+                    {
+                        <strong>@letter</strong>@Html.Raw("&nbsp;|&nbsp;")
+
+                    }
+                    else
+                    {
+                        <a href="?slice=alpha&query=@letter" id="anch_59">@letter</a>@Html.Raw("&nbsp;|&nbsp;")
+                    }
+                }
+            </p>
+
+            if (locationList != null && locationList.Any())
+            {
+                foreach (RefModeCode location in locationList)
+                {
+                    string url = "javascript:alert('Location site not found.')";
+
+                    IPublishedContent locationNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(location.ModeCodeConcat);
+
+                    if (locationNode != null)
+                    {
+                        url = locationNode.Url;
+                    }
+
+                    <table span="p">
+                        <tbody>
+                            <tr>
+                                <td valign="top"><img src="/images/incme/bullet.gif" border="0" alt="item"></td>
+                                <td valign="top" align="left">
+                                    <a href="@url" id="anch_51">@location.WebLabel</a>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                }
+            }
+        }
+
+
+    </div>
+</div>

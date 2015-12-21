@@ -1,0 +1,41 @@
+﻿@using Umbraco.Core.Models
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        <table align="center">
+            <tbody>
+                <tr>
+                    <td width="262"><div align="center"><img src="@(currentPage.GetPropertyValue<string>("image"))" alt="@currentPage.Name" width="252" height="168" title="@currentPage.Name"></div></td>
+                    <td width="553" valign="top">
+                        <p align="left"><strong>@currentPage.Name</strong></p>
+                        <br>
+                        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+                        <p>
+                            <b>
+                                <br>
+                                Audio Podcast
+                            </b>:   (@(currentPage.GetPropertyValue<string>("podcastLength")))&nbsp;&nbsp; <a href="#" id="anch_76">mp4</a> &nbsp;|&nbsp;&nbsp;<a href="#" title="rich text format" id="anch_77">Transcript</a>
+                        </p>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+
+    </div>
+
+
+</div>

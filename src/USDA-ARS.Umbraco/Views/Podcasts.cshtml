@@ -1,0 +1,65 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+    bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
+
+    IEnumerable<IPublishedContent> podcastList = currentPage.Children;
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        @if (false == hideHeaderTitle)
+        {
+            <table border="0" width="100%">
+                <tr>
+                    <td class="pageHeading">@currentPage.Name                                                                                                                                                                                               </td>
+                </tr>
+                <tr>
+                    <td>
+
+                        <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
+                    </td>
+                </tr>
+            </table>
+        }
+
+        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+        
+        <table cellspacing="0" cellpadding="10" width="100%" align="center" border="0">
+            <tbody>
+                <tr valign="top">
+                    <td width="29%" align="left">
+                        <font size="-2" face="Arial, Helvetica, sans-serif">Date issued</font>
+                    </td>
+                </tr>
+                <tr valign="top"></tr>
+                @if (podcastList != null && podcastList.Any())
+                {
+                    foreach (IPublishedContent node in podcastList)
+                    {
+                        string dateIssued = node.GetPropertyValue<DateTime>("dateIssued").ToString("MMMM yyyy");
+
+                        <tr valign="top">
+                            <td valign="top" align="left">@dateIssued</td>
+                            <td valign="top" align="left"><a href="@node.Url" id="anch_59">@node.Name<br></a>(@(node.GetPropertyValue<string>("podcastLength")))</td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+
+
+
+
+    </div>
+
+
+</div>

@@ -35,7 +35,7 @@
         {
             foreach (var item in parentRelatedTopics)
             {
-                @Html.Raw(OutputTopic(item))
+            @Html.Raw(OutputTopic(item))
             }
         }
 
@@ -43,7 +43,7 @@
         {
             foreach (var item in currentRelatedTopics)
             {
-                @Html.Raw(OutputTopic(item))
+            @Html.Raw(OutputTopic(item))
             }
         }
     </ul>
@@ -71,7 +71,10 @@
             {
                 Link navLink = item.GetValue<MultiUrls>("location").FirstOrDefault();
 
+                if (navLink != null && navLink.Url != null)
+{
                 urlLink = navLink.Url;
+}
             }
 
             html = "<li><a href=\"" + urlLink + "\">" + item.GetValue<string>("title") + "</a></li>";

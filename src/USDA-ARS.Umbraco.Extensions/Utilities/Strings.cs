@@ -19,5 +19,28 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 
             return output;
         }
+
+
+        public static string FormatPhoneNumber(string phone)
+        {
+            string output = null;
+
+            if (false == string.IsNullOrEmpty(phone) && phone.Length == 10)
+            {
+                output = "(" + phone.Substring(0, 3) + ") " + phone.Substring(3, 3) + "-" + phone.Substring(6, 4);
+            }
+            else
+            {
+                output = phone;
+            }
+
+            return output;
+        }
+
+
+        public static string CleanSqlString(string str)
+        {
+            return str.Replace("'", "''").Replace(";", "");
+        }
     }
 }

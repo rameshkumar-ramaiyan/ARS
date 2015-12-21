@@ -2925,6 +2925,14 @@
     <Content Include="Views\Publications.cshtml" />
     <Content Include="Views\Partials\Modules\NavigationLinksSub.cshtml" />
     <Content Include="Views\FindAPublication.cshtml" />
+    <Content Include="Views\FindAPerson.cshtml" />
+    <Content Include="Views\FindALocation.cshtml" />
+    <Content Include="Views\Podcasts.cshtml" />
+    <Content Include="Views\Podcast.cshtml" />
+    <Content Include="Views\Event.cshtml" />
+    <Content Include="Views\Events.cshtml" />
+    <Content Include="Views\Video.cshtml" />
+    <Content Include="Views\Videos.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
