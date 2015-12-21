@@ -263,86 +263,56 @@ namespace USDA_ARS.Core
 
         public static DataTable SetTableRow5Td(int tdNumber)
         {
-            Exception errorEx = null;
-            OleDbConnection conn = null;
-            OleDbCommand cmd = null;
-            OleDbDataAdapter adapter = null;
-            DataTable getID = null;
-
-            try
-            {
-                //1.Set Access connection(using  connection string from App.config).
-                // string strAccessConn = ConfigurationManager.AppSettings["AccessConnection"];
-                string strAccessConn = PullDataFromAccess.AccessConnectionString;
-                string strTableName = PullDataFromAccess.AccessTableName;
-
-                //private static string tablerow5 = 
-                //2.select values from Schedule Table table.
-                getID = new DataTable();
-                conn = new OleDbConnection(strAccessConn);
-                conn.Open();
-                cmd = new OleDbCommand();
-                cmd.Connection = conn;
-                string query = "";
-                if (tdNumber == 1)
-                {
-                    query = "SELECT	[National Program Title]  "
-                                       + "                    FROM  [" + strTableName + "]"
-                                         + " WHERE   mid([National Program Title], 4, 3) in ('101','103','104','105','106')"
-                                         + "ORDER BY[National Program Title]";
-                }
-                if (tdNumber == 2)
-                {
-
-
-                    query = "SELECT	[National Program Title]  "
-                                        + "                    FROM  [" + strTableName + "]"
-                                         + " WHERE   mid([National Program Title], 4, 3) in ('107','108','306')"
-                                         + "ORDER BY[National Program Title]";
-                }
-                if (tdNumber == 3)
-                {
-                    query = "SELECT	[National Program Title]  "
-                                       + "                    FROM  [" + strTableName + "]"
-                                         + " WHERE   mid([National Program Title], 4, 3) in ('201', '202', '203', '204', '205', '206', '207', '211', '212', '213', '214', '215', '216', '307')"
-                                         + "ORDER BY[National Program Title]";
-                }
-                if (tdNumber == 4)
-                {
-                    query = "SELECT	[National Program Title]  "
-                                       + "                    FROM  [" + strTableName + "]"
-                                         + " WHERE   mid([National Program Title], 4, 3) in ('301', '302','303','304','305','308')"
-                                         + "ORDER BY[National Program Title]";
-                }
-                cmd.CommandText = query;
-
-
-
-                adapter = new OleDbDataAdapter(cmd);
-                adapter.Fill(getID);
-            }
-            catch(Exception ex)
-            {
-                errorEx = ex;
-            }
-            finally
-            {
-                if (adapter != null)
-                    adapter.Dispose();
-                if (cmd != null)
-                    cmd.Dispose();
-                if (conn != null)
-                {
-                    conn.Close();
-                    conn.Dispose();
-                }
-
-                if (errorEx != null)
-                {
-                    throw new Exception(errorEx.Message, errorEx.InnerException);
-                }
-            }
+            //1.Set Access connection(using  connection string from App.config).
+            // string strAccessConn = ConfigurationManager.AppSettings["AccessConnection"];
+            string strAccessConn = PullDataFromAccess.AccessConnectionString;
+            string strTableName = PullDataFromAccess.AccessTableName;
             
+            //private static string tablerow5 = 
+            //2.select values from Schedule Table table.
+            DataTable getID = new DataTable();
+            OleDbConnection conn = new OleDbConnection(strAccessConn);
+            conn.Open();
+            OleDbCommand cmd = new OleDbCommand();
+            cmd.Connection = conn;
+            string query = "";
+            if (tdNumber == 1)
+            {
+                query = "SELECT	[National Program Title]  "
+                                   + "                    FROM  [" + strTableName + "]"
+                                     + " WHERE   mid([National Program Title], 4, 3) in ('101','103','104','105','106')"
+                                     + "ORDER BY[National Program Title]";
+            }
+            if (tdNumber == 2)
+            {
+
+
+                query = "SELECT	[National Program Title]  "
+                                    + "                    FROM  [" + strTableName + "]"
+                                     + " WHERE   mid([National Program Title], 4, 3) in ('107','108','306')"
+                                     + "ORDER BY[National Program Title]";
+            }
+            if (tdNumber == 3)
+            {
+                query = "SELECT	[National Program Title]  "
+                                   + "                    FROM  [" + strTableName + "]"
+                                     + " WHERE   mid([National Program Title], 4, 3) in ('201', '202', '203', '204', '205', '206', '207', '211', '212', '213', '214', '215', '216', '307')"
+                                     + "ORDER BY[National Program Title]";
+            }
+            if (tdNumber == 4)
+            {
+                query = "SELECT	[National Program Title]  "
+                                   + "                    FROM  [" + strTableName + "]"
+                                     + " WHERE   mid([National Program Title], 4, 3) in ('301', '302','303','304','305','308')"
+                                     + "ORDER BY[National Program Title]";
+            }
+            cmd.CommandText = query;
+
+
+
+            OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
+            adapter.Fill(getID);
+
 
             return getID;
         }
@@ -498,10 +468,6 @@ namespace USDA_ARS.Core
             OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
             adapter.Fill(getID);
 
-            adapter.Dispose();
-            cmd.Dispose();
-            conn.Close();
-            conn.Dispose();
 
             return getID;
         }

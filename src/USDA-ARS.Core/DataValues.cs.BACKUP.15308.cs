@@ -263,6 +263,21 @@ namespace USDA_ARS.Core
 
         public static DataTable SetTableRow5Td(int tdNumber)
         {
+<<<<<<< HEAD
+            //1.Set Access connection(using  connection string from App.config).
+            // string strAccessConn = ConfigurationManager.AppSettings["AccessConnection"];
+            string strAccessConn = PullDataFromAccess.AccessConnectionString;
+            string strTableName = PullDataFromAccess.AccessTableName;
+            
+            //private static string tablerow5 = 
+            //2.select values from Schedule Table table.
+            DataTable getID = new DataTable();
+            OleDbConnection conn = new OleDbConnection(strAccessConn);
+            conn.Open();
+            try
+            {
+                OleDbCommand cmd = new OleDbCommand();
+=======
             Exception errorEx = null;
             OleDbConnection conn = null;
             OleDbCommand cmd = null;
@@ -282,6 +297,7 @@ namespace USDA_ARS.Core
                 conn = new OleDbConnection(strAccessConn);
                 conn.Open();
                 cmd = new OleDbCommand();
+>>>>>>> 92d71113fef85b7f0a737b8e6dcb720214a1f7ad
                 cmd.Connection = conn;
                 string query = "";
                 if (tdNumber == 1)
@@ -318,6 +334,21 @@ namespace USDA_ARS.Core
 
 
 
+<<<<<<< HEAD
+                OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
+                adapter.Fill(getID);
+            }
+            catch (Exception ex)
+            {
+               
+                throw new Exception(" Internal Error.  " + ex.Message.ToString());
+                return getID;
+            }
+            finally
+            {
+                conn.Close();
+            }
+=======
                 adapter = new OleDbDataAdapter(cmd);
                 adapter.Fill(getID);
             }
@@ -343,6 +374,7 @@ namespace USDA_ARS.Core
                 }
             }
             
+>>>>>>> 92d71113fef85b7f0a737b8e6dcb720214a1f7ad
 
             return getID;
         }
@@ -459,49 +491,63 @@ namespace USDA_ARS.Core
             DataTable getID = new DataTable();
             OleDbConnection conn = new OleDbConnection(strAccessConn);
             conn.Open();
-            OleDbCommand cmd = new OleDbCommand();
-            cmd.Connection = conn;
-            string query = "";
-            if (tdNumber == 1)
-            {
-                query = "SELECT	ID,"
-                    + "[National Program Title]                        AS NationalProgramTitle,"
-                    + "[Termination Date]                              AS TerminationDate,"
-                    + "[Program Analyst]                               AS ProgramAssistant,"
-                    + "[Number of Projects in the Review]              AS RoundNumberofProjectsintheReview,"
-                    + "[Planned Duration]                              AS PlannedDuration,"
-                    + "[Status of Reviews]                             AS statusOfReviews,"
-                    + "[Concurrence Memo Due to Area Director]         AS ConcurrenceMemoDuetoAreaDirector,"
-                    + "[PDRAMs Due to Area & OSQR with Schedule]       AS PDRAMsDueToAreaOSQRWithSchedule,"
-                    + "[Conflicts of Interest Lists Due To OSQR]       AS ConflictsofInterestListDuetoOSQR,"
+            try {
+                OleDbCommand cmd = new OleDbCommand();
+                cmd.Connection = conn;
+                string query = "";
+                if (tdNumber == 1)
+                {
+                    query = "SELECT	ID,"
+                        + "[National Program Title]                        AS NationalProgramTitle,"
+                        + "[Termination Date]                              AS TerminationDate,"
+                        + "[Program Analyst]                               AS ProgramAssistant,"
+                        + "[Number of Projects in the Review]              AS RoundNumberofProjectsintheReview,"
+                        + "[Planned Duration]                              AS PlannedDuration,"
+                        + "[Status of Reviews]                             AS statusOfReviews,"
+                        + "[Concurrence Memo Due to Area Director]         AS ConcurrenceMemoDuetoAreaDirector,"
+                        + "[PDRAMs Due to Area & OSQR with Schedule]       AS PDRAMsDueToAreaOSQRWithSchedule,"
+                        + "[Conflicts of Interest Lists Due To OSQR]       AS ConflictsofInterestListDuetoOSQR,"
 
-                    + "[Project Plans Due to OSQR]                     AS ProjectPlansDueToOSQR,"
-                    + "[Review Period]                                 AS ReviewPeriod,"
+                        + "[Project Plans Due to OSQR]                     AS ProjectPlansDueToOSQR,"
+                        + "[Review Period]                                 AS ReviewPeriod,"
 
-                    + "[Project's Targeted Implementation Date]		AS ProjectsTargetedImplementationDate"
-                    + ",[Ad Hoc Cut-Off Date]                           AS AdHocCutOffDate"
+                        + "[Project's Targeted Implementation Date]		AS ProjectsTargetedImplementationDate"
+                        + ",[Ad Hoc Cut-Off Date]                           AS AdHocCutOffDate"
 
-                    + "                    FROM  [" + strTableName+"]"
-                                     + "ORDER BY[National Program Title]";
-                //
-
-
-
+                        + "                    FROM  [" + strTableName + "]"
+                                         + "ORDER BY[National Program Title]";
+                    //
 
 
+
+
+
+                }
+
+                cmd.CommandText = query;
+
+
+
+<<<<<<< HEAD
+                OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
+                adapter.Fill(getID);
             }
-
-            cmd.CommandText = query;
-
-
-
-            OleDbDataAdapter adapter = new OleDbDataAdapter(cmd);
-            adapter.Fill(getID);
-
+             catch (Exception ex)
+            {
+               
+                throw new Exception(" Internal Error.  " + ex.Message.ToString());
+                return getID;
+            }
+            finally
+            {
+                conn.Close();
+            }
+=======
             adapter.Dispose();
             cmd.Dispose();
             conn.Close();
             conn.Dispose();
+>>>>>>> 92d71113fef85b7f0a737b8e6dcb720214a1f7ad
 
             return getID;
         }
