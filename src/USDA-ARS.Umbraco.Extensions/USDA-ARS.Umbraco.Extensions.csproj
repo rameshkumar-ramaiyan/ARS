@@ -278,6 +278,7 @@
     <Compile Include="Helpers\Aris\ModeCodesNew.cs" />
     <Compile Include="Helpers\Aris\People.cs" />
     <Compile Include="Helpers\Aris\Publications.cs" />
+    <Compile Include="Helpers\Aris\JobSeries.cs" />
     <Compile Include="Helpers\Blogs.cs" />
     <Compile Include="Helpers\LinqExtensions.cs" />
     <Compile Include="Helpers\Aris\Projects.cs" />
@@ -290,6 +291,7 @@
     <Compile Include="Models\Aris\PeoplePublication.cs" />
     <Compile Include="Models\Aris\SearchPublicationView.cs" />
     <Compile Include="Models\Aris\SearchPublication.cs" />
+    <Compile Include="Models\Aris\JobSeries.cs" />
     <Compile Include="Models\Aris\UsdaPublication.cs" />
     <Compile Include="Models\Aris\UsdaPublicationSearch.cs" />
     <Compile Include="Models\BlogItem.cs" />

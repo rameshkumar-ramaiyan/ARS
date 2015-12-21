@@ -1,0 +1,448 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+    List<PeopleInfo> peopleInfoList = null;
+    List<string> alphaList = null;
+
+    string lname = "";
+    string fname = "";
+    string title = "";
+    string phone = "";
+    string email = "";
+    string city = "";
+    string state = "";
+
+    string lnss = "";
+
+    string jobSeriesCode = "";
+
+    string slice = "";
+
+    if (false == string.IsNullOrEmpty(Request.QueryString["lname"]))
+    {
+        lname = Request.QueryString.Get("lname").Trim();
+    }
+    if (false == string.IsNullOrEmpty(Request.QueryString["fname"]))
+    {
+        fname = Request.QueryString.Get("fname").Trim();
+    }
+    if (false == string.IsNullOrEmpty(Request.QueryString["title"]))
+    {
+        title = Request.QueryString.Get("title").Trim();
+    }
+    if (false == string.IsNullOrEmpty(Request.QueryString["phone"]))
+    {
+        phone = Request.QueryString.Get("phone").Trim();
+    }
+    if (false == string.IsNullOrEmpty(Request.QueryString["email"]))
+    {
+        email = Request.QueryString.Get("email").Trim();
+    }
+    if (false == string.IsNullOrEmpty(Request.QueryString["city"]))
+    {
+        city = Request.QueryString.Get("city").Trim();
+    }
+    if (false == string.IsNullOrEmpty(Request.QueryString["state"]))
+    {
+        state = Request.QueryString.Get("state").Trim();
+    }
+    if (false == string.IsNullOrEmpty(Request.QueryString["lnss"]))
+    {
+        lnss = Request.QueryString.Get("lnss").Trim();
+    }
+    if (false == string.IsNullOrEmpty(Request.QueryString["job-series-code"]))
+    {
+        jobSeriesCode = Request.QueryString.Get("job-series-code").Trim();
+    }
+
+    if (false == string.IsNullOrEmpty(Request.QueryString["slice"]))
+    {
+        slice = Request.QueryString.Get("slice").Trim();
+    }
+
+    if (slice == "search")
+    {
+        peopleInfoList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeople(lname, fname, title, phone, email, city, state);
+    }
+    else if (slice == "alpha")
+    {
+        alphaList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetAlphaList(lnss);
+        peopleInfoList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleAlpha(lnss);
+    }
+
+
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+        <script language="JavaScript">function DisplayEmail(username, domain) { document.write(username + "&#64;" + domain); }</script>
+
+        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+
+        @if (slice == "" || slice == "search")
+        {
+            <form action="" name="pplsearch" method="get" onsubmit="return FormValidation(this)">
+                <input type="hidden" name="slice" value="search">
+
+                <table border="0" cellspacing="0" cellpadding="2">
+                    <tbody>
+                        <tr><td colspan="2">Search for a person:</td></tr>
+                        <tr>
+                            <td class="BodyTextBlackSmall">Last Name:</td>
+                            <td>
+                                <label for="lname" title="lname" class="displayNone" tabindex="1">lname</label>
+                                <input type="text" id="lname" name="lname" size="15" value="@lname">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="BodyTextBlackSmall">First Name:</td>
+                            <td>
+                                <label for="fname" title="fname" class="displayNone" tabindex="2">fname</label>
+                                <input type="text" id="fname" name="fname" size="15" value="@fname">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="BodyTextBlackSmall">Job Title:</td>
+                            <td>
+                                <label for="title" title="title" class="displayNone" tabindex="3">title</label>
+                                <input type="text" id="title" name="title" size="15" value="@title">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="BodyTextBlackSmall">Phone:</td>
+                            <td>
+                                <label for="phone" title="phone" class="displayNone" tabindex="4">phone</label>
+                                <input type="text" id="phone" name="phone" size="15" value="@phone">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="BodyTextBlackSmall">E-mail:</td>
+                            <td>
+                                <label for="email" title="email" class="displayNone" tabindex="5">email</label>
+                                <input type="text" id="email" name="email" size="15" value="@email">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="BodyTextBlackSmall">City:</td>
+                            <td>
+                                <label for="city" title="city" class="displayNone" tabindex="6">city</label>
+                                <input type="text" id="city" name="city" size="15" value="@city">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="BodyTextBlackSmall">State Abbr:</td>
+                            <td>
+                                <label for="state" title="state" class="displayNone" tabindex="7">state</label>
+                                <input type="text" id="state" name="state" size="2" value="@state">
+                                <input type="hidden" name="searchnow" id="searchnow" value="true">
+
+                                <!-- <label for="go" title="Run Search Query" tabindex="8"> -->
+                                <input type="submit" name="Search" value="Search">
+                                <!-- </label> -->
+                            </td>
+                        </tr>
+
+
+                    </tbody>
+                </table>
+
+                <!-- this is a convenience: it allows NS users to hit "enter" to submit -->
+                <script>
+                    if (document.layers) {
+                        document.captureEvents(Event.KEYPRESS);
+                        document.onkeypress =
+                          function (evt) {
+                              if (evt.target.constructor == Input)
+                                  if (evt.which == 13) {
+                                      document.pplsearch.submit();
+                                  }
+                          };
+                    }
+
+                    function FormValidation(thisForm) {
+                        with (thisForm) {
+                            if (lname.value.length == 0 && fname.value.length == 0 && subject.value.length == 0 && title.value.length == 0 &&
+                                phone.value.length == 0 && email.value.length == 0 && city.value.length == 0 && state.value.length == 0) {
+                                alert("Please enter at least one search string.");
+                                return false;
+                            }
+                            else {
+                                return true;
+                            }
+                        }
+                    }
+                </script>
+            </form>
+
+            <hr style="margin-top: 20px;" />
+        }
+
+        @if (slice == "search" && peopleInfoList != null)
+        {
+            <p>@(string.Format("{0:n0}", peopleInfoList.Count)) People matched:</p>
+
+            if (peopleInfoList.Count > 0)
+            {
+                foreach (PeopleInfo person in peopleInfoList)
+                {
+                    <table>
+
+                        <tbody>
+                            <tr>
+                                <td class="BodyTextBlackSmall">
+
+                                    <a href="/people-locations/person?person-id=@person.PersonId" class="projectNav" id="anch_51">
+                                        @(person.LastName), @(person.FirstName)
+
+                                        @if (false == string.IsNullOrWhiteSpace(person.CommonName))
+                                        {
+                                            Html.Raw(" - <i>" + person.CommonName + "</i>");
+                                        }
+                                    </a>
+                                    <br />Phone: @USDA_ARS.Umbraco.Extensions.Utilities.Strings.FormatPhoneNumber(person.PhoneAreaCode + person.Phone)<br />
+                                    @if (person.Email != null && person.Email.Split('@').Length == 2)
+                                    {
+                                        <script language="javascript">DisplayEmail('@(person.Email.Split('@')[0])', '@(person.Email.Split('@')[1])');</script>
+                                    }
+                                    <br /> @(person.TitleWorking)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><img src="/images/content-divider.gif"></td>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                }
+            }
+        }
+
+        @if (slice == "position")
+        {
+            List<JobSeries> jobSeriesList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.JobSeries.GetJobSeriesList();
+
+            if (false == string.IsNullOrEmpty(jobSeriesCode))
+            {
+                peopleInfoList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByPosition(jobSeriesCode);
+            }
+
+            string activeJobSeries = "";
+
+            <table>
+                <tbody>
+                    <tr>
+                        <td valign="TOP" width="50%">
+                            <strong>Positions</strong>
+                            <p>
+                                @foreach (JobSeries jobSeries in jobSeriesList)
+                                {
+                                    if (jobSeries.JobSeriesCode == jobSeriesCode)
+                                    {
+                                        activeJobSeries = jobSeries.SeriesTitle;
+
+                                        @jobSeries.SeriesTitle
+                                        <br />
+                                    }
+                                    else
+                                    {
+                                        <a href="?slice=position&job-series-code=@jobSeries.JobSeriesCode" id="anch_51">
+                                            @jobSeries.SeriesTitle
+                                        </a><br />
+                                    }
+                                }
+                            </p>
+
+                        </td>
+
+                        <td valign="TOP" width="50%">
+                            @if (false == string.IsNullOrEmpty(jobSeriesCode))
+                            {
+                                <strong style="font-size: 14px;">@activeJobSeries</strong>
+                                <br />
+                                <br />
+                            }
+
+                            @if (peopleInfoList != null && peopleInfoList.Any())
+                            {
+                                foreach (PeopleInfo person in peopleInfoList)
+                                {
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td valign="top"><img src="/images/incme/bullet.gif" border="0" alt="item"></td>
+                                                <td valign="top" align="left">
+                                                    <font face="verdana,arial" size="-1">
+                                                        <a href="/people-locations/person?person-id=@person.PersonId" class="projectNav" id="anch_51">
+                                                            @(person.LastName), @(person.FirstName)
+
+                                                            @if (false == string.IsNullOrWhiteSpace(person.CommonName))
+                                                            {
+                                                                @Html.Raw(" - <i>" + person.CommonName + "</i>");
+                                                            }
+                                                        </a>
+                                                        <br />
+                                                        @USDA_ARS.Umbraco.Extensions.Utilities.Strings.FormatPhoneNumber(person.PhoneAreaCode + person.Phone)<br />
+                                                        @if (person.Email != null && person.Email.Split('@').Length == 2)
+                                                        {
+                                                            <script language="javascript">DisplayEmail('@(person.Email.Split('@')[0])', '@(person.Email.Split('@')[1])');</script>
+                                                        }
+                                                        <br />
+                                                        <font size="-2">@(person.TitleWorking)</font>
+                                                    </font>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                }
+                            }
+                            <p></p>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+
+        @if (slice == "" && peopleInfoList == null)
+        {
+            <p style="margin: 20px 0 20px 0;">
+                Alternativelly, browse for employees by clicking on a letter to
+                see all people last names starting with a specific letter:
+            </p>
+        }
+
+        @if (slice == "" || slice == "alpha")
+        {
+            for (char chr = 'A'; chr <= 'Z'; chr++)
+            {
+                if (lnss != chr.ToString())
+                {
+                    @Html.Raw("&nbsp;| &nbsp;") <a href="?slice=alpha&lnss=@(chr.ToString())" id="anch_52">@(chr.ToString())</a>
+                }
+                else
+                {
+                    @Html.Raw("&nbsp;| &nbsp;") <strong>@(chr.ToString())</strong>
+                }
+            }
+        }
+
+        @if (slice != "position" && alphaList != null && alphaList.Any())
+        {
+            int i = 0;
+
+            <div align="center">
+                <p>
+                    @foreach (string alpha in alphaList)
+                    {
+                        i++;
+
+                        if (lnss.Length == 1 && i == 1)
+                        {
+                            <strong>@alpha</strong>
+                        }
+                        else if (alpha != lnss)
+                        {
+                            <a href="?slice=alpha&lnss=@(alpha.ToString())" id="anch_52">@(alpha.ToString())</a>
+                        }
+                        else
+                        {
+                            <strong>@alpha</strong>
+                        }
+
+                        if (i < alphaList.Count)
+                        {
+                            @Html.Raw(" | ");
+                        }
+                    }
+                </p>
+            </div>
+        }
+
+
+        @if (slice == "alpha" && peopleInfoList != null && peopleInfoList.Any())
+        {
+            int inc = 0;
+            <table width="100%">
+                <tbody>
+                    <tr>
+                        @foreach (PeopleInfo person in peopleInfoList)
+                        {
+                            if (inc == 0)
+                            {
+                                @Html.Raw("<td valign=\"top\" width=\"100%\">")
+                            }
+
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td valign="top"><img src="/images/incme/bullet.gif" border="0" alt="item"></td>
+                                        <td valign="top" align="left">
+                                            <font face="verdana,arial" size="-1">
+                                                <a href="/people-locations/person?person-id=@person.PersonId" class="projectNav" id="anch_51">
+                                                    @(person.LastName), @(person.FirstName)
+
+                                                    @if (false == string.IsNullOrWhiteSpace(person.CommonName))
+                                                    {
+                                                        @Html.Raw(" - <i>" + person.CommonName + "</i>");
+                                                    }
+                                                </a>
+                                                <br />
+                                                @USDA_ARS.Umbraco.Extensions.Utilities.Strings.FormatPhoneNumber(person.PhoneAreaCode + person.Phone)<br />
+                                                @if (person.Email != null && person.Email.Split('@').Length == 2)
+                                                {
+                                                    <script language="javascript">DisplayEmail('@(person.Email.Split('@')[0])', '@(person.Email.Split('@')[1])');</script>
+                                                }
+                                                <br />
+                                                <font size="-2">@(person.TitleWorking)</font>
+                                            </font>
+                                        </td>
+                                    </tr>
+
+                                </tbody>
+                            </table>
+
+
+
+                            if (inc == Convert.ToInt32(peopleInfoList.Count / 2) - 1)
+                            {
+                                @Html.Raw("</td>")
+                                @Html.Raw("<td valign=\"top\">")
+                            }
+
+                            inc++;
+                        }
+
+
+                        @Html.Raw("</td>")
+
+                    </tr>
+                </tbody>
+            </table>
+
+        }
+
+        @if (slice == "" && peopleInfoList == null)
+        {
+            <hr style="margin-top:20px;" />
+            <p style="margin: 20px 0 20px 0;">
+                Or you can obtain a list of people by <a href="?slice=position" id="anch_78">position</a>.
+            </p>
+        }
+
+        <p>&nbsp;</p>
+        <p>&nbsp;</p>
+
+    </div>
+</div>

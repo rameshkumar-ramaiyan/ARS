@@ -1,0 +1,64 @@
+﻿@using Umbraco.Core.Models
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+    IEnumerable<IPublishedContent> videosList = currentPage.Children.OrderByDescending(p => p.GetProperty("dateIssued").Value);
+    bool archiveEvents = false;
+
+    //if (false == string.IsNullOrEmpty(Request.QueryString["archived"]))^
+    //{
+    //    archiveEvents = Request.QueryString.Get("archived") == "1" ? true : false;
+    //}
+
+    //videosList = videosList.Where(p => p.GetPropertyValue<bool>("archiveEvent") == archiveEvents);
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        <table cellpadding="0" cellspacing="0" border="0" width="80%">
+            <tbody>
+                <tr>
+                    <td valign="top">
+                        <div class="spDocPageBody">
+                            <table cellspacing="0" cellpadding="10" width="90%" align="center" border="0">
+                                <tbody>
+                                    <tr valign="top">
+                                        <td colspan="2" align="left">
+                                            <p>Archives&nbsp; <a href="/is/video/archive.htm#2008" id="anch_59">1996-2008</a></p>
+                                            <p>NOTE: Videos are available in mp4 and wmv format. </p>
+                                        </td>
+                                    </tr>
+                                    <tr valign="top">
+                                        <td width="28%" align="left">Date issued</td>
+                                        <td width="72%" align="left"></td>
+                                    </tr>
+                                    @if (videosList != null && videosList.Any())
+                                    {
+                                        foreach (IPublishedContent node in videosList)
+                                        {
+                                            <tr valign="top">
+                                                <td valign="top" align="left">@(node.GetPropertyValue<DateTime>("dateIssued").ToString("MMMM yyyy"))</td>
+                                                <td valign="top" align="left"><a href="@node.Url" id="anch_60">@node.Name</a></td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+
+</div>
