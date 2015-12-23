@@ -273,6 +273,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller\ContentImporterController.cs" />
     <Compile Include="Controller\NewsImporterController.cs" />
     <Compile Include="Controller\DataImporterController.cs" />
     <Compile Include="Helpers\Aris\ModeCodesNew.cs" />
@@ -296,6 +297,9 @@
     <Compile Include="Models\Aris\UsdaPublicationSearch.cs" />
     <Compile Include="Models\BlogItem.cs" />
     <Compile Include="Models\Aris\RefModeCode.cs" />
+    <Compile Include="Models\Import\Content.cs" />
+    <Compile Include="Models\Import\Property.cs" />
+    <Compile Include="Models\Import\Response.cs" />
     <Compile Include="Models\ResearchUnit.cs" />
     <Compile Include="Models\Aris\UsdaArsNews.cs" />
     <Compile Include="Models\Aris\UsdaProject.cs" />
