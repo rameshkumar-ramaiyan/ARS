@@ -67,6 +67,24 @@ namespace USDA_ARS.LocationsWebApp {
         protected global::System.Web.UI.WebControls.Button btnGetByModeCode;
         
         /// <summary>
+        /// txtParentId control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtParentId;
+        
+        /// <summary>
+        /// btnGetChild control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnGetChild;
+        
+        /// <summary>
         /// output control.
         /// </summary>
         /// <remarks>
@@ -74,5 +92,14 @@ namespace USDA_ARS.LocationsWebApp {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Literal output;
+        
+        /// <summary>
+        /// outputChild control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Literal outputChild;
     }
 }

@@ -11,5 +11,6 @@ namespace USDA_ARS.LocationsWebApp.Models.Import
         public bool Success { get; set; }
         public string Message { get; set; }
         public Content Content { get; set; }
+        public List<Content> ChildContentList { get; set; }
     }
 }

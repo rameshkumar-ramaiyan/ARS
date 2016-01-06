@@ -83,7 +83,7 @@ namespace USDA_ARS.LocationsWebApp
 
                     foreach (Models.Import.Property property in responseBack.Content.Properties)
                     {
-                        output.Text += property.Key +": " + property.Value + " <br />\r\n";
+                        output.Text += property.Key + ": " + property.Value + " <br />\r\n";
                     }
                 }
             }
@@ -116,6 +116,49 @@ namespace USDA_ARS.LocationsWebApp
                     foreach (Models.Import.Property property in responseBack.Content.Properties)
                     {
                         output.Text += property.Key + ": " + property.Value + " <br />\r\n";
+                    }
+                }
+
+                
+            }
+        }
+
+
+        protected void btnGetChild_Click(object sender, EventArgs e)
+        {
+            Models.Import.Content content = new Models.Import.Content();
+
+            content.ApiKey = API_KEY;
+            content.Id = Convert.ToInt32(txtParentId.Text); // Load page
+
+            Models.Import.Response responseBack = PostData(content, "GetChildsList");
+
+            if (responseBack != null)
+            {
+                output.Text = "Success: " + responseBack.Success + "<br />\r\n";
+                output.Text += "Message: " + responseBack.Message + "<br />\r\n";
+                output.Text += "<br />\r\n";
+
+                if (responseBack.Content != null)
+                {
+                    output.Text += "Content Umbraco Id: " + responseBack.Content.Id + "<br />\r\n";
+                    output.Text += "Content Name: " + responseBack.Content.Name + "<br />\r\n";
+                    output.Text += "<strong>Properties</strong><br />\r\n";
+
+                    foreach (Models.Import.Property property in responseBack.Content.Properties)
+                    {
+                        output.Text += property.Key + ": " + property.Value + " <br />\r\n";
+                    }
+
+                    if (responseBack.ChildContentList != null)
+                    {
+                        outputChild.Text = "";
+
+                        foreach (Models.Import.Content childContent in responseBack.ChildContentList)
+                        {
+                            outputChild.Text += " - Child Content Umbraco Id: " + childContent.Id + "<br />\r\n";
+                            outputChild.Text += " - Child Content Name: " + childContent.Name + "<br /><br />\r\n";
+                        }
                     }
                 }
             }
