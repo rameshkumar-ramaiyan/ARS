@@ -12,6 +12,12 @@
         .auto-style2 {
             height: 64px;
         }
+        .auto-style3 {
+            height: 31px;
+        }
+        .auto-style4 {
+            height: 40px;
+        }
     </style>
 </head>
 <body>
@@ -36,7 +42,8 @@
                             <td>&nbsp;</td>
                         </tr>
                         <tr>
-                            <td>&nbsp;</td>
+                            <td>
+                                &nbsp;</td>
                             <td>&nbsp;</td>
                         </tr>
                         <tr>
@@ -76,7 +83,8 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>&nbsp;</td>
+                            <td>
+                                &nbsp;</td>
                             <td>&nbsp;</td>
                         </tr>
                         <tr>
@@ -124,7 +132,8 @@
                             </td>
                         </tr>
                         <tr>
-                            <td>&nbsp;</td>
+                            <td>
+                                &nbsp;</td>
                             <td>&nbsp;</td>
                         </tr>
                         <tr>
@@ -135,13 +144,98 @@
                 </td>
             </tr>
             <tr>
-                <td>
+                <td class="auto-style4">
                     <asp:Label ID="lblMessage" runat="server" Text="Click RetrieveAll  to see the number of locations retrieved."></asp:Label>
+                </td>
+                <td class="auto-style4">
                     <asp:GridView ID="gvAreas" runat="server">
                     </asp:GridView>
                 </td>
+                <td class="auto-style4">
+                                            &nbsp;</td>
+            </tr>
+            <tr>
+                <td class="auto-style4">
+                    &nbsp;</td>
+                <td class="auto-style4">
+                                            &nbsp;</td>
+                <td class="auto-style4">
+                                            &nbsp;</td>
+            </tr>
+            <tr>
+                <td class="auto-style4">
+                    &nbsp;</td>
+                <td class="auto-style4">
+                                            &nbsp;</td>
+                <td class="auto-style4">
+                                            &nbsp;</td>
+            </tr>
+            <tr>
+                <td class="auto-style4">
+                                            <asp:Label ID="lblParentAreaModeCode3" runat="server" Text="New Mode Code"></asp:Label>
+                                <asp:TextBox ID="txtNewModeCode" runat="server"></asp:TextBox>
+                </td>
+                <td class="auto-style4">
+                                            &nbsp;</td>
+                <td class="auto-style4">
+                                <asp:Button ID="btnAddNewArea" runat="server" OnClick="btnAddNewArea_Click" Text="Add/Update Area" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                                            <asp:Label ID="lblParentAreaModeCode4" runat="server" Text="Old Mode Code"></asp:Label>
+                                <asp:TextBox ID="txtOldModeCode" runat="server"></asp:TextBox>
+                </td>
+                <td>
+                                            &nbsp;</td>
+                <td>
+                                <asp:Button ID="btnAddNewCity" runat="server" OnClick="btnAreaRetrieveAll_Click" Text="Add New City" />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                                            <asp:Label ID="lblParentAreaModeCode5" runat="server" Text="Old Id"></asp:Label>
+                                <asp:TextBox ID="txtOldId" runat="server"></asp:TextBox>
+                </td>
+                <td>
+                                            &nbsp;</td>
+                <td>
+                                &nbsp;</td>
+            </tr>
+            <tr>
+                <td class="auto-style3">
+                                            <asp:Label ID="lblParentAreaName" runat="server" Text="Area Name"></asp:Label>
+                                <asp:TextBox ID="txtParentAreaName" runat="server" ></asp:TextBox>
+                </td>
+                <td class="auto-style3">
+                                            &nbsp;</td>
+                <td class="auto-style3">
+                                <asp:Button ID="btnAddNewRC" runat="server" OnClick="btnAreaRetrieveAll_Click" Text="Add New Research Center" />
+                                        </td>
+            </tr>
+            <tr>
+                <td class="auto-style3">
+                                            <asp:Label ID="lblParentCityName0" runat="server" Text="City Name"></asp:Label>
+                                <asp:TextBox ID="txtParentCityName" runat="server"></asp:TextBox>
+                </td>
+                <td class="auto-style3">&nbsp;</td>
+                <td class="auto-style3">&nbsp;</td>
+            </tr>
+            <tr>
+                <td class="auto-style3">
+                                            <asp:Label ID="lblParentCityName1" runat="server" Text="Facility Name"></asp:Label>
+                                <asp:TextBox ID="txtRCParentCityModeCode2" runat="server"></asp:TextBox>
+                </td>
+                <td class="auto-style3"></td>
+                <td class="auto-style3"></td>
+            </tr>
+            <tr>
+                <td>
+        <asp:Literal ID="output1" runat="server" />
+                </td>
                 <td>&nbsp;</td>
-                <td>&nbsp;</td>
+                <td>
+                    &nbsp;</td>
             </tr>
         </table>
     </form>
