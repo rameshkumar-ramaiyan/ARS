@@ -141,7 +141,72 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                             {
                                 if (false == string.IsNullOrWhiteSpace(contentObj.Name))
                                 {
-                                    //TODO: Finish
+                                    contentGet.Name = contentObj.Name;
+                                }
+                                if (contentObj.ParentId > 0)
+                                {
+                                    contentGet.ParentId = contentObj.ParentId;
+                                }
+                                if (false == string.IsNullOrWhiteSpace(contentObj.Template))
+                                {
+                                    IEnumerable<ITemplate> allowedTemplates = contentGet.ContentType.AllowedTemplates;
+                                    ITemplate selectedTemplate = null;
+
+                                    selectedTemplate = allowedTemplates.Where(p => p.Alias == contentObj.Template).FirstOrDefault();
+
+                                    if (selectedTemplate != null)
+                                    {
+                                        contentGet.Template = selectedTemplate;
+                                    }
+                                    else
+                                    {
+                                        response.Message = "Template is not allowed for this DocType.";
+                                        response.Success = false;
+
+                                        return response;
+                                    }
+                                }
+
+                                if (contentObj.Properties != null && contentObj.Properties.Count > 0)
+                                {
+                                    foreach (Models.Import.Property property in contentObj.Properties)
+                                    {
+                                        contentGet.SetValue(property.Key, property.Value);
+                                    }
+                                }
+
+                                if (contentObj.Save == 0)
+                                {
+                                    _contentService.UnPublish(contentGet);
+
+                                    response.Content = ConvertContentObj(contentGet);
+                                    response.Success = true;
+                                    response.Message = "Content updated and unpublished.";
+                                }
+                                else if (contentObj.Save == 1)
+                                {
+                                    _contentService.Save(contentGet);
+
+                                    contentObj.Id = contentGet.Id;
+
+                                    response.Content = ConvertContentObj(contentGet);
+                                    response.Success = true;
+                                    response.Message = "Content updated and saved.";
+                                }
+                                else if (contentObj.Save == 2)
+                                {
+                                    _contentService.SaveAndPublishWithStatus(contentGet);
+
+                                    contentObj.Id = contentGet.Id;
+
+                                    response.Content = ConvertContentObj(contentGet);
+                                    response.Success = true;
+                                    response.Message = "Content updated and published.";
+                                }
+                                else
+                                {
+                                    response.Message = "Invalid save option.";
+                                    return response;
                                 }
                             }
                             else

@@ -12,6 +12,12 @@
         <p><asp:Button ID="btnImport" runat="server" OnClick="btnImport_Click" Text="Test Import" /></p>
         <hr />
         <p>
+            ID: <asp:TextBox ID="txtIdUpdate" runat="server" Text="8050" />
+            Name: <asp:TextBox ID="txtName" runat="server" Text="Test Page Update" />
+            <asp:Button ID="btnUpdate" runat="server" OnClick="btnUpdate_Click" Text="Update Content Page" />
+        </p>
+        <hr />
+        <p>
             <asp:TextBox ID="txtId" runat="server" Text="8050" />
             <asp:Button ID="btnGet" runat="server" OnClick="btnGet_Click" Text="Get By Id" />
         </p>
