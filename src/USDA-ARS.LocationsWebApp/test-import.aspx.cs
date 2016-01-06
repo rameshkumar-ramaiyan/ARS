@@ -60,6 +60,41 @@ namespace USDA_ARS.LocationsWebApp
         }
 
 
+        protected void btnUpdate_Click(object sender, EventArgs e)
+        {
+            Models.Import.Content content = new Models.Import.Content();
+
+            content.ApiKey = API_KEY;
+            content.Id = Convert.ToInt32(txtIdUpdate.Text); // Update a page
+            content.Name = txtName.Text;
+
+            List<Models.Import.Property> properties = new List<Models.Import.Property>();
+
+            properties.Add(new Models.Import.Property("modeCode", "80-00-00-00")); // Region mode code
+            properties.Add(new Models.Import.Property("oldUrl", "/main/site_main.htm?modeCode=80-00-00-00")); // current URL
+            properties.Add(new Models.Import.Property("oldId", "1234")); // sitepublisher ID (So we can reference it later if needed).
+
+            content.Properties = properties;
+
+            content.Save = 1; // 0=Unpublish (update only), 1=Saved, 2=Save And Publish
+
+            Models.Import.Response responseBack = PostData(content);
+
+            if (responseBack != null)
+            {
+                output.Text = "Success: " + responseBack.Success + "<br />\r\n";
+                output.Text += "Message: " + responseBack.Message + "<br />\r\n";
+                output.Text += "<br />\r\n";
+
+                if (responseBack.Content != null)
+                {
+                    output.Text += "Content Umbraco Id: " + responseBack.Content.Id + "<br />\r\n";
+                    output.Text += "Content Name: " + responseBack.Content.Name + "<br />\r\n";
+                }
+            }
+        }
+
+
         protected void btnGet_Click(object sender, EventArgs e)
         {
             Models.Import.Content content = new Models.Import.Content();
