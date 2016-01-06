@@ -9,9 +9,28 @@
 <body>
     <form id="form1" runat="server">
     <div>
-        <asp:Button ID="btnImport" runat="server" OnClick="btnImport_Click" Text="Test Import" />
+        <p><asp:Button ID="btnImport" runat="server" OnClick="btnImport_Click" Text="Test Import" /></p>
         <hr />
+        <p>
+            <asp:TextBox ID="txtId" runat="server" Text="8050" />
+            <asp:Button ID="btnGet" runat="server" OnClick="btnGet_Click" Text="Get By Id" />
+        </p>
+        <hr />
+        <p>
+            <asp:TextBox ID="txtModeCode" runat="server" Text="20-00-00-00" />
+            <asp:Button ID="btnGetByModeCode" runat="server" OnClick="btnGetByModeCode_Click" Text="Get By ModeCode" />
+        </p>
+        <hr />
+        <p>
+            <asp:TextBox ID="txtParentId" runat="server" Text="8050" />
+            <asp:Button ID="btnGetChild" runat="server" OnClick="btnGetChild_Click" Text="Get Child Content List" />
+        </p>
+        <hr />
+        <h2>Response</h2>
         <asp:Literal ID="output" runat="server" />
+        <hr />
+        <h2>Child Content</h2>
+        <asp:Literal ID="outputChild" runat="server" />
     </div>
     </form>
 </body>
