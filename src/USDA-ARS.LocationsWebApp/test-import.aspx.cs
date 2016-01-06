@@ -60,17 +60,79 @@ namespace USDA_ARS.LocationsWebApp
         }
 
 
+        protected void btnGet_Click(object sender, EventArgs e)
+        {
+            Models.Import.Content content = new Models.Import.Content();
+
+            content.ApiKey = API_KEY;
+            content.Id = Convert.ToInt32(txtId.Text); // Load page
+
+            Models.Import.Response responseBack = PostData(content, "Get");
+
+            if (responseBack != null)
+            {
+                output.Text = "Success: " + responseBack.Success + "<br />\r\n";
+                output.Text += "Message: " + responseBack.Message + "<br />\r\n";
+                output.Text += "<br />\r\n";
+
+                if (responseBack.Content != null)
+                {
+                    output.Text += "Content Umbraco Id: " + responseBack.Content.Id + "<br />\r\n";
+                    output.Text += "Content Name: " + responseBack.Content.Name + "<br />\r\n";
+                    output.Text += "<strong>Properties</strong><br />\r\n";
+
+                    foreach (Models.Import.Property property in responseBack.Content.Properties)
+                    {
+                        output.Text += property.Key +": " + property.Value + " <br />\r\n";
+                    }
+                }
+            }
+        }
+
+
+        protected void btnGetByModeCode_Click(object sender, EventArgs e)
+        {
+            Models.Import.Content content = new Models.Import.Content();
+
+            content.ApiKey = API_KEY;
+            content.Id = 0;
+            content.Properties = new List<Models.Import.Property>();
+            content.Properties.Add(new Models.Import.Property("modeCode", txtModeCode.Text.ToString())); // Load page by property value
+
+            Models.Import.Response responseBack = PostData(content, "Get");
+
+            if (responseBack != null)
+            {
+                output.Text = "Success: " + responseBack.Success + "<br />\r\n";
+                output.Text += "Message: " + responseBack.Message + "<br />\r\n";
+                output.Text += "<br />\r\n";
+
+                if (responseBack.Content != null)
+                {
+                    output.Text += "Content Umbraco Id: " + responseBack.Content.Id + "<br />\r\n";
+                    output.Text += "Content Name: " + responseBack.Content.Name + "<br />\r\n";
+                    output.Text += "<strong>Properties</strong><br />\r\n";
+
+                    foreach (Models.Import.Property property in responseBack.Content.Properties)
+                    {
+                        output.Text += property.Key + ": " + property.Value + " <br />\r\n";
+                    }
+                }
+            }
+        }
+
+
         /// <summary>
         /// Posts a JSON Content Object to the Umbraco API
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
-        private Models.Import.Response PostData(Models.Import.Content content)
+        private Models.Import.Response PostData(Models.Import.Content content, string endPoint = "Post")
         {
             Models.Import.Response response = null;
             string apiUrl = API_URL;
 
-            var http = (HttpWebRequest)WebRequest.Create(new Uri(apiUrl));
+            var http = (HttpWebRequest)WebRequest.Create(new Uri(apiUrl + endPoint));
             http.Accept = "application/json";
             http.ContentType = "application/json";
             http.Method = "POST";
