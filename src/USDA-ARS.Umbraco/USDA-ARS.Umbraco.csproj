@@ -309,6 +309,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Plugins\ArchetypeLabelTemplates\urlpicker.js" />
     <Content Include="App_Plugins\Archetype\assets\logo_50.png" />
     <Content Include="App_Plugins\Archetype\assets\twitter.png" />
     <Content Include="App_Plugins\Archetype\css\archetype.css" />
@@ -346,9 +347,12 @@
     <Content Include="App_Plugins\FilePicker\folderpicker.html" />
     <Content Include="App_Plugins\FilePicker\folderpickerdialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-dialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-file-upload.html" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.controller.js" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.directives.js" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.html" />
     <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker-dialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker-upload-dialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.js" />
@@ -356,6 +360,10 @@
     <Content Include="App_Plugins\UsdaDataImporter\js\usda.data.importer.js" />
     <Content Include="App_Plugins\UsdaDataImporter\upload.file.aspx" />
     <Content Include="App_Plugins\UsdaDataImporter\views\usda.data.importer.html" />
+    <Content Include="App_Plugins\UsdaImageMap\css\usda.image.map.css" />
+    <Content Include="App_Plugins\UsdaImageMap\js\usda.image.map.controller.js" />
+    <Content Include="App_Plugins\UsdaImageMap\js\usda.image.map.resource.js" />
+    <Content Include="App_Plugins\UsdaImageMap\views\usda.image.map.html" />
     <Content Include="Config\grid.editors.config.js" />
     <Content Include="Config\Lang\cs-CZ.user.xml" />
     <Content Include="Config\Lang\da-DK.user.xml" />
@@ -2895,6 +2903,8 @@
     <Content Include="Config\BaseRestExtensions.config" />
     <Content Include="Config\applications.config" />
     <Content Include="Config\404handlers.config" />
+    <Content Include="App_Plugins\UsdaImageMap\package.manifest" />
+    <Content Include="App_Plugins\ArchetypeLabelTemplates\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
     <Content Include="Views\SubpageStandard.cshtml" />

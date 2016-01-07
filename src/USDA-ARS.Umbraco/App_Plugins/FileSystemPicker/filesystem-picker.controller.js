@@ -48,6 +48,22 @@ function fileSystemPickerController($scope, dialogService) {
     function populate(data) {
         $scope.model.value = $scope.model.config.folder + data;
     };
+
+	//a method to update the model by adding a blank item
+    $scope.clickMap = function ($event) {
+    	var mapImage = $('#usda-map-image')
+
+    	var offset_t = mapImage.offset().top - $(window).scrollTop();
+    	var offset_l = mapImage.offset().left - $(window).scrollLeft();
+
+    	var left = Math.round(($event.clientX - offset_l));
+    	var top = Math.round(($event.clientY - offset_t));
+
+    	var $emptyInput = $('input[id*=mapCoordinates]').filter(function () { return !this.value; });
+
+    	$emptyInput.val(left + ',' + top);
+    }
+
 };
 angular.module("umbraco").controller("Umbraco.FileSystemPickerController", fileSystemPickerController);
 
