@@ -70,6 +70,7 @@
     <Reference Include="System.EnterpriseServices" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="AddUpdateLocations.aspx" />
     <Content Include="test-import.aspx" />
     <Content Include="AddRetrieveLocations.aspx" />
     <Content Include="packages.config" />
@@ -81,6 +82,13 @@
     <Compile Include="Models\Import\Content.cs" />
     <Compile Include="Models\Import\Property.cs" />
     <Compile Include="Models\Import\Response.cs" />
+    <Compile Include="AddUpdateLocations.aspx.cs">
+      <DependentUpon>AddUpdateLocations.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="AddUpdateLocations.aspx.designer.cs">
+      <DependentUpon>AddUpdateLocations.aspx</DependentUpon>
+    </Compile>
     <Compile Include="test-import.aspx.cs">
       <DependentUpon>test-import.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
