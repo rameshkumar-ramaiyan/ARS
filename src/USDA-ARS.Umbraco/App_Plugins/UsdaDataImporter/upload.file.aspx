@@ -17,7 +17,7 @@
         </div>
         <div class="row control-group">
             <strong>Access Table Name</strong><br />
-            <input name="tableName" id="tableName" type="text" value="KeyDates" />
+            <input name="tableName" id="tableName" type="text" value="Schedule Table" />
             <input name="nodeId" id="nodeId" type="hidden" value="<%= Request.QueryString.Get("id") %>" />
         </div>
         <div class="row control-group">

@@ -360,10 +360,6 @@
     <Content Include="App_Plugins\UsdaDataImporter\js\usda.data.importer.js" />
     <Content Include="App_Plugins\UsdaDataImporter\upload.file.aspx" />
     <Content Include="App_Plugins\UsdaDataImporter\views\usda.data.importer.html" />
-    <Content Include="App_Plugins\UsdaImageMap\css\usda.image.map.css" />
-    <Content Include="App_Plugins\UsdaImageMap\js\usda.image.map.controller.js" />
-    <Content Include="App_Plugins\UsdaImageMap\js\usda.image.map.resource.js" />
-    <Content Include="App_Plugins\UsdaImageMap\views\usda.image.map.html" />
     <Content Include="Config\grid.editors.config.js" />
     <Content Include="Config\Lang\cs-CZ.user.xml" />
     <Content Include="Config\Lang\da-DK.user.xml" />
@@ -2903,7 +2899,6 @@
     <Content Include="Config\BaseRestExtensions.config" />
     <Content Include="Config\applications.config" />
     <Content Include="Config\404handlers.config" />
-    <Content Include="App_Plugins\UsdaImageMap\package.manifest" />
     <Content Include="App_Plugins\ArchetypeLabelTemplates\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
