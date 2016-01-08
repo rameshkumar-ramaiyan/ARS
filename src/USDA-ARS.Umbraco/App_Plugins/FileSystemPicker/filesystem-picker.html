@@ -9,7 +9,11 @@
                      ng-show="model.value.length.toLowerCase().indexOf('.jpg') >= 0 || model.value.length.toLowerCase().indexOf('.gif') >= 0" />
             </div>
             <div ng-show="model.config.coordinatePicker">
-                <img id="usda-map-image" src="{{model.value}}" ng-click="clickMap($event)" style="cursor: crosshair;" />
+                <a href="#" ng-click="newWindow(model.value)">
+                    <img id="usda-map-image" src="{{model.value}}" />
+                    <br />
+                    Open image in new window to set map coordinates
+                </a>
             </div>
         </li>
     </ul>

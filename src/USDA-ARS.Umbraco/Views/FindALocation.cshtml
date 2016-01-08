@@ -11,6 +11,8 @@
 
     IEnumerable<IPublishedContent> regionSiteList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.RegionSiteList();
     IEnumerable<IPublishedContent> allLocationsList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.AllLocationsList();
+    ArchetypeModel locationMap = currentPage.GetPropertyValue<ArchetypeModel>("mapCoordinates");
+    string countryMap = currentPage.GetPropertyValue<string>("countryMap", "");
 
     List<string> alphaList = null;
 
@@ -88,19 +90,58 @@
 
         @if (slice == "")
         {
-            <img src="/images/incme/usmap.jpg" border="0" usemap="#usmap" alt="map of areas">
+            <img src="@(countryMap)" border="0" usemap="#usmap" alt="map of areas">
             <map name="usmap">
-                <area alt="Headquarters" title="Headquarters" href="/" coords="506,183,5" shape="circle">
-                <area alt="Pacific West Area" title="Pacific West Area" href="/pacific-west-area/" coords="51,9,5" shape="circle">
-                <area alt="Plains Area" title="Plains Area" href="/plains-area/" coords="169,304,5" shape="circle">
+                @if (locationMap != null && locationMap.Any())
+                {
+                    foreach (var mapCoord in locationMap)
+                    {
+                        Link navLink = mapCoord.GetValue<MultiUrls>("site").FirstOrDefault();
+                        IPublishedContent siteNode = Umbraco.TypedContent(navLink.Id ?? 0);
 
-                <area alt="Reno, NV Worksite" title="Reno, NV Worksite" href="http://www.ars.usda.gov/PandP/docs.htm?docid=12691" coords=",5" shape="circle">
-                <area alt="Palmer, AK Worksite" title="Palmer, AK Worksite" href="http://www.ars.usda.gov/PandP/docs.htm?docid=12692" coords=",5" shape="circle">
-                <area alt="Parma, ID Worksite" title="Parma, ID Worksite" href="http://www.ars.usda.gov/PandP/docs.htm?docid=12695" coords=",5" shape="circle">
-                <area alt="Hagerman, ID Worksite" title="Hagerman, ID Worksite" href="" coords=",5" shape="circle">
-                <area alt="Newport, OR Worksite" title="Newport, OR Worksite" href="" coords=",5" shape="circle">
-                <area alt="Honolulu, HI Worksite " title="Honolulu, HI Worksite " href="" coords=",5" shape="circle">
-                <area alt="Aiea, HI Worksite " title="Aiea, HI Worksite " href="" coords=",5" shape="circle">
+                        if (navLink != null)
+                        {
+                            string title = navLink.Name;
+                            string coords = "";
+                            string shape = "circle";
+
+                            if (true == mapCoord.GetValue<bool>("isARegion"))
+                            {
+                                shape = "rect";
+                                string coordString = mapCoord.GetValue<string>("coordinates");
+
+                                if (false == string.IsNullOrWhiteSpace(coordString) && coordString.IndexOf(",") >= 0)
+                                {
+                                    List<int> coordArray = coordString.Split(',').Select(int.Parse).ToList();
+
+                                    coords += (coordArray[0] - 40) + "," + (coordArray[1] - 10) + ",";
+                                    coords += (coordArray[0] + 40) + "," + (coordArray[1] + 10);
+                                }
+                            }
+                            else
+                            {
+                                if (siteNode != null)
+                                {
+                                    if (siteNode.DocumentTypeAlias == "City")
+                                    {
+                                        IPublishedContent parentNode = siteNode.Parent;
+
+                                        if (parentNode != null)
+                                        {
+                                            title = parentNode.Name + "&#013;" + siteNode.Name;
+                                        }
+                                    }
+                                }
+
+                                coords = mapCoord.GetValue<string>("coordinates") + ",5";
+                            }
+                            if (false == string.IsNullOrWhiteSpace(coords))
+                            {
+                                <area alt="@Html.Raw(title)" title="@Html.Raw(title)" href="@navLink.Url" coords="@coords" shape="@shape">
+                            }
+                        }
+                    }
+                }
             </map>
 
             <hr />

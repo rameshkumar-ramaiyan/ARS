@@ -348,6 +348,7 @@
     <Content Include="App_Plugins\FilePicker\folderpickerdialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-dialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-file-upload.html" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-new-window.aspx" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.controller.js" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.directives.js" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.html" />
@@ -2938,6 +2939,7 @@
     <Content Include="Views\Events.cshtml" />
     <Content Include="Views\Video.cshtml" />
     <Content Include="Views\Videos.cshtml" />
+    <Content Include="Views\Careers.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

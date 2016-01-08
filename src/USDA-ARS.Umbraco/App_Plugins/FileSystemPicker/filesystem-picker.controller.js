@@ -50,18 +50,18 @@ function fileSystemPickerController($scope, dialogService) {
     };
 
 	//a method to update the model by adding a blank item
-    $scope.clickMap = function ($event) {
-    	var mapImage = $('#usda-map-image')
+    $scope.newWindow = function (imageUrl) {
+    	var $mapImage = $('#usda-map-image');
 
-    	var offset_t = mapImage.offset().top - $(window).scrollTop();
-    	var offset_l = mapImage.offset().left - $(window).scrollLeft();
+    	var img = new Image();
+    	img.onload = function () {
+    		var urlImage = '/App_Plugins/FileSystemPicker/filesystem-picker-new-window.aspx?url=' + escape($mapImage.attr('src'));
 
-    	var left = Math.round(($event.clientX - offset_l));
-    	var top = Math.round(($event.clientY - offset_t));
+    		window.open(urlImage, 'popupWindow', 'width=' + (this.width + 30) + ',height=' + (this.height + 30) + ',scrollbars=no');
+    	}
+    	img.src = $mapImage.attr('src');
 
-    	var $emptyInput = $('input[id*=mapCoordinates]').filter(function () { return !this.value; });
-
-    	$emptyInput.val(left + ',' + top);
+    	event.preventDefault();
     }
 
 };
