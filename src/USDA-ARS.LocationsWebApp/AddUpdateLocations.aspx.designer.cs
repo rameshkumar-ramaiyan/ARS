@@ -10,7 +10,7 @@
 namespace USDA_ARS.LocationsWebApp {
     
     
-    public partial class AddRetrieveLocations {
+    public partial class AddUpdateLocations {
         
         /// <summary>
         /// form1 control.
@@ -22,130 +22,58 @@ namespace USDA_ARS.LocationsWebApp {
         protected global::System.Web.UI.HtmlControls.HtmlForm form1;
         
         /// <summary>
-        /// btnAreaRetrieveAll control.
+        /// txtId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAreaRetrieveAll;
+        protected global::System.Web.UI.WebControls.TextBox txtId;
         
         /// <summary>
-        /// btnCityRetrieveAll control.
+        /// btnGet control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnCityRetrieveAll;
+        protected global::System.Web.UI.WebControls.Button btnGet;
         
         /// <summary>
-        /// lblParentAreaModeCode control.
+        /// txtModeCode control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblParentAreaModeCode;
+        protected global::System.Web.UI.WebControls.TextBox txtModeCode;
         
         /// <summary>
-        /// txtParentAreaModeCode control.
+        /// btnGetByModeCode control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtParentAreaModeCode;
+        protected global::System.Web.UI.WebControls.Button btnGetByModeCode;
         
         /// <summary>
-        /// btnResearchCenterRetrieveAll control.
+        /// txtParentId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnResearchCenterRetrieveAll;
+        protected global::System.Web.UI.WebControls.TextBox txtParentId;
         
         /// <summary>
-        /// lblParentAreaModeCode0 control.
+        /// btnGetChild control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblParentAreaModeCode0;
-        
-        /// <summary>
-        /// lblParentAreaModeCode1 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblParentAreaModeCode1;
-        
-        /// <summary>
-        /// lblParentAreaModeCode2 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblParentAreaModeCode2;
-        
-        /// <summary>
-        /// txtRCParentAreaModeCode control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtRCParentAreaModeCode;
-        
-        /// <summary>
-        /// txtRCParentCityModeCode control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtRCParentCityModeCode;
-        
-        /// <summary>
-        /// txtParenRCModeCode control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtParenRCModeCode;
-        
-        /// <summary>
-        /// lblMessage control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblMessage;
-        
-        /// <summary>
-        /// gvAreas control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.GridView gvAreas;
-        
-        /// <summary>
-        /// lblParentAreaModeCode3 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblParentAreaModeCode3;
+        protected global::System.Web.UI.WebControls.Button btnGetChild;
         
         /// <summary>
         /// txtNewModeCode control.
@@ -157,22 +85,13 @@ namespace USDA_ARS.LocationsWebApp {
         protected global::System.Web.UI.WebControls.TextBox txtNewModeCode;
         
         /// <summary>
-        /// btnAddNewArea control.
+        /// txtParentAreaName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddNewArea;
-        
-        /// <summary>
-        /// lblParentAreaModeCode4 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblParentAreaModeCode4;
+        protected global::System.Web.UI.WebControls.TextBox txtParentAreaName;
         
         /// <summary>
         /// txtOldModeCode control.
@@ -184,24 +103,6 @@ namespace USDA_ARS.LocationsWebApp {
         protected global::System.Web.UI.WebControls.TextBox txtOldModeCode;
         
         /// <summary>
-        /// btnAddNewCity control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Button btnAddNewCity;
-        
-        /// <summary>
-        /// lblParentAreaModeCode5 control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblParentAreaModeCode5;
-        
-        /// <summary>
         /// txtOldId control.
         /// </summary>
         /// <remarks>
@@ -211,22 +112,139 @@ namespace USDA_ARS.LocationsWebApp {
         protected global::System.Web.UI.WebControls.TextBox txtOldId;
         
         /// <summary>
-        /// lblParentAreaName control.
+        /// btnAddNewArea control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblParentAreaName;
+        protected global::System.Web.UI.WebControls.Button btnAddNewArea;
         
         /// <summary>
-        /// txtParentAreaName control.
+        /// txtParentAreaId control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtParentAreaName;
+        protected global::System.Web.UI.WebControls.TextBox txtParentAreaId;
+        
+        /// <summary>
+        /// txtParentAreaModeCode control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtParentAreaModeCode;
+        
+        /// <summary>
+        /// txtCityName control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtCityName;
+        
+        /// <summary>
+        /// txtStateCode control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtStateCode;
+        
+        /// <summary>
+        /// txtCityOldModeCodeSP control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtCityOldModeCodeSP;
+        
+        /// <summary>
+        /// txtCityOldIdSP control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtCityOldIdSP;
+        
+        /// <summary>
+        /// btnNewCity control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnNewCity;
+        
+        /// <summary>
+        /// TextBox3 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TextBox3;
+        
+        /// <summary>
+        /// TextBox4 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TextBox4;
+        
+        /// <summary>
+        /// TextBox1 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TextBox1;
+        
+        /// <summary>
+        /// TextBox11 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TextBox11;
+        
+        /// <summary>
+        /// TextBox12 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TextBox12;
+        
+        /// <summary>
+        /// TextBox7 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TextBox7;
+        
+        /// <summary>
+        /// TextBox8 control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox TextBox8;
         
         /// <summary>
         /// btnAddNewRC control.
@@ -238,48 +256,48 @@ namespace USDA_ARS.LocationsWebApp {
         protected global::System.Web.UI.WebControls.Button btnAddNewRC;
         
         /// <summary>
-        /// lblParentCityName0 control.
+        /// txtIdUpdate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblParentCityName0;
+        protected global::System.Web.UI.WebControls.TextBox txtIdUpdate;
         
         /// <summary>
-        /// txtParentCityName control.
+        /// txtName control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtParentCityName;
+        protected global::System.Web.UI.WebControls.TextBox txtName;
         
         /// <summary>
-        /// lblParentCityName1 control.
+        /// btnUpdate control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Label lblParentCityName1;
+        protected global::System.Web.UI.WebControls.Button btnUpdate;
         
         /// <summary>
-        /// txtRCParentCityModeCode2 control.
+        /// output control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtRCParentCityModeCode2;
+        protected global::System.Web.UI.WebControls.Literal output;
         
         /// <summary>
-        /// output1 control.
+        /// outputChild control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal output1;
+        protected global::System.Web.UI.WebControls.Literal outputChild;
     }
 }

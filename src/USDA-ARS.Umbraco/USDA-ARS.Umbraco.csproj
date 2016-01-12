@@ -346,9 +346,12 @@
     <Content Include="App_Plugins\FilePicker\folderpicker.html" />
     <Content Include="App_Plugins\FilePicker\folderpickerdialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-dialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-file-upload.html" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.controller.js" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.directives.js" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.html" />
     <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker-dialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker-upload-dialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.js" />
@@ -2747,6 +2750,13 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Plugins\UsdaDataImporter\upload.file.aspx.cs">
+      <DependentUpon>upload.file.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="App_Plugins\UsdaDataImporter\upload.file.aspx.designer.cs">
+      <DependentUpon>upload.file.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
