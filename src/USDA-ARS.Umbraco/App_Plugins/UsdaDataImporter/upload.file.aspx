@@ -1,9 +1,32 @@
-﻿<!DOCTYPE html>
+﻿<%@ Import namespace="Umbraco.Core.Models" %>
+<%@ Import namespace="Umbraco.Web" %>
+
+<script language="c#" runat="server">
+    public string Id = "";
+    public string defaultTableName = "Schedule Tables";
+
+    public void Page_Load(object sender, EventArgs e)
+    {
+        Id = Request.QueryString.Get("id");
+        IPublishedContent siteSettings = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.SiteSettings();
+
+        if (siteSettings != null)
+        {
+            defaultTableName = siteSettings.GetPropertyValue<string>("contentTable");
+        }
+        
+    }
+</script>
+
+<!DOCTYPE html>
 <html>
 <head>
     <title></title>
     <meta charset="utf-8" />
-    <link href="/umbraco/assets/css/umbraco.css?cdv=509615776" type="text/css" rel="stylesheet"/><link href="/umbraco_client/tree/treeicons.css?cdv=509615776" type="text/css" rel="stylesheet"/><link href="/umbraco/lib/bootstrap-social/bootstrap-social.css?cdv=509615776" type="text/css" rel="stylesheet"/><link href="/umbraco/lib/font-awesome/css/font-awesome.min.css?cdv=509615776" type="text/css" rel="stylesheet"/>
+    <link href="/umbraco/assets/css/umbraco.css?cdv=509615776" type="text/css" rel="stylesheet" />
+    <link href="/umbraco_client/tree/treeicons.css?cdv=509615776" type="text/css" rel="stylesheet" />
+    <link href="/umbraco/lib/bootstrap-social/bootstrap-social.css?cdv=509615776" type="text/css" rel="stylesheet" />
+    <link href="/umbraco/lib/font-awesome/css/font-awesome.min.css?cdv=509615776" type="text/css" rel="stylesheet" />
     <script></script>
 </head>
 <body>
@@ -17,8 +40,8 @@
         </div>
         <div class="row control-group">
             <strong>Access Table Name</strong><br />
-            <input name="tableName" id="tableName" type="text" value="KeyDates" />
-            <input name="nodeId" id="nodeId" type="hidden" value="<%= Request.QueryString.Get("id") %>" />
+            <input name="tableName" id="tableName" type="text" value="<%= defaultTableName %>" />
+            <input name="nodeId" id="nodeId" type="hidden" value="<%= Id %>" />
         </div>
         <div class="row control-group">
             <input name="uploadFile" id="uploadFile" type="submit" value="Process File" />

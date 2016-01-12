@@ -66,30 +66,29 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                             {
                                 response.Message = "Content DocType is missing.";
                             }
-                            else if (true == string.IsNullOrWhiteSpace(contentObj.Template))
-                            {
-                                response.Message = "Content Template is missing.";
-                            }
                             else
                             {
                                 // Insert Content
                                 var content = _contentService.CreateContent(contentObj.Name, contentObj.ParentId, contentObj.DocType);
 
-                                IEnumerable<ITemplate> allowedTemplates = content.ContentType.AllowedTemplates;
-                                ITemplate selectedTemplate = null;
-
-                                selectedTemplate = allowedTemplates.Where(p => p.Alias == contentObj.Template).FirstOrDefault();
-
-                                if (selectedTemplate != null)
+                                if (false == string.IsNullOrWhiteSpace(contentObj.Template))
                                 {
-                                    content.Template = selectedTemplate;
-                                }
-                                else
-                                {
-                                    response.Message = "Template is not allowed for this DocType.";
-                                    response.Success = false;
+                                    IEnumerable<ITemplate> allowedTemplates = content.ContentType.AllowedTemplates;
+                                    ITemplate selectedTemplate = null;
 
-                                    return response;
+                                    selectedTemplate = allowedTemplates.Where(p => p.Alias == contentObj.Template).FirstOrDefault();
+
+                                    if (selectedTemplate != null)
+                                    {
+                                        content.Template = selectedTemplate;
+                                    }
+                                    else
+                                    {
+                                        response.Message = "Template is not allowed for this DocType.";
+                                        response.Success = false;
+
+                                        return response;
+                                    }
                                 }
 
                                 if (contentObj.Properties != null && contentObj.Properties.Count > 0)

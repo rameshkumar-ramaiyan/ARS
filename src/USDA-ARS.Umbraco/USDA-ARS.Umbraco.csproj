@@ -346,9 +346,12 @@
     <Content Include="App_Plugins\FilePicker\folderpicker.html" />
     <Content Include="App_Plugins\FilePicker\folderpickerdialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-dialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-file-upload.html" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.controller.js" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.directives.js" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.html" />
     <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker-dialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker-upload-dialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.js" />
