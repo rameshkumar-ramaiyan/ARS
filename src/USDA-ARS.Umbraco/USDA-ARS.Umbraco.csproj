@@ -2750,6 +2750,13 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Plugins\UsdaDataImporter\upload.file.aspx.cs">
+      <DependentUpon>upload.file.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="App_Plugins\UsdaDataImporter\upload.file.aspx.designer.cs">
+      <DependentUpon>upload.file.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

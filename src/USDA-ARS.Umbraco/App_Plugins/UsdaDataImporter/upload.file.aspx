@@ -1,22 +1,4 @@
-﻿<%@ Import namespace="Umbraco.Core.Models" %>
-<%@ Import namespace="Umbraco.Web" %>
-
-<script language="c#" runat="server">
-    public string Id = "";
-    public string defaultTableName = "Schedule Tables";
-
-    public void Page_Load(object sender, EventArgs e)
-    {
-        Id = Request.QueryString.Get("id");
-        IPublishedContent siteSettings = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.SiteSettings();
-
-        if (siteSettings != null)
-        {
-            defaultTableName = siteSettings.GetPropertyValue<string>("contentTable");
-        }
-        
-    }
-</script>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeBehind="upload.file.aspx.cs" Inherits="USDA_ARS.Umbraco.App_Plugins.UsdaDataImporter.upload_file" %>
 
 <!DOCTYPE html>
 <html>
