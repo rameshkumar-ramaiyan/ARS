@@ -2943,6 +2943,8 @@
     <Content Include="Views\Events.cshtml" />
     <Content Include="Views\Video.cshtml" />
     <Content Include="Views\Videos.cshtml" />
+    <Content Include="Views\City.cshtml" />
+    <None Include="Properties\PublishProfiles\Publish2Staging.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
