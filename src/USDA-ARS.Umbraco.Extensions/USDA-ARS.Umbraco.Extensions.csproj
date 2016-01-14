@@ -299,6 +299,7 @@
     <Compile Include="Models\Aris\RefModeCode.cs" />
     <Compile Include="Models\Import\Content.cs" />
     <Compile Include="Models\Import\Property.cs" />
+    <Compile Include="Models\Import\Request.cs" />
     <Compile Include="Models\Import\Response.cs" />
     <Compile Include="Models\ResearchUnit.cs" />
     <Compile Include="Models\Aris\UsdaArsNews.cs" />
