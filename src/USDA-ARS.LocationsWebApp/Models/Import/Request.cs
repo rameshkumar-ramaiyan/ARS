@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Web;
 
 namespace USDA_ARS.LocationsWebApp.Models.Import
 {
-    public class Response
+    public class Request
     {
-        public bool Success { get; set; }
-        public string Message { get; set; }
-
+        public string ApiKey { get; set; }
         public List<Content> ContentList { get; set; }
     }
 }

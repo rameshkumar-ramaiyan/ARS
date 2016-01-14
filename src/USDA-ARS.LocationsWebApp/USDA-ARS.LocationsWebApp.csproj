@@ -71,16 +71,23 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AddUpdateLocations.aspx" />
-    <Content Include="test-import.aspx" />
-    <Content Include="AddRetrieveLocations.aspx" />
+    <Content Include="delete-regions.aspx" />
     <Content Include="packages.config" />
     <Content Include="StoredProcedures\uspgetAllAreas.sql" />
     <Content Include="StoredProcedures\uspgetAllCities.sql" />
     <Content Include="StoredProcedures\[uspgetAllResearchCenters].sql" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="delete-regions.aspx.cs">
+      <DependentUpon>delete-regions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete-regions.aspx.designer.cs">
+      <DependentUpon>delete-regions.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Models\Import\Content.cs" />
     <Compile Include="Models\Import\Property.cs" />
+    <Compile Include="Models\Import\Request.cs" />
     <Compile Include="Models\Import\Response.cs" />
     <Compile Include="AddUpdateLocations.aspx.cs">
       <DependentUpon>AddUpdateLocations.aspx</DependentUpon>
@@ -89,26 +96,14 @@
     <Compile Include="AddUpdateLocations.aspx.designer.cs">
       <DependentUpon>AddUpdateLocations.aspx</DependentUpon>
     </Compile>
-    <Compile Include="test-import.aspx.cs">
-      <DependentUpon>test-import.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="test-import.aspx.designer.cs">
-      <DependentUpon>test-import.aspx</DependentUpon>
-    </Compile>
-    <Compile Include="AddRetrieveLocations.aspx.cs">
-      <DependentUpon>AddRetrieveLocations.aspx</DependentUpon>
-      <SubType>ASPXCodeBehind</SubType>
-    </Compile>
-    <Compile Include="AddRetrieveLocations.aspx.designer.cs">
-      <DependentUpon>AddRetrieveLocations.aspx</DependentUpon>
-    </Compile>
     <Compile Include="DL\AddRetrieveLocationsDL.cs" />
     <Compile Include="DL\Locations.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="Web.Debug.config">
