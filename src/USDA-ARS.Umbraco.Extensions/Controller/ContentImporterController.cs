@@ -267,6 +267,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                     else
                     {
                         response.Success = true;
+                        response.ContentList = new List<Models.Import.Content>();
 
                         foreach (Models.Import.Content contentObj in request.ContentList)
                         {
@@ -277,6 +278,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                             {
                                 if (contentObj.Properties != null && contentObj.Properties.Count > 0)
                                 {
+                                    response.ContentList = new List<Models.Import.Content>();
                                     Models.Import.Property propObj = contentObj.Properties[0];
 
                                     IEnumerable<IContent> rootNodeList = _contentService.GetRootContent();
@@ -353,7 +355,110 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
             return response;
         }
-        
+
+
+
+        [System.Web.Http.HttpPost]
+        public Models.Import.Response Delete([FromBody] dynamic json)
+        {
+            Models.Import.Response response = new Models.Import.Response();
+
+            Models.Import.Request request = JsonConvert.DeserializeObject<Models.Import.Request>(json.ToString());
+
+            try
+            {
+                if (request != null)
+                {
+                    //Check object
+                    if (true == string.IsNullOrWhiteSpace(request.ApiKey))
+                    {
+                        response.Message = "API Key is missing.";
+                    }
+                    else if (request.ApiKey != _apiKey)
+                    {
+                        response.Message = "API Key is invalid.";
+                    }
+                    else if (request.ContentList == null || request.ContentList.Count == 0)
+                    {
+                        response.Message = "Content object empty. Needed for GET.";
+                    }
+                    else
+                    {
+                        response.Success = true;
+
+                        foreach (Models.Import.Content contentObj in request.ContentList)
+                        {
+                            IContent content = null;
+                            Models.Import.Content responseContent = new Models.Import.Content();
+
+                            if (contentObj.Id <= 0)
+                            {
+                                if (contentObj.Properties != null && contentObj.Properties.Count > 0)
+                                {
+                                    Models.Import.Property propObj = contentObj.Properties[0];
+
+                                    IEnumerable<IContent> rootNodeList = _contentService.GetRootContent();
+
+                                    foreach (IContent rootNode in rootNodeList)
+                                    {
+                                        if (content == null)
+                                        {
+                                            IEnumerable<IContent> nodeList = _contentService.GetDescendants(rootNode.Id);
+
+                                            content = nodeList.Where(p => p.Properties.Any(s => s.Value != null && s.Alias == propObj.Key && s.Value.ToString() == propObj.Value.ToString())).FirstOrDefault();
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    responseContent.Message = "Must provide a property key and value to return content on.";
+                                    responseContent.Success = false;
+                                }
+                            }
+                            else // Find by Id
+                            {
+                                content = _contentService.GetById(contentObj.Id);
+                            }
+
+                            if (content != null && content.Id > 0)
+                            {
+                                // Content Found!
+                                responseContent = ConvertContentObj(content);
+
+                                _contentService.Delete(content);
+
+                                responseContent.Success = true;
+                                responseContent.Message = "Content found and deleted.";
+                            }
+                            else
+                            {
+                                responseContent.Message = "Content could not be found for deletion.";
+                                responseContent.Success = false;
+                            }
+
+                            response.ContentList.Add(responseContent);
+                        }
+                    }
+                }
+                else
+                {
+                    response.Message = "The JSON object was not properly formatted.";
+                    response.Success = false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                //LogHelper.Error<DataImporterController>("Content Import Post Error", ex);
+
+                response.Message = ex.ToString();
+            }
+
+            return response;
+        }
+
+
+
 
         /// <summary>
         /// Convert Umbraco content object

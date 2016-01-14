@@ -71,12 +71,20 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="AddUpdateLocations.aspx" />
+    <Content Include="delete-regions.aspx" />
     <Content Include="packages.config" />
     <Content Include="StoredProcedures\uspgetAllAreas.sql" />
     <Content Include="StoredProcedures\uspgetAllCities.sql" />
     <Content Include="StoredProcedures\[uspgetAllResearchCenters].sql" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="delete-regions.aspx.cs">
+      <DependentUpon>delete-regions.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete-regions.aspx.designer.cs">
+      <DependentUpon>delete-regions.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Models\Import\Content.cs" />
     <Compile Include="Models\Import\Property.cs" />
     <Compile Include="Models\Import\Request.cs" />
@@ -93,7 +101,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <ItemGroup>
     <None Include="Web.Debug.config">
