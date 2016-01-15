@@ -237,7 +237,7 @@ namespace USDA_ARS.LocationsWebApp
             request.ContentList = new List<ApiContent>();
             request.ContentList.Add(content);
 
-            ApiResponse responseBack = PostData(request, "GetChildsList");
+            ApiResponse responseBack = PostData(request, "Get");
 
             if (responseBack != null)
             {
@@ -486,8 +486,8 @@ namespace USDA_ARS.LocationsWebApp
             properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
             properties.Add(new ApiProperty("oldUrl", "/main/site_main.htm?modeCode=" + newModeCodeProperty + "")); // current URL               
             properties.Add(new ApiProperty("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
-            properties.Add(new ApiProperty("state", txtStateCode.Text)); // For example: NY (2 letter state code)
-            properties.Add(new ApiProperty("navigationTitle", cityStateConcatenatedString)); // All CAPS - For example: GENEVA, NY
+            //properties.Add(new ApiProperty("state", txtStateCode.Text)); // For example: NY (2 letter state code)
+            //properties.Add(new ApiProperty("navigationTitle", cityStateConcatenatedString)); // All CAPS - For example: GENEVA, NY
 
             //properties.Add(new ApiProperty("modeCode", "80-10-00-00")); // Region mode code
             //properties.Add(new ApiProperty("oldUrl", "")); // Leave blank since there is no city page on the website.
