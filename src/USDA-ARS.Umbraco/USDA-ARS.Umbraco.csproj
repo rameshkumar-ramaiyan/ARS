@@ -1583,7 +1583,6 @@
     <Content Include="umbraco\Views\directives\imaging\umb-image-folder.html" />
     <Content Include="umbraco\Views\directives\imaging\umb-image-gravity.html" />
     <Content Include="umbraco\Views\directives\imaging\umb-image-thumbnail.html" />
-    <Content Include="umbraco\Views\directives\umb-avatar.html" />
     <Content Include="umbraco\Views\directives\umb-confirm.html" />
     <Content Include="umbraco\Views\directives\umb-content-name.html" />
     <Content Include="umbraco\Views\directives\umb-contextmenu.html" />
