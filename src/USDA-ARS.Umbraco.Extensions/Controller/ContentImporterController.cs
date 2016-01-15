@@ -216,10 +216,12 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                                     responseContent.Message = "Could not find content with Id: " + contentObj.Id + " [" + i + "]";
                                 }
 
-                                response.ContentList.Add(responseContent);
+                                
                             }
 
                             i++;
+
+                            response.ContentList.Add(responseContent);
                         }
                     }
                 }
@@ -239,6 +241,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
             return response;
         }
+
 
         [System.Web.Http.HttpPost]
         public Models.Import.ApiResponse Get([FromBody] dynamic json)
@@ -355,7 +358,6 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
             return response;
         }
-
 
 
         [System.Web.Http.HttpPost]
