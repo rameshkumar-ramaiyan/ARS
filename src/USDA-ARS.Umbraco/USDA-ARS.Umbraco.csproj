@@ -386,7 +386,6 @@
     <Content Include="JQuery\jquery.corner.js" />
     <Content Include="JQuery\jquery.cycle.all.min.js" />
     <Content Include="JQuery\jquery.min.js" />
-    <Content Include="MSBuild.WebApplication.CopyContentLinkedFiles.Dummy.txt" />
     <Content Include="umbraco\Actions\delete.aspx" />
     <Content Include="umbraco\Actions\editContent.aspx" />
     <Content Include="umbraco\Actions\preview.aspx" />
@@ -3022,7 +3021,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\UmbracoCms.7.3.4\build\UmbracoCms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\UmbracoCms.7.3.4\build\UmbracoCms.props'))" />
     <Error Condition="!Exists('..\packages\UmbracoCms.7.3.4\build\UmbracoCms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\UmbracoCms.7.3.4\build\UmbracoCms.targets'))" />
-    <Error Condition="!Exists('..\packages\MSBuild.WebApplication.CopyContentLinkedFiles.1.0.0\build\MSBuild.WebApplication.CopyContentLinkedFiles.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSBuild.WebApplication.CopyContentLinkedFiles.1.0.0\build\MSBuild.WebApplication.CopyContentLinkedFiles.targets'))" />
+    <Error Condition="!Exists('..\packages\NugetPackageRestore.1.0.5\build\net40\NugetPackageRestore.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NugetPackageRestore.1.0.5\build\net40\NugetPackageRestore.targets'))" />
   </Target>
   <Import Project="..\packages\UmbracoCms.7.3.4\build\UmbracoCms.targets" Condition="Exists('..\packages\UmbracoCms.7.3.4\build\UmbracoCms.targets')" />
   <!--
@@ -3046,7 +3045,7 @@
        Other similar extension points exist, see Microsoft.Common.targets.
 	   -->
   <Target Name="BeforeBuild" />
-  <Import Project="..\packages\MSBuild.WebApplication.CopyContentLinkedFiles.1.0.0\build\MSBuild.WebApplication.CopyContentLinkedFiles.targets" Condition="Exists('..\packages\MSBuild.WebApplication.CopyContentLinkedFiles.1.0.0\build\MSBuild.WebApplication.CopyContentLinkedFiles.targets')" />
+  <Import Project="..\packages\NugetPackageRestore.1.0.5\build\net40\NugetPackageRestore.targets" Condition="Exists('..\packages\NugetPackageRestore.1.0.5\build\net40\NugetPackageRestore.targets')" />
   <!--
   <Target Name="AfterBuild">
   </Target>
