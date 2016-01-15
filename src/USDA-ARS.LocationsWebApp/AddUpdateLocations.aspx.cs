@@ -9,6 +9,7 @@ using System.Text;
 using System.IO;
 using Newtonsoft.Json;
 using System.Configuration;
+using USDA_ARS.Umbraco.Extensions.Models.Import;
 
 namespace USDA_ARS.LocationsWebApp
 {
@@ -24,8 +25,8 @@ namespace USDA_ARS.LocationsWebApp
 
         protected void btnImport_Click(object sender, EventArgs e)
         {
-            Models.Import.Request request = new Models.Import.Request();
-            Models.Import.Content content = new Models.Import.Content();
+            ApiRequest request = new ApiRequest();
+            ApiContent content = new ApiContent();
 
             request.ApiKey = API_KEY;
 
@@ -35,20 +36,20 @@ namespace USDA_ARS.LocationsWebApp
             content.DocType = "Region";
             content.Template = "Region";
 
-            List<Models.Import.Property> properties = new List<Models.Import.Property>();
+            List<ApiProperty> properties = new List<ApiProperty>();
 
-            properties.Add(new Models.Import.Property("modeCode", "90-00-00-00")); // Region mode code
-            properties.Add(new Models.Import.Property("oldUrl", "/main/site_main.htm?modeCode=50-00-00-00")); // current URL
-            properties.Add(new Models.Import.Property("oldId", "1234")); // sitepublisher ID (So we can reference it later if needed).
+            properties.Add(new ApiProperty("modeCode", "90-00-00-00")); // Region mode code
+            properties.Add(new ApiProperty("oldUrl", "/main/site_main.htm?modeCode=50-00-00-00")); // current URL
+            properties.Add(new ApiProperty("oldId", "1234")); // sitepublisher ID (So we can reference it later if needed).
 
             content.Properties = properties;
 
             content.Save = 2; // 0=Unpublish (update only), 1=Saved, 2=Save And Publish
 
-            request.ContentList = new List<Models.Import.Content>();
+            request.ContentList = new List<ApiContent>();
             request.ContentList.Add(content);
 
-            Models.Import.Response responseBack = PostData(request);
+            ApiResponse responseBack = PostData(request);
 
             if (responseBack != null)
             {
@@ -58,7 +59,7 @@ namespace USDA_ARS.LocationsWebApp
 
                 if (responseBack.ContentList != null && responseBack.ContentList.Count > 0)
                 {
-                    foreach (Models.Import.Content responseContent in responseBack.ContentList)
+                    foreach (ApiContent responseContent in responseBack.ContentList)
                     {
                         output.Text += "Umbraco Import Success: " + responseContent.Success + "<br />\r\n";
 
@@ -78,27 +79,27 @@ namespace USDA_ARS.LocationsWebApp
 
         protected void btnUpdate_Click(object sender, EventArgs e)
         {
-            Models.Import.Request request = new Models.Import.Request();
-            Models.Import.Content content = new Models.Import.Content();
+            ApiRequest request = new ApiRequest();
+            ApiContent content = new ApiContent();
 
             request.ApiKey = API_KEY;
             content.Id = Convert.ToInt32(txtIdUpdate.Text); // Update a page
             content.Name = txtName.Text;
 
-            List<Models.Import.Property> properties = new List<Models.Import.Property>();
+            List<ApiProperty> properties = new List<ApiProperty>();
 
-            properties.Add(new Models.Import.Property("modeCode", "80-00-00-00")); // Region mode code
-            properties.Add(new Models.Import.Property("oldUrl", "/main/site_main.htm?modeCode=80-00-00-00")); // current URL
-            properties.Add(new Models.Import.Property("oldId", "1234")); // sitepublisher ID (So we can reference it later if needed).
+            properties.Add(new ApiProperty("modeCode", "80-00-00-00")); // Region mode code
+            properties.Add(new ApiProperty("oldUrl", "/main/site_main.htm?modeCode=80-00-00-00")); // current URL
+            properties.Add(new ApiProperty("oldId", "1234")); // sitepublisher ID (So we can reference it later if needed).
 
             content.Properties = properties;
 
             content.Save = 2; // 0=Unpublish (update only), 1=Saved, 2=Save And Publish
 
-            request.ContentList = new List<Models.Import.Content>();
+            request.ContentList = new List<ApiContent>();
             request.ContentList.Add(content);
 
-            Models.Import.Response responseBack = PostData(request);
+            ApiResponse responseBack = PostData(request);
 
             if (responseBack != null)
             {
@@ -108,7 +109,7 @@ namespace USDA_ARS.LocationsWebApp
 
                 if (responseBack.ContentList != null && responseBack.ContentList.Count > 0)
                 {
-                    foreach (Models.Import.Content responseContent in responseBack.ContentList)
+                    foreach (ApiContent responseContent in responseBack.ContentList)
                     {
                         output.Text += "Umbraco Import Success: " + responseContent.Success + "<br />\r\n";
 
@@ -128,16 +129,16 @@ namespace USDA_ARS.LocationsWebApp
 
         protected void btnGet_Click(object sender, EventArgs e)
         {
-            Models.Import.Request request = new Models.Import.Request();
-            Models.Import.Content content = new Models.Import.Content();
+            ApiRequest request = new ApiRequest();
+            ApiContent content = new ApiContent();
 
             request.ApiKey = API_KEY;
             content.Id = Convert.ToInt32(txtId.Text); // Load page
 
-            request.ContentList = new List<Models.Import.Content>();
+            request.ContentList = new List<ApiContent>();
             request.ContentList.Add(content);
 
-            Models.Import.Response responseBack = PostData(request, "Get");
+            ApiResponse responseBack = PostData(request, "Get");
 
             if (responseBack != null)
             {
@@ -147,7 +148,7 @@ namespace USDA_ARS.LocationsWebApp
 
                 if (responseBack.ContentList != null)
                 {
-                    foreach (Models.Import.Content responseContent in responseBack.ContentList)
+                    foreach (ApiContent responseContent in responseBack.ContentList)
                     {
                         output.Text += "Get Content Success: " + responseContent.Success + "<br />\r\n";
 
@@ -157,7 +158,7 @@ namespace USDA_ARS.LocationsWebApp
                             output.Text += "Content Name: " + responseContent.Name + "<br />\r\n";
                             output.Text += "<strong>Properties</strong><br />\r\n";
 
-                            foreach (Models.Import.Property property in responseContent.Properties)
+                            foreach (ApiProperty property in responseContent.Properties)
                             {
                                 output.Text += property.Key + ": " + property.Value + " <br />\r\n";
                             }
@@ -176,18 +177,18 @@ namespace USDA_ARS.LocationsWebApp
 
         protected void btnGetByModeCode_Click(object sender, EventArgs e)
         {
-            Models.Import.Request request = new Models.Import.Request();
-            Models.Import.Content content = new Models.Import.Content();
+            ApiRequest request = new ApiRequest();
+            ApiContent content = new ApiContent();
 
             request.ApiKey = API_KEY;
             content.Id = 0;
-            content.Properties = new List<Models.Import.Property>();
-            content.Properties.Add(new Models.Import.Property("modeCode", txtModeCode.Text.ToString())); // Load page by property value
+            content.Properties = new List<ApiProperty>();
+            content.Properties.Add(new ApiProperty("modeCode", txtModeCode.Text.ToString())); // Load page by property value
 
-            request.ContentList = new List<Models.Import.Content>();
+            request.ContentList = new List<ApiContent>();
             request.ContentList.Add(content);
 
-            Models.Import.Response responseBack = PostData(request, "Get");
+            ApiResponse responseBack = PostData(request, "Get");
 
             if (responseBack != null)
             {
@@ -197,7 +198,7 @@ namespace USDA_ARS.LocationsWebApp
 
                 if (responseBack.ContentList != null)
                 {
-                    foreach (Models.Import.Content responseContent in responseBack.ContentList)
+                    foreach (ApiContent responseContent in responseBack.ContentList)
                     {
                         output.Text += "Get Content Success: " + responseContent.Success + "<br />\r\n";
 
@@ -207,7 +208,7 @@ namespace USDA_ARS.LocationsWebApp
                             output.Text += "Content Name: " + responseContent.Name + "<br />\r\n";
                             output.Text += "<strong>Properties</strong><br />\r\n";
 
-                            foreach (Models.Import.Property property in responseContent.Properties)
+                            foreach (ApiProperty property in responseContent.Properties)
                             {
                                 output.Text += property.Key + ": " + property.Value + " <br />\r\n";
                             }
@@ -227,16 +228,16 @@ namespace USDA_ARS.LocationsWebApp
 
         protected void btnGetChild_Click(object sender, EventArgs e)
         {
-            Models.Import.Request request = new Models.Import.Request();
-            Models.Import.Content content = new Models.Import.Content();
+            ApiRequest request = new ApiRequest();
+            ApiContent content = new ApiContent();
 
             request.ApiKey = API_KEY;
             content.Id = Convert.ToInt32(txtParentId.Text); // Load page
 
-            request.ContentList = new List<Models.Import.Content>();
+            request.ContentList = new List<ApiContent>();
             request.ContentList.Add(content);
 
-            Models.Import.Response responseBack = PostData(request, "GetChildsList");
+            ApiResponse responseBack = PostData(request, "GetChildsList");
 
             if (responseBack != null)
             {
@@ -246,7 +247,7 @@ namespace USDA_ARS.LocationsWebApp
 
                 if (responseBack.ContentList != null)
                 {
-                    foreach (Models.Import.Content responseContent in responseBack.ContentList)
+                    foreach (ApiContent responseContent in responseBack.ContentList)
                     {
                         output.Text += "Get Content Success: " + responseContent.Success + "<br />\r\n";
 
@@ -256,7 +257,7 @@ namespace USDA_ARS.LocationsWebApp
                             output.Text += "Content Name: " + responseContent.Name + "<br />\r\n";
                             output.Text += "<strong>Properties</strong><br />\r\n";
 
-                            foreach (Models.Import.Property property in responseContent.Properties)
+                            foreach (ApiProperty property in responseContent.Properties)
                             {
                                 output.Text += property.Key + ": " + property.Value + " <br />\r\n";
                             }
@@ -265,7 +266,7 @@ namespace USDA_ARS.LocationsWebApp
                             {
                                 outputChild.Text = "";
 
-                                foreach (Models.Import.Content childContent in responseContent.ChildContentList)
+                                foreach (ApiContent childContent in responseContent.ChildContentList)
                                 {
                                     outputChild.Text += " - Child Content Umbraco Id: " + childContent.Id + "<br />\r\n";
                                     outputChild.Text += " - Child Content Name: " + childContent.Name + "<br /><br />\r\n";
@@ -289,9 +290,9 @@ namespace USDA_ARS.LocationsWebApp
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
-        private Models.Import.Response PostData(Models.Import.Request request, string endPoint = "Post")
+        private ApiResponse PostData(ApiRequest request, string endPoint = "Post")
         {
-            Models.Import.Response response = null;
+            ApiResponse response = null;
             string apiUrl = API_URL;
 
             var http = (HttpWebRequest)WebRequest.Create(new Uri(apiUrl + endPoint));
@@ -307,13 +308,13 @@ namespace USDA_ARS.LocationsWebApp
             newStream.Write(bytes, 0, bytes.Length);
             newStream.Close();
 
-            var httpResponse = http.GetResponse();
+            var httpApiResponse = http.GetResponse();
 
-            var stream = httpResponse.GetResponseStream();
+            var stream = httpApiResponse.GetResponseStream();
             var sr = new StreamReader(stream);
-            var httpResponseStr = sr.ReadToEnd();
+            var httpApiResponseStr = sr.ReadToEnd();
 
-            response = JsonConvert.DeserializeObject<Models.Import.Response>(httpResponseStr);
+            response = JsonConvert.DeserializeObject<ApiResponse>(httpApiResponseStr);
 
             return response;
         }
@@ -322,8 +323,8 @@ namespace USDA_ARS.LocationsWebApp
 
         protected void btnAddNewArea_Click(object sender, EventArgs e)
         {
-            Models.Import.Request request = new Models.Import.Request();
-            Models.Import.Content content = new Models.Import.Content();
+            ApiRequest request = new ApiRequest();
+            ApiContent content = new ApiContent();
 
             request.ApiKey = API_KEY;
 
@@ -336,28 +337,28 @@ namespace USDA_ARS.LocationsWebApp
             content.DocType = "Region";
             content.Template = "Region";
 
-            List<Models.Import.Property> properties = new List<Models.Import.Property>();
+            List<ApiProperty> properties = new List<ApiProperty>();
             string newModeCodeProperty = txtNewModeCode.Text;
             string oldModeCodeProperty = txtOldModeCode.Text;
 
-            properties.Add(new Models.Import.Property("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
-            properties.Add(new Models.Import.Property("oldUrl", "/main/site_main.htm?modeCode=" + newModeCodeProperty + "")); // current URL               
-            properties.Add(new Models.Import.Property("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
+            properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
+            properties.Add(new ApiProperty("oldUrl", "/main/site_main.htm?modeCode=" + newModeCodeProperty + "")); // current URL               
+            properties.Add(new ApiProperty("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
 
 
-            //properties.Add(new Models.Import.Property("modeCode", "90-00-00-00")); // Region mode code
-            //properties.Add(new Models.Import.Property("oldUrl", "/main/site_main.htm?modeCode=50-00-00-00")); // current URL
-            // properties.Add(new Models.Import.Property("oldId", "1234")); // sitepublisher ID (So we can reference it later if needed).
+            //properties.Add(new ApiProperty("modeCode", "90-00-00-00")); // Region mode code
+            //properties.Add(new ApiProperty("oldUrl", "/main/site_main.htm?modeCode=50-00-00-00")); // current URL
+            // properties.Add(new ApiProperty("oldId", "1234")); // sitepublisher ID (So we can reference it later if needed).
 
 
 
             content.Properties = properties;
             content.Save = 2; // 0=Unpublish (update only), 1=Saved, 2=Save And Publish
 
-            request.ContentList = new List<Models.Import.Content>();
+            request.ContentList = new List<ApiContent>();
             request.ContentList.Add(content);
 
-            Models.Import.Response responseBack = PostData(request, "Post");
+            ApiResponse responseBack = PostData(request, "Post");
 
             if (responseBack != null)
             {
@@ -367,7 +368,7 @@ namespace USDA_ARS.LocationsWebApp
 
                 if (responseBack.ContentList != null)
                 {
-                    foreach (Models.Import.Content responseContent in responseBack.ContentList)
+                    foreach (ApiContent responseContent in responseBack.ContentList)
                     {
                         output.Text += "Get Content Success: " + responseContent.Success + "<br />\r\n";
 
@@ -392,8 +393,8 @@ namespace USDA_ARS.LocationsWebApp
             // === ADD NEW CITY ===
             // Set the parent ID. You will need to get the Content ID for the Area the city is under.
 
-            Models.Import.Request request = new Models.Import.Request();
-            Models.Import.Content content = new Models.Import.Content();
+            ApiRequest request = new ApiRequest();
+            ApiContent content = new ApiContent();
 
             request.ApiKey = API_KEY;
 
@@ -409,34 +410,34 @@ namespace USDA_ARS.LocationsWebApp
             content.DocType = "City";
             content.Template = ""; // Leave blank
 
-            List<Models.Import.Property> properties = new List<Models.Import.Property>();
+            List<ApiProperty> properties = new List<ApiProperty>();
             string newModeCodeProperty = txtParentAreaModeCode.Text;
             string oldModeCodeProperty = txtOldModeCode.Text;
 
-            properties.Add(new Models.Import.Property("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
-            properties.Add(new Models.Import.Property("oldUrl", "/main/site_main.htm?modeCode=" + newModeCodeProperty + "")); // current URL               
-            properties.Add(new Models.Import.Property("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
-            properties.Add(new Models.Import.Property("state", txtStateCode.Text)); // For example: NY (2 letter state code)
-            properties.Add(new Models.Import.Property("navigationTitle", cityStateConcatenatedString)); // All CAPS - For example: GENEVA, NY
+            properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
+            properties.Add(new ApiProperty("oldUrl", "/main/site_main.htm?modeCode=" + newModeCodeProperty + "")); // current URL               
+            properties.Add(new ApiProperty("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
+            properties.Add(new ApiProperty("state", txtStateCode.Text)); // For example: NY (2 letter state code)
+            properties.Add(new ApiProperty("navigationTitle", cityStateConcatenatedString)); // All CAPS - For example: GENEVA, NY
 
-            //properties.Add(new Models.Import.Property("modeCode", "80-10-00-00")); // Region mode code
-            //properties.Add(new Models.Import.Property("oldUrl", "")); // Leave blank since there is no city page on the website.
-            //properties.Add(new Models.Import.Property("oldId", "1234")); // NOT REQUIRED. INTERNAL USE ONLY. sitepublisher ID (So we can reference it later if needed).
-            //properties.Add(new Models.Import.Property("state", "{State Code}")); // For example: NY (2 letter state code)
-            //properties.Add(new Models.Import.Property("navigationTitle", "{City Name, State Code}")); // All CAPS - For example: GENEVA, NY
+            //properties.Add(new ApiProperty("modeCode", "80-10-00-00")); // Region mode code
+            //properties.Add(new ApiProperty("oldUrl", "")); // Leave blank since there is no city page on the website.
+            //properties.Add(new ApiProperty("oldId", "1234")); // NOT REQUIRED. INTERNAL USE ONLY. sitepublisher ID (So we can reference it later if needed).
+            //properties.Add(new ApiProperty("state", "{State Code}")); // For example: NY (2 letter state code)
+            //properties.Add(new ApiProperty("navigationTitle", "{City Name, State Code}")); // All CAPS - For example: GENEVA, NY
 
             content.Properties = properties;
 
             content.Save = 2; // 1=Saved, 2=Save And Publish
 
-            request.ContentList = new List<Models.Import.Content>();
+            request.ContentList = new List<ApiContent>();
             request.ContentList.Add(content);
 
-            Models.Import.Response responseBack = PostData(request, "Post");
+            ApiResponse responseBack = PostData(request, "Post");
 
             if (responseBack.ContentList != null)
             {
-                foreach (Models.Import.Content responseContent in responseBack.ContentList)
+                foreach (ApiContent responseContent in responseBack.ContentList)
                 {
                     output.Text += "Get Content Success: " + responseContent.Success + "<br />\r\n";
 
@@ -461,8 +462,8 @@ namespace USDA_ARS.LocationsWebApp
             // === ADD NEW LAB ===
             // Set the parent ID. You will need to get the Content ID for the Area the city is under.
 
-            Models.Import.Request request = new Models.Import.Request();
-            Models.Import.Content content = new Models.Import.Content();
+            ApiRequest request = new ApiRequest();
+            ApiContent content = new ApiContent();
 
             request.ApiKey = API_KEY;
 
@@ -478,30 +479,30 @@ namespace USDA_ARS.LocationsWebApp
             content.DocType = "ResearchUnit";
             content.Template = "ResearchUnit"; // Leave blank
 
-            List<Models.Import.Property> properties = new List<Models.Import.Property>();
+            List<ApiProperty> properties = new List<ApiProperty>();
             string newModeCodeProperty = txtParentAreaModeCode.Text;
             string oldModeCodeProperty = txtOldModeCode.Text;
 
-            properties.Add(new Models.Import.Property("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
-            properties.Add(new Models.Import.Property("oldUrl", "/main/site_main.htm?modeCode=" + newModeCodeProperty + "")); // current URL               
-            properties.Add(new Models.Import.Property("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
-            properties.Add(new Models.Import.Property("state", txtStateCode.Text)); // For example: NY (2 letter state code)
-            properties.Add(new Models.Import.Property("navigationTitle", cityStateConcatenatedString)); // All CAPS - For example: GENEVA, NY
+            properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
+            properties.Add(new ApiProperty("oldUrl", "/main/site_main.htm?modeCode=" + newModeCodeProperty + "")); // current URL               
+            properties.Add(new ApiProperty("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
+            properties.Add(new ApiProperty("state", txtStateCode.Text)); // For example: NY (2 letter state code)
+            properties.Add(new ApiProperty("navigationTitle", cityStateConcatenatedString)); // All CAPS - For example: GENEVA, NY
 
-            //properties.Add(new Models.Import.Property("modeCode", "80-10-00-00")); // Region mode code
-            //properties.Add(new Models.Import.Property("oldUrl", "")); // Leave blank since there is no city page on the website.
-            //properties.Add(new Models.Import.Property("oldId", "1234")); // NOT REQUIRED. INTERNAL USE ONLY. sitepublisher ID (So we can reference it later if needed).
-            //properties.Add(new Models.Import.Property("state", "{State Code}")); // For example: NY (2 letter state code)
-            //properties.Add(new Models.Import.Property("navigationTitle", "{City Name, State Code}")); // All CAPS - For example: GENEVA, NY
+            //properties.Add(new ApiProperty("modeCode", "80-10-00-00")); // Region mode code
+            //properties.Add(new ApiProperty("oldUrl", "")); // Leave blank since there is no city page on the website.
+            //properties.Add(new ApiProperty("oldId", "1234")); // NOT REQUIRED. INTERNAL USE ONLY. sitepublisher ID (So we can reference it later if needed).
+            //properties.Add(new ApiProperty("state", "{State Code}")); // For example: NY (2 letter state code)
+            //properties.Add(new ApiProperty("navigationTitle", "{City Name, State Code}")); // All CAPS - For example: GENEVA, NY
 
             content.Properties = properties;
 
             content.Save = 2; // 1=Saved, 2=Save And Publish
 
-            request.ContentList = new List<Models.Import.Content>();
+            request.ContentList = new List<ApiContent>();
             request.ContentList.Add(content);
 
-            Models.Import.Response responseBack = PostData(request, "Post");
+            ApiResponse responseBack = PostData(request, "Post");
 
             if (responseBack != null)
             {
@@ -511,7 +512,7 @@ namespace USDA_ARS.LocationsWebApp
 
                 if (responseBack.ContentList != null)
                 {
-                    foreach (Models.Import.Content responseContent in responseBack.ContentList)
+                    foreach (ApiContent responseContent in responseBack.ContentList)
                     {
                         output.Text += "Get Content Success: " + responseContent.Success + "<br />\r\n";
 

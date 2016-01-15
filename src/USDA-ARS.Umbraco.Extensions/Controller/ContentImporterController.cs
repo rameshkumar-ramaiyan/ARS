@@ -30,12 +30,12 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
         private static string _apiKey = "E027CF8B-C5B8-45F6-A37B-979DB02A8544";
 
         [System.Web.Http.HttpPost]
-        public Models.Import.Response Post([FromBody] dynamic json)
+        public Models.Import.ApiResponse Post([FromBody] dynamic json)
         {
-            Models.Import.Response response = new Models.Import.Response();
-            response.ContentList = new List<Models.Import.Content>();
+            Models.Import.ApiResponse response = new Models.Import.ApiResponse();
+            response.ContentList = new List<Models.Import.ApiContent>();
 
-            Models.Import.Request request = JsonConvert.DeserializeObject<Models.Import.Request>(json.ToString());
+            Models.Import.ApiRequest request = JsonConvert.DeserializeObject<Models.Import.ApiRequest>(json.ToString());
 
             try
             {
@@ -56,9 +56,9 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                         response.Success = true;
 
-                        foreach (Models.Import.Content contentObj in request.ContentList)
+                        foreach (Models.Import.ApiContent contentObj in request.ContentList)
                         {
-                            Models.Import.Content responseContent = contentObj;
+                            Models.Import.ApiContent responseContent = contentObj;
 
                             if (contentObj.Id == 0)
                             {
@@ -101,7 +101,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                                     if (contentObj.Properties != null && contentObj.Properties.Count > 0)
                                     {
-                                        foreach (Models.Import.Property property in contentObj.Properties)
+                                        foreach (Models.Import.ApiProperty property in contentObj.Properties)
                                         {
                                             content.SetValue(property.Key, property.Value);
                                         }
@@ -172,7 +172,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                                     if (contentObj.Properties != null && contentObj.Properties.Count > 0)
                                     {
-                                        foreach (Models.Import.Property property in contentObj.Properties)
+                                        foreach (Models.Import.ApiProperty property in contentObj.Properties)
                                         {
                                             contentGet.SetValue(property.Key, property.Value);
                                         }
@@ -241,11 +241,11 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
         }
 
         [System.Web.Http.HttpPost]
-        public Models.Import.Response Get([FromBody] dynamic json)
+        public Models.Import.ApiResponse Get([FromBody] dynamic json)
         {
-            Models.Import.Response response = new Models.Import.Response();
+            Models.Import.ApiResponse response = new Models.Import.ApiResponse();
 
-            Models.Import.Request request = JsonConvert.DeserializeObject<Models.Import.Request>(json.ToString());
+            Models.Import.ApiRequest request = JsonConvert.DeserializeObject<Models.Import.ApiRequest>(json.ToString());
 
             try
             {
@@ -267,19 +267,19 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                     else
                     {
                         response.Success = true;
-                        response.ContentList = new List<Models.Import.Content>();
+                        response.ContentList = new List<Models.Import.ApiContent>();
 
-                        foreach (Models.Import.Content contentObj in request.ContentList)
+                        foreach (Models.Import.ApiContent contentObj in request.ContentList)
                         {
                             IContent content = null;
-                            Models.Import.Content responseContent = new Models.Import.Content();
+                            Models.Import.ApiContent responseContent = new Models.Import.ApiContent();
 
                             if (contentObj.Id <= 0)
                             {
                                 if (contentObj.Properties != null && contentObj.Properties.Count > 0)
                                 {
-                                    response.ContentList = new List<Models.Import.Content>();
-                                    Models.Import.Property propObj = contentObj.Properties[0];
+                                    response.ContentList = new List<Models.Import.ApiContent>();
+                                    Models.Import.ApiProperty propObj = contentObj.Properties[0];
 
                                     IEnumerable<IContent> rootNodeList = _contentService.GetRootContent();
 
@@ -313,11 +313,11 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                                 if (childContentList != null && childContentList.Count > 0)
                                 {
-                                    responseContent.ChildContentList = new List<Models.Import.Content>();
+                                    responseContent.ChildContentList = new List<Models.Import.ApiContent>();
 
                                     foreach (IContent child in childContentList)
                                     {
-                                        Models.Import.Content responseChild = ConvertContentObj(child);
+                                        Models.Import.ApiContent responseChild = ConvertContentObj(child);
 
                                         if (responseChild != null)
                                         {
@@ -359,11 +359,11 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
 
         [System.Web.Http.HttpPost]
-        public Models.Import.Response Delete([FromBody] dynamic json)
+        public Models.Import.ApiResponse Delete([FromBody] dynamic json)
         {
-            Models.Import.Response response = new Models.Import.Response();
+            Models.Import.ApiResponse response = new Models.Import.ApiResponse();
 
-            Models.Import.Request request = JsonConvert.DeserializeObject<Models.Import.Request>(json.ToString());
+            Models.Import.ApiRequest request = JsonConvert.DeserializeObject<Models.Import.ApiRequest>(json.ToString());
 
             try
             {
@@ -385,17 +385,18 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                     else
                     {
                         response.Success = true;
+                        response.ContentList = new List<Models.Import.ApiContent>();
 
-                        foreach (Models.Import.Content contentObj in request.ContentList)
+                        foreach (Models.Import.ApiContent contentObj in request.ContentList)
                         {
                             IContent content = null;
-                            Models.Import.Content responseContent = new Models.Import.Content();
+                            Models.Import.ApiContent responseContent = new Models.Import.ApiContent();
 
                             if (contentObj.Id <= 0)
                             {
                                 if (contentObj.Properties != null && contentObj.Properties.Count > 0)
                                 {
-                                    Models.Import.Property propObj = contentObj.Properties[0];
+                                    Models.Import.ApiProperty propObj = contentObj.Properties[0];
 
                                     IEnumerable<IContent> rootNodeList = _contentService.GetRootContent();
 
@@ -465,9 +466,9 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
-        private Models.Import.Content ConvertContentObj(IContent content)
+        private Models.Import.ApiContent ConvertContentObj(IContent content)
         {
-            Models.Import.Content contentObj = new Models.Import.Content();
+            Models.Import.ApiContent contentObj = new Models.Import.ApiContent();
 
             contentObj.Id = content.Id;
             contentObj.Name = content.Name;
@@ -477,7 +478,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
             {
                 contentObj.Template = content.Template.Name;
             }
-            contentObj.Properties = new List<Models.Import.Property>();
+            contentObj.Properties = new List<Models.Import.ApiProperty>();
 
             foreach (var property in content.Properties)
             {
@@ -488,7 +489,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                     propValue = property.Value.ToString();
                 }
 
-                Models.Import.Property propObj = new Models.Import.Property(property.Alias, propValue);
+                Models.Import.ApiProperty propObj = new Models.Import.ApiProperty(property.Alias, propValue);
 
                 contentObj.Properties.Add(propObj);
             }

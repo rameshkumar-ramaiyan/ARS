@@ -9,6 +9,7 @@ using System.Text;
 using System.IO;
 using Newtonsoft.Json;
 using System.Configuration;
+using USDA_ARS.Umbraco.Extensions.Models.Import;
 
 namespace USDA_ARS.LocationsWebApp
 {
@@ -24,17 +25,17 @@ namespace USDA_ARS.LocationsWebApp
 
         protected void btn_Delete_Click(object sender, EventArgs e)
         {
-            Models.Import.Request request = new Models.Import.Request();
-            Models.Import.Content content = new Models.Import.Content();
+            ApiRequest request = new ApiRequest();
+            ApiContent content = new ApiContent();
 
             request.ApiKey = API_KEY;
 
             content.Id = 1111; // ARS Locations
 
-            request.ContentList = new List<Models.Import.Content>();
+            request.ContentList = new List<ApiContent>();
             request.ContentList.Add(content);
 
-            Models.Import.Response responseBack = PostData(request, "Get");
+            ApiResponse responseBack = PostData(request, "Get");
 
             if (responseBack != null)
             {
@@ -44,18 +45,18 @@ namespace USDA_ARS.LocationsWebApp
 
                 if (responseBack.ContentList != null && responseBack.ContentList.Count > 0)
                 {
-                    Models.Import.Content reqContent = responseBack.ContentList[0];
+                    ApiContent reqContent = responseBack.ContentList[0];
 
                     if (reqContent.ChildContentList != null && reqContent.ChildContentList.Count > 0)
                     {
-                        foreach (Models.Import.Content child in reqContent.ChildContentList)
+                        foreach (ApiContent child in reqContent.ChildContentList)
                         {
                             output.Text += "Content Id: " + child.Id + "<br />\r\n";
                             output.Text += "Content Name: " + child.Name + "<br />\r\n";
                             output.Text += "<br />\r\n";
                         }
 
-                        Models.Import.Response responseDeleteBack = DeleteNodes(reqContent.ChildContentList);
+                        ApiResponse responseDeleteBack = DeleteNodes(reqContent.ChildContentList);
 
                         output.Text = "<hr />\r\n";
                         output.Text = "<strong>Delete</strong><br />\r\n";
@@ -69,7 +70,7 @@ namespace USDA_ARS.LocationsWebApp
 
                             if (responseBack.ContentList != null && responseBack.ContentList.Count > 0)
                             {
-                                foreach (Models.Import.Content child in responseBack.ContentList)
+                                foreach (ApiContent child in responseBack.ContentList)
                                 {
                                     output.Text += "Success: " + child.Success   + "<br />\r\n";
                                     output.Text += "Content Id: " + child.Id + "<br />\r\n";
@@ -85,10 +86,10 @@ namespace USDA_ARS.LocationsWebApp
         }
 
 
-        protected Models.Import.Response DeleteNodes(List<Models.Import.Content> contentList)
+        protected ApiResponse DeleteNodes(List<ApiContent> contentList)
         {
-            Models.Import.Response response = null;
-            Models.Import.Request request = new Models.Import.Request();
+            ApiResponse response = null;
+            ApiRequest request = new ApiRequest();
 
             request.ApiKey = API_KEY;
             request.ContentList = contentList;
@@ -105,9 +106,9 @@ namespace USDA_ARS.LocationsWebApp
         /// </summary>
         /// <param name="content"></param>
         /// <returns></returns>
-        private Models.Import.Response PostData(Models.Import.Request request, string endPoint = "Post")
+        private ApiResponse PostData(ApiRequest request, string endPoint = "Post")
         {
-            Models.Import.Response response = null;
+            ApiResponse response = null;
             string apiUrl = API_URL;
 
             var http = (HttpWebRequest)WebRequest.Create(new Uri(apiUrl + endPoint));
@@ -129,7 +130,7 @@ namespace USDA_ARS.LocationsWebApp
             var sr = new StreamReader(stream);
             var httpResponseStr = sr.ReadToEnd();
 
-            response = JsonConvert.DeserializeObject<Models.Import.Response>(httpResponseStr);
+            response = JsonConvert.DeserializeObject<ApiResponse>(httpResponseStr);
 
             return response;
         }

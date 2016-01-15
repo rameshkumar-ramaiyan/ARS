@@ -297,10 +297,10 @@
     <Compile Include="Models\Aris\UsdaPublicationSearch.cs" />
     <Compile Include="Models\BlogItem.cs" />
     <Compile Include="Models\Aris\RefModeCode.cs" />
-    <Compile Include="Models\Import\Content.cs" />
-    <Compile Include="Models\Import\Property.cs" />
-    <Compile Include="Models\Import\Request.cs" />
-    <Compile Include="Models\Import\Response.cs" />
+    <Compile Include="Models\Import\ApiContent.cs" />
+    <Compile Include="Models\Import\ApiProperty.cs" />
+    <Compile Include="Models\Import\ApiRequest.cs" />
+    <Compile Include="Models\Import\ApiResponse.cs" />
     <Compile Include="Models\ResearchUnit.cs" />
     <Compile Include="Models\Aris\UsdaArsNews.cs" />
     <Compile Include="Models\Aris\UsdaProject.cs" />
