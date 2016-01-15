@@ -3058,7 +3058,6 @@
        Other similar extension points exist, see Microsoft.Common.targets.
 	   -->
   <Target Name="BeforeBuild" />
-  <Import Project="..\packages\NugetPackageRestore.1.0.5\build\net40\NugetPackageRestore.targets" Condition="Exists('..\packages\NugetPackageRestore.1.0.5\build\net40\NugetPackageRestore.targets')" />
   <!--
   <Target Name="AfterBuild">
   </Target>
