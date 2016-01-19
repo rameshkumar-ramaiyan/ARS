@@ -274,6 +274,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\ContentImporterController.cs" />
+    <Compile Include="Controller\HelpInfoController.cs" />
     <Compile Include="Controller\NewsImporterController.cs" />
     <Compile Include="Controller\DataImporterController.cs" />
     <Compile Include="Helpers\Aris\ModeCodesNew.cs" />
