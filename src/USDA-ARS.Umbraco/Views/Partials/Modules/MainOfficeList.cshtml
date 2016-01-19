@@ -29,11 +29,14 @@
                     {
                         Link navSubLink = subOfficeItem.GetPropertyValue<MultiUrls>("navigationLink").FirstOrDefault();
 
-                        navSubLinkUrl = navSubLink.Url;
+                        if (navSubLink != null)
+                        {
+                            navSubLinkUrl = navSubLink.Url;
+                        }
                     }
-                    <li class="locationLevel3">
-                        <a href="@navSubLinkUrl">@(subOfficeItem.Name)</a>
-                    </li>
+            <li class="locationLevel3">
+                <a href="@navSubLinkUrl">@(subOfficeItem.Name)</a>
+            </li>
                 }
             }
         }

@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace USDA_ARS.Umbraco.Extensions.Models.Import
 {
-    public class Request
+    public class ApiRequest
     {
         public string ApiKey { get; set; }
-        public List<Content> ContentList { get; set; }
+        public List<ApiContent> ContentList { get; set; }
     }
 }
