@@ -76,6 +76,15 @@ namespace USDA_ARS.LocationsWebApp {
         protected global::System.Web.UI.WebControls.Button btnGetChild;
         
         /// <summary>
+        /// btnAddMultipleAreas control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnAddMultipleAreas;
+        
+        /// <summary>
         /// txtNewModeCode control.
         /// </summary>
         /// <remarks>
@@ -281,6 +290,15 @@ namespace USDA_ARS.LocationsWebApp {
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.Button btnUpdate;
+        
+        /// <summary>
+        /// lnkDeleteLocations control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkDeleteLocations;
         
         /// <summary>
         /// output control.

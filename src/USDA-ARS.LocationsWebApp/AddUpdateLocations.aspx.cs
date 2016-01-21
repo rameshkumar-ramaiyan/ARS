@@ -11,6 +11,10 @@ using Newtonsoft.Json;
 using System.Configuration;
 using USDA_ARS.Umbraco.Extensions.Models.Import;
 
+using System.Xml;
+using USDA_ARS.LocationsWebApp.DL;
+using System.Data;
+
 namespace USDA_ARS.LocationsWebApp
 {
     public partial class AddUpdateLocations : System.Web.UI.Page
@@ -531,5 +535,206 @@ namespace USDA_ARS.LocationsWebApp
                 }
             }
         }
+
+        protected void btnAddMultipleAreas_Click(object sender, EventArgs e)
+        {
+            //1.connection string
+            string ConnectionString = AddRetrieveLocationsDL.LocationConnectionString;
+           //2.all areas -=retrieval from old db and inserting into new db using umbraco
+            System.Data.DataTable legacyAreasBeforeInsertion = new System.Data.DataTable();
+            System.Data.DataTable newAreasAfterInsertion = new System.Data.DataTable();
+            legacyAreasBeforeInsertion = AddRetrieveLocationsDL.GetAllAreas();
+          
+
+            newAreasAfterInsertion = AddAllAreas(legacyAreasBeforeInsertion);
+
+
+            //3.all cities
+            //System.Data.DataTable legacyCitiesBeforeInsertion = new System.Data.DataTable();
+            //System.Data.DataTable newCitiesAfterInsertion = new System.Data.DataTable();
+
+            //for (int i = 0; i < newAreasAfterInsertion.Rows.Count; i++)
+            //{
+            //    string parentAreaModeCode = newAreasAfterInsertion.Rows[i].Field<string>(2);
+            //    if (parentAreaModeCode.Length < 11)
+            //        parentAreaModeCode = "0" + parentAreaModeCode;
+            //    legacyCitiesBeforeInsertion = AddRetrieveLocationsDL.GetAllCities(Convert.ToInt32(parentAreaModeCode.Substring(0,2)));
+            //}
+
+            //System.Data.DataTable allRCs = new System.Data.DataTable();
+            
+
+           
+
+        }
+        protected DataTable AddAllAreas(DataTable legacyAreasBeforeInsertion)
+
+        {
+            DataTable newAreasAfterInsertion = new DataTable();
+            newAreasAfterInsertion.Columns.Add("UmbracoId");
+            newAreasAfterInsertion.Columns.Add("Name");
+            newAreasAfterInsertion.Columns.Add("ModeCode");
+          
+            for (int i = 0; i < legacyAreasBeforeInsertion.Rows.Count; i++)
+            {
+                string areaName = legacyAreasBeforeInsertion.Rows[i].Field<string>(1);
+                string completeModeCode = legacyAreasBeforeInsertion.Rows[i].Field<string>(0);
+                if (completeModeCode.Length < 11)
+                    completeModeCode = "0" + completeModeCode;
+
+                ApiRequest request = new ApiRequest();
+                ApiContent content = new ApiContent();
+
+                request.ApiKey = API_KEY;
+
+
+                string oldId = "";
+
+                content.Id = 0; // New page
+                content.Name = areaName;
+                content.ParentId = 1111;
+                content.DocType = "Region";
+                content.Template = "Region";
+
+                List<ApiProperty> properties = new List<ApiProperty>();
+                string newModeCodeProperty = completeModeCode;
+                string oldModeCodeProperty = completeModeCode;
+
+                properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
+                properties.Add(new ApiProperty("oldUrl", "/main/site_main.htm?modeCode=" + newModeCodeProperty + "")); // current URL               
+                properties.Add(new ApiProperty("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
+
+
+                //properties.Add(new ApiProperty("modeCode", "90-00-00-00")); // Region mode code
+                //properties.Add(new ApiProperty("oldUrl", "/main/site_main.htm?modeCode=50-00-00-00")); // current URL
+                // properties.Add(new ApiProperty("oldId", "1234")); // sitepublisher ID (So we can reference it later if needed).
+
+
+
+                content.Properties = properties;
+                content.Save = 2; // 0=Unpublish (update only), 1=Saved, 2=Save And Publish
+
+                request.ContentList = new List<ApiContent>();
+                request.ContentList.Add(content);
+
+                ApiResponse responseBack = PostData(request, "Post");
+
+                if (responseBack != null)
+                {
+                    output.Text = "Success: " + responseBack.Success + "<br />\r\n";
+                    output.Text += "Message: " + responseBack.Message + "<br />\r\n";
+                    output.Text += "<br />\r\n";
+
+                    if (responseBack.ContentList != null)
+                    {
+                        foreach (ApiContent responseContent in responseBack.ContentList)
+                        {
+                            output.Text += "Get Content Success: " + responseContent.Success + "<br />\r\n";
+
+                            if (true == responseContent.Success)
+                            {
+                                output.Text += "Content Umbraco Id: " + responseContent.Id + "<br />\r\n";
+                                output.Text += "Content Name: " + responseContent.Name + "<br />\r\n";
+                                newAreasAfterInsertion.Rows.Add(new object[] { responseContent.Id, responseContent.Name, completeModeCode });
+                            }
+                            else
+                            {
+                                output.Text += "Fail Message: " + responseContent.Message + "<br />\r\n";
+                            }
+
+                            output.Text += "<br />\r\n";
+                        }
+                    }
+                }
+
+            }
+            return newAreasAfterInsertion;
+
+        }
+        protected DataTable AddAllCities(DataTable legacyCitiesBeforeInsertion)
+
+        {
+            DataTable newAreasAfterInsertion = new DataTable();
+            newAreasAfterInsertion.Columns.Add("UmbracoId");
+            newAreasAfterInsertion.Columns.Add("Name");
+            newAreasAfterInsertion.Columns.Add("ModeCode");
+
+            for (int i = 0; i < legacyCitiesBeforeInsertion.Rows.Count; i++)
+            {
+                string areaName = legacyCitiesBeforeInsertion.Rows[i].Field<string>(1);
+                string completeModeCode = legacyCitiesBeforeInsertion.Rows[i].Field<string>(0);
+                if (completeModeCode.Length < 11)
+                    completeModeCode = "0" + completeModeCode;
+
+                ApiRequest request = new ApiRequest();
+                ApiContent content = new ApiContent();
+
+                request.ApiKey = API_KEY;
+
+
+                string oldId = "";
+
+                content.Id = 0; // New page
+                content.Name = areaName;
+                content.ParentId = 1111;
+                content.DocType = "City";
+                content.Template = "";
+
+                List<ApiProperty> properties = new List<ApiProperty>();
+                string newModeCodeProperty = completeModeCode;
+                string oldModeCodeProperty = completeModeCode;
+
+                properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
+                properties.Add(new ApiProperty("oldUrl", "/main/site_main.htm?modeCode=" + newModeCodeProperty + "")); // current URL               
+                properties.Add(new ApiProperty("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
+
+
+                //properties.Add(new ApiProperty("modeCode", "90-00-00-00")); // Region mode code
+                //properties.Add(new ApiProperty("oldUrl", "/main/site_main.htm?modeCode=50-00-00-00")); // current URL
+                // properties.Add(new ApiProperty("oldId", "1234")); // sitepublisher ID (So we can reference it later if needed).
+
+
+
+                content.Properties = properties;
+                content.Save = 2; // 0=Unpublish (update only), 1=Saved, 2=Save And Publish
+
+                request.ContentList = new List<ApiContent>();
+                request.ContentList.Add(content);
+
+                ApiResponse responseBack = PostData(request, "Post");
+
+                if (responseBack != null)
+                {
+                    output.Text = "Success: " + responseBack.Success + "<br />\r\n";
+                    output.Text += "Message: " + responseBack.Message + "<br />\r\n";
+                    output.Text += "<br />\r\n";
+
+                    if (responseBack.ContentList != null)
+                    {
+                        foreach (ApiContent responseContent in responseBack.ContentList)
+                        {
+                            output.Text += "Get Content Success: " + responseContent.Success + "<br />\r\n";
+
+                            if (true == responseContent.Success)
+                            {
+                                output.Text += "Content Umbraco Id: " + responseContent.Id + "<br />\r\n";
+                                output.Text += "Content Name: " + responseContent.Name + "<br />\r\n";
+                                newAreasAfterInsertion.Rows.Add(new object[] { responseContent.Id, responseContent.Name, completeModeCode });
+                            }
+                            else
+                            {
+                                output.Text += "Fail Message: " + responseContent.Message + "<br />\r\n";
+                            }
+
+                            output.Text += "<br />\r\n";
+                        }
+                    }
+                }
+
+            }
+            return newAreasAfterInsertion;
+
+        }
+
     }
 }
