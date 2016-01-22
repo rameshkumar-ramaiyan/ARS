@@ -299,6 +299,9 @@ namespace USDA_ARS.LocationsWebApp
             ApiResponse response = null;
             string apiUrl = API_URL;
 
+            // Clean output message
+            output.Text = "";
+
             var http = (HttpWebRequest)WebRequest.Create(new Uri(apiUrl + endPoint));
             http.Accept = "application/json";
             http.ContentType = "application/json";
@@ -621,7 +624,7 @@ namespace USDA_ARS.LocationsWebApp
 
                 if (responseBack != null)
                 {
-                    output.Text = "Success: " + responseBack.Success + "<br />\r\n";
+                    output.Text += "Success: " + responseBack.Success + "<br />\r\n";
                     output.Text += "Message: " + responseBack.Message + "<br />\r\n";
                     output.Text += "<br />\r\n";
 
