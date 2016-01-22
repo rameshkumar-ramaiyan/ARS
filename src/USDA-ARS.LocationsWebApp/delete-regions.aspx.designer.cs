@@ -31,6 +31,15 @@ namespace USDA_ARS.LocationsWebApp {
         protected global::System.Web.UI.WebControls.Button btn_Delete;
         
         /// <summary>
+        /// lnkAddLocations control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.HyperLink lnkAddLocations;
+        
+        /// <summary>
         /// output control.
         /// </summary>
         /// <remarks>

@@ -1,0 +1,21 @@
+﻿{   
+    //you can define multiple editors   
+    propertyEditors: [      
+        {
+            /*this must be a unique alias*/ 
+            alias: "UsdaHelpInfo",
+            /*the name*/
+            name: "Help Information",
+			
+            /*the html file we will load for the editor*/
+            editor: {
+                view: "~/App_Plugins/UsdaHelpInfo/views/usda.help.info.html"
+            }
+        }
+    ]
+    ,
+    //array of files we want to inject into the application on app_start
+    javascript: [
+		'~/App_Plugins/UsdaHelpInfo/js/usda.help.info.js'
+    ]
+}

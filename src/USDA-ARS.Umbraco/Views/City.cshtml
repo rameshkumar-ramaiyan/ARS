@@ -8,6 +8,13 @@
     Layout = "_Master.cshtml";
 
     IPublishedContent currentPage = Model.Content;
+
+    List<IPublishedContent> researchUnitList = currentPage.Descendants().ToList();
+
+    if (researchUnitList != null && researchUnitList.Count == 1)
+    {
+        Response.Redirect(researchUnitList[0].Url);
+    }
 }
 
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
