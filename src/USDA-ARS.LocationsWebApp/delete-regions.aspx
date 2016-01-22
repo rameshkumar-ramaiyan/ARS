@@ -9,7 +9,9 @@
 <body>
     <form id="form1" runat="server">
     <div>
-        <asp:Button id="btn_Delete" runat="server" OnClick="btn_Delete_Click" Text="Delete Regions" /><br />
+        <asp:Button id="btn_Delete" runat="server" OnClick="btn_Delete_Click" Text="Delete Regions" />
+        <asp:HyperLink ID="lnkAddLocations" runat="server" NavigateUrl="~/AddUpdateLocations.aspx">Add Locations</asp:HyperLink>
+        <br />
         <br />
         <hr />
         <asp:Literal ID="output" runat="server" />
