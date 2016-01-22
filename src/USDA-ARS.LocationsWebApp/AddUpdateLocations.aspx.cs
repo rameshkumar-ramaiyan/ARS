@@ -299,9 +299,6 @@ namespace USDA_ARS.LocationsWebApp
             ApiResponse response = null;
             string apiUrl = API_URL;
 
-            // Clean output message
-            output.Text = "";
-
             var http = (HttpWebRequest)WebRequest.Create(new Uri(apiUrl + endPoint));
             http.Accept = "application/json";
             http.ContentType = "application/json";
@@ -541,6 +538,9 @@ namespace USDA_ARS.LocationsWebApp
 
         protected void btnAddMultipleAreas_Click(object sender, EventArgs e)
         {
+            // Clean output message
+            output.Text = "";
+
             //1.connection string
             string ConnectionString = AddRetrieveLocationsDL.LocationConnectionString;
            //2.all areas -=retrieval from old db and inserting into new db using umbraco
@@ -606,6 +606,7 @@ namespace USDA_ARS.LocationsWebApp
                 properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
                 properties.Add(new ApiProperty("oldUrl", "/main/site_main.htm?modeCode=" + newModeCodeProperty + "")); // current URL               
                 properties.Add(new ApiProperty("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
+                properties.Add(new ApiProperty("umbracoUrlName", areaName.Replace(" Area","").Replace(" ","-").ToLower())); // sitepublisher ID (So we can reference it later if needed).
 
 
                 //properties.Add(new ApiProperty("modeCode", "90-00-00-00")); // Region mode code
@@ -654,6 +655,9 @@ namespace USDA_ARS.LocationsWebApp
             return newAreasAfterInsertion;
 
         }
+
+
+
         protected DataTable AddAllCities(DataTable legacyCitiesBeforeInsertion)
 
         {
