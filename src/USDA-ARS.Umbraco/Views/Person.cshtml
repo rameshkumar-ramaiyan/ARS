@@ -16,10 +16,19 @@
     if (false == string.IsNullOrEmpty(Request.QueryString["person-id"]))
     {
         int personId = Convert.ToInt32(Request.QueryString["person-id"]);
-        peopleInfo = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPerson(personId);
 
-        peoplePublicationList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.Publications.PublicationsByPerson(personId);
+        IPublishedContent personSite = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByPersonId(personId);
 
+        if (null == personSite)
+        {
+            peopleInfo = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPerson(personId);
+
+            peoplePublicationList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.Publications.PublicationsByPerson(personId);
+        }
+        else
+        {
+            Response.Redirect(personSite.Url);
+        }
     }
     if (peopleInfo == null)
     {

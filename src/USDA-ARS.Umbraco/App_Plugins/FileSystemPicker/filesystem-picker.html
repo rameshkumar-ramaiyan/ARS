@@ -6,8 +6,7 @@
             </a>
             <div ng-show="!model.config.coordinatePicker">
                 <img src="/umbraco/backoffice/FileSystemPicker/FileSystemThumbnailApi/GetThumbnail?width={{model.config.thumbnailSize}}&imagePath={{model.value}}"
-                     ng-show="model.value.length.toLowerCase().indexOf('.jpg') >= 0 || model.value.length.toLowerCase().indexOf('.gif') >= 0" />
-                <strong style="color: red;">Image is not at the required resolution of: 520x320. The image will be resized.</strong>
+                     ng-show="model.value.toLowerCase().indexOf('.jpg') >= 0 || model.value.toLowerCase().indexOf('.gif') >= 0" />
             </div>
             <div ng-show="model.config.coordinatePicker">
                 <img id="usda-map-image" src="{{model.value}}" ng-click="clickMap($event)" style="cursor: crosshair;" />

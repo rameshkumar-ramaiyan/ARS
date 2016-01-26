@@ -1,0 +1,140 @@
+﻿@model USDA_ARS.Umbraco.Extensions.Models.DownloadRequest
+@{
+
+}
+@using (Html.BeginUmbracoForm<USDA_ARS.Umbraco.Controllers.DownloadRequestSurfaceController>("HandleFormSubmit"))
+{
+    <table border="0" cellspacing="0" cellpadding="3">
+        <tbody>
+            <tr>
+                <td>&nbsp;</td>
+            </tr>
+
+            <tr>
+                <td valign="top" align="right"><font face="arial,helvetica" size="-1" color="Navy"> First Name </font> &nbsp;&nbsp;</td>
+                <td>
+                    @Html.TextBoxFor(p => p.FirstName)
+                    @Html.ValidationMessageFor(p => p.FirstName)
+                </td>
+            </tr>
+
+            <tr>
+                <td valign="top" align="right">
+                    <font face="arial,helvetica" size="-1" color="Navy">Last Name</font>  &nbsp;&nbsp;
+                </td>
+                <td>
+                    @Html.TextBoxFor(p => p.LastName)
+                    @Html.ValidationMessageFor(p => p.LastName)
+                </td>
+            </tr>
+
+            <tr>
+                <td valign="top" align="right">
+                    <font face="arial,helvetica" size="-1" color="Navy">Middle</font>  &nbsp;&nbsp;
+                </td>
+
+                <td>
+                    @Html.TextBoxFor(p => p.MiddleName)
+                    @Html.ValidationMessageFor(p => p.MiddleName)
+                </td>
+            </tr>
+
+            <tr>
+                <td valign="top" align="right">
+                    <font face="arial,helvetica" size="-1" color="Navy">Email</font>  &nbsp;&nbsp;
+                </td>
+                <td>
+                    @Html.TextBoxFor(p => p.Email)
+                    @Html.ValidationMessageFor(p => p.Email)
+                </td>
+            </tr>
+
+            <tr>
+                <td valign="top" align="right">
+                    <font face="arial,helvetica" size="-1" color="Navy">Affiliation</font> &nbsp;&nbsp;
+                </td>
+                <td>
+                    @Html.TextBoxFor(p => p.Affiliation)
+                    @Html.ValidationMessageFor(p => p.Affiliation)
+                </td>
+            </tr>
+
+            <tr>
+                <td valign="top" align="right">
+                    <font face="arial,helvetica" size="-1" color="Navy">City</font> &nbsp;&nbsp;
+                </td>
+                <td>
+                    @Html.TextBoxFor(p => p.City)
+                    @Html.ValidationMessageFor(p => p.City)
+                </td>
+            </tr>
+
+            <tr>
+                <td valign="top" align="right">
+                    <font face="arial,helvetica" size="-1" color="Navy">State</font> &nbsp;&nbsp;
+                </td>
+                <td>
+                    @Html.DropDownListFor(p => p.State, USDA_ARS.Umbraco.Extensions.Helpers.SelectList.StateList())
+                    @Html.ValidationMessageFor(p => p.State)
+                </td>
+            </tr>
+
+            <tr>
+                <td valign="top" align="right">
+                    <font face="arial,helvetica" size="-1" color="Navy">Country</font> &nbsp;&nbsp;
+                </td>
+                <td>
+                    @Html.DropDownListFor(p => p.Country, USDA_ARS.Umbraco.Extensions.Helpers.SelectList.CountryList())
+                    @Html.ValidationMessageFor(p => p.Country)
+                </td>
+            </tr>
+
+            <tr>
+                <td valign="top" align="right">
+                    <font face="arial,helvetica" size="-1" color="Navy">Reference</font> &nbsp;&nbsp;
+                </td>
+                <td>
+                    @Html.DropDownListFor(p => p.Reference, USDA_ARS.Umbraco.Extensions.Helpers.SelectList.ReferenceList())
+                    @Html.ValidationMessageFor(p => p.Reference)
+                </td>
+            </tr>
+
+            <tr>
+                <td valign="top" align="right">
+                    <font face="arial,helvetica" size="-1" color="Navy">Purpose</font>  &nbsp;&nbsp;
+                </td>
+                <td>
+                    @Html.DropDownListFor(p => p.Purpose, USDA_ARS.Umbraco.Extensions.Helpers.SelectList.PurposeList())
+                    @Html.ValidationMessageFor(p => p.Purpose)
+                </td>
+            </tr>
+
+            <tr>
+                <td valign="top" align="right">
+                    <font face="arial,helvetica" size="-1" color="Navy">Comments</font>  &nbsp;&nbsp;
+                </td>
+                <td>
+                    @Html.TextAreaFor(p => p.Comments, new { cols = "30", rows = "4" })
+                    @Html.ValidationMessageFor(p => p.Comments)
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+
+    <p align="center">
+        <button type="submit">Take me to the download...</button>
+    </p>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#State').change(function () {
+                $('#Country').val('United States');
+            });
+
+            $('#Country').change(function () {
+                $('#State').val('none');
+            });
+        });
+    </script>
+}

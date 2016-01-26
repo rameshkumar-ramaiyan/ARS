@@ -1,0 +1,94 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+    string modeCode = "";
+
+    if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
+    {
+        modeCode = Request.QueryString.Get("modeCode");
+    }
+
+    IPublishedContent sitePage = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode);
+
+    bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
+
+    ArchetypeModel softwareList = sitePage.GetPropertyValue<ArchetypeModel>("software");
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+        @Html.Partial("~/Views/Partials/Modules/HeaderTitle.cshtml", currentPage)
+
+
+        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+
+        @if (softwareList != null && softwareList.Any())
+        {
+            <table cellspacing="2" cellpadding="0" border="0">
+                <tbody>
+                    @foreach (var softwareItem in softwareList)
+                    {
+                        string id = softwareItem.Id.ToString();
+                        string title = "";
+                        string desc = "";
+
+                        if (softwareItem.HasValue("title"))
+                        {
+                            title = softwareItem.GetValue<string>("title");
+                        }
+                        if (softwareItem.HasValue("shortBlurb"))
+                        {
+                            desc = softwareItem.GetValue<string>("shortBlurb");
+                        }
+                        <tr>
+                                <td valign="top">
+                                    <h2>@title</h2>
+
+                                    @Html.Raw(desc)
+                                </td>
+                            </tr>
+                            <tr>
+                                <td valign="top">
+                                    <a href="@(currentPage.Url +"download/?softwareid="+ Server.UrlEncode(id) +"&modecode=" + modeCode)" id="anch_54">Download</a>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <img src="/images/content-divider.gif">
+                                </td>
+                            </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p>No software available to download.</p>
+        }
+
+
+
+
+        <!-- document content end -->
+
+
+        <br />
+
+
+
+        <p></p>
+
+
+    </div>
+</div>

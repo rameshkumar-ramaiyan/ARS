@@ -1,0 +1,34 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+    if (currentPage.DocumentTypeAlias == "City")
+    {
+        List<IPublishedContent> researchUnitList = currentPage.Descendants().ToList();
+
+        if (researchUnitList != null && researchUnitList.Count == 1)
+        {
+            Response.Redirect(researchUnitList[0].Url);
+        }
+    }
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        @Html.Partial("~/Views/Partials/Modules/PeopleListByCity.cshtml", currentPage)
+
+    </div>
+</div>

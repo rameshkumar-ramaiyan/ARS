@@ -1,0 +1,25 @@
+﻿@using Umbraco.Core.Models
+@model IPublishedContent
+@{ 
+    bool hideHeaderTitle = Model.GetPropertyValue<bool>("hidePageTitle");
+}
+
+@if (false == hideHeaderTitle)
+{
+    <table border="0" width="100%">
+        <tr>
+            <td class="pageHeading">@Model.Name</td>
+        </tr>
+        <tr>
+            <td>
+
+                <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
+            </td>
+        </tr>
+    </table>
+}
+
+
+<!-- display URLs of subpages start -->
+<!--  display URLs of subpages end -->
+<!-- document content start -->

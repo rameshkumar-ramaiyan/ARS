@@ -329,11 +329,11 @@
             {
                 if (lnss != chr.ToString())
                 {
-                    @Html.Raw("&nbsp;| &nbsp;") <a href="?slice=alpha&lnss=@(chr.ToString())" id="anch_52">@(chr.ToString())</a>
+                    @Html.Raw(" | ") <a style="padding: 0 4px 0 4px;" href="?slice=alpha&lnss=@(chr.ToString())" id="anch_52">@(chr.ToString())</a>
                 }
                 else
                 {
-                    @Html.Raw("&nbsp;| &nbsp;") <strong>@(chr.ToString())</strong>
+                    @Html.Raw(" | ") <strong style="padding: 0 4px 0 4px;">@(chr.ToString())</strong>
                 }
             }
         }

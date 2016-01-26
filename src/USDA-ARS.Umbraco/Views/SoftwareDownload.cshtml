@@ -1,0 +1,159 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+    string modeCode = "";
+    string softwareId = "";
+    string fileTitle = "";
+    string fileInfo = "";
+    bool downloadFile = false;
+
+    if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
+    {
+        modeCode = Request.QueryString.Get("modeCode");
+    }
+    if (false == string.IsNullOrWhiteSpace(Request.QueryString["softwareid"]))
+    {
+        softwareId = Request.QueryString.Get("softwareId");
+    }
+
+    if (TempData["downloadReady"] != null && true == Convert.ToBoolean(TempData["downloadReady"]))
+    {
+        downloadFile = true;
+    }
+
+    IPublishedContent sitePage = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode);
+
+    ArchetypeModel softwareList = sitePage.GetPropertyValue<ArchetypeModel>("software");
+
+    ArchetypeModel softwareDownloadFiles = null;
+
+    if (softwareList != null && softwareList.Any())
+    {
+        Guid softwareIdGuid = Guid.Parse(softwareId);
+        ArchetypeFieldsetModel softwareItem = softwareList.Where(p => p.Id == softwareIdGuid).FirstOrDefault();
+
+        if (softwareItem != null)
+        {
+            if (softwareItem.HasValue("title"))
+            {
+                fileTitle = softwareItem.GetValue<string>("title");
+            }
+            if (softwareItem.HasValue("information"))
+            {
+                fileInfo = softwareItem.GetValue<string>("information");
+            }
+
+            if (softwareItem.HasValue("fileDownloads"))
+            {
+                softwareDownloadFiles = softwareItem.GetValue<ArchetypeModel>("fileDownloads");
+            }
+        }
+    }
+
+    if (true == string.IsNullOrWhiteSpace(fileTitle))
+    {
+        Response.Redirect("/services/software/?modeCode=" + modeCode);
+    }
+
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+        @Html.Partial("~/Views/Partials/Modules/HeaderTitle.cshtml", currentPage)
+
+
+        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+
+
+        <font face="arial,helvetica" color="Navy">@(fileTitle)</font>
+        <div class="spSoftware">&nbsp;</div>
+
+        @if (false == downloadFile)
+        {
+
+        <!--SW:swid:1-->
+
+            <hr size="1" noshade="">
+
+        <!-- For location sites, changed /email/site_email.htm to /contactus/site_feedback.htm -->
+        <!-- JCP Aug. 31, 2007 -->
+
+            <font face="arial,helvetica" size="-1">
+                Welcome to the software download area! Please
+
+                <a href="/contactus/site_feedback.htm?modecode=00-00-00-00" id="anch_56">contact us</a>
+
+                if you have problems or questions.
+            </font><p></p>
+            <p>
+                <a href="#downloadForm" id="anch_57">Download Available</a>
+            </p>
+            <hr size="1" noshade="">
+
+            @Html.Raw(fileInfo)
+
+            <a name="downloadForm"></a>
+
+            <hr size="1" noshade="">
+
+            <h2>Download Form</h2>
+            <font face="arial,helvetica" size="-1">Please complete the form below to track the use of the service we are providing and to help improve our product.</font>
+
+            @Html.Action("Index", "DownloadRequestSurface")
+
+        }
+        else
+        {
+            <hr size="1" noshade="">
+
+            <p>The following are the files available for the @(fileTitle) software:</p>
+
+            <table>
+                <tbody>
+                    @if (softwareDownloadFiles != null && softwareDownloadFiles.Any())
+                    {
+                        foreach (var fileItem in softwareDownloadFiles)
+                        {
+                            if (fileItem.HasValue("file"))
+                            {
+                                FileInfo fileDetails = new FileInfo(Server.MapPath(fileItem.GetValue("file")));
+
+                                if (fileDetails != null && true == fileDetails.Exists)
+                                {
+                                    <tr>
+                                        <td valign="top"><img src="/images/incme/bullet.gif" border="0" alt="item"></td>
+                                        <td valign="top" align="left" background="/incme/images/spacer.gif">
+                                            <font face="verdana,arial" size="-1">
+                                                <a href="@(fileDetails.FullName)" id="anch_54">@(fileDetails.Name)</a>
+                                                (@(USDA_ARS.Umbraco.Extensions.Utilities.Strings.BytesToString(fileDetails.Length)))
+                                            </font>
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                        }
+                    }
+                </tbody>
+            </table>
+        }
+
+
+        <!-- document content end -->
+
+        <br />
+
+        <p></p>
+
+    </div>
+</div>
