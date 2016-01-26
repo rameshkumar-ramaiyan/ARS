@@ -508,8 +508,12 @@ angular.module("umbraco.directives")
 
                 if (node.name.match(/\.(gif|jpg|jpeg|tiff|png)$/i)) {
                     icon.hide();
-                    var thumbnailPath = '/umbraco/backoffice/FileSystemPicker/FileSystemThumbnailApi/GetThumbnail?width=150&amp;imagePath=' + node.metaData.startfolder + node.id;
-                    element.find("a:first").append($('<img src="' + thumbnailPath + '" /><p>' + node.name + '</p>'));
+
+                    var imagePath = node.metaData.startfolder + node.id;
+                    var thumbnailPath = '/umbraco/backoffice/FileSystemPicker/FileSystemThumbnailApi/GetThumbnail?width=150&amp;imagePath=' + imagePath;
+                    element.find("a:first").append($('<img src="' + thumbnailPath + '" /><p>' + node.name + '<span class="image-alert" data-path="' + imagePath + '"></span></p>'));
+
+                    checkImageResolution(imagePath);
                 } else {
                     element.find("a:first").text(node.name);
                 }
@@ -521,6 +525,16 @@ angular.module("umbraco.directives")
                 if (node.style) {
                     element.find("i:first").attr("style", node.style);
                 }
+            }
+
+            function checkImageResolution(imagePath) {
+                $.get('/umbraco/usda/ImageCheck/Get/?imagePath=' + escape(imagePath), function (data) {
+                    if (data != undefined && data.length > 0)
+                    {
+                        var imageMessage = "<br /><strong style=\"color:#FF0000\">Incorrect resolution. Not 520x320</strong>";
+                        $('.image-alert[data-path="' + imagePath + '"]').html(imageMessage);
+                    }
+                });
             }
 
             //This will deleteAnimations to true after the current digest

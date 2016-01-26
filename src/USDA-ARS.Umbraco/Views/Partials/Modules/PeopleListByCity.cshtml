@@ -1,0 +1,134 @@
+﻿@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@model IPublishedContent
+@{
+    IPublishedContent currentNode = Model;
+    string modeCode = Model.GetPropertyValue<string>("modeCode");
+
+    if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
+    {
+        modeCode = Request.QueryString.Get("modeCode");
+
+        currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode);
+    }
+
+    List<PeopleByCity> peopleFullList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByCity(modeCode);
+
+    List<PeopleByCity> siteLabelList = peopleFullList.DistinctBy(p => p.SiteLabel).ToList();
+}
+
+<!-- jQuery accordion -->
+<script>
+    $(document).ready(function () {
+        $("#accordion")
+            .accordion({
+                header: "h4",
+                active: false,
+                collapsible: true,
+                icons: {
+                    // Icon for collapsed headers
+                    header: "ui-icon-plus",
+
+                    // Icon for active header
+                    activeHeader: "ui-icon-minus"
+                },
+                heightStyle: "content"
+            });
+
+        // Expand/Collapse all
+        $('.expand').click(function () {
+            $('.ui-widget-content').show();
+        });
+        $('.collapse').click(function () {
+            $('.ui-widget-content').hide();
+        });
+
+        /*
+        $('.toggle').click(function() {
+            $('.ui-widget-content').toggle();
+            $(this).text($(this).text() == '[Collapse All]' ? '[Expand All]' : '[Collapse All]');
+        });
+        */
+
+    });
+</script>
+
+
+<div id="CityPeopleListing">
+
+
+
+    <b>
+        People and Locations at
+        @currentNode.Name
+    </b>
+    <br /><br />
+
+
+    <!-- Expand/Collapse All -->
+    <div style="margin-left:450px;">
+        <a href="#" class="expand">[Expand All]</a> |
+        <a href="#" class="collapse">[Collapse All]</a>
+    </div>
+
+
+    <div id="accordion" style="width:600px">
+
+        @if (siteLabelList != null && siteLabelList.Any())
+        {
+            foreach (PeopleByCity siteLabel in siteLabelList)
+            {
+                IPublishedContent siteNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(siteLabel.ModeCode);
+
+                if (siteNode != null)
+                {
+                    List<PeopleByCity> peopleList = peopleFullList.Where(p => p.SiteLabel == siteLabel.SiteLabel).ToList();
+
+                    if (peopleList != null && peopleList.Count > 0)
+                    {
+                        int peopleCount = peopleList.Count;
+
+                        <h4 id="@(siteLabel.SiteCode)">
+                            @(siteLabel.SiteLabel)
+
+                            @("(" + peopleCount + " " + (peopleCount == 1 ? "person" : "people") + ")")
+                        </h4>
+
+                        <div>
+                            <p>
+                                <b>Home Page:</b>
+                                <a href="@(siteNode.Url)" title="@(siteNode.Name) home page" id="anch_55">
+                                    @(siteNode.Name)
+                                </a>
+                            </p>
+                            <p>
+                                <ul>
+                                    @if (peopleList != null && peopleList.Any())
+                                    {
+                                        foreach (PeopleByCity person in peopleList)
+                                        {
+                                            <li>
+                                                <a href="/people-locations/person?person-id=@(person.PersonId)" class="listItems">
+                                                    @(person.LastName),
+                                                    @(person.FirstName)
+                                                    @Html.Raw(false == string.IsNullOrWhiteSpace(person.CommonName) ? " <em>" + person.CommonName + "</em>" : "")
+                                                </a>
+                                                <br>
+                                                (@(person.PhoneAreaCode)) @(person.Phone)<br /> @(person.Email) <br /> @(person.TitleWorking)
+                                                <br />
+                                                <br />
+                                            </li>
+                                        }
+                                    }
+                                </ul>
+                            </p>
+                        </div>
+                    }
+                }
+            }
+        }
+
+    </div>
+</div>

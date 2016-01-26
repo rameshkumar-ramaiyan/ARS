@@ -1,4 +1,4 @@
-@charset "utf-8";
+﻿@charset "utf-8";
 /* set font sizes, width, mgarin */
 
 /* CSS Document */
@@ -302,3 +302,15 @@ div {margin:0; padding:0;}
 .more {padding:15px 20px 0 0; text-align:right;}
 .search-left {width:180px; height:30px; float:left; border:1px solid #00F; text-align:right;}
 .search-right {width:30px; height:30px; float:left; border:1px solid #00F; margin-top:2px !important;}
+
+
+/********			FORM STYLES 		*********/
+form .field-validation-error {
+    color: #c30000;
+    font-weight: bold;
+}
+
+form .input-validation-error {
+    background-color: #edc8c8;
+    border-color: #c30000;
+}

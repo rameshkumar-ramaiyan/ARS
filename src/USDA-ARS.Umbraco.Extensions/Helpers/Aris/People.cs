@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Core.Models;
 using Umbraco.Core.Persistence;
 using USDA_ARS.Umbraco.Extensions.Models.Aris;
 
@@ -44,6 +45,115 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
         }
 
 
+        public static List<PeopleByCity> GetPeopleByCity(string modeCode)
+        {
+            List<PeopleByCity> peopleList = null;
+            
+            List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
+
+            var db = new Database("arisPublicWebDbDSN");
+
+            Sql sql = null;
+
+            if (modeCodeArray != null && modeCodeArray.Count == 4)
+            {
+                string modeCodeWhere = modeCodeArray[0];
+
+                if (modeCodeArray[1] != "00")
+                {
+                    modeCodeWhere += modeCodeArray[1];
+                }
+                if (modeCodeArray[2] != "00")
+                {
+                    modeCodeWhere += modeCodeArray[2];
+                }
+                if (modeCodeArray[3] != "00")
+                {
+                    modeCodeWhere += modeCodeArray[3];
+                }
+
+                modeCodeWhere += "%";
+
+
+                string sqlStr = @"
+
+	                SELECT	v.mySiteCode,
+			                v.modecodeconc,
+			                v.personid, 
+			                v.perlname, 
+			                v.perfname, 
+			                v.percommonname, 
+			                v.workingtitle,
+			                v.EMail, 
+			                v.DeskPhone, 
+			                v.deskareacode,
+			                r.city,
+			                r.state_code,
+
+			                case
+				                when right(v.modecodeconc, 4) = '0100' 										then r.modecode_2_desc
+
+				                -- turn off sites
+				                when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 6) = '000000'	then r.modecode_1_desc
+				                when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 4) = '0000'	then r.modecode_2_desc
+				                when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 2) = '00'		then r.modecode_3_desc
+
+				                when right(v.mySiteCode, 6) = '000000'										then r.modecode_1_desc
+				                when right(v.mySiteCode, 4) = '0000'										then r.modecode_2_desc
+				                when right(v.mySiteCode, 2) = '00'											then r.modecode_3_desc
+				
+				                else 									 	 									 r.modecode_4_desc
+			                end 
+				                as siteLabel,
+					
+			                ( 	
+				                substring(mySiteCode, 1, 2) + '-' + 
+				                substring(mySiteCode, 3, 2) + '-' + 
+				                substring(mySiteCode, 5, 2) + '-' +
+				                substring(mySiteCode, 7, 2)
+			                )	as URLModecode
+			
+			
+	                FROM 	V_PEOPLE_INFO_2_DIRECTORY	v,
+			                REF_MODECODE				r
+	                WHERE 	1=1
+	
+	
+	
+		                and 	(v.modecodeconc like
+
+					                '@MODE_CODE'
+				                )
+	
+	 
+	                AND 	(
+				                v.status_code = 'A' 		OR 
+				                v.status_code IS NULL
+				
+				
+			                )
+	                and		substring(v.modecodeconc, 1, 2) = r.modecode_1
+	                and		substring(v.modecodeconc, 3, 2) = r.modecode_2
+	                and		substring(v.modecodeconc, 5, 2) = r.modecode_3
+	                and		substring(v.modecodeconc, 7, 2) = r.modecode_4
+			
+	                ORDER BY 	v.modecodeconc,
+				                v.perlname, 
+				                v.perfname
+
+                ";
+
+                sqlStr = sqlStr.Replace("@MODE_CODE", modeCodeWhere);
+
+                sql = new Sql(sqlStr);
+
+                peopleList = db.Query<PeopleByCity>(sql).ToList();
+            }
+
+            return peopleList;
+        }
+
+
         public static List<PeopleInfo> GetPeople(string lname, string fname, string title, string phone, string email, string city, string state)
         {
             List<PeopleInfo> peopleList = null;
@@ -67,7 +177,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                 }
                 if (false == string.IsNullOrWhiteSpace(fname))
                 {
-                    where += "(perfname like '%" + CleanSqlString(fname) + "%'  or percommonname like '%" + CleanSqlString(fname) + "%') AND ";
+                    where += "(perfname LIKE '%" + CleanSqlString(fname) + "%'  or percommonname like '%" + CleanSqlString(fname) + "%') AND ";
                 }
                 if (false == string.IsNullOrWhiteSpace(title))
                 {
@@ -83,11 +193,11 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                 }
                 if (false == string.IsNullOrWhiteSpace(email))
                 {
-                    where += "email = '%" + CleanSqlString(email) + "%' AND ";
+                    where += "email LIKE '%" + CleanSqlString(email) + "%' AND ";
                 }
                 if (false == string.IsNullOrWhiteSpace(city))
                 {
-                    where += "deskcity = '%" + CleanSqlString(city) + "%' AND ";
+                    where += "deskcity LIKE '%" + CleanSqlString(city) + "%' AND ";
                 }
                 if (false == string.IsNullOrWhiteSpace(state))
                 {
@@ -127,14 +237,14 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
             {
                 if (alpha.Length == 2)
                 {
-                    alpha = alpha.Substring(0, 1);  
+                    alpha = alpha.Substring(0, 1);
                 }
 
-                where += "perlname LIKE '"+ alpha +"%'";
+                where += "perlname LIKE '" + alpha + "%'";
                 where += " AND (status_code = 'a' OR status_code IS NULL)";
 
                 sql = new Sql()
-                 .Select("DISTINCT '"+ alpha.ToUpper() +"' + SUBSTRING(perlname, 2, 1) as chars")
+                 .Select("DISTINCT '" + alpha.ToUpper() + "' + SUBSTRING(perlname, 2, 1) as chars")
                  .From("w_people_info")
                  .Where(where);
 
@@ -176,7 +286,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             if (peopleList != null && peopleList.Count > 0)
             {
-                peopleList = peopleList.OrderBy(p => p.LastName).ToList();
+                peopleList = peopleList.OrderBy(p => p.LastName).ThenBy(x => x.FirstName).ToList();
 
                 if (alpha.Length == 1)
                 {
@@ -199,7 +309,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             if (false == string.IsNullOrWhiteSpace(jobSeriesCode))
             {
-                where += "SERIES_CODE = '"+ jobSeriesCode + "'";
+                where += "SERIES_CODE = '" + jobSeriesCode + "'";
 
                 where += " AND (status_code = 'a' OR status_code is null)";
 
@@ -238,6 +348,14 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
             personInfo = db.Query<PeopleInfo>(sql).FirstOrDefault();
 
             return personInfo;
+        }
+
+
+        public static IPublishedContent GetPersonSite(int personId)
+        {
+            IPublishedContent node = Helpers.Nodes.GetNodeByPersonId(personId);
+
+            return node;
         }
 
 
