@@ -359,6 +359,15 @@
     <Content Include="App_Plugins\UsdaDataImporter\js\usda.data.importer.js" />
     <Content Include="App_Plugins\UsdaDataImporter\upload.file.aspx" />
     <Content Include="App_Plugins\UsdaDataImporter\views\usda.data.importer.html" />
+    <Content Include="App_Plugins\UsdaDownloadRequests\js\usda.download.requests.js" />
+    <Content Include="App_Plugins\UsdaDownloadRequests\views\usda.download.requests.html" />
+    <Content Include="App_Plugins\UsdaHelpInfo\js\usda.help.info.js" />
+    <Content Include="App_Plugins\UsdaHelpInfo\views\usda.help.info.html" />
+    <Content Include="App_Plugins\UsdaPeopleList\js\usda.people.list.js" />
+    <Content Include="App_Plugins\UsdaPeopleList\views\usda.people.list.html" />
+    <Content Include="App_Plugins\UsdaWebtrendsRedirect\js\usda.webtrends.redirect.js" />
+    <Content Include="App_Plugins\UsdaWebtrendsRedirect\views\usda.webtrends.redirect.html" />
+    <Content Include="App_Plugins\UsdaWebtrendsRedirect\webtrends.redirect.aspx" />
     <Content Include="Config\grid.editors.config.js" />
     <Content Include="Config\Lang\cs-CZ.user.xml" />
     <Content Include="Config\Lang\da-DK.user.xml" />
@@ -381,6 +390,7 @@
     <Content Include="css\ARSbranding.css" />
     <Content Include="css\ie8-and-down.css" />
     <Content Include="css\layout.css" />
+    <Content Include="css\umbraco-css.css" />
     <Content Include="default.aspx" />
     <Content Include="Global.asax" />
     <Content Include="JQuery\jquery.corner.js" />
@@ -2756,6 +2766,14 @@
     <Compile Include="App_Plugins\UsdaDataImporter\upload.file.aspx.designer.cs">
       <DependentUpon>upload.file.aspx</DependentUpon>
     </Compile>
+    <Compile Include="App_Plugins\UsdaWebtrendsRedirect\webtrends.redirect.aspx.cs">
+      <DependentUpon>webtrends.redirect.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="App_Plugins\UsdaWebtrendsRedirect\webtrends.redirect.aspx.designer.cs">
+      <DependentUpon>webtrends.redirect.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Controllers\DownloadRequestSurfaceController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -2904,6 +2922,10 @@
     <Content Include="Config\BaseRestExtensions.config" />
     <Content Include="Config\applications.config" />
     <Content Include="Config\404handlers.config" />
+    <Content Include="App_Plugins\UsdaWebtrendsRedirect\package.manifest" />
+    <Content Include="App_Plugins\UsdaHelpInfo\package.manifest" />
+    <Content Include="App_Plugins\UsdaDownloadRequests\package.manifest" />
+    <Content Include="App_Plugins\UsdaPeopleList\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
     <Content Include="Views\SubpageStandard.cshtml" />
@@ -2942,8 +2964,13 @@
     <Content Include="Views\Events.cshtml" />
     <Content Include="Views\Video.cshtml" />
     <Content Include="Views\Videos.cshtml" />
-    <Content Include="Views\City.cshtml" />
     <None Include="Properties\PublishProfiles\Publish2Staging.pubxml" />
+    <Content Include="Views\SoftwareList.cshtml" />
+    <Content Include="Views\SoftwareDownload.cshtml" />
+    <Content Include="Views\Partials\Modules\HeaderTitle.cshtml" />
+    <Content Include="Views\Partials\DownloadRequest.cshtml" />
+    <Content Include="Views\Partials\Modules\PeopleListByCity.cshtml" />
+    <Content Include="Views\PeopleLocations.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -2958,7 +2985,6 @@
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="App_Start\" />
-    <Folder Include="Controllers\" />
     <Folder Include="Models\" />
     <Folder Include="Views\MacroPartials\" />
   </ItemGroup>

@@ -147,5 +147,21 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             return node;
         }
 
+
+        public static IPublishedContent GetNodeByPersonId(int personId)
+        {
+            IPublishedContent node = null;
+
+            foreach (IPublishedContent root in UmbHelper.TypedContentAtRoot())
+            {
+                if (node == null)
+                {
+                    node = root.Descendants().Where(p => p.DocumentTypeAlias == "PersonSite").FirstOrDefault(n => n.GetPropertyValue<string>("personLink") == personId.ToString());
+                }
+            }
+
+            return node;
+        }
+
     }
 }

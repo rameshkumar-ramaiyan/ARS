@@ -67,7 +67,9 @@ display: table-cell;
             <div class="table">
                 <div class="table-main-row">
                     <div class="tablecell">       
-                        <p><b><font face="Arial, Helvetica, sans-serif" size="2">Area</font> </b>  </p>
+                        <p><b><font face="Arial, Helvetica, sans-serif" size="2">Area</font>
+                <asp:Button ID="btnAddMultipleAreas" runat="server" Text="Add Multiple Areas" OnClick="btnAddMultipleAreas_Click" />  
+                            </b>  </p>
                         </div>
                           </div>
                 <br />
@@ -214,6 +216,8 @@ display: table-cell;
             ID: <asp:TextBox ID="txtIdUpdate" runat="server" Text="8050" />
             Name: <asp:TextBox ID="txtName" runat="server" Text="Test Page Update" />
             <asp:Button ID="btnUpdate" runat="server" OnClick="btnUpdate_Click" Text="Update Content Page" />
+            
+             <asp:HyperLink ID="lnkDeleteLocations" runat="server" NavigateUrl="~/delete-regions.aspx">Delete All Locations</asp:HyperLink>
             
         </div>
         <hr />

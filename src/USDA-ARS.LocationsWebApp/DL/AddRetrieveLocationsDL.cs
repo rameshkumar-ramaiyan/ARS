@@ -63,6 +63,50 @@ namespace USDA_ARS.LocationsWebApp.DL
             //return locationsResponse;
             return dt;
         }
+        public static DataTable GetAllCitiesOld(int parentAreaModeCode)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "uspgetAllCities";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+                sqlComm.Parameters.AddWithValue("@ParentAreaModeCode", parentAreaModeCode);
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_2"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_2_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
         public static DataTable GetAllCities(int parentAreaModeCode)
         {
             Locations locationsResponse = new Locations();
