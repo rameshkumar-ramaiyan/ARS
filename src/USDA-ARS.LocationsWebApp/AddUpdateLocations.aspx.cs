@@ -673,8 +673,9 @@ namespace USDA_ARS.LocationsWebApp
                     string cityNameWithStateName = legacyCitiesBeforeInsertion.Rows[j].Field<string>(2);
                     string stateCode = legacyCitiesBeforeInsertion.Rows[j].Field<string>(3);
                     string cityNameWithStateCode = cityNameWithStateName.Split(',')[0]+'-'+ stateCode;
-                   
-                   
+                    string cityNameWithStateCodeWithComma = cityNameWithStateName.Split(',')[0].ToUpper() + ',' + stateCode;
+
+
                     request.ApiKey = API_KEY;
                     content.Id = 0; // New page
                                     // content.Name = "{City Name, State Code}";
@@ -689,11 +690,11 @@ namespace USDA_ARS.LocationsWebApp
                     string oldModeCodeProperty = legacyCitiesBeforeInsertion.Rows[j].Field<string>(1);
 
                     properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
-                    properties.Add(new ApiProperty("oldUrl", "/main/site_main.htm?modeCode=" + newModeCodeProperty + "")); // current URL               
+                    properties.Add(new ApiProperty("oldUrl", "/PandP/locations/cityPeopleList.cfm?modeCode=" + newModeCodeProperty + "")); // current URL               
                     properties.Add(new ApiProperty("oldId", "")); // sitepublisher ID (So we can reference it later if needed).
                                                                   //properties.Add(new ApiProperty("state", legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Substring(0,legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Length -2))); // For example: NY (2 letter state code)
-                    properties.Add(new ApiProperty("state", legacyCitiesBeforeInsertion.Rows[j].Field<string>(3))); // For example: NY (2 letter state code)
-                    properties.Add(new ApiProperty("navigationTitle", legacyCitiesBeforeInsertion.Rows[j].Field<string>(2))); // All CAPS - For example: GENEVA, NY
+                    properties.Add(new ApiProperty("state", stateCode)); // For example: NY (2 letter state code)
+                    properties.Add(new ApiProperty("navigationTitle", cityNameWithStateCodeWithComma)); // All CAPS - For example: GENEVA, NY
                     properties.Add(new ApiProperty("umbracoUrlName", cityNameWithStateCode));
                     //properties.Add(new ApiProperty("modeCode", "80-10-00-00")); // Region mode code
                     //properties.Add(new ApiProperty("oldUrl", "")); // Leave blank since there is no city page on the website.

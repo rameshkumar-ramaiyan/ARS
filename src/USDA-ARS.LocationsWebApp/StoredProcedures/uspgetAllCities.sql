@@ -1,7 +1,7 @@
 USE [aris_public_webNew]
 GO
 
-/****** Object:  StoredProcedure [dbo].[uspgetAllCities]    Script Date: 1/27/2016 3:03:19 PM ******/
+/****** Object:  StoredProcedure [dbo].[uspgetAllCities]    Script Date: 1/27/2016 5:01:02 PM ******/
 SET ANSI_NULLS ON
 GO
 
