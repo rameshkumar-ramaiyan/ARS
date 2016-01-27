@@ -17,7 +17,7 @@ AS
  
  	BEGIN
 		
-select  MODECODE_1 as 'Area Mode Code', 
+ select  MODECODE_1 as 'Area Mode Code', 
 		cast (MODECODE_1 as varchar(2))+'-'+cast (MODECODE_2 as varchar(2))+'-00-00'as 'Area,City and State Mode Code',
 		substring(MODECODE_2_DESC,0 ,
 		charindex(',',MODECODE_2_DESC )) as 'City and State' ,
