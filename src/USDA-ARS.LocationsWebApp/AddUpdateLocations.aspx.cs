@@ -555,13 +555,13 @@ namespace USDA_ARS.LocationsWebApp
             newCitiesAfterInsertion = AddAllCities(newAreasAfterInsertion);
 
                     ////2.3 all RCs---retrieval and insertion
-            System.Data.DataTable newRCsAfterInsertion = new System.Data.DataTable();
-            newRCsAfterInsertion = AddAllResearchUnits(newCitiesAfterInsertion);
+            System.Data.DataTable newResearchUnitsAfterInsertion = new System.Data.DataTable();
+            newResearchUnitsAfterInsertion = AddAllResearchUnits(newCitiesAfterInsertion);
 
                     ////2.4 all Labs---retrieval and insertion
             System.Data.DataTable newLabsAfterInsertion = new System.Data.DataTable();
-           // newLabsAfterInsertion = AddAllLabs(newRCsAfterInsertion);
-            
+            newLabsAfterInsertion = AddAllLabs(newResearchUnitsAfterInsertion);
+
         }
         protected DataTable AddAllAreas(DataTable legacyAreasBeforeInsertion)
 
@@ -834,13 +834,91 @@ namespace USDA_ARS.LocationsWebApp
 
                 return newResearchUnitsAfterInsertion;
         }
-        protected DataTable AddAllLabs(DataTable newRCsAfterInsertion)
+        protected DataTable AddAllLabs(DataTable newResearchUnitsAfterInsertion)
 
         {
+            ApiRequest request = new ApiRequest();
+            ApiContent content = new ApiContent();
+
+            request.ApiKey = API_KEY;
+            DataTable newLabsAfterInsertion = new DataTable();
+
+            newLabsAfterInsertion.Columns.Add("UmbracoId");
+            newLabsAfterInsertion.Columns.Add("Name");
+            newLabsAfterInsertion.Columns.Add("ModeCode");
 
 
-            return newRCsAfterInsertion;
 
+            ////3.all cities--retrieval of new areas umbraco ids,retrieval of old cities based on those modecodes,insertion of new cities
+
+            System.Data.DataTable legacyLabsBeforeInsertion = new System.Data.DataTable();
+            for (int i = 0; i < newResearchUnitsAfterInsertion.Rows.Count; i++)
+            {
+
+                int parentResearchUnitUmbracoId = Convert.ToInt32(newResearchUnitsAfterInsertion.Rows[i].Field<string>(0));
+                string parentLocationModeCode = newResearchUnitsAfterInsertion.Rows[i].Field<string>(2);
+                if (parentLocationModeCode.Length < 11)
+                    parentLocationModeCode = "0" + parentLocationModeCode;
+                legacyLabsBeforeInsertion = AddRetrieveLocationsDL.GetAllLabs(Convert.ToInt32(parentLocationModeCode.Substring(0, 2)), Convert.ToInt32(parentLocationModeCode.Substring(3, 2)), Convert.ToInt32(parentLocationModeCode.Substring(6, 2)));
+                for (int j = 0; j < legacyLabsBeforeInsertion.Rows.Count; j++)
+                {
+
+                    string labName = legacyLabsBeforeInsertion.Rows[j].Field<string>(4);
+                    request.ApiKey = API_KEY;
+                    content.Id = 0; // New page
+                                    // content.Name = "{City Name, State Code}";
+                                    //content.ParentId = { The Umbraco Content ID for the AREA};
+                    content.Name = labName;
+                    content.ParentId = parentResearchUnitUmbracoId;
+                    content.DocType = "ResearchUnit";
+                    content.Template = "ResearchUnit"; // Leave blank
+
+                    List<ApiProperty> properties = new List<ApiProperty>();
+                    string newModeCodeProperty = legacyLabsBeforeInsertion.Rows[j].Field<string>(3);
+                    string oldModeCodeProperty = legacyLabsBeforeInsertion.Rows[j].Field<string>(3);
+
+                    properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
+                    properties.Add(new ApiProperty("oldUrl", "/PandP/locations/cityPeopleList.cfm?modeCode=" + newModeCodeProperty + "")); // current URL               
+                    properties.Add(new ApiProperty("oldId", "")); // sitepublisher ID (So we can reference it later if needed).
+                                                                  //properties.Add(new ApiProperty("state", legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Substring(0,legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Length -2))); // For example: NY (2 letter state code)
+
+                    content.Properties = properties;
+
+                    content.Save = 2; // 1=Saved, 2=Save And Publish
+
+                    request.ContentList = new List<ApiContent>();
+                    request.ContentList.Add(content);
+
+                    ApiResponse responseBack = PostData(request, "Post");
+
+                    if (responseBack.ContentList != null)
+                    {
+                        foreach (ApiContent responseContent in responseBack.ContentList)
+                        {
+                            output.Text += "Get Content Success: " + responseContent.Success + "<br />\r\n";
+
+                            if (true == responseContent.Success)
+                            {
+                                output.Text += "Content Umbraco Id: " + responseContent.Id + "<br />\r\n";
+                                output.Text += "Content Name: " + responseContent.Name + "<br />\r\n";
+                                newLabsAfterInsertion.Rows.Add(responseContent.Id, responseContent.Name, responseContent.Properties[0].Value);
+                            }
+                            else
+                            {
+                                output.Text += "Fail Message: " + responseContent.Message + "<br />\r\n";
+                            }
+
+                            output.Text += "<br />\r\n";
+                        }
+                    }
+
+
+                }
+            }
+
+
+
+            return newLabsAfterInsertion;
         }
 
 
