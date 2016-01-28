@@ -1,4 +1,4 @@
-USE [aris_public_webNew]
+USE [aris_public_web]
 GO
 
 /****** Object:  StoredProcedure [dbo].[uspgetAllCities]    Script Date: 1/27/2016 5:01:02 PM ******/
@@ -23,7 +23,7 @@ select  MODECODE_1 as 'Area Mode Code',
 		MODECODE_2_DESC  as 'City and State'
 		--substring(MODECODE_2_DESC,0 ,		charindex(',',MODECODE_2_DESC )) as 'City and State'
 		 ,STATE_CODE as 'State Code'
-from aris_public_webNew.dbo.REF_MODECODE 
+from [aris_public_web].dbo.REF_MODECODE 
 where 
 	MODECODE_1=@ParentAreaModeCode
 	and	MODECODE_3=0 
