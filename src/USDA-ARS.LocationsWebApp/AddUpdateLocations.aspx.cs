@@ -673,7 +673,7 @@ namespace USDA_ARS.LocationsWebApp
                     string cityNameWithStateName = legacyCitiesBeforeInsertion.Rows[j].Field<string>(2);
                     string stateCode = legacyCitiesBeforeInsertion.Rows[j].Field<string>(3);
                     string cityNameWithStateCode = cityNameWithStateName.Split(',')[0]+'-'+ stateCode;
-                    string cityNameWithStateCodeWithComma = cityNameWithStateName.Split(',')[0].ToUpper() + ',' + stateCode;
+                    string cityNameWithStateCodeWithComma = cityNameWithStateName.Split(',')[0].ToUpper() + ", " + stateCode;
 
 
                     request.ApiKey = API_KEY;
