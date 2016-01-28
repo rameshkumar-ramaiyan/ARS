@@ -359,8 +359,12 @@
     <Content Include="App_Plugins\UsdaDataImporter\js\usda.data.importer.js" />
     <Content Include="App_Plugins\UsdaDataImporter\upload.file.aspx" />
     <Content Include="App_Plugins\UsdaDataImporter\views\usda.data.importer.html" />
+    <Content Include="App_Plugins\UsdaDownloadRequests\js\usda.download.requests.js" />
+    <Content Include="App_Plugins\UsdaDownloadRequests\views\usda.download.requests.html" />
     <Content Include="App_Plugins\UsdaHelpInfo\js\usda.help.info.js" />
     <Content Include="App_Plugins\UsdaHelpInfo\views\usda.help.info.html" />
+    <Content Include="App_Plugins\UsdaPeopleList\js\usda.people.list.js" />
+    <Content Include="App_Plugins\UsdaPeopleList\views\usda.people.list.html" />
     <Content Include="App_Plugins\UsdaWebtrendsRedirect\js\usda.webtrends.redirect.js" />
     <Content Include="App_Plugins\UsdaWebtrendsRedirect\views\usda.webtrends.redirect.html" />
     <Content Include="App_Plugins\UsdaWebtrendsRedirect\webtrends.redirect.aspx" />
@@ -386,12 +390,12 @@
     <Content Include="css\ARSbranding.css" />
     <Content Include="css\ie8-and-down.css" />
     <Content Include="css\layout.css" />
+    <Content Include="css\umbraco-css.css" />
     <Content Include="default.aspx" />
     <Content Include="Global.asax" />
     <Content Include="JQuery\jquery.corner.js" />
     <Content Include="JQuery\jquery.cycle.all.min.js" />
     <Content Include="JQuery\jquery.min.js" />
-    <Content Include="MSBuild.WebApplication.CopyContentLinkedFiles.Dummy.txt" />
     <Content Include="umbraco\Actions\delete.aspx" />
     <Content Include="umbraco\Actions\editContent.aspx" />
     <Content Include="umbraco\Actions\preview.aspx" />
@@ -1589,7 +1593,6 @@
     <Content Include="umbraco\Views\directives\imaging\umb-image-folder.html" />
     <Content Include="umbraco\Views\directives\imaging\umb-image-gravity.html" />
     <Content Include="umbraco\Views\directives\imaging\umb-image-thumbnail.html" />
-    <Content Include="umbraco\Views\directives\umb-avatar.html" />
     <Content Include="umbraco\Views\directives\umb-confirm.html" />
     <Content Include="umbraco\Views\directives\umb-content-name.html" />
     <Content Include="umbraco\Views\directives\umb-contextmenu.html" />
@@ -2770,6 +2773,7 @@
     <Compile Include="App_Plugins\UsdaWebtrendsRedirect\webtrends.redirect.aspx.designer.cs">
       <DependentUpon>webtrends.redirect.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\DownloadRequestSurfaceController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -2920,6 +2924,8 @@
     <Content Include="Config\404handlers.config" />
     <Content Include="App_Plugins\UsdaWebtrendsRedirect\package.manifest" />
     <Content Include="App_Plugins\UsdaHelpInfo\package.manifest" />
+    <Content Include="App_Plugins\UsdaDownloadRequests\package.manifest" />
+    <Content Include="App_Plugins\UsdaPeopleList\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
     <Content Include="Views\SubpageStandard.cshtml" />
@@ -2958,19 +2964,27 @@
     <Content Include="Views\Events.cshtml" />
     <Content Include="Views\Video.cshtml" />
     <Content Include="Views\Videos.cshtml" />
-    <Content Include="Views\City.cshtml" />
     <None Include="Properties\PublishProfiles\Publish2Staging.pubxml" />
+    <Content Include="Views\SoftwareList.cshtml" />
+    <Content Include="Views\SoftwareDownload.cshtml" />
+    <Content Include="Views\Partials\Modules\HeaderTitle.cshtml" />
+    <Content Include="Views\Partials\DownloadRequest.cshtml" />
+    <Content Include="Views\Partials\Modules\PeopleListByCity.cshtml" />
+    <Content Include="Views\PeopleLocations.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+    <None Include="Web.Staging.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="App_Start\" />
-    <Folder Include="Controllers\" />
     <Folder Include="Models\" />
     <Folder Include="Views\MacroPartials\" />
   </ItemGroup>
@@ -2990,6 +3004,15 @@
   </PropertyGroup>
   <PropertyGroup>
     <OnBeforePackageUsingManifest>AddCustomSkipRules</OnBeforePackageUsingManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Staging|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <Target Name="AddCustomSkipRules">
     <ItemGroup>
@@ -3036,7 +3059,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\UmbracoCms.7.3.4\build\UmbracoCms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\UmbracoCms.7.3.4\build\UmbracoCms.props'))" />
     <Error Condition="!Exists('..\packages\UmbracoCms.7.3.4\build\UmbracoCms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\UmbracoCms.7.3.4\build\UmbracoCms.targets'))" />
-    <Error Condition="!Exists('..\packages\MSBuild.WebApplication.CopyContentLinkedFiles.1.0.0\build\MSBuild.WebApplication.CopyContentLinkedFiles.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSBuild.WebApplication.CopyContentLinkedFiles.1.0.0\build\MSBuild.WebApplication.CopyContentLinkedFiles.targets'))" />
+    <Error Condition="!Exists('..\packages\NugetPackageRestore.1.0.5\build\net40\NugetPackageRestore.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NugetPackageRestore.1.0.5\build\net40\NugetPackageRestore.targets'))" />
   </Target>
   <Import Project="..\packages\UmbracoCms.7.3.4\build\UmbracoCms.targets" Condition="Exists('..\packages\UmbracoCms.7.3.4\build\UmbracoCms.targets')" />
   <!--
@@ -3060,7 +3083,6 @@
        Other similar extension points exist, see Microsoft.Common.targets.
 	   -->
   <Target Name="BeforeBuild" />
-  <Import Project="..\packages\MSBuild.WebApplication.CopyContentLinkedFiles.1.0.0\build\MSBuild.WebApplication.CopyContentLinkedFiles.targets" Condition="Exists('..\packages\MSBuild.WebApplication.CopyContentLinkedFiles.1.0.0\build\MSBuild.WebApplication.CopyContentLinkedFiles.targets')" />
   <!--
   <Target Name="AfterBuild">
   </Target>

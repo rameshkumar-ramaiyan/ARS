@@ -1,0 +1,17 @@
+﻿<div ng-controller="Usda.Download.Requests">
+    <div ng-repeat="group in NodeDownloadRequestsList">
+        <p><strong>{{ group.SoftwareTitle }}</strong> - <a href="#clear">Clear</a></p>
+
+        <table cellpadding="4" cellspacing="3">
+            <tr ng-repeat="DownloadItem in group.DownloadRequestList">
+                <td>{{ DownloadItem.TimeStamp }}</td>
+                <td>{{ DownloadItem.Email }}</td>
+                <td>{{ DownloadItem.FirstName }}</td>
+                <td>{{ DownloadItem.LastName }}</td>
+                <td>{{ DownloadItem.City }}</td>
+                <td>{{ DownloadItem.State }}</td>
+                <td>{{ DownloadItem.Country }}</td>
+            </tr>
+        </table>
+    </div>
+</div>
