@@ -1,10 +1,8 @@
 USE [aris_public_web]
 GO
-
-/****** Object:  StoredProcedure [dbo].[uspgetAllLabs]    Script Date: 1/28/2016 5:46:25 PM ******/
+/****** Object:  StoredProcedure [dbo].[uspgetAllLabs]    Script Date: 1/29/2016 9:58:23 AM ******/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
 
@@ -14,8 +12,7 @@ GO
 
 
 
-
-CREATE PROCEDURE [dbo].[uspgetAllLabs]
+create PROCEDURE [dbo].[uspgetAllLabs]
 @ParentAreaModeCode int, 
 @ParentCityModeCode int ,
 @ParentResearchUnitModeCode int 
@@ -47,11 +44,10 @@ CASE
 --,MODECODE_4 as 'Lab Mode Code',MODECODE_4_DESC as 'Lab'
 from aris_public_web.dbo.REF_MODECODE 
 where 
-MODECODE_1=@ParentAreaModeCode 
+MODECODE_1=@ParentAreaModeCode and MODECODE_2 <> '1'
 and MODECODE_2=@ParentCityModeCode
-and MODECODE_3=@ParentResearchUnitModeCode
-and MODECODE_4 is not null 
-and MODECODE_4<>0
+and MODECODE_3=@ParentResearchUnitModeCode and MODECODE_3 <> '2'
+and MODECODE_4 is not null and MODECODE_4<>0 and MODECODE_4 <> '1'  and MODECODE_4 <>  '2'
 AND STATUS_CODE = 'A' --status code active                  
 	and  STATE_CODE is not null
 	order by MODECODE_1,MODECODE_2,MODECODE_3,MODECODE_4,MODECODE_4_DESC
@@ -60,9 +56,5 @@ AND STATUS_CODE = 'A' --status code active
 	END
 
 
-
-
-
-GO
 
 

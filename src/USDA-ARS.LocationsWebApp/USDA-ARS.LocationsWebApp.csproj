@@ -301,6 +301,7 @@
     <Content Include="packages.config" />
     <Content Include="StoredProcedures\uspgetAllAreas.sql" />
     <Content Include="StoredProcedures\uspgetAllCities.sql" />
+    <Content Include="StoredProcedures\uspgetAllLabs.sql" />
     <Content Include="StoredProcedures\[uspgetAllResearchUnits].sql" />
   </ItemGroup>
   <ItemGroup>

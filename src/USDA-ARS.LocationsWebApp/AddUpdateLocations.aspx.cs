@@ -303,7 +303,7 @@ namespace USDA_ARS.LocationsWebApp
             http.Accept = "application/json";
             http.ContentType = "application/json";
             http.Method = "POST";
-
+            http.Timeout = 216000;
             string parsedContent = JsonConvert.SerializeObject(request);
             ASCIIEncoding encoding = new ASCIIEncoding();
             Byte[] bytes = encoding.GetBytes(parsedContent);
