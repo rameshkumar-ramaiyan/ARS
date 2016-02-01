@@ -19,6 +19,7 @@ angular.module("umbraco.directives")
             hideheader: '@',
             cachekey: '@',
             isdialog: '@',
+            title: '@',
             //Custom query string arguments to pass in to the tree as a string, example: "startnodeid=123&something=value"
             customtreeparams: '@',
             eventhandler: '=',
@@ -34,8 +35,8 @@ angular.module("umbraco.directives")
             template += '<div ng-hide="hideheader" on-right-click="altSelect(tree.root, $event)">' +
                 '<h5>' +
                 '<i ng-if="enablecheckboxes == \'true\'" ng-class="selectEnabledNodeClass(tree.root)"></i>' +
-                '<a href="#/{{section}}" ng-click="select(tree.root, $event)"  class="root-link">{{tree.name}}</a></h5>' +
-                '<a class="umb-options" ng-hide="tree.root.isContainer || !tree.root.menuUrl" ng-click="options(tree.root, $event)" ng-swipe-right="options(tree.root, $event)"><span class="icon-page-up"></span></a>' +
+                '<a href="#/{{section}}" ng-click="select(tree.root, $event)" class="root-link">{{title ? title : tree.name}}</a></h5>' +
+                //'<a class="umb-options" ng-hide="tree.root.isContainer || !tree.root.menuUrl" ng-click="options(tree.root, $event)" ng-swipe-right="options(tree.root, $event)"><i></i><i></i><i></i></a>' +
                 '</div>';
             template += '<ul>' +
                 '<fs-tree-item ng-repeat="child in tree.root.children" eventhandler="eventhandler" node="child" current-node="currentNode" tree="this" section="{{section}}" ng-animate="animation()"></fs-tree-item>' +
@@ -268,6 +269,10 @@ angular.module("umbraco.directives")
                                 scope.activeTree = scope.tree.root;
                                 emitEvent("treeLoaded", { tree: scope.tree });
                                 emitEvent("treeNodeExpanded", { tree: scope.tree, node: scope.tree.root, children: scope.tree.root.children });
+                                if(scope.tree.root.children.length === 1)
+                                {
+                                    
+                                }
 
                             }, function (reason) {
                                 scope.loading = false;
@@ -458,7 +463,7 @@ angular.module("umbraco.directives")
             '<i class="icon umb-tree-icon sprTree"></i>' +
             '<a ng-click="select(node, $event)"></a>' +
             //NOTE: These are the 'option' elipses
-            '<a class="fs-upload umb-options" ng-click="options(node, $event)"><span class="icon-page-up"></span></a>' +
+            '<a class="fs-upload umb-options" ng-click="options(node, $event)"><span class="umb-options"><i></i><i></i><i></i></span></a>' +
             '<div ng-show="node.loading" class="l"><div></div></div>' +
             '</div>' +
             '</li>',
@@ -483,10 +488,6 @@ angular.module("umbraco.directives")
             // updates the node's DOM/styles
             function setupNodeDom(node, tree) {
 
-                var dialogTitle = node.metaData.startfolder.replace('/SP2UserFiles/Place', '');
-
-                $('a[href*="/dummy"]').html(dialogTitle);
-
                 //get the first div element
                 element.children(":first")
                     //set the padding
@@ -509,17 +510,16 @@ angular.module("umbraco.directives")
                 if (node.name.match(/\.(gif|jpg|jpeg|tiff|png)$/i)) {
                     icon.hide();
 
-                    var imagePath = node.metaData.startfolder + node.id;
-                    var thumbnailPath = '/umbraco/backoffice/FileSystemPicker/FileSystemThumbnailApi/GetThumbnail?width=150&amp;imagePath=' + imagePath;
-                    element.find("a:first").append($('<img src="' + thumbnailPath + '" /><p>' + node.name + '<span class="image-alert" data-path="' + imagePath + '"></span></p>'));
+                    var thumbnailPath = '/umbraco/backoffice/FileSystemPicker/FileSystemThumbnailApi/GetThumbnail?width=150&amp;imagePath=' + escape(node.id);
+                    element.find("a:first").append($('<img src="' + thumbnailPath + '" /><p>' + node.name + '<span class="image-alert" data-path="' + node.id + '"></span></p>'));
 
-                    checkImageResolution(imagePath);
+                    checkImageResolution(node.id);
                 } else {
                     element.find("a:first").text(node.name);
                 }
 
                 if (node.icon === "icon-document") {
-                    element.find("a.fs-upload").remove();
+                    //element.find("a.fs-upload").remove();
                 }
 
                 if (node.style) {
@@ -528,13 +528,20 @@ angular.module("umbraco.directives")
             }
 
             function checkImageResolution(imagePath) {
-                $.get('/umbraco/usda/ImageCheck/Get/?imagePath=' + escape(imagePath), function (data) {
-                    if (data != undefined && data.length > 0)
-                    {
-                        var imageMessage = "<br /><strong style=\"color:#FF0000\">Incorrect resolution. Not 520x320</strong>";
-                        $('.image-alert[data-path="' + imagePath + '"]').html(imageMessage);
-                    }
-                });
+                var width = 520; //$rootScope.checkImageWidth;
+                var height = 320; //$rootScope.checkImageHeight;
+                
+                $http.get('/umbraco/backoffice/FileSystemPicker/FileSystemThumbnailApi/ImageCheck?imagePath=' + escape(imagePath) + "&width=" + width + "&height=" + height, null)
+                    .then(function (data) {
+                        if (data) {
+                            $('.image-alert[data-path="' + imagePath + '"]').html(data.data);
+                        }
+                    }, errorCallback);
+
+            }
+
+            function errorCallback(e) {
+                $log.error('Error checking image: ', e);
             }
 
             //This will deleteAnimations to true after the current digest
@@ -570,6 +577,15 @@ angular.module("umbraco.directives")
                 _.extend(scope.node, newNode);
                 //now update the styles
                 setupNodeDom(scope.node, scope.tree);
+            };
+
+            scope.node.refresh = function () {
+                treeService.loadNodeChildren({ node: scope.node, section: scope.section })
+                    .then(function (data) {
+                        //emit expanded event
+                        emitEvent("treeNodeExpanded", { tree: scope.tree, node: scope.node, children: data });
+                        enableDeleteAnimations();
+                    });
             };
 
             /**
@@ -725,14 +741,10 @@ angular.module("umbraco.directives")
             scope.blueimpOptions = angular.extend(defaultOptions, scope.options);
 
             function loadChildren(node) {
-                //mediaResource.getChildren(id)
-                //    .then(function (data) {
-                //        scope.images = data.items;
-                //    });
+
             }
 
             function checkComplete(e, data) {
-
                 scope.$apply(function () {
                     //remove the amount of files complete
                     //NOTE: function is here instead of in the loop otherwise jshint blows up

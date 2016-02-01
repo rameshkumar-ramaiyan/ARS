@@ -4,6 +4,7 @@
             <a href="#" prevent-default ng-click="remove()">
                 <i class="icon icon-delete red"></i> {{model.value}}
             </a>
+
             <div ng-show="!model.config.coordinatePicker">
                 <img src="/umbraco/backoffice/FileSystemPicker/FileSystemThumbnailApi/GetThumbnail?width={{model.config.thumbnailSize}}&imagePath={{model.value}}"
                      ng-show="model.value.toLowerCase().indexOf('.jpg') >= 0 || model.value.toLowerCase().indexOf('.gif') >= 0" />
