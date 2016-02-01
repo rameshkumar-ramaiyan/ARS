@@ -151,6 +151,85 @@ namespace USDA_ARS.LocationsWebApp.DL
             //return locationsResponse;
             return dt;
         }
+
+        public static DataTable GetAllResearchUnits(int parentAreaModeCode, int parentCityModeCode)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "uspgetAllResearchUnits";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+                sqlComm.Parameters.AddWithValue("@ParentAreaModeCode", parentAreaModeCode);
+                sqlComm.Parameters.AddWithValue("@ParentCityModeCode", parentCityModeCode);
+               
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
+        public static DataTable GetAllLabs(int parentAreaModeCode, int parentCityModeCode, int parentResearchUnitModeCode)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "uspgetAllLabs";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+                sqlComm.Parameters.AddWithValue("@ParentAreaModeCode", parentAreaModeCode);
+                sqlComm.Parameters.AddWithValue("@ParentCityModeCode", parentCityModeCode);
+                sqlComm.Parameters.AddWithValue("@ParentResearchUnitModeCode", parentResearchUnitModeCode);
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
         public static DataTable GetAllResearchCenters(int parentAreaModeCode, int parentCityModeCode, int parentResearchCenterModeCode)
         {
             Locations locationsResponse = new Locations();
