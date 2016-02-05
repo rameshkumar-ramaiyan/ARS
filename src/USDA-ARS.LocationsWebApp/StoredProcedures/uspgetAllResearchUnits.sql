@@ -1,4 +1,4 @@
-USE [aris_public_webNew]
+USE [aris_public_web]
 GO
 
 /****** Object:  StoredProcedure [dbo].[uspgetAllResearchUnits]    Script Date: 2/5/2016 4:22:56 PM ******/

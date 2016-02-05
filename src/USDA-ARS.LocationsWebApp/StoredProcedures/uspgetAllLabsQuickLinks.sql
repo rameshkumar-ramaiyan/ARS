@@ -1,4 +1,4 @@
-USE [aris_public_webNew]
+USE [aris_public_web]
 GO
 
 /****** Object:  StoredProcedure [dbo].[uspgetAllLabsQuickLinks]    Script Date: 2/5/2016 4:21:55 PM ******/
