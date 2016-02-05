@@ -1,8 +1,10 @@
-USE [aris_public_web]
+USE [aris_public_webNew]
 GO
-/****** Object:  StoredProcedure [dbo].[uspgetAllLabs]    Script Date: 1/29/2016 9:58:23 AM ******/
+
+/****** Object:  StoredProcedure [dbo].[uspgetAllLabs]    Script Date: 2/5/2016 4:21:21 PM ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
 
@@ -12,7 +14,8 @@ GO
 
 
 
-create PROCEDURE [dbo].[uspgetAllLabs]
+
+CREATE PROCEDURE [dbo].[uspgetAllLabs]
 @ParentAreaModeCode int, 
 @ParentCityModeCode int ,
 @ParentResearchUnitModeCode int 
@@ -37,12 +40,12 @@ CASE
 	WHEN MODECODE_4  >=10 THEN cast (MODECODE_4 as varchar(2))
 	ELSE '0'+ cast (MODECODE_4 as varchar(2)) 
 	END 
-	as 'Lab Mode Code'
+	as 'Mode Code'
 
 
 ,MODECODE_4_DESC as 'Lab' 
 --,MODECODE_4 as 'Lab Mode Code',MODECODE_4_DESC as 'Lab'
-from aris_public_web.dbo.REF_MODECODE 
+from aris_public_webNew.dbo.REF_MODECODE 
 where 
 MODECODE_1=@ParentAreaModeCode and MODECODE_2 <> '1'
 and MODECODE_2=@ParentCityModeCode
@@ -57,4 +60,7 @@ AND STATUS_CODE = 'A' --status code active
 
 
 
+
+
+GO
 

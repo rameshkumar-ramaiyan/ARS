@@ -1,7 +1,7 @@
-USE [aris_public_web]
+USE [aris_public_webNew]
 GO
 
-/****** Object:  StoredProcedure [dbo].[uspgetAllResearchUnits]    Script Date: 1/29/2016 9:44:48 AM ******/
+/****** Object:  StoredProcedure [dbo].[uspgetAllResearchUnits]    Script Date: 2/5/2016 4:22:56 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -13,7 +13,9 @@ GO
 
 
 
-create PROCEDURE [dbo].[uspgetAllResearchUnits]
+
+
+CREATE PROCEDURE [dbo].[uspgetAllResearchUnits]
 @ParentAreaModeCode int, 
 @ParentCityModeCode int 
 
@@ -31,15 +33,15 @@ CASE
 	END 
 
 
-+'-00'as 'Research Unit Mode Code'
++'-00'as 'Mode Code'
 
 ,MODECODE_3_DESC as 'Research Unit' 
 --,MODECODE_4 as 'Lab Mode Code',MODECODE_4_DESC as 'Lab'
-from aris_public_web.dbo.REF_MODECODE 
+from aris_public_webNew.dbo.REF_MODECODE 
 where 
 MODECODE_1=@ParentAreaModeCode 
 and MODECODE_2=@ParentCityModeCode and MODECODE_2 <> '1'
-and MODECODE_3 is not null and MODECODE_3<>0 and MODECODE_3 <> '2'
+and MODECODE_3 is not null and MODECODE_3<>0 and MODECODE_3<>1  and MODECODE_3 <> '2'
 and MODECODE_4=0 
 
 
@@ -54,7 +56,7 @@ AND STATUS_CODE = 'A' --status code active
 
 
 
+
+
 GO
 
-
- 
