@@ -103,9 +103,9 @@
 
                                     navLinkUrl = navLink.Url;
                                 }
-                                <li>
-                                    <a href="@(navLinkUrl + "?mc=" + modeCode)">@Html.Raw(topic.GetValue("label"))</a>
-                                </li>
+                            <li>
+                                <a href="@(navLinkUrl + "?mc=" + modeCode)">@Html.Raw(topic.GetValue("label"))</a>
+                            </li>
                             }
                         }
 
@@ -213,11 +213,14 @@
             <div id="slideshow" style="width:520px;height:320px;float:left;">
 
 
-                @foreach (var slide in carouselSlides)
+                @if (carouselSlides != null && carouselSlides.Any())
                 {
+                    foreach (var slide in carouselSlides)
+                    {
                     <a href="@slide.GetValue("slideUrl")" title="@slide.GetValue("slideText")">
                         <img src="@slide.GetValue("slideImage")" class="carouselPhoto" alt="@slide.GetValue("slideAltText")" />
                     </a>
+                    }
                 }
 
             </div>
@@ -272,11 +275,11 @@
                         {
                             foreach (UsdaProject item in researchList)
                             {
-                                <li>
-                                    <a href="/research/projects-programs/project/?account-no=@item.AccountNo">
-                                        @item.Title
-                                    </a>
-                                </li>
+                            <li>
+                                <a href="/research/projects-programs/project/?account-no=@item.AccountNo">
+                                    @item.Title
+                                </a>
+                            </li>
                             }
                         }
 
@@ -294,11 +297,11 @@
                         {
                             foreach (IPublishedContent item in newsList)
                             {
-                                <li>
-                                    <a href="/news/news-item/@(item.GetPropertyValue<string>("newsId"))">
-                                        @(item.GetPropertyValue<string>("title"))
-                                    </a>
-                                </li>
+                            <li>
+                                <a href="/news/news-item/@(item.GetPropertyValue<string>("newsId"))">
+                                    @(item.GetPropertyValue<string>("title"))
+                                </a>
+                            </li>
                             }
                         }
 
@@ -315,11 +318,11 @@
                         {
                             foreach (UsdaPublication item in publicationList)
                             {
-                                <li>
-                                    <a href="/research/publications/publication/?seq-no-155=@item.SeqNo115">
-                                        @item.Title
-                                    </a>
-                                </li>
+                            <li>
+                                <a href="/research/publications/publication/?seq-no-155=@item.SeqNo115">
+                                    @item.Title
+                                </a>
+                            </li>
                             }
                         }
 

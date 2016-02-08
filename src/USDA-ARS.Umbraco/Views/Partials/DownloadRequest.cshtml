@@ -2,6 +2,9 @@
 @{
 
 }
+
+<script src='https://www.google.com/recaptcha/api.js'></script>
+
 @using (Html.BeginUmbracoForm<USDA_ARS.Umbraco.Controllers.DownloadRequestSurfaceController>("HandleFormSubmit"))
 {
     <table border="0" cellspacing="0" cellpadding="3">
@@ -119,6 +122,14 @@
                 </td>
             </tr>
 
+            <tr>
+                <td valign="top" align="right">
+                    &nbsp;&nbsp;
+                </td>
+                <td>
+                    <div class="g-recaptcha" data-sitekey="6LcQsxcTAAAAAEmuzT5cHktKKjEximXtffcP_VK9"></div>
+                </td>
+            </tr>
         </tbody>
     </table>
 
