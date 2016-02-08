@@ -301,6 +301,7 @@
     <Compile Include="Helpers\Aris\Publications.cs" />
     <Compile Include="Helpers\Aris\JobSeries.cs" />
     <Compile Include="Helpers\Blogs.cs" />
+    <Compile Include="Helpers\BodyTextTags.cs" />
     <Compile Include="Helpers\LinqExtensions.cs" />
     <Compile Include="Helpers\Aris\Projects.cs" />
     <Compile Include="Helpers\Aris\SiteInfo.cs" />

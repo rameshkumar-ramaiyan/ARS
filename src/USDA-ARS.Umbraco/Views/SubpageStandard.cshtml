@@ -9,6 +9,16 @@
     IPublishedContent currentPage = Model.Content;
 
     bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
+
+    string bodyText = currentPage.GetPropertyValue<string>("bodyText");
+    string modeCode = "";
+
+    if (Request.QueryString["modeCode"] != null)
+    {
+        modeCode = Request.QueryString.Get("modeCode");
+    }
+
+    bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
 }
 
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
@@ -39,7 +49,7 @@
         <!--  display URLs of subpages end -->
         <!-- document content start -->
 
-        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+        @Html.Raw(bodyText)
 
         <!-- document content end -->
 

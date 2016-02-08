@@ -6,7 +6,7 @@
 
     IPublishedContent currentPage = Model.Content;
     IPublishedContent siteSettings = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.SiteSettings();
-    IPublishedContent rootNode = currentPage.AncestorOrSelf(1);
+    IPublishedContent rootNode = currentPage.AncestorOrSelf(2);
 
     string siteTitle = siteSettings.GetPropertyValue<string>("siteTitle");
     string htmlTitleSiteName = siteSettings.GetPropertyValue<string>("siteName");
@@ -174,7 +174,7 @@
                                     {
                                 <li>|</li>
                                     }
-                                <li><a title="@item.Name" href="@item.Url" target="@item.Target"><b>@item.Name</b></a></li>
+                                <li><a title="@item.Name" href="@item.Url?modeCode=@(modeCode)" target="@item.Target"><b>@item.Name</b></a></li>
 
                                     secondMenuCount++;
                                 }
