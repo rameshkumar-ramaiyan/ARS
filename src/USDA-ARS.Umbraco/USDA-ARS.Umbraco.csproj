@@ -56,6 +56,9 @@
       <HintPath>..\packages\AutoMapper.3.0.0\lib\net40\AutoMapper.Net4.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Axial.Umbraco.FileSystemPicker">
+      <HintPath>..\..\..\Umbraco.FileSystemPicker\src\Axial.Umbraco.FileSystemPicker\bin\Debug\Axial.Umbraco.FileSystemPicker.dll</HintPath>
+    </Reference>
     <Reference Include="businesslogic, Version=1.0.5820.25374, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\UmbracoCms.Core.7.3.4\lib\businesslogic.dll</HintPath>
       <Private>True</Private>
@@ -345,14 +348,6 @@
     <Content Include="App_Plugins\FilePicker\filepickerdialog.html" />
     <Content Include="App_Plugins\FilePicker\folderpicker.html" />
     <Content Include="App_Plugins\FilePicker\folderpickerdialog.html" />
-    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-dialog.html" />
-    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-file-upload.html" />
-    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.controller.js" />
-    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.directives.js" />
-    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.html" />
-    <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker-dialog.html" />
-    <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker-upload-dialog.html" />
-    <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.js" />
     <Content Include="App_Plugins\UsdaDataImporter\css\usda.data.importer.css" />
@@ -363,6 +358,8 @@
     <Content Include="App_Plugins\UsdaDownloadRequests\views\usda.download.requests.html" />
     <Content Include="App_Plugins\UsdaHelpInfo\js\usda.help.info.js" />
     <Content Include="App_Plugins\UsdaHelpInfo\views\usda.help.info.html" />
+    <Content Include="App_Plugins\UsdaTopicPicker\js\usda.topic.picker.js" />
+    <Content Include="App_Plugins\UsdaTopicPicker\views\usda.topic.picker.html" />
     <Content Include="App_Plugins\UsdaPeopleList\js\usda.people.list.js" />
     <Content Include="App_Plugins\UsdaPeopleList\views\usda.people.list.html" />
     <Content Include="App_Plugins\UsdaWebtrendsRedirect\js\usda.webtrends.redirect.js" />
@@ -396,7 +393,6 @@
     <Content Include="JQuery\jquery.corner.js" />
     <Content Include="JQuery\jquery.cycle.all.min.js" />
     <Content Include="JQuery\jquery.min.js" />
-    <Content Include="MSBuild.WebApplication.CopyContentLinkedFiles.Dummy.txt" />
     <Content Include="umbraco\Actions\delete.aspx" />
     <Content Include="umbraco\Actions\editContent.aspx" />
     <Content Include="umbraco\Actions\preview.aspx" />
@@ -1594,7 +1590,6 @@
     <Content Include="umbraco\Views\directives\imaging\umb-image-folder.html" />
     <Content Include="umbraco\Views\directives\imaging\umb-image-gravity.html" />
     <Content Include="umbraco\Views\directives\imaging\umb-image-thumbnail.html" />
-    <Content Include="umbraco\Views\directives\umb-avatar.html" />
     <Content Include="umbraco\Views\directives\umb-confirm.html" />
     <Content Include="umbraco\Views\directives\umb-content-name.html" />
     <Content Include="umbraco\Views\directives\umb-contextmenu.html" />
@@ -2908,7 +2903,6 @@
     <Content Include="App_Plugins\UsdaDataImporter\js\usda.data.importer.resource.js" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\package.manifest" />
     <Content Include="App_Plugins\FilePicker\package.manifest" />
-    <Content Include="App_Plugins\FileSystemPicker\package.manifest" />
     <Content Include="Config\UrlRewriting.config" />
     <Content Include="Config\umbracoSettings.config" />
     <Content Include="Config\tinyMceConfig.config" />
@@ -2928,6 +2922,7 @@
     <Content Include="App_Plugins\UsdaHelpInfo\package.manifest" />
     <Content Include="App_Plugins\UsdaDownloadRequests\package.manifest" />
     <Content Include="App_Plugins\UsdaPeopleList\package.manifest" />
+    <Content Include="App_Plugins\UsdaTopicPicker\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
     <Content Include="Views\SubpageStandard.cshtml" />
@@ -2979,6 +2974,10 @@
     <None Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
+    <None Include="Web.Staging.config">
+      <DependentUpon>Web.config</DependentUpon>
+      <SubType>Designer</SubType>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
@@ -3002,6 +3001,15 @@
   </PropertyGroup>
   <PropertyGroup>
     <OnBeforePackageUsingManifest>AddCustomSkipRules</OnBeforePackageUsingManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Staging|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <Target Name="AddCustomSkipRules">
     <ItemGroup>
@@ -3048,7 +3056,7 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\UmbracoCms.7.3.4\build\UmbracoCms.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\UmbracoCms.7.3.4\build\UmbracoCms.props'))" />
     <Error Condition="!Exists('..\packages\UmbracoCms.7.3.4\build\UmbracoCms.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\UmbracoCms.7.3.4\build\UmbracoCms.targets'))" />
-    <Error Condition="!Exists('..\packages\MSBuild.WebApplication.CopyContentLinkedFiles.1.0.0\build\MSBuild.WebApplication.CopyContentLinkedFiles.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MSBuild.WebApplication.CopyContentLinkedFiles.1.0.0\build\MSBuild.WebApplication.CopyContentLinkedFiles.targets'))" />
+    <Error Condition="!Exists('..\packages\NugetPackageRestore.1.0.5\build\net40\NugetPackageRestore.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\NugetPackageRestore.1.0.5\build\net40\NugetPackageRestore.targets'))" />
   </Target>
   <Import Project="..\packages\UmbracoCms.7.3.4\build\UmbracoCms.targets" Condition="Exists('..\packages\UmbracoCms.7.3.4\build\UmbracoCms.targets')" />
   <!--
@@ -3072,7 +3080,6 @@
        Other similar extension points exist, see Microsoft.Common.targets.
 	   -->
   <Target Name="BeforeBuild" />
-  <Import Project="..\packages\MSBuild.WebApplication.CopyContentLinkedFiles.1.0.0\build\MSBuild.WebApplication.CopyContentLinkedFiles.targets" Condition="Exists('..\packages\MSBuild.WebApplication.CopyContentLinkedFiles.1.0.0\build\MSBuild.WebApplication.CopyContentLinkedFiles.targets')" />
   <!--
   <Target Name="AfterBuild">
   </Target>
