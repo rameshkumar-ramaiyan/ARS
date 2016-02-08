@@ -300,9 +300,15 @@
     <Content Include="delete-regions.aspx" />
     <Content Include="packages.config" />
     <Content Include="StoredProcedures\uspgetAllAreas.sql" />
+    <Content Include="StoredProcedures\uspgetAllAreasQuickLinks.sql" />
+    <Content Include="StoredProcedures\uspgetAllAreasWebTrendsProfileIDs.sql" />
     <Content Include="StoredProcedures\uspgetAllCities.sql" />
     <Content Include="StoredProcedures\uspgetAllLabs.sql" />
-    <Content Include="StoredProcedures\[uspgetAllResearchUnits].sql" />
+    <Content Include="StoredProcedures\uspgetAllLabsQuickLinks.sql" />
+    <Content Include="StoredProcedures\uspgetAllLabsWebTrendsProfileIDs.sql" />
+    <Content Include="StoredProcedures\uspgetAllResearchUnits.sql" />
+    <Content Include="StoredProcedures\uspgetAllResearchUnitsQuickLinks.sql" />
+    <Content Include="StoredProcedures\uspgetAllResearchUnitsWebTrendsProfileIDs.sql" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="delete-regions.aspx.cs">
