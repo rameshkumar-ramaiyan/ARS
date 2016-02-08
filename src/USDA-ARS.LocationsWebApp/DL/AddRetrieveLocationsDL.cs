@@ -19,50 +19,7 @@ namespace USDA_ARS.LocationsWebApp.DL
     public class AddRetrieveLocationsDL
     {
         public static string LocationConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SqlConnectionString"].ConnectionString;
-        public static DataTable GetAllAreas()
-        {
-            Locations locationsResponse = new Locations();
-            string sql = "uspgetAllAreas";
-            DataTable dt = new DataTable();
-            SqlConnection conn = new SqlConnection(LocationConnectionString);
-
-            try
-            {
-                SqlDataAdapter da = new SqlDataAdapter();
-                SqlCommand sqlComm = new SqlCommand(sql, conn);
-
-
-                da.SelectCommand = sqlComm;
-                da.SelectCommand.CommandType = CommandType.StoredProcedure;
-
-                DataSet ds = new DataSet();
-                da.Fill(ds, "Locations");
-
-                dt = ds.Tables["Locations"];
-                //foreach (DataRow dr in dt.Rows)
-                //{
-                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
-                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
-
-
-
-                //}
-
-
-
-            }
-            catch (Exception ex)
-            {
-                throw ex;
-            }
-            finally
-            {
-                conn.Close();
-            }
-
-            //return locationsResponse;
-            return dt;
-        }
+        #region single insert buttons-Areas,Cities,Research Units,Labs
         public static DataTable GetAllCitiesOld(int parentAreaModeCode)
         {
             Locations locationsResponse = new Locations();
@@ -107,6 +64,100 @@ namespace USDA_ARS.LocationsWebApp.DL
             //return locationsResponse;
             return dt;
         }
+        public static DataTable GetAllResearchCenters(int parentAreaModeCode, int parentCityModeCode, int parentResearchCenterModeCode)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "uspgetAllResearchCenters";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+                sqlComm.Parameters.AddWithValue("@ParentAreaModeCode", parentAreaModeCode);
+                sqlComm.Parameters.AddWithValue("@ParentCityModeCode", parentCityModeCode);
+                sqlComm.Parameters.AddWithValue("@ParentResearchCenterModeCode", parentResearchCenterModeCode);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_2"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_2_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
+        #endregion
+        #region Get All Locations- Legacy Areas,Cities,Research Units,Labs 
+        public static DataTable GetAllAreas()
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "uspgetAllAreas";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }        
         public static DataTable GetAllCities(int parentAreaModeCode)
         {
             Locations locationsResponse = new Locations();
@@ -151,7 +202,6 @@ namespace USDA_ARS.LocationsWebApp.DL
             //return locationsResponse;
             return dt;
         }
-
         public static DataTable GetAllResearchUnits(int parentAreaModeCode, int parentCityModeCode)
         {
             Locations locationsResponse = new Locations();
@@ -230,10 +280,13 @@ namespace USDA_ARS.LocationsWebApp.DL
             //return locationsResponse;
             return dt;
         }
-        public static DataTable GetAllResearchCenters(int parentAreaModeCode, int parentCityModeCode, int parentResearchCenterModeCode)
+
+        #endregion        
+        #region Get All QuickLinks- Legacy Areas,Research Units,Labs 
+        public static DataTable GetAllAreasQuickLinks()
         {
             Locations locationsResponse = new Locations();
-            string sql = "uspgetAllResearchCenters";
+            string sql = "uspgetAllAreasQuickLinks";
             DataTable dt = new DataTable();
             SqlConnection conn = new SqlConnection(LocationConnectionString);
 
@@ -242,26 +295,51 @@ namespace USDA_ARS.LocationsWebApp.DL
                 SqlDataAdapter da = new SqlDataAdapter();
                 SqlCommand sqlComm = new SqlCommand(sql, conn);
 
-                sqlComm.Parameters.AddWithValue("@ParentAreaModeCode", parentAreaModeCode);
-                sqlComm.Parameters.AddWithValue("@ParentCityModeCode", parentCityModeCode);
-                sqlComm.Parameters.AddWithValue("@ParentResearchCenterModeCode", parentResearchCenterModeCode);
-
 
                 da.SelectCommand = sqlComm;
                 da.SelectCommand.CommandType = CommandType.StoredProcedure;
-
+              
                 DataSet ds = new DataSet();
                 da.Fill(ds, "Locations");
 
                 dt = ds.Tables["Locations"];
-                //foreach (DataRow dr in dt.Rows)
-                //{
-                //    locationsResponse.LocationModeCode = dr["MODECODE_2"].ToString();
-                //    locationsResponse.LocationName = dr["MODECODE_2_DESC"].ToString();
+                
 
 
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
 
-                //}
+            
+            return dt;
+        }
+        public static DataTable GetAllResearchUnitsQuickLinks(int parentAreaModeCode, int parentCityModeCode)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "uspgetAllResearchUnitsQuickLinks";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@ParentAreaModeCode", parentAreaModeCode);
+                sqlComm.Parameters.AddWithValue("@ParentCityModeCode", parentCityModeCode);
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
 
 
 
@@ -275,9 +353,161 @@ namespace USDA_ARS.LocationsWebApp.DL
                 conn.Close();
             }
 
-            //return locationsResponse;
+
+            return dt;
+        }
+        public static DataTable GetAllLabsQuickLinks(int parentAreaModeCode, int parentCityModeCode, int parentResearchUnitModeCode)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "uspgetAllLabsQuickLinks";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@ParentAreaModeCode", parentAreaModeCode);
+                sqlComm.Parameters.AddWithValue("@ParentCityModeCode", parentCityModeCode);
+                sqlComm.Parameters.AddWithValue("@ParentResearchUnitModeCode", parentResearchUnitModeCode);
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+
+            return dt;
+        }
+        #endregion
+        #region Get All WebTrends- Legacy Areas,Research Units,Labs 
+        public static DataTable GetAllAreasWebTrendsProfileIDs()
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "uspgetAllAreasWebTrendsProfileIDs";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+
+            return dt;
+        }
+        public static DataTable GetAllResearchUnitsWebTrends(int parentAreaModeCode, int parentCityModeCode)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "uspgetAllResearchUnitsWebTrendsProfileIDs";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@ParentAreaModeCode", parentAreaModeCode);
+                sqlComm.Parameters.AddWithValue("@ParentCityModeCode", parentCityModeCode);
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+
+            return dt;
+        }
+        public static DataTable GetAllLabsWebTrendsProfileIDs(int parentAreaModeCode, int parentCityModeCode, int parentResearchUnitModeCode)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "uspgetAllLabsWebTrendsProfileIDs";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@ParentAreaModeCode", parentAreaModeCode);
+                sqlComm.Parameters.AddWithValue("@ParentCityModeCode", parentCityModeCode);
+                sqlComm.Parameters.AddWithValue("@ParentResearchUnitModeCode", parentResearchUnitModeCode);
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+
             return dt;
         }
 
-    }   
+        #endregion
+    }
 }

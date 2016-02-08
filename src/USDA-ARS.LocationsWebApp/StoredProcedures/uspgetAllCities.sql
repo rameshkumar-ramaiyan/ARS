@@ -1,7 +1,7 @@
 USE [aris_public_web]
 GO
 
-/****** Object:  StoredProcedure [dbo].[uspgetAllCities]    Script Date: 1/27/2016 5:01:02 PM ******/
+/****** Object:  StoredProcedure [dbo].[uspgetAllCities]    Script Date: 2/5/2016 4:20:55 PM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -19,11 +19,11 @@ AS
  	BEGIN
 		
 select  MODECODE_1 as 'Area Mode Code', 
-		cast (MODECODE_1 as varchar(2))+'-'+cast (MODECODE_2 as varchar(2))+'-00-00'as 'Area,City and State Mode Code',
+		cast (MODECODE_1 as varchar(2))+'-'+cast (MODECODE_2 as varchar(2))+'-00-00'as 'Mode Code',
 		MODECODE_2_DESC  as 'City and State'
 		--substring(MODECODE_2_DESC,0 ,		charindex(',',MODECODE_2_DESC )) as 'City and State'
 		 ,STATE_CODE as 'State Code'
-from [aris_public_web].dbo.REF_MODECODE 
+from aris_public_webNew.dbo.REF_MODECODE 
 where 
 	MODECODE_1=@ParentAreaModeCode
 	and	MODECODE_3=0 
@@ -42,5 +42,4 @@ where
 
 
 GO
-
 
