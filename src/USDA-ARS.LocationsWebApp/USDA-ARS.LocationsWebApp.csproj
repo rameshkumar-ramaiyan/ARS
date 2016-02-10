@@ -362,6 +362,8 @@
     </Compile>
     <Compile Include="DL\AddRetrieveLocationsDL.cs" />
     <Compile Include="DL\Locations.cs" />
+    <Compile Include="DL\LowercaseJsonSerializer.cs" />
+    <Compile Include="Models\ApiArchetype.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

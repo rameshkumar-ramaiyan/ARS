@@ -14,6 +14,8 @@ using USDA_ARS.Umbraco.Extensions.Models.Import;
 using System.Xml;
 using USDA_ARS.LocationsWebApp.DL;
 using System.Data;
+using Archetype.Models;
+using USDA_ARS.LocationsWebApp.Models;
 
 namespace USDA_ARS.LocationsWebApp
 {
@@ -45,6 +47,12 @@ namespace USDA_ARS.LocationsWebApp
             properties.Add(new ApiProperty("modeCode", "90-00-00-00")); // Region mode code
             properties.Add(new ApiProperty("oldUrl", "/PandP/locations/cityPeopleList.cfm?modeCode=50-00-00-00")); // current URL
             properties.Add(new ApiProperty("oldId", "1234")); // sitepublisher ID (So we can reference it later if needed).
+
+
+
+
+
+
 
             content.Properties = properties;
 
@@ -311,6 +319,47 @@ namespace USDA_ARS.LocationsWebApp
             properties.Add(new ApiProperty("oldUrl", "/PandP/locations/cityPeopleList.cfm?modeCode=" + newModeCodeProperty + "")); // current URL               
             properties.Add(new ApiProperty("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
             properties.Add(new ApiProperty("quickLinks", oldId));
+
+
+
+
+
+
+
+
+            ApiArchetype popularTopics = new ApiArchetype();
+            var jsonSettings = new JsonSerializerSettings();
+            jsonSettings.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
+
+            popularTopics.Fieldsets = new List<Fieldset>();
+
+            // Here is where you would loop through each Popular Topics Link
+            // LOOP START
+            Fieldset fieldset = new Fieldset();
+
+            fieldset.Alias = "popularTopics";
+            fieldset.Disabled = false;
+            fieldset.Id = new Guid();
+            fieldset.Properties = new List<Property>();
+            fieldset.Properties.Add(new Property("label", "Bee Health")); // set the label name
+
+            Link link = new Link("http://planthardiness.ars.usda.gov/PHZMWeb/", "http://planthardiness.ars.usda.gov/PHZMWeb/", ""); // set the url path
+            fieldset.Properties.Add(new Property("link", "[" + JsonConvert.SerializeObject(link, Newtonsoft.Json.Formatting.None, jsonSettings) + "]")); 
+
+            popularTopics.Fieldsets.Add(fieldset);
+
+            // LOOP END
+
+
+            // Last, we set the ApiProperty for "popularTopics"
+            properties.Add(new ApiProperty("popularTopics", JsonConvert.SerializeObject(popularTopics, Newtonsoft.Json.Formatting.None, jsonSettings)));
+
+
+
+
+
+
+
 
             //properties.Add(new ApiProperty("modeCode", "90-00-00-00")); // Region mode code
             //properties.Add(new ApiProperty("oldUrl", "/PandP/locations/cityPeopleList.cfm?modeCode=50-00-00-00")); // current URL
@@ -614,8 +663,6 @@ namespace USDA_ARS.LocationsWebApp
                 properties.Add(new ApiProperty("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
                 properties.Add(new ApiProperty("quickLinks", quickLinks));
                 properties.Add(new ApiProperty("webtrendsProfileID", webtrendsProfileID));
-
-
 
 
                 content.Properties = properties;
@@ -979,4 +1026,7 @@ namespace USDA_ARS.LocationsWebApp
 
         }
     }
+
+
+    
 }
