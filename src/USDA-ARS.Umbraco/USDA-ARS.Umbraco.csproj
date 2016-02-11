@@ -312,6 +312,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Plugins\ArchetypeLabelTemplates\urlpicker.js" />
     <Content Include="App_Plugins\Archetype\assets\logo_50.png" />
     <Content Include="App_Plugins\Archetype\assets\twitter.png" />
     <Content Include="App_Plugins\Archetype\css\archetype.css" />
@@ -348,6 +349,10 @@
     <Content Include="App_Plugins\FilePicker\filepickerdialog.html" />
     <Content Include="App_Plugins\FilePicker\folderpicker.html" />
     <Content Include="App_Plugins\FilePicker\folderpickerdialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-file-upload.html" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-new-window.aspx" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.directives.js" />
+    <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker-upload-dialog.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.js" />
     <Content Include="App_Plugins\UsdaDataImporter\css\usda.data.importer.css" />
@@ -2919,6 +2924,7 @@
     <Content Include="Config\applications.config" />
     <Content Include="Config\404handlers.config" />
     <Content Include="App_Plugins\UsdaWebtrendsRedirect\package.manifest" />
+    <Content Include="App_Plugins\ArchetypeLabelTemplates\package.manifest" />
     <Content Include="App_Plugins\UsdaHelpInfo\package.manifest" />
     <Content Include="App_Plugins\UsdaDownloadRequests\package.manifest" />
     <Content Include="App_Plugins\UsdaPeopleList\package.manifest" />
@@ -2962,6 +2968,7 @@
     <Content Include="Views\Video.cshtml" />
     <Content Include="Views\Videos.cshtml" />
     <None Include="Properties\PublishProfiles\Publish2Staging.pubxml" />
+    <Content Include="Views\Careers.cshtml" />
     <Content Include="Views\SoftwareList.cshtml" />
     <Content Include="Views\SoftwareDownload.cshtml" />
     <Content Include="Views\Partials\Modules\HeaderTitle.cshtml" />
