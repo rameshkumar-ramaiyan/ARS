@@ -302,6 +302,7 @@
     <Compile Include="Helpers\Aris\JobSeries.cs" />
     <Compile Include="Helpers\Blogs.cs" />
     <Compile Include="Helpers\BodyTextTags.cs" />
+    <Compile Include="Helpers\ExternalReferer.cs" />
     <Compile Include="Helpers\LinqExtensions.cs" />
     <Compile Include="Helpers\Aris\Projects.cs" />
     <Compile Include="Helpers\Aris\SiteInfo.cs" />
@@ -309,6 +310,7 @@
     <Compile Include="Helpers\News.cs" />
     <Compile Include="Helpers\Nodes.cs" />
     <Compile Include="Helpers\SelectList.cs" />
+    <Compile Include="Helpers\Topics.cs" />
     <Compile Include="Models\Aris\DownloadRequest.cs" />
     <Compile Include="Models\Aris\ModeCodeNew.cs" />
     <Compile Include="Models\Aris\PeopleByCity.cs" />

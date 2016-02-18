@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Archetype.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -32,43 +33,51 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
         [System.Web.Http.AcceptVerbs("GET")]
         [System.Web.Http.HttpGet]
-
         public string Get(string id)
         {
             string output = "";
 
             try
             {
-                var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
-                IPublishedContent node = umbracoHelper.TypedContent(id);
-                List<TopicPickerItem> selectList = new List<TopicPickerItem>();
 
-                string textStr = "";
+                IContent node = ApplicationContext.Current.Services.ContentService.GetById(Convert.ToInt32(id));
+                List<TopicPickerItem> selectList = new List<TopicPickerItem>();
 
                 if (node != null)
                 {
-                    if (node.DocumentTypeAlias == "PersonSite")
+
+                    if (node.ContentType.Alias == "PersonSite")
                     {
-                        node = node.Parent.Parent;
+                        node = node.Parent().Parent();
                     }
 
-                    if (node.DocumentTypeAlias == "ResearchUnit")
+                    if (node.ContentType.Alias != "ARSLocations" && node.ContentType.Alias != "PersonSite")
                     {
-                        if (true == node.HasValue("customTopicTitle") && false == string.IsNullOrWhiteSpace(node.GetPropertyValue<string>("customTopicTitle")))
+                        IContent checkNode = node.Ancestors().FirstOrDefault();
+
+                        if (checkNode.ContentType.Alias == "Homepage")
                         {
-                            textStr = node.GetPropertyValue<string>("customTopicTitle") + " - " + node.Name;
-                            selectList.Add(new TopicPickerItem(node.Id.ToString(), textStr));
+                            node = node.Ancestors().FirstOrDefault();
                         }
+                        else
+                        {
+
+                        }
+
+                        selectList.AddRange(GetTopicList(node));
                     }
 
-                    IEnumerable<IPublishedContent> subNodeList = node.Descendants();
-
-                    foreach (IPublishedContent subNode in subNodeList)
+                    if (node.ContentType.Alias == "ARSLocations")
                     {
-                        if (true == subNode.HasValue("customTopicTitle") && false == string.IsNullOrWhiteSpace(subNode.GetPropertyValue<string>("customTopicTitle")))
+                        selectList.AddRange(GetTopicList(node));
+                    }
+                    else
+                    {
+                        IEnumerable<IContent> subNodeList = node.Descendants();
+
+                        foreach (IContent subNode in subNodeList)
                         {
-                            textStr = subNode.GetPropertyValue<string>("customTopicTitle") + " - " + subNode.Name;
-                            selectList.Add(new TopicPickerItem(subNode.Id.ToString(), textStr));
+                            selectList.AddRange(GetTopicList(subNode));
                         }
                     }
 
@@ -81,6 +90,60 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
             }
 
             return output;
+        }
+
+
+        [System.Web.Http.AcceptVerbs("GET")]
+        [System.Web.Http.HttpGet]
+        public string GetTitle(string id)
+        {
+            string output = "";
+
+            UmbracoHelper umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
+
+            IEnumerable<IContent> nodeList = ApplicationContext.Current.Services.ContentService.GetRootContent();
+
+            foreach (IContent node in nodeList)
+            {
+                List<TopicPickerItem> pickerList = GetTopicList(node);
+
+                TopicPickerItem pickerItem = pickerList.Where(p => p.Value.ToLower() == id.ToLower()).FirstOrDefault();
+
+                if (pickerItem != null)
+                {
+                    return pickerItem.Text;
+                }
+            }
+
+            return output;
+        }
+
+
+        private List<TopicPickerItem> GetTopicList(IContent node)
+        {
+            List<TopicPickerItem> pickerList = new List<TopicPickerItem>();
+
+            if (node.HasProperty("leftNavCreate") && node.GetValue("leftNavCreate") != null && false == string.IsNullOrEmpty(node.GetValue("leftNavCreate").ToString()))
+            {
+                string archetypeStrValue = node.GetValue("leftNavCreate").ToString();
+
+                ArchetypeModel topicLinks = JsonConvert.DeserializeObject<ArchetypeModel>(archetypeStrValue);
+
+                if (topicLinks != null && topicLinks.Any())
+                {
+                    foreach (var topic in topicLinks)
+                    {
+                        if (topic.HasValue("customLeftNavTitle"))
+                        {
+                            string textStr = topic.GetValue("customLeftNavTitle") + " - " + node.Name;
+
+                            pickerList.Add(new TopicPickerItem(topic.Id.ToString(), textStr));
+                        }
+                    }
+                }
+            }
+
+            return pickerList;
         }
     }
 

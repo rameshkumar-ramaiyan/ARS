@@ -78,6 +78,7 @@ namespace USDA_ARS.Umbraco.Controllers
                         downloadToSave.State = model.State;
                         downloadToSave.Country = model.Country;
                         downloadToSave.Reference = model.Reference;
+                        downloadToSave.HttpReferer = Request.UrlReferrer.AbsoluteUri;
 
                         Extensions.Helpers.Aris.DownloadRequest.SaveDownloadRequest(downloadToSave);
 

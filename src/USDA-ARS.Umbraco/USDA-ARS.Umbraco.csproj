@@ -56,8 +56,14 @@
       <HintPath>..\packages\AutoMapper.3.0.0\lib\net40\AutoMapper.Net4.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Axial.Umbraco.DecendantsAudit">
+      <HintPath>..\..\..\Umbraco.BackofficeTweaking\src\Axial.Umbraco.DecendantAudit\bin\Debug\Axial.Umbraco.DecendantsAudit.dll</HintPath>
+    </Reference>
     <Reference Include="Axial.Umbraco.FileSystemPicker">
       <HintPath>..\..\..\Umbraco.FileSystemPicker\src\Axial.Umbraco.FileSystemPicker\bin\Debug\Axial.Umbraco.FileSystemPicker.dll</HintPath>
+    </Reference>
+    <Reference Include="Axial.Umbraco.PropertyAccess">
+      <HintPath>..\..\..\Umbraco.BackofficeTweaking\src\Axial.Umbraco.BackofficeTweaking\bin\Debug\Axial.Umbraco.PropertyAccess.dll</HintPath>
     </Reference>
     <Reference Include="businesslogic, Version=1.0.5820.25374, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\UmbracoCms.Core.7.3.4\lib\businesslogic.dll</HintPath>
@@ -312,6 +318,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="App_Plugins\ArchetypeLabelTemplatesTopicPicker\topicpicker.js" />
     <Content Include="App_Plugins\ArchetypeLabelTemplates\urlpicker.js" />
     <Content Include="App_Plugins\Archetype\assets\logo_50.png" />
     <Content Include="App_Plugins\Archetype\assets\twitter.png" />
@@ -2929,6 +2936,7 @@
     <Content Include="App_Plugins\UsdaDownloadRequests\package.manifest" />
     <Content Include="App_Plugins\UsdaPeopleList\package.manifest" />
     <Content Include="App_Plugins\UsdaTopicPicker\package.manifest" />
+    <Content Include="App_Plugins\ArchetypeLabelTemplatesTopicPicker\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
     <Content Include="Views\SubpageStandard.cshtml" />

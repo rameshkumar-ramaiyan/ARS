@@ -22,7 +22,7 @@
         </div>
         <div class="row control-group">
             <strong>Access Table Name</strong><br />
-            <input name="tableName" id="tableName" type="text" value="<%= defaultTableName %>" />
+            <input name="tableName" id="tableName" type="text" value="<%= defaultTableName %>" <%= disableInput %> />
             <input name="nodeId" id="nodeId" type="hidden" value="<%= Id %>" />
         </div>
         <div class="row control-group">
