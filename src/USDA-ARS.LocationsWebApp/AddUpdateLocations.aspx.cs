@@ -322,14 +322,59 @@ namespace USDA_ARS.LocationsWebApp
 
 
 
+            // USED FOR ALL ARCHETYPE DATA TYPES
+            var jsonSettings = new JsonSerializerSettings();
+            jsonSettings.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
+
+
+
+
+            // ADD CAROUSEL
+            ApiArchetype carouselSlide = new ApiArchetype();
+            
+            carouselSlide.Fieldsets = new List<Fieldset>();
+
+            // Here is where you would loop through each Carousel Slide Link
+            // LOOP START
+            string slideFilePath = null; // If a slide links to a file instead of a page, set it here.
+
+            Fieldset fieldsetCar = new Fieldset();
+
+            fieldsetCar.Alias = "carouselSlides";
+            fieldsetCar.Disabled = false;
+            fieldsetCar.Id = new Guid();
+            fieldsetCar.Properties = new List<Property>();
+            fieldsetCar.Properties.Add(new Property("slideName", "ARS Commitment")); // set the slide name
+            fieldsetCar.Properties.Add(new Property("slideImage", "/SP2UserFiles/Place/00000000/images/PhotoCarousel/ARS1890-B.png")); // set the slide image path
+            fieldsetCar.Properties.Add(new Property("slideText", "<p>Slide Text Here</p>")); // set the slide html text
+            fieldsetCar.Properties.Add(new Property("slideAltText", "Slide Alt Text Here")); // set the slide alt text
+
+            // if slide file path is not empty, set it
+            if (false == string.IsNullOrEmpty(slideFilePath))
+            {
+                fieldsetCar.Properties.Add(new Property("slideFile", slideFilePath)); // set the slide file path
+                fieldsetCar.Properties.Add(new Property("slideUrl", "")); // set the slide url to empty
+            }
+            else // Set the URL instead.
+            {
+                Link linkSlide = new Link("/research/", "/research/", ""); // set the url path
+                fieldsetCar.Properties.Add(new Property("link", "[" + JsonConvert.SerializeObject(linkSlide, Newtonsoft.Json.Formatting.None, jsonSettings) + "]"));
+
+                fieldsetCar.Properties.Add(new Property("slideFile", "")); // set the slide alt text
+            }
+            carouselSlide.Fieldsets.Add(fieldsetCar);
+
+            // LOOP END
+
+            // Last, we set the ApiProperty for "carouselSlide"
+            properties.Add(new ApiProperty("carouselSlide", JsonConvert.SerializeObject(carouselSlide, Newtonsoft.Json.Formatting.None, jsonSettings)));
+
 
 
 
 
 
             ApiArchetype popularTopics = new ApiArchetype();
-            var jsonSettings = new JsonSerializerSettings();
-            jsonSettings.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
 
             popularTopics.Fieldsets = new List<Fieldset>();
 
