@@ -22,6 +22,7 @@ using Umbraco.Web;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.WebApi;
 using USDA_ARS.Core;
+using USDA_ARS.Umbraco.Extensions.Models;
 using USDA_ARS.Umbraco.Extensions.Models.Aris;
 
 namespace USDA_ARS.Umbraco.Extensions.Controller
@@ -39,8 +40,8 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
             try
             {
-
-                IContent node = ApplicationContext.Current.Services.ContentService.GetById(Convert.ToInt32(id));
+                var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
+                IPublishedContent node = umbracoHelper.TypedContent(id);
                 List<TopicPickerItem> selectList = new List<TopicPickerItem>();
 
                 if (node != null)
@@ -48,12 +49,12 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                     if (node.ContentType.Alias == "PersonSite")
                     {
-                        node = node.Parent().Parent();
+                        node = node.Parent.Parent;
                     }
 
                     if (node.ContentType.Alias != "ARSLocations" && node.ContentType.Alias != "PersonSite")
                     {
-                        IContent checkNode = node.Ancestors().FirstOrDefault();
+                        IPublishedContent checkNode = node.AncestorsOrSelf(1).FirstOrDefault();
 
                         if (checkNode.ContentType.Alias == "Homepage")
                         {
@@ -73,9 +74,9 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                     }
                     else
                     {
-                        IEnumerable<IContent> subNodeList = node.Descendants();
+                        IEnumerable<IPublishedContent> subNodeList = node.Descendants();
 
-                        foreach (IContent subNode in subNodeList)
+                        foreach (IPublishedContent subNode in subNodeList)
                         {
                             selectList.AddRange(GetTopicList(subNode));
                         }
@@ -99,35 +100,45 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
         {
             string output = "";
 
-            UmbracoHelper umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
+            //UmbracoHelper umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
 
-            IEnumerable<IContent> nodeList = ApplicationContext.Current.Services.ContentService.GetRootContent();
+            //IEnumerable<IPublishedContent> nodeList = umbracoHelper.TypedContentAtRoot();
 
-            foreach (IContent node in nodeList)
-            {
-                List<TopicPickerItem> pickerList = GetTopicList(node);
+            //foreach (IPublishedContent node in nodeList)
+            //{
+            //    List<TopicPickerItem> pickerListParent = GetTopicList(node);
 
-                TopicPickerItem pickerItem = pickerList.Where(p => p.Value.ToLower() == id.ToLower()).FirstOrDefault();
+            //    TopicPickerItem pickerItemParent = pickerListParent.Where(p => p.Value.ToLower() == id.ToLower()).FirstOrDefault();
 
-                if (pickerItem != null)
-                {
-                    return pickerItem.Text;
-                }
-            }
+            //    if (pickerItemParent != null)
+            //    {
+            //        return pickerItemParent.Text;
+            //    }
+
+            //    foreach (IPublishedContent subNode in node.Descendants())
+            //    {
+            //        List<TopicPickerItem> pickerList = GetTopicList(subNode);
+
+            //        TopicPickerItem pickerItem = pickerList.Where(p => p.Value.ToLower() == id.ToLower()).FirstOrDefault();
+
+            //        if (pickerItem != null)
+            //        {
+            //            return pickerItem.Text;
+            //        }
+            //    }
+            //}
 
             return output;
         }
 
 
-        private List<TopicPickerItem> GetTopicList(IContent node)
+        private List<TopicPickerItem> GetTopicList(IPublishedContent node)
         {
             List<TopicPickerItem> pickerList = new List<TopicPickerItem>();
 
-            if (node.HasProperty("leftNavCreate") && node.GetValue("leftNavCreate") != null && false == string.IsNullOrEmpty(node.GetValue("leftNavCreate").ToString()))
+            if (node.HasValue("leftNavCreate"))
             {
-                string archetypeStrValue = node.GetValue("leftNavCreate").ToString();
-
-                ArchetypeModel topicLinks = JsonConvert.DeserializeObject<ArchetypeModel>(archetypeStrValue);
+                ArchetypeModel topicLinks = node.GetPropertyValue<ArchetypeModel>("leftNavCreate");
 
                 if (topicLinks != null && topicLinks.Any())
                 {
@@ -147,15 +158,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
         }
     }
 
-    public class TopicPickerItem
-    {
-        public string Value { get; set; }
-        public string Text { get; set; }
+    
 
-        public TopicPickerItem(string value, string text)
-        {
-            this.Value = value;
-            this.Text = text;
-        }
-    }
+    
 }

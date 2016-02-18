@@ -2,6 +2,7 @@
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
 @using USDA_ARS.Umbraco.Extensions.Models
+@using Newtonsoft.Json
 @model IPublishedContent
 @{
     ArchetypeModel parentRelatedTopics = null;
@@ -29,13 +30,18 @@
             {
                 foreach (var topicItemList in topicList.Properties)
                 {
-                    ArchetypeModel topicItem = USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetTopicsByGuid(Guid.Parse(topicItemList.Value.ToString()), rootPage.Descendants());
+                    TopicPickerValue topicItemListValue = JsonConvert.DeserializeObject<TopicPickerValue>(topicItemList.Value.ToString());
 
-                    if (topicItem != null)
+                    if (topicItemListValue != null && false == string.IsNullOrEmpty(topicItemListValue.Value))
                     {
-                        foreach (var item in topicItem)
+                        ArchetypeModel topicItem = USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetTopicsByGuid(Guid.Parse(topicItemListValue.Value), rootPage.Descendants());
+
+                        if (topicItem != null)
                         {
-                            @Html.Raw(OutputTopic(item))
+                            foreach (var item in topicItem)
+                            {
+                                @Html.Raw(OutputTopic(item))
+                            }
                         }
                     }
                 }
@@ -49,13 +55,18 @@
             {
                 foreach (var topicItemList in topicList.Properties)
                 {
-                    ArchetypeModel topicItem = USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetTopicsByGuid(Guid.Parse(topicItemList.Value.ToString()), rootPage.Descendants());
+                    TopicPickerValue topicItemListValue = JsonConvert.DeserializeObject<TopicPickerValue>(topicItemList.Value.ToString());
 
-                    if (topicItem != null)
+                    if (topicItemListValue != null && false == string.IsNullOrEmpty(topicItemListValue.Value))
                     {
-                        foreach (var item in topicItem)
+                        ArchetypeModel topicItem = USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetTopicsByGuid(Guid.Parse(topicItemListValue.Value), rootPage.Descendants());
+
+                        if (topicItem != null)
                         {
+                            foreach (var item in topicItem)
+                            {
                             @Html.Raw(OutputTopic(item))
+                            }
                         }
                     }
                 }
