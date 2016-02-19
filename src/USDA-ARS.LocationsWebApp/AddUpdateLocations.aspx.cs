@@ -329,7 +329,7 @@ namespace USDA_ARS.LocationsWebApp
 
 
 
-            // ADD CAROUSEL
+            // ADD CAROUSEL SLIDES
             ApiArchetype carouselSlide = new ApiArchetype();
             
             carouselSlide.Fieldsets = new List<Fieldset>();
@@ -340,9 +340,9 @@ namespace USDA_ARS.LocationsWebApp
 
             Fieldset fieldsetCar = new Fieldset();
 
-            fieldsetCar.Alias = "carouselSlides";
+            fieldsetCar.Alias = "slide";
             fieldsetCar.Disabled = false;
-            fieldsetCar.Id = new Guid();
+            fieldsetCar.Id = Guid.NewGuid();
             fieldsetCar.Properties = new List<Property>();
             fieldsetCar.Properties.Add(new Property("slideName", "ARS Commitment")); // set the slide name
             fieldsetCar.Properties.Add(new Property("slideImage", "/SP2UserFiles/Place/00000000/images/PhotoCarousel/ARS1890-B.png")); // set the slide image path
@@ -358,7 +358,7 @@ namespace USDA_ARS.LocationsWebApp
             else // Set the URL instead.
             {
                 Link linkSlide = new Link("/research/", "/research/", ""); // set the url path
-                fieldsetCar.Properties.Add(new Property("link", "[" + JsonConvert.SerializeObject(linkSlide, Newtonsoft.Json.Formatting.None, jsonSettings) + "]"));
+                fieldsetCar.Properties.Add(new Property("slideUrl", "[" + JsonConvert.SerializeObject(linkSlide, Newtonsoft.Json.Formatting.None, jsonSettings) + "]"));
 
                 fieldsetCar.Properties.Add(new Property("slideFile", "")); // set the slide alt text
             }
@@ -367,13 +367,14 @@ namespace USDA_ARS.LocationsWebApp
             // LOOP END
 
             // Last, we set the ApiProperty for "carouselSlide"
-            properties.Add(new ApiProperty("carouselSlide", JsonConvert.SerializeObject(carouselSlide, Newtonsoft.Json.Formatting.None, jsonSettings)));
+            string slideJson = JsonConvert.SerializeObject(carouselSlide, Newtonsoft.Json.Formatting.None, jsonSettings);
+            properties.Add(new ApiProperty("carouselSlides", slideJson));
 
 
 
 
 
-
+            // ADD POPULAR TOPICS
             ApiArchetype popularTopics = new ApiArchetype();
 
             popularTopics.Fieldsets = new List<Fieldset>();
@@ -384,7 +385,7 @@ namespace USDA_ARS.LocationsWebApp
 
             fieldset.Alias = "popularTopics";
             fieldset.Disabled = false;
-            fieldset.Id = new Guid();
+            fieldset.Id = Guid.NewGuid();
             fieldset.Properties = new List<Property>();
             fieldset.Properties.Add(new Property("label", "Bee Health")); // set the label name
 
