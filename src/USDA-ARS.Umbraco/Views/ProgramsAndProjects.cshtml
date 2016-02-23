@@ -1,0 +1,130 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+    string bodyText = currentPage.GetPropertyValue<string>("bodyText");
+    string modeCode = "";
+    string showType = Request.QueryString["show"];
+    bool appropriatedOnly = (showType != null && showType == "projecttype" ? true : false);
+
+    if (Request.QueryString["modeCode"] != null)
+    {
+        modeCode = Request.QueryString.Get("modeCode");
+    }
+
+    bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
+
+    List<ProjectProgram> projectProgramList = ProjectPrograms.GetProjectPrograms(modeCode, appropriatedOnly);
+    List<ProjectProgram> nationalProgramList = null;
+
+    if (projectProgramList != null && projectProgramList.Any())
+    {
+        nationalProgramList = projectProgramList.DistinctBy(p => p.NpCode).ToList();
+    }
+
+    
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        <!-- site_projects_programs start -->
+
+        <table width="100%" border="0">
+            <tbody>
+                <tr>
+                    <td>
+                        <font face="verdana,arial,helvetica" size="+1" color="#FF6600">
+                            @(currentPage.Name)
+                        </font>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td>
+                        @Html.Raw(bodyText)
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+
+
+        <b>Current View: <font color="FF3300">@(true == appropriatedOnly ? "Appropriated Projects Only " : "All Projects")</font></b>
+
+        <br /><br />
+
+        <b>
+            Show <a href="@(currentPage.Url +"?modeCode=" + modeCode + "&show=")" id="anch_53">All Projects</a> ||
+            <a href="@(currentPage.Url +"?modeCode=" + modeCode + "&show=projecttype")" id="anch_54">Appropriated Projects Only</a>
+        </b>
+
+        <br />
+        <br />
+
+        <table border="0" cellspacing="10" cellpadding="0">
+            <tbody>
+
+                @if (nationalProgramList != null && nationalProgramList.Any())
+                {
+                    foreach (ProjectProgram program in nationalProgramList)
+                    {
+                        <tr>
+                            <td colspan="3">
+                                <a href="/research/programs/program/?npCode=@(program.NpCode)" class="programNav" id="anch_55">
+                                    @(program.ShortDescription)
+                                    (NP #@(program.NpCode))
+                                </a>
+                            </td>
+                        </tr>
+
+                        List<ProjectProgram> filterProjects = projectProgramList.Where(p => p.NpCode == program.NpCode).ToList();
+
+                        if (filterProjects != null && filterProjects.Any())
+                        {
+                            foreach (ProjectProgram project in filterProjects)
+                            {
+                                <tr>
+                                    <td width="20"></td>
+                                    <td valign="top">
+                                        <a href="/research/project/?accnNo=@(project.AccountNo)" class="projectNav" id="anch_56">
+                                            @(project.ProjectTitle)
+                                        </a>
+                                        <br />
+                                        <font size="-1">
+                                            (@(Projects.ProjectTypeByCode(project.ProjectType)))
+                                        </font>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                    }
+                }
+
+            </tbody>
+        </table>
+
+
+
+
+
+        <!-- site_projects_programs end -->
+
+
+    </div>
+
+</div>

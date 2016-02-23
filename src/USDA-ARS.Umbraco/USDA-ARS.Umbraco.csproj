@@ -2983,6 +2983,10 @@
     <Content Include="Views\Partials\DownloadRequest.cshtml" />
     <Content Include="Views\Partials\Modules\PeopleListByCity.cshtml" />
     <Content Include="Views\PeopleLocations.cshtml" />
+    <Content Include="Views\ProgramsAndProjects.cshtml" />
+    <Content Include="Views\Project.cshtml" />
+    <Content Include="Views\ResearchProjectsSubjects.cshtml" />
+    <Content Include="Views\Collaborations.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

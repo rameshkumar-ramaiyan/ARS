@@ -152,6 +152,8 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                     locationList = locationList.Where(p => p.WebLabel.IndexOf(query, StringComparison.OrdinalIgnoreCase) == 0).ToList();
                     locationList = locationList.OrderBy(p => p.WebLabel).ToList();
                 }
+
+
             }
 
             return locationList;

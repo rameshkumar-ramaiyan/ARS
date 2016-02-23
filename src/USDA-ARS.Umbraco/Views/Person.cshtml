@@ -2,6 +2,7 @@
 @using Archetype.Models
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
 @using USDA_ARS.Umbraco.Extensions.Models.Aris
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
@@ -11,7 +12,7 @@
 
     PeopleInfo peopleInfo = null;
     List<PeoplePublication> peoplePublicationList = null;
-
+    List<ProjectInfo> personProjectList = null;
 
     if (false == string.IsNullOrEmpty(Request.QueryString["person-id"]))
     {
@@ -21,9 +22,10 @@
 
         if (null == personSite)
         {
-            peopleInfo = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPerson(personId);
+            peopleInfo = People.GetPerson(personId);
 
-            peoplePublicationList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.Publications.PublicationsByPerson(personId);
+            peoplePublicationList = Publications.PublicationsByPerson(personId);
+            personProjectList = Projects.GetProjectsByPerson(peopleInfo.EmpId);
         }
         else
         {
@@ -74,13 +76,14 @@ remote.location.href = u;
             <tbody>
                 <tr>
                     <td valign="top">
+                        <b>
+                            @peopleInfo.FirstName @peopleInfo.MiddleName @peopleInfo.LastName
 
-                        @peopleInfo.FirstName @peopleInfo.MiddleName @peopleInfo.LastName
-
-                        @if (false == string.IsNullOrEmpty(peopleInfo.CommonName))
-                        {
-                            @("(" + peopleInfo.CommonName + ")")
-                        }
+                            @if (false == string.IsNullOrEmpty(peopleInfo.CommonName))
+                            {
+                                @("(" + peopleInfo.CommonName + ")")
+                            }
+                        </b>
                         <br/ >
 
                         <font size="-1">
@@ -97,6 +100,11 @@ remote.location.href = u;
                                 {
                                     <a href="@node.Url" id="anch_50"> @node.Name </a>
                                 }
+                                else
+                                {
+                                    <em>Location not available</em>
+                                }
+
                             }
 
                         </font>
@@ -114,9 +122,9 @@ remote.location.href = u;
                         </a><br>
 
 
-                        Phone: @("(" + peopleInfo.PhoneAreaCode + ")") @peopleInfo.Phone <br />
+                        Phone: @(USDA_ARS.Umbraco.Extensions.Utilities.Strings.FormatPhoneNumber(peopleInfo.PhoneAreaCode + peopleInfo.Phone)) <br />
 
-                        Fax: <strong>TODO</strong><br />
+                        Fax: @(USDA_ARS.Umbraco.Extensions.Utilities.Strings.FormatPhoneNumber(peopleInfo.FaxAreaCode + peopleInfo.Fax))<br />
                         <br />
                         @peopleInfo.Address1<br />
                         @Html.Raw(false == string.IsNullOrWhiteSpace(peopleInfo.Address2) ? peopleInfo.Address2 + "<br />" : "")
@@ -124,6 +132,49 @@ remote.location.href = u;
 
 
                         <p> </p>
+
+                        @if (personProjectList != null && personProjectList.Any())
+                        {
+                            <table width="368">
+                                <tbody>
+                                    <tr>
+                                        <td class="hdrBlackBold"><b>Projects</b></td>
+                                    </tr>
+                                    <tr>
+                                        <td><img src="/images/headline_bar.gif"></td>
+                                    </tr>
+
+                                    @foreach (ProjectInfo project in personProjectList)
+                                    {
+                                        <tr>
+                                            <td>
+                                                <a href="/research/project/?accnNo=@(project.AccountNo)" class="projectNav" id="anch_53">@(project.ProjectTitle)</a>
+                                                <table border="0">
+                                                    <tbody>
+                                                        <tr>
+                                                            <td></td>
+                                                            <td class="bodyTextBlack">
+                                                                @(Projects.ProjectTypeByCode(project.ProjectType))
+
+                                                                (@project.ProjectType)
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>&nbsp;</td>
+                                                            <td class="bodyTextBlack">Accession Number: @(project.AccountNo)</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td><img src="/images/content-divider.gif"></td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        }
 
                         @if (peoplePublicationList != null && peoplePublicationList.Any())
                         {

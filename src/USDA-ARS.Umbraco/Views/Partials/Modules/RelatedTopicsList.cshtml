@@ -1,6 +1,7 @@
 ﻿@using Archetype.Models
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions
 @using USDA_ARS.Umbraco.Extensions.Models
 @using Newtonsoft.Json
 @model IPublishedContent
@@ -11,7 +12,14 @@
 
     ArchetypeModel currentRelatedTopics = Model.GetPropertyValue<ArchetypeModel>("leftNavPicker");
 
+    List<ArchetypeModel> siteRelatedTopicsTop = null;
+    List<ArchetypeModel> siteRelatedTopicsBottom = null;
+
+    USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetSiteGlobalNav(Model, ref siteRelatedTopicsTop, ref siteRelatedTopicsBottom);
+
     parentRelatedTopics = rootPage.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+
+    bool foundExternalLink = false;
 }
 
 <!--[if lt IE 9]>
@@ -24,25 +32,15 @@
 <div id="relatedTopics">
     <h1 class="related_topics">Related Topics</h1>
     <ul>
-        @if (parentRelatedTopics != null && parentRelatedTopics.Any())
+        @if (siteRelatedTopicsTop != null && siteRelatedTopicsTop.Any())
         {
-            foreach (var topicList in parentRelatedTopics)
+            foreach (var siteNavTopList in siteRelatedTopicsTop)
             {
-                foreach (var topicItemList in topicList.Properties)
+                foreach (var siteNavTop in siteNavTopList)
                 {
-                    TopicPickerValue topicItemListValue = JsonConvert.DeserializeObject<TopicPickerValue>(topicItemList.Value.ToString());
-
-                    if (topicItemListValue != null && false == string.IsNullOrEmpty(topicItemListValue.Value))
+                    if (siteNavTop != null)
                     {
-                        ArchetypeModel topicItem = USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetTopicsByGuid(Guid.Parse(topicItemListValue.Value), rootPage.Descendants());
-
-                        if (topicItem != null)
-                        {
-                            foreach (var item in topicItem)
-                            {
-                                @Html.Raw(OutputTopic(item))
-                            }
-                        }
+                        @Html.Raw(OutputTopic(siteNavTop, ref foundExternalLink))
                     }
                 }
             }
@@ -65,7 +63,7 @@
                         {
                             foreach (var item in topicItem)
                             {
-                            @Html.Raw(OutputTopic(item))
+                                @Html.Raw(OutputTopic(item, ref foundExternalLink))
                             }
                         }
                     }
@@ -73,6 +71,11 @@
             }
         }
     </ul>
+    @if (true == foundExternalLink)
+    {
+        <br />
+        <span style="padding: 0 0 0 20px;">* Goes to a non-federal site</span>
+    }
 </div>
 <!--[if lt IE 9]>
     <div class="IErounded-sidebot"
@@ -85,7 +88,7 @@
 
 @functions
 {
-    string OutputTopic(ArchetypeFieldsetModel item)
+    string OutputTopic(ArchetypeFieldsetModel item, ref bool foundExternalLink)
     {
         string html = null;
 
@@ -98,12 +101,24 @@
                 Link navLink = item.GetValue<MultiUrls>("location").FirstOrDefault();
 
                 if (navLink != null && navLink.Url != null)
-{
-                urlLink = navLink.Url;
-}
+                {
+                    urlLink = navLink.Url;
+                }
             }
 
-            html = "<li><a href=\"" + urlLink + "\">" + item.GetValue<string>("title") + "</a></li>";
+            string externalIcon = "";
+
+            if (urlLink.StartsWith("http"))
+            {
+                if (urlLink.ToLower().IndexOf("usda.gov") < 0)
+                {
+                    externalIcon = " *";
+
+                    foundExternalLink = true;
+                }
+            }
+
+            html = "<li><a href=\"" + urlLink + "\">" + item.GetValue<string>("title") + externalIcon + "</a></li>";
         }
         else if (item.Alias == "topicsHeader")
         {

@@ -77,69 +77,65 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
                 string sqlStr = @"
 
-	                SELECT	v.mySiteCode,
-			                v.modecodeconc,
-			                v.personid, 
-			                v.perlname, 
-			                v.perfname, 
-			                v.percommonname, 
-			                v.workingtitle,
-			                v.EMail, 
-			                v.DeskPhone, 
-			                v.deskareacode,
-			                r.city,
-			                r.state_code,
+	                            SELECT	v.mySiteCode,
+			            v.modecodeconc,
+			            v.personid, 
+			            v.perlname, 
+			            v.perfname, 
+			            v.percommonname, 
+			            v.workingtitle,
+			            v.EMail, 
+			            v.deskareacode,
+			            v.DeskPhone,
+			            v.deskext,			
+			            r.city,
+			            r.state_code,
 
-			                case
-				                when right(v.modecodeconc, 4) = '0100' 										then r.modecode_2_desc
+			            case
+				            when right(v.modecodeconc, 4) = '0100' 										then r.modecode_2_desc
 
-				                -- turn off sites
-				                when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 6) = '000000'	then r.modecode_1_desc
-				                when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 4) = '0000'	then r.modecode_2_desc
-				                when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 2) = '00'		then r.modecode_3_desc
+				            -- turn off sites
+				            when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 6) = '000000'	then r.modecode_1_desc
+				            when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 4) = '0000'	then r.modecode_2_desc
+				            when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 2) = '00'		then r.modecode_3_desc
 
-				                when right(v.mySiteCode, 6) = '000000'										then r.modecode_1_desc
-				                when right(v.mySiteCode, 4) = '0000'										then r.modecode_2_desc
-				                when right(v.mySiteCode, 2) = '00'											then r.modecode_3_desc
+				            when right(v.mySiteCode, 6) = '000000'										then r.modecode_1_desc
+				            when right(v.mySiteCode, 4) = '0000'										then r.modecode_2_desc
+				            when right(v.mySiteCode, 2) = '00'											then r.modecode_3_desc
 				
-				                else 									 	 									 r.modecode_4_desc
-			                end 
-				                as siteLabel,
+				            else 									 	 									 r.modecode_4_desc
+			            end 
+				            as siteLabel,
 					
-			                ( 	
-				                substring(mySiteCode, 1, 2) + '-' + 
-				                substring(mySiteCode, 3, 2) + '-' + 
-				                substring(mySiteCode, 5, 2) + '-' +
-				                substring(mySiteCode, 7, 2)
-			                )	as URLModecode
+			            ( 	
+				            substring(mySiteCode, 1, 2) + '-' + 
+				            substring(mySiteCode, 3, 2) + '-' + 
+				            substring(mySiteCode, 5, 2) + '-' +
+				            substring(mySiteCode, 7, 2)
+			            )	as URLModecode
 			
 			
-	                FROM 	V_PEOPLE_INFO_2_DIRECTORY	v,
-			                REF_MODECODE				r
-	                WHERE 	1=1
+	            FROM 	V_PEOPLE_INFO_2_DIRECTORY	v,
+			            REF_MODECODE				r
+	            WHERE 	1=1
 	
 	
 	
-		                and 	(v.modecodeconc like
-
-					                '@MODE_CODE'
-				                )
+		            and 	(v.modecodeconc like '@MODE_CODE')
 	
 	 
-	                AND 	(
-				                v.status_code = 'A' 		OR 
-				                v.status_code IS NULL
-				
-				
-			                )
-	                and		substring(v.modecodeconc, 1, 2) = r.modecode_1
-	                and		substring(v.modecodeconc, 3, 2) = r.modecode_2
-	                and		substring(v.modecodeconc, 5, 2) = r.modecode_3
-	                and		substring(v.modecodeconc, 7, 2) = r.modecode_4
+	            AND 	(
+				            v.status_code = 'A' 		OR 
+				            v.status_code IS NULL
+			            )
+	            and		substring(v.modecodeconc, 1, 2) = r.modecode_1
+	            and		substring(v.modecodeconc, 3, 2) = r.modecode_2
+	            and		substring(v.modecodeconc, 5, 2) = r.modecode_3
+	            and		substring(v.modecodeconc, 7, 2) = r.modecode_4
 			
-	                ORDER BY 	v.modecodeconc,
-				                v.perlname, 
-				                v.perfname
+	            ORDER BY 	v.modecodeconc,
+				            v.perlname, 
+				            v.perfname
 
                 ";
 
@@ -336,16 +332,15 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             var db = new Database("arisPublicWebDbDSN");
 
-            Sql sql = null;
+            string sql = @"SELECT perfname,EMP_ID,p_emp_id,POSITIONID,permname,perlname,percommonname,PERSONID,
+			        MODECODE_1,MODECODE_2,MODECODE_3,MODECODE_4,category,PositionTitle,officialtitle,SERIES_CODE,
+			        workingtitle,email,IMAGEURL,Expertise,DESKPHONE,deskareacode,deskext,deskbldgabbr,ofcfax,ofcfaxareacode,
+			        deskroomnum,DESKADDR1,deskaddr2,deskcity,deskstate,homepageurl,deskzip4,status_code,modecodeconc,mySiteCode 
+			        FROM V_PEOPLE_INFO_2_DIRECTORY
+			        WHERE personid = @personId
+			        AND 1=1";
 
-            string where = "PERSONID = '" + personId + "'";
-
-            sql = new Sql()
-             .Select("*")
-             .From("w_people_info")
-             .Where(where);
-
-            personInfo = db.Query<PeopleInfo>(sql).FirstOrDefault();
+            personInfo = db.Query<PeopleInfo>(sql, new { personId = personId }).FirstOrDefault();
 
             return personInfo;
         }
