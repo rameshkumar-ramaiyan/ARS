@@ -50,6 +50,14 @@ namespace USDA_ARS.Umbraco.Extensions.Models.Aris
         [NullSetting(NullSetting = NullSettings.Null)]
         public string Email { get; set; }
 
+        [Column("ofcfax")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string Fax { get; set; }
+
+        [Column("ofcfaxareacode")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string FaxAreaCode { get; set; }
+        
         [Column("DESKPHONE")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public string Phone { get; set; }

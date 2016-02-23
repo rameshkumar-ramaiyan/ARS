@@ -1,0 +1,68 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@using RJP.MultiUrlPicker.Models
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+    string bodyText = currentPage.GetPropertyValue<string>("bodyText");
+    string modeCode = "";
+    string showType = Request.QueryString["show"];
+    bool appropriatedOnly = (showType != null && showType == "projecttype" ? true : false);
+
+    if (Request.QueryString["modeCode"] != null)
+    {
+        modeCode = Request.QueryString.Get("modeCode");
+    }
+
+    bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
+
+    List<ProjectInfo> projectProgramList = Projects.GetProjectsByCollaborations(modeCode);
+    List<ProjectInfo> collaboratorList = null;
+
+    if (projectProgramList != null && projectProgramList.Any())
+    {
+        collaboratorList = projectProgramList.DistinctBy(p => p.RecipientName).ToList();
+    }
+}
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+        <strong>@(currentPage.Name)</strong>
+        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+
+        @if (collaboratorList != null && collaboratorList.Any())
+        {
+            foreach (ProjectInfo collab in collaboratorList)
+            {
+                @(collab.RecipientName + ", " + collab.City + ", " + collab.State + ", " + collab.CountryDescription)
+                <br />
+
+                List<ProjectInfo> filteredList = projectProgramList.Where(p => p.RecipientName == collab.RecipientName).ToList();
+
+                if (filteredList != null && filteredList.Any())
+                {
+                    foreach (ProjectInfo filteredItem in filteredList)
+                    {
+                        <li>
+                            <a href="/research/project/?accnNo=@(filteredItem.AccountNo)" style="color:#0000FF;text-decoration:underline;" id="anch_53">
+                                @(filteredItem.ProjectTitle)
+                            </a>
+                        </li>
+                        <br />
+                    }
+                }
+            }
+        }
+
+    </div>
+</div>

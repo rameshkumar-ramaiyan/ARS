@@ -1,3 +1,6 @@
 ﻿<div ng-controller="Usda.Topic.Picker">
+    
+    <p class="topic-loading">Loading Navigation List...</p>
+
     <select ng-model="model.value" ng-options="p.Value as p.Text for p in list" style="width: 100%"></select>
 </div>

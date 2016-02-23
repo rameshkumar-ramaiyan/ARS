@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace USDA_ARS.Umbraco.Extensions.Utilities
@@ -57,6 +58,12 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
             double num = Math.Round(bytes / Math.Pow(1024, place), 1);
 
             return (Math.Sign(byteCount) * num).ToString() + " " + suf[place];
+        }
+
+
+        public static string RemoveHtmlTags(string html)
+        {
+            return Regex.Replace(html, "<.*?>", String.Empty);
         }
     }
 }

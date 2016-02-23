@@ -56,5 +56,13 @@ namespace USDA_ARS.Umbraco.Extensions.Models.Aris
         [Column("summary")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public string Summary { get; set; }
+
+        [Column("citation")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string Citation { get; set; }
+
+        [Column("reprint_url")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string ReprintUrl { get; set; }
     }
 }

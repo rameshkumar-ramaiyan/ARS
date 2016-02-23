@@ -145,13 +145,15 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                 }
                 else if (type == "mission-statement")
                 {
-                    locationList = locationList.Where(p => p.MissionStatement.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
+                    locationList = locationList.Where(p => p.MissionStatement != null && p.MissionStatement.IndexOf(query, StringComparison.OrdinalIgnoreCase) >= 0).ToList();
                 }
                 else if (type == "alpha")
                 {
                     locationList = locationList.Where(p => p.WebLabel.IndexOf(query, StringComparison.OrdinalIgnoreCase) == 0).ToList();
                     locationList = locationList.OrderBy(p => p.WebLabel).ToList();
                 }
+
+
             }
 
             return locationList;

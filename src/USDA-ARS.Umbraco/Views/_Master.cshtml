@@ -29,6 +29,11 @@
     MultiUrls thirdNavigation = siteSettings.GetPropertyValue<MultiUrls>("thirdNavigation");
     MultiUrls footerNavigationLineOne = siteSettings.GetPropertyValue<MultiUrls>("footerNavigationLineOne");
     MultiUrls footerNavigationLineTwo = siteSettings.GetPropertyValue<MultiUrls>("footerNavigationLineTwo");
+
+    if (Session["externalReferer"] == null)
+    {
+        Session["externalReferer"] = USDA_ARS.Umbraco.Extensions.Helpers.ExternalReferer.GetExternalUrl(Request.UrlReferrer);
+    }
 }
 <!DOCTYPE HTML>
 

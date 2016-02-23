@@ -77,7 +77,9 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             string output = "";
 
             IPublishedContent settingsNode = Nodes.SiteSettings();
-            string emailto = settingsNode.GetPropertyValue<string>("defaultContact");
+            string emailto = settingsNode.GetPropertyValue<string>("defaultContactEmail");
+            string emailSubject = settingsNode.GetPropertyValue<string>("contactEmailSubject");
+            string defaultContactLabel = settingsNode.GetPropertyValue<string>("defaultContactLabel");
 
             ArchetypeModel contactCategoryList = node.GetPropertyValue<ArchetypeModel>("contactCategory");
 
@@ -111,7 +113,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                         customEmailTo = emailto;
                     }
 
-                    output += "<li><a href=\"mailto:" + customEmailTo + "?Subject=From ARS website: " + categoryItem.GetValue("category") + "\" target=\"_blank\" id=\"anch_48\">";
+                    output += "<li><a href=\"mailto:" + customEmailTo + "?Subject=" + emailSubject + categoryItem.GetValue("category") + "\" target=\"_blank\" id=\"anch_48\">";
                     output += categoryItem.GetValue("category") + "</a></li>";
                 }
 
@@ -147,7 +149,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
                 output += "<tr><td>";
                 output += "<ul>";
-                output += "<li><a href=\"mailto:" + customEmailTo + "?Subject=From ARS website: ARS Webmaster\" target=\"_blank\" id=\"anch_48\">ARS Webmaster</a></li>";
+                output += "<li><a href=\"mailto:" + customEmailTo + "?Subject=" + emailSubject + defaultContactLabel + "\" target=\"_blank\" id=\"anch_48\">" + defaultContactLabel + "</a></li>";
                 output += "</ul>";
                 output += "</td></tr>";
             }

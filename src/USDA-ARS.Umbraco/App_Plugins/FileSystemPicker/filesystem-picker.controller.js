@@ -81,6 +81,22 @@ function fileSystemPickerController($scope, $http, $routeParams, dialogService) 
     function populate(data) {
         $scope.model.value = data;
     };
+
+	//a method to update the model by adding a blank item
+    $scope.newWindow = function (imageUrl) {
+    	var $mapImage = $('#usda-map-image');
+
+    	var img = new Image();
+    	img.onload = function () {
+    		var urlImage = '/App_Plugins/FileSystemPicker/filesystem-picker-new-window.aspx?url=' + escape($mapImage.attr('src'));
+
+    		window.open(urlImage, 'popupWindow', 'width=' + (this.width + 30) + ',height=' + (this.height + 30) + ',scrollbars=no');
+    	}
+    	img.src = $mapImage.attr('src');
+
+    	event.preventDefault();
+    }
+
 };
 angular.module("umbraco").controller("Umbraco.FileSystemPickerController", fileSystemPickerController);
 

@@ -1,0 +1,120 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+    string modeCode = "";
+    string soiCodeStr = Request.QueryString["soiCode"];
+    int soiCode = 0;
+    string activeSubject = "";
+
+    if (false == string.IsNullOrWhiteSpace(soiCodeStr))
+    {
+        soiCode = Convert.ToInt32(soiCodeStr);
+    }
+
+    if (Request.QueryString["modeCode"] != null)
+    {
+        modeCode = Request.QueryString.Get("modeCode");
+    }
+    string bodyText = currentPage.GetPropertyValue<string>("bodyText");
+
+    List<ProjectSubject> projectSubjectList = Projects.GetProjectSubjectsByModeCode(modeCode);
+    List<ProjectInfo> projectList = null;
+
+    if (soiCode > 0)
+    {
+        projectList = Projects.GetProjectsBySubject(modeCode, soiCode);
+    }
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        <table border="0">
+            <tbody>
+                <tr>
+                    <td colspan="2">
+                        <font face="verdana,arial,helvetica" size="+1" color="#FF6600">
+                            @(currentPage.Name)
+                        </font>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td colspan="2">
+                        @Html.Raw(bodyText)
+                    </td>
+                </tr>
+
+                <tr>
+                    <td valign="top" align="left" width="50%">
+
+                        @if (projectSubjectList != null && projectSubjectList.Any())
+                        {
+                            <b>Subjects of Investigation</b>
+                            <br />
+
+                            foreach (ProjectSubject subject in projectSubjectList)
+                            {
+                                if (soiCode > 0 && soiCode == subject.SoiCode)
+                                {
+                                    activeSubject = subject.LongDescription;
+                                    <strong>@subject.LongDescription</strong>
+                                }
+                                else
+                                {
+                                    <a href="@(currentPage.Url + "?modeCode=" + modeCode + "&soiCode=" + subject.SoiCode)" class="projectNav" id="anch_52">
+                                        @subject.LongDescription
+                                    </a>
+                                }
+                                <br />
+                            }
+                        }
+                    </td>
+
+                    <td valign="top">
+                        @if (soiCode > 0)
+                        {
+                            <b>Research Projects within @(activeSubject)</b>
+
+                            <br />
+
+                            foreach (ProjectInfo projectInfo in projectList)
+                            {
+                                <table>
+                                    <tbody>
+                                        <tr>
+                                            <td valign="top"><img src="images//incme/bullet.gif" border="0" alt="item"></td>
+                                            <td valign="top" align="left" background="images/incme/spacer.gif">
+                                                <font face="verdana,arial" size="-1">
+                                                    <a href="/research/project?accnNo=@(projectInfo.AccountNo)" class="projectNav" id="anch_59">
+                                                        @(projectInfo.ProjectTitle)
+                                                    </a>
+                                                    <br>
+                                                </font>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            }
+                        }
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+</div>

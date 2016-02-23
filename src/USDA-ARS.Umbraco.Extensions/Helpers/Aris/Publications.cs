@@ -359,5 +359,68 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
             return peoplePublicationsList;
         }
 
+
+        public static List<ProjectPublication> GetPublicationsByProjectYear(int accountNo, string year)
+        {
+            List<ProjectPublication> projectPublicationList = null;
+
+            var db = new Database("arisPublicWebDbDSN");
+
+            string sql = @"select 	publication, seq_no_115,
+			            (
+				            select 	count(*) 
+				            from 	gen_public_115s
+				            where 	seq_no_115 = a421_publications.seq_no_115
+			            )  ok  
+	            from 	a421_publications
+	            where 	ACCN_NO = @accountNo
+	            and 	fy = @year ";
+
+            projectPublicationList = db.Query<ProjectPublication>(sql, new { accountNo = accountNo, year = year }).ToList();
+
+            return projectPublicationList;
+        }
+
+
+        public static List<UsdaPublication> GetPublicationsByProject(int accountNo)
+        {
+            List<UsdaPublication> projectPublicationList = null;
+
+            var db = new Database("arisPublicWebDbDSN");
+
+            string sql = @"SELECT 	manuscript_title, citation, seq_no_115, journal_accpt_date, PUB_TYPE_CODE,
+					        reprint_url				
+			        FROM 	gen_public_115s
+			        WHERE 	ACCN_NO = @accountNo
+			        AND 	journal_accpt_date IS NOT NULL
+			        ORDER BY journal_accpt_date desc
+			        Option  (Robust Plan)";
+
+            projectPublicationList = db.Query<UsdaPublication>(sql, new { accountNo = accountNo }).ToList();
+
+            return projectPublicationList;
+        }
+
+
+        public static string PublicationType(string pubCode)
+        {
+            if (pubCode == "A")
+            {
+                return "Abstract Only";
+            }
+            else if (pubCode == "J")
+            {
+                return "Peer Reviewed Journal";
+            }
+            else if (pubCode == "P")
+            {
+                return "Proceedings";
+            }
+            else
+            {
+                return "";
+            }
+        }
+
     }
 }

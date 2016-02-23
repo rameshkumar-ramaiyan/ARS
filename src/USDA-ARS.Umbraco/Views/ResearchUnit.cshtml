@@ -101,7 +101,10 @@
                                 {
                                     Link navLink = topic.GetValue<MultiUrls>("link").FirstOrDefault();
 
-                                    navLinkUrl = navLink.Url;
+                                    if (navLink != null)
+                                    {
+                                        navLinkUrl = navLink.Url;
+                                    }
                                 }
                             <li>
                                 <a href="@(navLinkUrl + "?mc=" + modeCode)">@Html.Raw(topic.GetValue("label"))</a>
@@ -122,7 +125,10 @@
                                             {
                                                 Link navLink = topic.GetValue<MultiUrls>("link").FirstOrDefault();
 
-                                                navLinkUrl = navLink.Url;
+                                                if (navLink != null)
+                                                {
+                                                    navLinkUrl = navLink.Url;
+                                                }
                                             }
                                             <li>
                                                 <a href="@(navLinkUrl + "?mc=" + modeCode)">@Html.Raw(topic.GetValue("label"))</a>
@@ -319,7 +325,7 @@
                             foreach (UsdaPublication item in publicationList)
                             {
                             <li>
-                                <a href="/research/publications/publication/?seq-no-155=@item.SeqNo115">
+                                <a href="/services/publications/publication/?seq-no-155=@item.SeqNo115">
                                     @item.Title
                                 </a>
                             </li>
@@ -327,7 +333,7 @@
                         }
 
                         <li class="textAlignRight">
-                            <a href="/research/publications/?modecode=@modeCode">&gt;&gt;&gt;More</a>
+                            <a href="/services/publications/?modecode=@modeCode">&gt;&gt;&gt;More</a>
                         </li>
                     </ul>
                 </div>

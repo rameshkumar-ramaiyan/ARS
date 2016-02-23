@@ -163,5 +163,14 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             return node;
         }
 
+
+        public static IPublishedContent GetNodeById(int nodeId)
+        {
+            IPublishedContent node = null;
+
+            node = UmbHelper.TypedContent(nodeId);
+
+            return node;
+        }
     }
 }

@@ -116,7 +116,9 @@
                                                     @Html.Raw(false == string.IsNullOrWhiteSpace(person.CommonName) ? " <em>" + person.CommonName + "</em>" : "")
                                                 </a>
                                                 <br>
-                                                (@(person.PhoneAreaCode)) @(person.Phone)<br /> @(person.Email) <br /> @(person.TitleWorking)
+                                                @(USDA_ARS.Umbraco.Extensions.Utilities.Strings.FormatPhoneNumber(person.PhoneAreaCode + person.Phone))
+
+                                                <br /> @(person.Email) <br /> @(person.TitleWorking)
                                                 <br />
                                                 <br />
                                             </li>

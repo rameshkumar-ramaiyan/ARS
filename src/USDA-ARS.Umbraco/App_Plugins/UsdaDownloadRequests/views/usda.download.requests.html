@@ -1,16 +1,46 @@
-﻿<div ng-controller="Usda.Download.Requests">
+﻿<style>
+    #downloads-table td {
+        border: 1px solid #777;
+    }
+</style>
+
+
+<div ng-controller="Usda.Download.Requests">
     <div ng-repeat="group in NodeDownloadRequestsList">
         <p><strong>{{ group.SoftwareTitle }}</strong> - <a href="#clear">Clear</a></p>
 
-        <table cellpadding="4" cellspacing="3">
+        <table id="downloads-table" cellpadding="4" cellspacing="3" style="border: 1px solid #000;">
+            <tr>
+                <th>Date</th>
+                <th>First</th>
+                <th>Last</th>
+                <th>Middle</th>
+                <th>Email</th>
+                <th>Affiliation</th>
+                <th>City</th>
+                <th>State</th>
+                <th>Country</th>
+                <th>Reference</th>
+                <th>Purpose</th>
+                <th>Comments</th>
+                <th>Referer URL</th>
+                <th>Ext Referer URL</th>
+            </tr>
             <tr ng-repeat="DownloadItem in group.DownloadRequestList">
                 <td>{{ DownloadItem.TimeStamp }}</td>
-                <td>{{ DownloadItem.Email }}</td>
                 <td>{{ DownloadItem.FirstName }}</td>
                 <td>{{ DownloadItem.LastName }}</td>
+                <td>{{ DownloadItem.MiddleName }}</td>
+                <td>{{ DownloadItem.Email }}</td>
+                <td>{{ DownloadItem.Affiliation }}</td>
                 <td>{{ DownloadItem.City }}</td>
                 <td>{{ DownloadItem.State }}</td>
                 <td>{{ DownloadItem.Country }}</td>
+                <td>{{ DownloadItem.Reference }}</td>
+                <td>{{ DownloadItem.Purpose }}</td>
+                <td>{{ DownloadItem.Comments }}</td>
+                <td>{{ DownloadItem.HttpReferer }}</td>
+                <td></td>
             </tr>
         </table>
     </div>
