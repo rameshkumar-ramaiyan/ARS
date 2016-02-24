@@ -62,6 +62,7 @@
     <Compile Include="CoreTest.Designer.cs">
       <DependentUpon>CoreTest.cs</DependentUpon>
     </Compile>
+    <Compile Include="Daniel.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="CoreTest.resx">
