@@ -360,7 +360,7 @@ namespace USDA_ARS.LocationsWebApp
                 Link linkSlide = new Link("/research/", "/research/", ""); // set the url path
                 fieldsetCar.Properties.Add(new Property("slideUrl", "[" + JsonConvert.SerializeObject(linkSlide, Newtonsoft.Json.Formatting.None, jsonSettings) + "]"));
 
-                fieldsetCar.Properties.Add(new Property("slideFile", "")); // set the slide alt text
+                fieldsetCar.Properties.Add(new Property("slideFile", "")); // set the slide file to empty
             }
             carouselSlide.Fieldsets.Add(fieldsetCar);
 
