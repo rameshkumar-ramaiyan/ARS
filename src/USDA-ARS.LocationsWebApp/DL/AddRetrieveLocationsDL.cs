@@ -157,7 +157,7 @@ namespace USDA_ARS.LocationsWebApp.DL
 
             //return locationsResponse;
             return dt;
-        }        
+        }
         public static DataTable GetAllCities(int parentAreaModeCode)
         {
             Locations locationsResponse = new Locations();
@@ -216,7 +216,7 @@ namespace USDA_ARS.LocationsWebApp.DL
 
                 sqlComm.Parameters.AddWithValue("@ParentAreaModeCode", parentAreaModeCode);
                 sqlComm.Parameters.AddWithValue("@ParentCityModeCode", parentCityModeCode);
-               
+
                 da.SelectCommand = sqlComm;
                 da.SelectCommand.CommandType = CommandType.StoredProcedure;
 
@@ -224,7 +224,7 @@ namespace USDA_ARS.LocationsWebApp.DL
                 da.Fill(ds, "Locations");
 
                 dt = ds.Tables["Locations"];
-                
+
 
 
 
@@ -298,12 +298,12 @@ namespace USDA_ARS.LocationsWebApp.DL
 
                 da.SelectCommand = sqlComm;
                 da.SelectCommand.CommandType = CommandType.StoredProcedure;
-              
+
                 DataSet ds = new DataSet();
                 da.Fill(ds, "Locations");
 
                 dt = ds.Tables["Locations"];
-                
+
 
 
             }
@@ -316,7 +316,7 @@ namespace USDA_ARS.LocationsWebApp.DL
                 conn.Close();
             }
 
-            
+
             return dt;
         }
         public static DataTable GetAllResearchUnitsQuickLinks(int parentAreaModeCode, int parentCityModeCode)
@@ -508,6 +508,101 @@ namespace USDA_ARS.LocationsWebApp.DL
             return dt;
         }
 
+        #endregion
+
+        #region  Get All Carousel Slides based on Mode Code
+        public static DataTable GetAllCarouselSlidesBasedOnModeCode(string modeCode)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "[uspgetAllCarouselSlidesBasedOnModeCode]";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@ModeCode", modeCode);
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
+        #endregion
+        #region  Get All Softwares based on Mode Code
+        public static DataTable GetAllSoftwaresBasedOnModeCode(string modeCode)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "[uspgetAllSoftwaresBasedOnModeCode]";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@ModeCode", modeCode);
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
         #endregion
     }
 }

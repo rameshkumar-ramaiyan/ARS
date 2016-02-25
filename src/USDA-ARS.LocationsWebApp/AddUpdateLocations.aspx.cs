@@ -331,7 +331,7 @@ namespace USDA_ARS.LocationsWebApp
 
             // ADD CAROUSEL SLIDES
             ApiArchetype carouselSlide = new ApiArchetype();
-            
+
             carouselSlide.Fieldsets = new List<Fieldset>();
 
             // Here is where you would loop through each Carousel Slide Link
@@ -360,7 +360,7 @@ namespace USDA_ARS.LocationsWebApp
                 Link linkSlide = new Link("/research/", "/research/", ""); // set the url path
                 fieldsetCar.Properties.Add(new Property("slideUrl", "[" + JsonConvert.SerializeObject(linkSlide, Newtonsoft.Json.Formatting.None, jsonSettings) + "]"));
 
-                fieldsetCar.Properties.Add(new Property("slideFile", "")); // set the slide file to empty
+                fieldsetCar.Properties.Add(new Property("slideFile", "")); // set the slide alt text
             }
             carouselSlide.Fieldsets.Add(fieldsetCar);
 
@@ -390,7 +390,7 @@ namespace USDA_ARS.LocationsWebApp
             fieldset.Properties.Add(new Property("label", "Bee Health")); // set the label name
 
             Link link = new Link("http://planthardiness.ars.usda.gov/PHZMWeb/", "http://planthardiness.ars.usda.gov/PHZMWeb/", ""); // set the url path
-            fieldset.Properties.Add(new Property("link", "[" + JsonConvert.SerializeObject(link, Newtonsoft.Json.Formatting.None, jsonSettings) + "]")); 
+            fieldset.Properties.Add(new Property("link", "[" + JsonConvert.SerializeObject(link, Newtonsoft.Json.Formatting.None, jsonSettings) + "]"));
 
             popularTopics.Fieldsets.Add(fieldset);
 
@@ -618,7 +618,7 @@ namespace USDA_ARS.LocationsWebApp
             newStream.Write(bytes, 0, bytes.Length);
             newStream.Close();
 
-                var httpApiResponse = http.GetResponse();
+            var httpApiResponse = http.GetResponse();
 
             var stream = httpApiResponse.GetResponseStream();
             var sr = new StreamReader(stream);
@@ -631,7 +631,7 @@ namespace USDA_ARS.LocationsWebApp
 
 
 
-      
+
         protected void btnAddMultipleAreas_Click(object sender, EventArgs e)
         {
             // Clean output message
@@ -639,32 +639,32 @@ namespace USDA_ARS.LocationsWebApp
             //1.connection string
             string ConnectionString = AddRetrieveLocationsDL.LocationConnectionString;
             //2.all locations -=retrieval from old db and inserting into new db using umbraco
-                    
-                    ////2.1 all areas---retrieval and insertion
-            
-            System.Data.DataTable newAreasAfterInsertion = new System.Data.DataTable();            
-            newAreasAfterInsertion = AddAllAreas();            
-            
-            
 
-         
+            ////2.1 all areas---retrieval and insertion
+
+            System.Data.DataTable newAreasAfterInsertion = new System.Data.DataTable();
+            newAreasAfterInsertion = AddAllAreas();
+
+
+
+
             ////2.2 all cities---retrieval and insertion
             System.Data.DataTable newCitiesAfterInsertion = new System.Data.DataTable();
             newCitiesAfterInsertion = AddAllCities(newAreasAfterInsertion);
-            
-                    ////2.3 all RCs---retrieval and insertion
-            System.Data.DataTable newResearchUnitsAfterInsertion = new System.Data.DataTable();
-           newResearchUnitsAfterInsertion = AddAllResearchUnits(newCitiesAfterInsertion);
 
-                    ////2.4 all Labs---retrieval and insertion
+            ////2.3 all RCs---retrieval and insertion
+            System.Data.DataTable newResearchUnitsAfterInsertion = new System.Data.DataTable();
+            newResearchUnitsAfterInsertion = AddAllResearchUnits(newCitiesAfterInsertion);
+
+            ////2.4 all Labs---retrieval and insertion
             System.Data.DataTable newLabsAfterInsertion = new System.Data.DataTable();
-           newLabsAfterInsertion = AddAllLabs(newResearchUnitsAfterInsertion);
+            newLabsAfterInsertion = AddAllLabs(newResearchUnitsAfterInsertion);
 
         }
         protected DataTable AddAllAreas()
 
         {
-            
+
             ApiRequest request = new ApiRequest();
             ApiContent content = new ApiContent();
 
@@ -683,11 +683,14 @@ namespace USDA_ARS.LocationsWebApp
             legacyAreasBeforeInsertion = CompareTwoDataTables(legacyAreasBeforeInsertion, legacyQuickLinksBeforeInsertion);
             legacyWebTrendsBeforeInsertion = AddRetrieveLocationsDL.GetAllAreasWebTrendsProfileIDs();
             legacyAreasBeforeInsertion = CompareTwoDataTables(legacyAreasBeforeInsertion, legacyWebTrendsBeforeInsertion);
+            System.Data.DataTable legacyCarouselSlidesBeforeInsertion = new System.Data.DataTable();
+            System.Data.DataTable legacySoftwaresBeforeInsertion = new System.Data.DataTable();
+
             for (int i = 0; i < legacyAreasBeforeInsertion.Rows.Count; i++)
             {
                 string completeModeCode = legacyAreasBeforeInsertion.Rows[i].Field<string>(0);
-                string areaName = legacyAreasBeforeInsertion.Rows[i].Field<string>(1);               
-                string quickLinks= legacyAreasBeforeInsertion.Rows[i].Field<string>(2);
+                string areaName = legacyAreasBeforeInsertion.Rows[i].Field<string>(1);
+                string quickLinks = legacyAreasBeforeInsertion.Rows[i].Field<string>(2);
                 string webtrendsProfileID = legacyAreasBeforeInsertion.Rows[i].Field<string>(3);
                 if (completeModeCode.Length < 11)
                     completeModeCode = "0" + completeModeCode;
@@ -709,7 +712,118 @@ namespace USDA_ARS.LocationsWebApp
                 properties.Add(new ApiProperty("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
                 properties.Add(new ApiProperty("quickLinks", quickLinks));
                 properties.Add(new ApiProperty("webtrendsProfileID", webtrendsProfileID));
+                legacyCarouselSlidesBeforeInsertion = AddRetrieveLocationsDL.GetAllCarouselSlidesBasedOnModeCode(completeModeCode);
+                var jsonSettings = new JsonSerializerSettings();
+                jsonSettings.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
 
+                // USED FOR ALL ARCHETYPE DATA TYPES
+
+
+                // ADD CAROUSEL
+                ApiArchetype carouselSlide = new ApiArchetype();
+
+                carouselSlide.Fieldsets = new List<Fieldset>();
+                string slideJson;
+
+
+                for (int legacyCarouselSlidesRowId = 0; legacyCarouselSlidesRowId < legacyCarouselSlidesBeforeInsertion.Rows.Count; legacyCarouselSlidesRowId++)
+                {
+
+                    Fieldset fieldsetCar = new Fieldset();
+                    // Here is where you would loop through each Carousel Slide Link
+                    // LOOP START
+                    string slideName = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(5);
+                    string slideText = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(4);
+                    string slideAltText = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(3);
+                    string slideURL = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(2);
+                    string slideImage = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(1);
+                    string slideImageSP2 = "/SP2UserFiles/Place/" + "" + completeModeCode.Replace("-", "") + "/images/PhotoCarousel/" + slideImage;
+                    string slideFilePath = null;
+                    if (slideURL.Contains("/SP2UserFiles/Place/"))
+                    {
+                        slideFilePath = slideImageSP2; // If a slide links to a file instead of a page, set it here.
+                    }
+
+
+
+
+                    fieldsetCar.Alias = "slide";
+                    fieldsetCar.Disabled = false;
+                    fieldsetCar.Id = new Guid();
+                    fieldsetCar.Properties = new List<Property>();
+                    fieldsetCar.Properties.Add(new Property("slideName", slideName)); // set the slide name
+                    fieldsetCar.Properties.Add(new Property("slideImage", slideImageSP2)); // set the slide image path
+                    fieldsetCar.Properties.Add(new Property("slideText", "<p>" + slideText + "</p>")); // set the slide html text
+                    fieldsetCar.Properties.Add(new Property("slideAltText", slideAltText)); // set the slide alt text
+
+                    // if slide file path is not empty, set it
+                    if (false == string.IsNullOrEmpty(slideFilePath))
+                    {
+                        fieldsetCar.Properties.Add(new Property("slideFile", slideFilePath)); // set the slide file path
+                        fieldsetCar.Properties.Add(new Property("slideUrl", "")); // set the slide url to empty
+                    }
+                    else // Set the URL instead.
+                    {
+                        if (slideURL.Contains("ars.usda.gov"))
+                        {
+                            Link linkSlide = new Link("/research/", "/research/", slideURL); // set the url path
+                            fieldsetCar.Properties.Add(new Property("link", "[" + JsonConvert.SerializeObject(linkSlide, Newtonsoft.Json.Formatting.None, jsonSettings) + "]"));
+                        }
+                        else { fieldsetCar.Properties.Add(new Property("slideUrl", "")); }
+                        fieldsetCar.Properties.Add(new Property("slideFile", "")); // set the slide alt text
+                    }
+                    carouselSlide.Fieldsets.Add(fieldsetCar);
+                    // Last, we set the ApiProperty for "carouselSlide"
+                    slideJson = JsonConvert.SerializeObject(carouselSlide, Newtonsoft.Json.Formatting.None, jsonSettings);
+                    properties.Add(new ApiProperty("carouselSlides", slideJson));
+                    // LOOP END
+                }
+
+                ////softwares
+                //legacySoftwaresBeforeInsertion = AddRetrieveLocationsDL.GetAllSoftwaresBasedOnModeCode(completeModeCode);
+                //var jsonSettingsForSoftware = new JsonSerializerSettings();
+                //jsonSettingsForSoftware.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
+
+                //// USED FOR ALL ARCHETYPE DATA TYPES
+
+
+                //// ADD software
+                //ApiArchetype software = new ApiArchetype();
+
+                //software.Fieldsets = new List<Fieldset>();
+                //string softwareJson;
+
+
+                //for (int legacySoftwaresRowId = 0; legacySoftwaresRowId < legacySoftwaresBeforeInsertion.Rows.Count; legacySoftwaresRowId++)
+                //{
+
+                //    Fieldset fieldsetSoftware = new Fieldset();
+                //    // Here is where you would loop through each Carousel Slide Link
+                //    // LOOP START
+                //    string title = legacyCarouselSlidesBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(1);
+                //    string recipients = legacyCarouselSlidesBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(2);
+                //    string shortBlurb = legacyCarouselSlidesBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(11);
+                //    string info = legacyCarouselSlidesBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(6);
+
+
+
+
+                //    fieldsetSoftware.Alias = "software";
+                //    fieldsetSoftware.Disabled = false;
+                //    fieldsetSoftware.Id = new Guid();
+                //    fieldsetSoftware.Properties = new List<Property>();
+                //    fieldsetSoftware.Properties.Add(new Property("title", info)); // set the slide name
+                //    fieldsetSoftware.Properties.Add(new Property("recipients", info)); // set the slide image path
+                //    fieldsetSoftware.Properties.Add(new Property("shortBlurb", shortBlurb)); // set the slide html text
+                //    fieldsetSoftware.Properties.Add(new Property("info", info)); // set the slide alt text
+
+
+                //    carouselSlide.Fieldsets.Add(fieldsetSoftware);
+                //    // Last, we set the ApiProperty for "carouselSlide"
+                //    softwareJson = JsonConvert.SerializeObject(carouselSlide, Newtonsoft.Json.Formatting.None, jsonSettings);
+                //    properties.Add(new ApiProperty("software", softwareJson));
+                //    // LOOP END
+                //}
 
                 content.Properties = properties;
                 content.Save = 2; // 0=Unpublish (update only), 1=Saved, 2=Save And Publish
@@ -766,12 +880,12 @@ namespace USDA_ARS.LocationsWebApp
             newCitiesAfterInsertion.Columns.Add("Name");
             newCitiesAfterInsertion.Columns.Add("ModeCode");
             newCitiesAfterInsertion.Columns.Add("StateCode");
-            
+
 
             ////3.all cities--retrieval of new areas umbraco ids,retrieval of old cities based on those modecodes,insertion of new cities
 
             System.Data.DataTable legacyCitiesBeforeInsertion = new System.Data.DataTable();
-           
+
 
             for (int i = 0; i < newAreasAfterInsertion.Rows.Count; i++)
             {
@@ -783,10 +897,10 @@ namespace USDA_ARS.LocationsWebApp
                 legacyCitiesBeforeInsertion = AddRetrieveLocationsDL.GetAllCities(Convert.ToInt32(parentAreaModeCode.Substring(0, 2)));
                 for (int j = 0; j < legacyCitiesBeforeInsertion.Rows.Count; j++)
                 {
-                   
+
                     string cityNameWithStateName = legacyCitiesBeforeInsertion.Rows[j].Field<string>(2);
                     string stateCode = legacyCitiesBeforeInsertion.Rows[j].Field<string>(3);
-                    string cityNameWithStateCode = cityNameWithStateName.Split(',')[0]+'-'+ stateCode;
+                    string cityNameWithStateCode = cityNameWithStateName.Split(',')[0] + '-' + stateCode;
                     string cityNameWithStateCodeWithComma = cityNameWithStateName.Split(',')[0].ToUpper() + ", " + stateCode;
 
 
@@ -875,10 +989,10 @@ namespace USDA_ARS.LocationsWebApp
 
             ////3.all cities--retrieval of new areas umbraco ids,retrieval of old cities based on those modecodes,insertion of new cities
 
-            System.Data.DataTable legacyResearchUnitsBeforeInsertion = new System.Data.DataTable();            
+            System.Data.DataTable legacyResearchUnitsBeforeInsertion = new System.Data.DataTable();
             System.Data.DataTable legacyQuickLinksBeforeInsertion = new System.Data.DataTable();
             System.Data.DataTable legacyWebTrendsBeforeInsertion = new System.Data.DataTable();
-
+            System.Data.DataTable legacyCarouselSlidesBeforeInsertion = new System.Data.DataTable();
             for (int i = 0; i < newCitiesAfterInsertion.Rows.Count; i++)
             {
 
@@ -917,6 +1031,81 @@ namespace USDA_ARS.LocationsWebApp
                     properties.Add(new ApiProperty("oldId", "")); // sitepublisher ID (So we can reference it later if needed).
                     properties.Add(new ApiProperty("quickLinks", quickLinks));                                  //properties.Add(new ApiProperty("state", legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Substring(0,legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Length -2))); // For example: NY (2 letter state code)
                     properties.Add(new ApiProperty("webtrendsProfileID", webtrendsProfileID));
+                    legacyCarouselSlidesBeforeInsertion = AddRetrieveLocationsDL.GetAllCarouselSlidesBasedOnModeCode(newModeCodeProperty);
+                    var jsonSettings = new JsonSerializerSettings();
+                    jsonSettings.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
+
+                    // USED FOR ALL ARCHETYPE DATA TYPES
+
+
+                    // ADD CAROUSEL
+                    ApiArchetype carouselSlide = new ApiArchetype();
+
+                    carouselSlide.Fieldsets = new List<Fieldset>();
+                    string slideJson;
+
+
+                    for (int legacyCarouselSlidesRowId = 0; legacyCarouselSlidesRowId < legacyCarouselSlidesBeforeInsertion.Rows.Count; legacyCarouselSlidesRowId++)
+                    {
+
+                        Fieldset fieldsetCar = new Fieldset();
+                        // Here is where you would loop through each Carousel Slide Link
+                        // LOOP START
+                        string slideName = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(5);
+                        string slideText = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(4);
+                        string slideAltText = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(3);
+                        string slideURL = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(2);
+                        string slideImage = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(1);
+                        string slideImageSP2 = "/SP2UserFiles/Place/" + "" + newModeCodeProperty.Replace("-", "") + "/images/PhotoCarousel/" + slideImage;
+                        string slideFilePath = null;
+                        if (slideURL.Contains("/SP2UserFiles/Place/"))
+                        {
+                            slideFilePath = slideImageSP2; // If a slide links to a file instead of a page, set it here.
+                        }
+
+
+
+
+                        fieldsetCar.Alias = "slide";
+                        fieldsetCar.Disabled = false;
+                        fieldsetCar.Id = new Guid();
+                        fieldsetCar.Properties = new List<Property>();
+                        fieldsetCar.Properties.Add(new Property("slideName", slideName)); // set the slide name
+                        fieldsetCar.Properties.Add(new Property("slideImage", slideImageSP2)); // set the slide image path
+                        fieldsetCar.Properties.Add(new Property("slideText", "<p>" + slideText + "</p>")); // set the slide html text
+                        fieldsetCar.Properties.Add(new Property("slideAltText", slideAltText)); // set the slide alt text
+
+                        // if slide file path is not empty, set it
+                        if (false == string.IsNullOrEmpty(slideFilePath))
+                        {
+                            fieldsetCar.Properties.Add(new Property("slideFile", slideFilePath)); // set the slide file path
+                            fieldsetCar.Properties.Add(new Property("slideUrl", "")); // set the slide url to empty
+                        }
+                        else // Set the URL instead.
+                        {
+                            if (slideURL.Contains("ars.usda.gov"))
+                            {
+                                Link linkSlide = new Link("/research/", "/research/", slideURL); // set the url path
+                                fieldsetCar.Properties.Add(new Property("link", "[" + JsonConvert.SerializeObject(linkSlide, Newtonsoft.Json.Formatting.None, jsonSettings) + "]"));
+                            }
+                            else { fieldsetCar.Properties.Add(new Property("slideUrl", "")); }
+                            fieldsetCar.Properties.Add(new Property("slideFile", "")); // set the slide alt text
+                        }
+                        carouselSlide.Fieldsets.Add(fieldsetCar);
+                        // Last, we set the ApiProperty for "carouselSlide"
+                        slideJson = JsonConvert.SerializeObject(carouselSlide, Newtonsoft.Json.Formatting.None, jsonSettings);
+                        properties.Add(new ApiProperty("carouselSlides", slideJson));
+                        // LOOP END
+                    }
+
+
+
+
+
+
+
+
+
                     content.Properties = properties;
 
                     content.Save = 2; // 1=Saved, 2=Save And Publish
@@ -936,7 +1125,7 @@ namespace USDA_ARS.LocationsWebApp
                             {
                                 output.Text += "Content Umbraco Id: " + responseContent.Id + "<br />\r\n";
                                 output.Text += "Content Name: " + responseContent.Name + "<br />\r\n";
-                                newResearchUnitsAfterInsertion.Rows.Add(responseContent.Id, responseContent.Name, responseContent.Properties[0].Value, responseContent.Properties[3].Value,responseContent.Properties[4].Value);
+                                newResearchUnitsAfterInsertion.Rows.Add(responseContent.Id, responseContent.Name, responseContent.Properties[0].Value, responseContent.Properties[3].Value, responseContent.Properties[4].Value);
                             }
                             else
                             {
@@ -953,7 +1142,7 @@ namespace USDA_ARS.LocationsWebApp
 
 
 
-                return newResearchUnitsAfterInsertion;
+            return newResearchUnitsAfterInsertion;
         }
         protected DataTable AddAllLabs(DataTable newResearchUnitsAfterInsertion)
 
@@ -973,12 +1162,12 @@ namespace USDA_ARS.LocationsWebApp
             ////3.all cities--retrieval of new areas umbraco ids,retrieval of old cities based on those modecodes,insertion of new cities
 
             System.Data.DataTable legacyLabsBeforeInsertion = new System.Data.DataTable();
-           
 
-           
+
+
             System.Data.DataTable legacyQuickLinksBeforeInsertion = new System.Data.DataTable();
             System.Data.DataTable legacyWebTrendsBeforeInsertion = new System.Data.DataTable();
-
+            System.Data.DataTable legacyCarouselSlidesBeforeInsertion = new System.Data.DataTable();
             for (int i = 0; i < newResearchUnitsAfterInsertion.Rows.Count; i++)
             {
 
@@ -1016,6 +1205,80 @@ namespace USDA_ARS.LocationsWebApp
                     properties.Add(new ApiProperty("oldId", "")); // sitepublisher ID (So we can reference it later if needed).
                     properties.Add(new ApiProperty("quickLinks", quickLinks));                                              //properties.Add(new ApiProperty("state", legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Substring(0,legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Length -2))); // For example: NY (2 letter state code)
                     properties.Add(new ApiProperty("webtrendsProfileID", webtrendsProfileID));
+                    legacyCarouselSlidesBeforeInsertion = AddRetrieveLocationsDL.GetAllCarouselSlidesBasedOnModeCode(newModeCodeProperty);
+                    var jsonSettings = new JsonSerializerSettings();
+                    jsonSettings.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
+
+                    // USED FOR ALL ARCHETYPE DATA TYPES
+
+
+                    // ADD CAROUSEL
+                    ApiArchetype carouselSlide = new ApiArchetype();
+
+                    carouselSlide.Fieldsets = new List<Fieldset>();
+                    string slideJson;
+
+                    for (int legacyCarouselSlidesRowId = 0; legacyCarouselSlidesRowId < legacyCarouselSlidesBeforeInsertion.Rows.Count; legacyCarouselSlidesRowId++)
+                    {
+
+                        Fieldset fieldsetCar = new Fieldset();
+                        // Here is where you would loop through each Carousel Slide Link
+                        // LOOP START
+                        string slideName = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(5);
+                        string slideText = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(4);
+                        string slideAltText = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(3);
+                        string slideURL = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(2);
+                        string slideImage = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(1);
+                        string slideImageSP2 = "/SP2UserFiles/Place/" + "" + newModeCodeProperty.Replace("-", "") + "/images/PhotoCarousel/" + slideImage;
+                        string slideFilePath = null;
+                        if (slideURL.Contains("/SP2UserFiles/Place/"))
+                        {
+                            slideFilePath = slideImageSP2; // If a slide links to a file instead of a page, set it here.
+                        }
+
+
+
+
+                        fieldsetCar.Alias = "slide";
+                        fieldsetCar.Disabled = false;
+                        fieldsetCar.Id = new Guid();
+                        fieldsetCar.Properties = new List<Property>();
+                        fieldsetCar.Properties.Add(new Property("slideName", slideName)); // set the slide name
+                        fieldsetCar.Properties.Add(new Property("slideImage", slideImageSP2)); // set the slide image path
+                        fieldsetCar.Properties.Add(new Property("slideText", "<p>" + slideText + "</p>")); // set the slide html text
+                        fieldsetCar.Properties.Add(new Property("slideAltText", slideAltText)); // set the slide alt text
+
+                        // if slide file path is not empty, set it
+                        if (false == string.IsNullOrEmpty(slideFilePath))
+                        {
+                            fieldsetCar.Properties.Add(new Property("slideFile", slideFilePath)); // set the slide file path
+                            fieldsetCar.Properties.Add(new Property("slideUrl", "")); // set the slide url to empty
+                        }
+                        else // Set the URL instead.
+                        {
+                            if (slideURL.Contains("ars.usda.gov"))
+                            {
+                                Link linkSlide = new Link("/research/", "/research/", slideURL); // set the url path
+                                fieldsetCar.Properties.Add(new Property("link", "[" + JsonConvert.SerializeObject(linkSlide, Newtonsoft.Json.Formatting.None, jsonSettings) + "]"));
+                            }
+                            else { fieldsetCar.Properties.Add(new Property("slideUrl", "")); }
+                            fieldsetCar.Properties.Add(new Property("slideFile", "")); // set the slide alt text
+                        }
+                        carouselSlide.Fieldsets.Add(fieldsetCar);
+                        // Last, we set the ApiProperty for "carouselSlide"
+                        slideJson = JsonConvert.SerializeObject(carouselSlide, Newtonsoft.Json.Formatting.None, jsonSettings);
+                        properties.Add(new ApiProperty("carouselSlides", slideJson));
+                        // LOOP END
+                    }
+
+
+
+
+
+
+
+
+
 
                     content.Properties = properties;
 
@@ -1055,7 +1318,7 @@ namespace USDA_ARS.LocationsWebApp
 
             return newLabsAfterInsertion;
         }
-       // protected DataTable AddAllQuickLinks(DataTable newLocations) { }
+        // protected DataTable AddAllQuickLinks(DataTable newLocations) { }
         public static DataTable CompareTwoDataTables(DataTable dataTable1, DataTable dataTable2)
         {
 
@@ -1066,13 +1329,14 @@ namespace USDA_ARS.LocationsWebApp
             dataTable3.Merge(dataTable2, false, MissingSchemaAction.Add);
             dataTable3.AcceptChanges();
 
-           
+
 
             return dataTable3;
 
         }
+
     }
 
 
-    
+
 }
