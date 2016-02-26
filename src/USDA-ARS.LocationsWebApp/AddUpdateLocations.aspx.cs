@@ -327,7 +327,61 @@ namespace USDA_ARS.LocationsWebApp
             jsonSettings.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
 
 
+            //===================================================================
 
+            // ADD SOFTWARE
+            ApiArchetype softwareItem = new ApiArchetype();
+
+            softwareItem.Fieldsets = new List<Fieldset>();
+
+            // LOOP START
+            Fieldset fieldsetSoft = new Fieldset();
+
+            fieldsetSoft.Alias = "software";
+            fieldsetSoft.Disabled = false;
+            fieldsetSoft.Id = Guid.NewGuid();
+            fieldsetSoft.Properties = new List<Property>();
+            fieldsetSoft.Properties.Add(new Property("softwareID", "124")); // set the file package name
+            fieldsetSoft.Properties.Add(new Property("title", "Cotton Production Model")); // set the file package name
+            fieldsetSoft.Properties.Add(new Property("recipients", "john@gmail.com,kiran@gmail.com")); // set the recipients email addresses
+            fieldsetSoft.Properties.Add(new Property("shortBlurb", "<p>A new process-based cotton model, CPM, has been developed to...</p>")); // set the short blurb
+            fieldsetSoft.Properties.Add(new Property("information", "<p>Long information text here</p>")); // set the large text information
+
+            // Files
+            {
+                ApiArchetype softwareFilesList = new ApiArchetype();
+                softwareFilesList.Fieldsets = new List<Fieldset>();
+
+                // LOOP Through the list of files
+                {
+                    Fieldset fieldsetFiles = new Fieldset();
+
+                    fieldsetFiles.Alias = "softwareDownloads";
+                    fieldsetFiles.Disabled = false;
+                    fieldsetFiles.Id = Guid.NewGuid();
+                    fieldsetFiles.Properties = new List<Property>();
+                    fieldsetFiles.Properties.Add(new Property("file", "/SP2UserFiles/Place/20000000/software/Brio-Insight_en.zip")); // set the file path
+
+                    softwareFilesList.Fieldsets.Add(fieldsetFiles);
+
+                    string fileListJson = JsonConvert.SerializeObject(softwareFilesList, Newtonsoft.Json.Formatting.None, jsonSettings);
+                    fieldsetSoft.Properties.Add(new Property("fileDownloads", fileListJson)); // set the large text information
+                }
+                // LOOP END for files
+            }
+            //
+            softwareItem.Fieldsets.Add(fieldsetSoft);
+            // LOOP END
+
+
+            string filePackageJson = JsonConvert.SerializeObject(softwareItem, Newtonsoft.Json.Formatting.None, jsonSettings);
+            properties.Add(new ApiProperty("software", filePackageJson));
+
+
+            
+
+
+            //===================================================================
 
             // ADD CAROUSEL SLIDES
             ApiArchetype carouselSlide = new ApiArchetype();
@@ -372,7 +426,7 @@ namespace USDA_ARS.LocationsWebApp
 
 
 
-
+            //===================================================================
 
             // ADD POPULAR TOPICS
             ApiArchetype popularTopics = new ApiArchetype();
