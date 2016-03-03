@@ -1,0 +1,133 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+    List<StpCode> stpCodeList = null;
+    List<StpCode> stpCodeListLeft = null;
+    List<StpCode> stpCodeListRight = null;
+    List<UsdaPublication> publicationList = null;
+    string actionStpItem = null;
+
+    string stpCode = Request.QueryString["stpCode"];
+
+    if (true == string.IsNullOrWhiteSpace(stpCode))
+    {
+        stpCodeList = Publications.GetStpCodeList();
+
+        if (stpCodeList != null && stpCodeList.Count > 0)
+        {
+            int splitCount = stpCodeList.Count / 2;
+
+            stpCodeListLeft = stpCodeList.Take(splitCount).ToList();
+            stpCodeListRight = stpCodeList.Except(stpCodeListLeft).ToList();
+        }
+    }
+    else
+    {
+        stpCodeList = Publications.GetStpCodeList();
+
+        if (stpCodeList != null && stpCodeList.Count > 0)
+        {
+            StpCode activeStpCode = stpCodeList.Where(p => p.Code == stpCode).FirstOrDefault();
+
+            if (activeStpCode != null)
+            {
+                actionStpItem = activeStpCode.ShortDesc;
+            }
+
+        }
+
+    }
+
+}
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+
+        <table>
+
+            <tbody>
+                <tr>
+                    <td>
+                        @if (true == string.IsNullOrWhiteSpace(stpCode))
+                        {
+                            <b>Manuscripts by strategic topical areas</b>
+                        }
+                        else
+                        {
+                            <b>@actionStpItem</b>
+                        }
+
+                    </td>
+                </tr>
+
+
+                @if (true == string.IsNullOrWhiteSpace(stpCode) && stpCodeList != null && stpCodeList.Count > 0)
+                {
+                    <tr>
+                        @if (stpCodeListLeft != null && stpCodeListLeft.Count > 0)
+                        {
+                            <td valign="top">
+                                <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-1">
+                                    @foreach (StpCode stpItem in stpCodeListLeft)
+                    {
+                                        <a href="?stpCode=@(stpItem.Code)" id="anch_56">@(stpItem.ShortDesc)</a>
+                                        <br />
+                                    }
+                                </font>
+                            </td>
+                        }
+
+                        @if (stpCodeListRight != null && stpCodeListRight.Count > 0)
+                        {
+                            <td valign="top">
+                                <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-1">
+                                    @foreach (StpCode stpItem in stpCodeListRight)
+                                    {
+                                        <a href="?stpCode=@(stpItem.Code)" id="anch_56">@(stpItem.ShortDesc)</a>
+                                        <br />
+                                    }
+                                </font>
+                            </td>
+                        }
+                    </tr>
+                }
+
+                else if (publicationList != null && publicationList.Count > 0)
+                {
+                    foreach (UsdaPublication publicationItem in publicationList)
+                    {
+                        <tr>
+                            <td valign="top"><img src="/images/incme/bullet.gif" border="0" alt="item"></td>
+                            <td valign="top" align="left" background="/images/incme/spacer.gif">
+                                <font face="verdana,arial" size="-1">
+                                    <font size="-1">
+
+                                        <a href="/research/publications/publication.htm?seqNo115=@(publicationItem.SeqNo115)" id="anch_56">@(publicationItem.Title)</a>
+                                        <font size="-2">(@(publicationItem.JournalPublicationDate.ToString("MMM yyyy")))</font>
+                                    </font>
+                                </font>
+                            </td>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
+
+    </div>
+
+</div>

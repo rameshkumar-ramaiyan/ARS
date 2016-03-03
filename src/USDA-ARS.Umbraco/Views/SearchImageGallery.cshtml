@@ -1,0 +1,54 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+
+}
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        
+
+
+        <h1>
+            <font face="Arial, Helvetica, sans-serif">@(currentPage.Name)</font>
+        </h1>
+
+        <form name="searchform" method="get" action="http://search.usa.gov/search/docs">
+
+            <input type="hidden" name="affiliate" value="agriculturalresearchservicears">
+
+            <div>
+
+                <input type="hidden" name="dc" value="1218">	<!-- /is/graphics -->
+
+                <label for="searchString"><b>Enter search term(s):</b></label>
+                <br>
+                <input name="query" type="text" id="searchString" value="" size="30" maxlength="255">
+                <br>
+                <br>
+                <input type="submit" value="Search">
+
+                <br>
+                <br>
+                @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+                
+            </div>
+        </form>
+
+    </div>
+
+</div>

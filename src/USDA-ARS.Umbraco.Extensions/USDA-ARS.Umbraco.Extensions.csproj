@@ -329,9 +329,11 @@
     <Compile Include="Models\Aris\ProjectProgram.cs" />
     <Compile Include="Models\Aris\PeoplePublication.cs" />
     <Compile Include="Models\Aris\ProjectTeam.cs" />
+    <Compile Include="Models\Aris\PublicationType.cs" />
     <Compile Include="Models\Aris\SearchPublicationView.cs" />
     <Compile Include="Models\Aris\SearchPublication.cs" />
     <Compile Include="Models\Aris\JobSeries.cs" />
+    <Compile Include="Models\Aris\StpCode.cs" />
     <Compile Include="Models\Aris\UsdaPublication.cs" />
     <Compile Include="Models\Aris\UsdaPublicationSearch.cs" />
     <Compile Include="Models\BlogItem.cs" />
@@ -351,6 +353,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RegisterEvents.cs" />
     <Compile Include="Utilities\Strings.cs" />
+    <Compile Include="Utilities\UmbEventHandler.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\USDA-ARS.Core\USDA-ARS.Core.csproj">

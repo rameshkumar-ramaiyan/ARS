@@ -73,42 +73,55 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             var db = new Database("arisPublicWebDbDSN");
 
-            Sql sql = null;
-
-            string where = "";
-
+            string sql = @"SELECT	p.accn_no, 
+	                upper(substring(p.prj_title,1,1)) + lower(substring(p.prj_title, 
+	                2, 
+	                len(p.prj_title))) prj_title, 
+	                modecodes.web_label
+                FROM 		
+	                W_CLEAN_PROJECTS 		p,		
+	                v_locations MODECODES
+                WHERE 	
+	                (
+		                1=0 
+                    ";
             if (type == "all")
             {
-                where = "(PRJ_TITLE LIKE '%" + query.Replace("'", "''") + "%'";
-                where += " OR APPROACH LIKE '%" + query.Replace("'", "''") + "%'";
-                where += " OR OBJECTIVE LIKE '%" + query.Replace("'", "''") + "%'";
-                where += " OR ProjectNumber = '" + query.Replace("'", "''") + "')";
+                sql += " OR PRJ_TITLE LIKE '%'+ @query +'%'";
+                sql += " OR APPROACH LIKE '%'+ @query +'%'";
+                sql += " OR OBJECTIVE LIKE '%'+ @query +'%'";
+                sql += " OR ProjectNumber LIKE '%'+ @query +'%' OR accn_no LIKE '%'+ @query +'%'";
             }
             else if (type == "title")
             {
-                where = "PRJ_TITLE LIKE '%" + query.Replace("'", "''") + "%'";
+                sql += " OR PRJ_TITLE LIKE '%'+ @query +'%'";
             }
             else if (type == "approach")
             {
-                where = "APPROACH LIKE '%" + query.Replace("'", "''") + "%'";
+                sql += " OR APPROACH LIKE '%'+ @query +'%'";
             }
             else if (type == "objective")
             {
-                where = "OBJECTIVE LIKE '%" + query.Replace("'", "''") + "%'";
+                sql += " OR OBJECTIVE LIKE '%'+ @query +'%'";
             }
             else if (type == "project_number")
             {
-                where = "ProjectNumber = '" + query.Replace("'", "''") + "'";
+                sql += " OR ProjectNumber LIKE '%'+ @query +'%' OR accn_no LIKE '%'+ @query +'%'";
             }
 
-            //where += " AND status_code = 'a' AND prj_type = 'd'";
+            sql += @"				
+	            )
+			
+	            AND		(PRJ_TYPE <> 'J')
+            
+	            AND p.MODECODE_1 = modecodes.MODECODE_1
+	            AND p.MODECODE_2 = modecodes.MODECODE_2
+	            AND p.MODECODE_3 = modecodes.MODECODE_3
+	            AND p.MODECODE_4 = modecodes.MODECODE_4
+	            order by web_label";
 
-            sql = new Sql()
-             .Select("*")
-             .From("V_CLEAN_PROJECTS")
-             .Where(where);
 
-            projectList = db.Query<UsdaProject>(sql).ToList();
+            projectList = db.Query<UsdaProject>(sql, new { query = query }).ToList();
 
             if (projectList != null && projectList.Count > 0)
             {
@@ -510,6 +523,10 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
             {
                 return "General Cooperative Agreement";
             }
+            else if (code == "C")
+            {
+                return "Contract";
+            }
             else if (code == "D")
             {
                 return "Appropriated";
@@ -542,9 +559,13 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
             {
                 return "Trust";
             }
+            else if (code == "X")
+            {
+                return "Other";
+            }
             else
             {
-                return "";
+                return "Invalid Project Type";
             }
         }
 

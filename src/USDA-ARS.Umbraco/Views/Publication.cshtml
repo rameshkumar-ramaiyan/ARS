@@ -1,0 +1,138 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+    UsdaPublication publication = null;
+    List<PeopleInfo> peopleList = null;
+
+    string seqNo115 = Request.QueryString["seqNo115"];
+
+    if (false == string.IsNullOrWhiteSpace(seqNo115))
+    {
+        publication = Publications.GetPublicationById(Convert.ToInt32(seqNo115));
+
+        peopleList = People.GetPeopleByPublication(Convert.ToInt32(seqNo115));
+
+    }
+
+    if (publication == null)
+    {
+        Response.Redirect("/");
+    }
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        <font face="verdana,arial,helvetica" size="-1">
+            <strong>Title:</strong> @(publication.Title))
+
+        </font><p></p>
+
+
+        @if (peopleList != null && peopleList.Count > 0)
+        {
+            <font face="verdana,arial" size="-1" color="#000000"><b>  Author  </b></font><br><font face="verdana,arial" size="-1">
+                <div align="left">
+
+                    <table cellspacing="0" cellpadding="3">
+                        <tbody>
+                            @foreach (PeopleInfo person in peopleList)
+                            {
+                                <tr>
+                                    <td valign="top"><img src="/images/incme/bullet.gif" border="0" alt="item"></td>
+                                    <td valign="top" align="left" background="/images/incme/spacer.gif">
+                                        <font face="verdana,arial" size="-1">
+                                            <a href="/people-locations/person?person-id=@(person.PersonId)" id="anch_57">
+                                                @(person.LastName.ToUpper()), @(person.FirstName.ToUpper())
+                                                @Html.Raw(false == string.IsNullOrEmpty(person.CommonName) ? " <em>" + person.CommonName + "</em>" : "")
+                                            </a>
+                                        </font>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+
+                </div>
+            </font>
+            <p></p>
+        }
+
+        <table width="100%" border="0" cellspacing="2" cellpadding="0">
+            <tbody>
+                <tr>
+                    <td valign="top">
+
+                        <div align="left">
+
+                            <font size="2">
+
+                                <script>
+	<!--
+ 	function showinfo(){
+
+	window.open('_pubinfo.js', 'pubinfo', 'height=150,width=150')
+	pubinfo.document.write('<h1>hi</h1>');
+	}
+	// -->
+                                </script>
+
+
+                                <b>Submitted to:</b> @(publication.Journal)
+                                <br>
+
+
+                                <b>Publication Type:</b> @(Publications.PublicationType(publication.PubTypeCode))
+                                <br>
+                                <b>Publication Acceptance Date:</b> @(publication.JournalAcceptDate.ToShortDateString())
+                                <br>
+                                <b>Publication  Date:</b> @(publication.JournalPublicationDate > DateTime.Parse("1/1/2000") ? publication.JournalPublicationDate.ToShortDateString() : "N/A")
+                                <br>
+                                <!--Removed abstract only flag 03-02-06 when pub_type_code was added to display  -->
+                                <!-- -->
+                                <!-- Reprint URL field added to ARIS June 1, 2006, file modified June 6, 2006 -->
+                                <!-- June 6, 2006: To capture good data stored in the publisher's url field that links to a reprint uploaded in SP, the following clause is inserted to display that information as the 'reprint url' -->
+                                <!-- Edited Aug. 15, 2007 JCP to increase manuscript title comparison from 50 to 60 characters -->
+
+                                <b>Citation:</b> @(publication.Citation)
+                                <p></p>
+
+
+                                <b>Interpretive Summary:</b> @(publication.Summary)
+                                <p>
+
+
+
+                                    <b>Technical Abstract:</b>
+
+                                    @(publication.Abstract)
+
+                                </p>
+                            </font><p>
+                                <font size="2">
+
+                                </font>
+                            </p>
+                        </div>
+
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+</div>

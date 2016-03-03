@@ -38,6 +38,9 @@ namespace USDA_ARS.Umbraco.Extensions.Models.Aris
         [NullSetting(NullSetting = NullSettings.Null)]
         public string PubTypeCode { get; set; }
 
+        [Column("JOURNAL_PUB_DATE")]
+        public DateTime JournalPublicationDate { get; set; }
+
         [Column("JOURNAL_ACCPT_DATE")]
         public DateTime JournalAcceptDate { get; set; }
 

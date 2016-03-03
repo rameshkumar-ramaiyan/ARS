@@ -129,34 +129,37 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
             publicationListView.Count = 0;
 
             var db = new Database("arisPublicWebDbDSN");
-            string where = null;
-            Sql sql = null;
 
-            query = query.Replace(";", "").Replace("'", "''");
+            string sql = @"select g.seq_no_115 as [key], MANUSCRIPT_TITLE as [title], abstract
+				            from GEN_a115_authors_w_Names g, dbo.V_TEKTRAN_115S v ";
 
             if (type == "all")
             {
-                where = "authors + '  ' +  title  + '  ' +  abstract like '%" + query + "%'";
-            }
-            else if (type == "author")
-            {
-                where = "authors like '%" + query + "%'";
+                sql += @"WHERE
+                                (
+                                    authors LIKE '%'+ @query +'%' OR
+                                    manuscript_title LIKE '%'+ @query +'%' OR
+                                    abstract LIKE '%'+ @query +'%'
+								)
+				            and g.seq_no_115 = v.seq_no_115";
             }
             else if (type == "title")
             {
-                where = "title like '%" + query + "%'";
+                sql += @"where g.seq_no_115 = v.seq_no_115
+                            and Manuscript_title like '%'+ @query +'%'";
+            }
+            else if (type == "author")
+            {
+                sql += @"where authors like '%'+ @query +'%'
+                            and g.seq_no_115 = v.seq_no_115";
             }
             else if (type == "abstract")
             {
-                where = "abstract like '%" + query + "%'";
+                sql += @"where g.seq_no_115 = v.seq_no_115
+				            and abstract like '%'+ @query +'%'";
             }
 
-            sql = new Sql()
-                 .Select("*")
-                 .From("V_PUBLICATION_SEARCH")
-                 .Where(where);
-
-            publicationList = db.Query<SearchPublication>(sql).ToList();
+            publicationList = db.Query<SearchPublication>(sql, new { query = query }).ToList();
 
             if (publicationList != null && publicationList.Count > 0)
             {
@@ -335,6 +338,32 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
         }
 
 
+        public static UsdaPublication GetPublicationById(int seqNo115)
+        {
+            UsdaPublication publication = null;
+
+            var db = new Database("arisPublicWebDbDSN");
+
+            string sql = @"SELECT 	*,
+                        (	
+	                        SELECT 	TOP 1 SUBSTRING(text_data, 1, 8000) 
+	                        FROM	v_AH115_text t 
+	                        WHERE 	t.seq_no_115 = a.seq_no_115 
+	                        AND 	text_type = 'a'
+                        ) AS Abstract2, J.NAME AS Journal
+					
+                        FROM 	gen_public_115s a, 
+	                        REF_JOURNAL_OR_EQUIVALENT J
+                        WHERE 	J.JOURNAL_OR_EQUIV_CODE = a.JOURNAL_CODE
+	                        AND SEQ_NO_115 = @seqNo115";
+
+            publication = db.Query<UsdaPublication>(sql, new { seqNo115 = seqNo115 }).FirstOrDefault();
+
+            return publication;
+        }
+
+
+
         public static List<PeoplePublication> PublicationsByPerson(int personId)
         {
             List<PeoplePublication> peoplePublicationsList = null;
@@ -350,7 +379,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                 sql = new Sql()
                  .Select("*")
                  .From("V_PERSON_115S")
-                 .Where("EMP_ID = '"+ peopleInfo.EmpId +"'");
+                 .Where("EMP_ID = '" + peopleInfo.EmpId + "'");
 
                 peoplePublicationsList = db.Query<PeoplePublication>(sql).ToList();
             }
@@ -402,23 +431,56 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
         }
 
 
+        public static List<StpCode> GetStpCodeList()
+        {
+            List<StpCode> stpCodeList = null;
+
+            var db = new Database("arisPublicWebDbDSN");
+
+            string sql = @"SELECT	cast(STP_OBJ_CODE as varchar(2)) + '' + 
+				                    cast(STP_APP_CODE as varchar(2)) + '' + 
+				                    cast(STP_ELE_CODE as varchar(2)) + '' + 
+				                    cast(STP_PROB_CODE as varchar(2)) as stp_code,  
+				                    SHORT_DESC
+		                    FROM 	[ARIS_PUBLIC_WEB].[dbo].[REF_STP]
+		                    where	cast(STP_OBJ_CODE as varchar(2)) + '' + 
+				                    cast(STP_APP_CODE as varchar(2)) + '' + 
+				                    cast(STP_ELE_CODE as varchar(2)) + '' + 
+				                    cast(STP_PROB_CODE as varchar(2))
+				                    in (	
+                                        select 	distinct stp_code
+		                                    from 	v_115_stp_codes	c, 
+				                                    gen_public_115s p
+		                                    where 	c.seq_no_115 = p.seq_no_115
+		                                    and 	p.journal_pub_date is not null
+					                    )
+		                    order by short_desc";
+
+            stpCodeList = db.Query<StpCode>(sql).ToList();
+
+            return stpCodeList;
+        }
+
+
         public static string PublicationType(string pubCode)
         {
-            if (pubCode == "A")
+            PublicationType pubType = null;
+
+            var db = new Database("arisPublicWebDbDSN");
+
+            string sql = @"SELECT	pub_type_code, description
+			                FROM ref_115_pub
+                            WHERE pub_type_code = @pubCode";
+
+            pubType = db.Query<PublicationType>(sql, new { pubCode = pubCode }).FirstOrDefault();
+
+            if (pubType != null)
             {
-                return "Abstract Only";
-            }
-            else if (pubCode == "J")
-            {
-                return "Peer Reviewed Journal";
-            }
-            else if (pubCode == "P")
-            {
-                return "Proceedings";
+                return Utilities.Strings.UppercaseFirst(pubType.Description.ToLower());
             }
             else
             {
-                return "";
+                return "Unknown";
             }
         }
 
