@@ -378,7 +378,7 @@ namespace USDA_ARS.LocationsWebApp
             properties.Add(new ApiProperty("software", filePackageJson));
 
 
-            
+
 
 
             //===================================================================
@@ -704,7 +704,7 @@ namespace USDA_ARS.LocationsWebApp
 
             ////2.2 all cities---retrieval and insertion
             System.Data.DataTable newCitiesAfterInsertion = new System.Data.DataTable();
-           newCitiesAfterInsertion = AddAllCities(newAreasAfterInsertion);
+            newCitiesAfterInsertion = AddAllCities(newAreasAfterInsertion);
 
             ////2.3 all RCs---retrieval and insertion
             System.Data.DataTable newResearchUnitsAfterInsertion = new System.Data.DataTable();
@@ -712,7 +712,7 @@ namespace USDA_ARS.LocationsWebApp
 
             ////2.4 all Labs---retrieval and insertion
             System.Data.DataTable newLabsAfterInsertion = new System.Data.DataTable();
-          newLabsAfterInsertion = AddAllLabs(newResearchUnitsAfterInsertion);
+            newLabsAfterInsertion = AddAllLabs(newResearchUnitsAfterInsertion);
 
         }
         protected DataTable AddAllAreas()
@@ -839,7 +839,7 @@ namespace USDA_ARS.LocationsWebApp
                 ////softwares
                 legacySoftwaresBeforeInsertion = AddRetrieveLocationsDL.GetAllSoftwaresBasedOnModeCode(completeModeCode);
 
-               
+
 
                 var jsonSettingsForSoftware = new JsonSerializerSettings();
                 jsonSettingsForSoftware.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
@@ -849,9 +849,9 @@ namespace USDA_ARS.LocationsWebApp
 
                 // ADD software
                 ApiArchetype softwareItem = new ApiArchetype();
-                
+
                 softwareItem.Fieldsets = new List<Fieldset>();
-                
+
                 string filePackageJson;
 
 
@@ -866,8 +866,8 @@ namespace USDA_ARS.LocationsWebApp
                     string recipients = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(3);
                     string shortBlurb = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(4);
                     string info = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(5);
-                   
-                    
+
+
 
 
                     fieldsetSoftware.Alias = "software";
@@ -883,7 +883,7 @@ namespace USDA_ARS.LocationsWebApp
                     string filePathSP2 = "/SP2UserFiles/Place/" + "" + completeModeCode.Replace("-", "") + "/software/Brio-Insight_en.zip";
                     {
                         ApiArchetype softwareFilesList = new ApiArchetype();
-                        
+
                         softwareFilesList.Fieldsets = new List<Fieldset>();
                         //get files from software id folder
 
@@ -1080,6 +1080,7 @@ namespace USDA_ARS.LocationsWebApp
             System.Data.DataTable legacyQuickLinksBeforeInsertion = new System.Data.DataTable();
             System.Data.DataTable legacyWebTrendsBeforeInsertion = new System.Data.DataTable();
             System.Data.DataTable legacyCarouselSlidesBeforeInsertion = new System.Data.DataTable();
+            System.Data.DataTable legacySoftwaresBeforeInsertion = new System.Data.DataTable();
             for (int i = 0; i < newCitiesAfterInsertion.Rows.Count; i++)
             {
 
@@ -1185,7 +1186,81 @@ namespace USDA_ARS.LocationsWebApp
                         // LOOP END
                     }
 
+                    ////softwares
+                    legacySoftwaresBeforeInsertion = AddRetrieveLocationsDL.GetAllSoftwaresBasedOnModeCode(newModeCodeProperty);
 
+
+
+                    var jsonSettingsForSoftware = new JsonSerializerSettings();
+                    jsonSettingsForSoftware.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
+
+                    // USED FOR ALL ARCHETYPE DATA TYPES
+
+
+                    // ADD software
+                    ApiArchetype softwareItem = new ApiArchetype();
+
+                    softwareItem.Fieldsets = new List<Fieldset>();
+
+                    string filePackageJson;
+
+
+                    for (int legacySoftwaresRowId = 0; legacySoftwaresRowId < legacySoftwaresBeforeInsertion.Rows.Count; legacySoftwaresRowId++)
+                    {
+
+                        Fieldset fieldsetSoftware = new Fieldset();
+                        // Here is where you would loop through each Carousel Slide Link
+                        // LOOP START
+                        string softwareID = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<int>(1).ToString();
+                        string title = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(2);
+                        string recipients = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(3);
+                        string shortBlurb = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(4);
+                        string info = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(5);
+
+
+
+
+                        fieldsetSoftware.Alias = "software";
+                        fieldsetSoftware.Disabled = false;
+                        fieldsetSoftware.Id = new Guid();
+                        fieldsetSoftware.Properties = new List<Property>();
+                        fieldsetSoftware.Properties.Add(new Property("softwareID", softwareID)); // set the file package name
+                        fieldsetSoftware.Properties.Add(new Property("title", title)); // set the title
+                        fieldsetSoftware.Properties.Add(new Property("recipients", info)); // set the recipients email addresses
+                        fieldsetSoftware.Properties.Add(new Property("shortBlurb", shortBlurb)); // set the short blurb
+                        fieldsetSoftware.Properties.Add(new Property("info", info)); // set the large text information
+                                                                                     // Files
+                        string filePathSP2 = "/SP2UserFiles/Place/" + "" + newModeCodeProperty.Replace("-", "") + "/software/Brio-Insight_en.zip";
+                        {
+                            ApiArchetype softwareFilesList = new ApiArchetype();
+
+                            softwareFilesList.Fieldsets = new List<Fieldset>();
+                            //get files from software id folder
+
+                            // LOOP Through the list of files
+                            {
+                                Fieldset fieldsetFiles = new Fieldset();
+
+                                fieldsetFiles.Alias = "softwareDownloads";
+                                fieldsetFiles.Disabled = false;
+                                fieldsetFiles.Id = Guid.NewGuid();
+                                fieldsetFiles.Properties = new List<Property>();
+                                fieldsetFiles.Properties.Add(new Property("file", filePathSP2)); // set the file path
+
+                                softwareFilesList.Fieldsets.Add(fieldsetFiles);
+
+                                string fileListJson = JsonConvert.SerializeObject(softwareFilesList, Newtonsoft.Json.Formatting.None, jsonSettings);
+                                fieldsetSoftware.Properties.Add(new Property("fileDownloads", fileListJson)); // set the large text information
+                            }
+                            // LOOP END for files
+                        }
+
+                        softwareItem.Fieldsets.Add(fieldsetSoftware);
+                        // Last, we set the ApiProperty for "carouselSlide"
+                        filePackageJson = JsonConvert.SerializeObject(softwareItem, Newtonsoft.Json.Formatting.None, jsonSettings);
+                        properties.Add(new ApiProperty("software", filePackageJson));
+                        // LOOP END
+                    }
 
 
 
@@ -1255,6 +1330,7 @@ namespace USDA_ARS.LocationsWebApp
             System.Data.DataTable legacyQuickLinksBeforeInsertion = new System.Data.DataTable();
             System.Data.DataTable legacyWebTrendsBeforeInsertion = new System.Data.DataTable();
             System.Data.DataTable legacyCarouselSlidesBeforeInsertion = new System.Data.DataTable();
+            System.Data.DataTable legacySoftwaresBeforeInsertion = new System.Data.DataTable();
             for (int i = 0; i < newResearchUnitsAfterInsertion.Rows.Count; i++)
             {
 
@@ -1360,6 +1436,82 @@ namespace USDA_ARS.LocationsWebApp
 
 
 
+                    ////softwares
+                    legacySoftwaresBeforeInsertion = AddRetrieveLocationsDL.GetAllSoftwaresBasedOnModeCode(newModeCodeProperty);
+
+
+
+                    var jsonSettingsForSoftware = new JsonSerializerSettings();
+                    jsonSettingsForSoftware.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
+
+                    // USED FOR ALL ARCHETYPE DATA TYPES
+
+
+                    // ADD software
+                    ApiArchetype softwareItem = new ApiArchetype();
+
+                    softwareItem.Fieldsets = new List<Fieldset>();
+
+                    string filePackageJson;
+
+
+                    for (int legacySoftwaresRowId = 0; legacySoftwaresRowId < legacySoftwaresBeforeInsertion.Rows.Count; legacySoftwaresRowId++)
+                    {
+
+                        Fieldset fieldsetSoftware = new Fieldset();
+                        // Here is where you would loop through each Carousel Slide Link
+                        // LOOP START
+                        string softwareID = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<int>(1).ToString();
+                        string title = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(2);
+                        string recipients = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(3);
+                        string shortBlurb = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(4);
+                        string info = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(5);
+
+
+
+
+                        fieldsetSoftware.Alias = "software";
+                        fieldsetSoftware.Disabled = false;
+                        fieldsetSoftware.Id = new Guid();
+                        fieldsetSoftware.Properties = new List<Property>();
+                        fieldsetSoftware.Properties.Add(new Property("softwareID", softwareID)); // set the file package name
+                        fieldsetSoftware.Properties.Add(new Property("title", title)); // set the title
+                        fieldsetSoftware.Properties.Add(new Property("recipients", info)); // set the recipients email addresses
+                        fieldsetSoftware.Properties.Add(new Property("shortBlurb", shortBlurb)); // set the short blurb
+                        fieldsetSoftware.Properties.Add(new Property("info", info)); // set the large text information
+                                                                                     // Files
+                        string filePathSP2 = "/SP2UserFiles/Place/" + "" + newModeCodeProperty.Replace("-", "") + "/software/Brio-Insight_en.zip";
+                        {
+                            ApiArchetype softwareFilesList = new ApiArchetype();
+
+                            softwareFilesList.Fieldsets = new List<Fieldset>();
+                            //get files from software id folder
+
+                            // LOOP Through the list of files
+                            {
+                                Fieldset fieldsetFiles = new Fieldset();
+
+                                fieldsetFiles.Alias = "softwareDownloads";
+                                fieldsetFiles.Disabled = false;
+                                fieldsetFiles.Id = Guid.NewGuid();
+                                fieldsetFiles.Properties = new List<Property>();
+                                fieldsetFiles.Properties.Add(new Property("file", filePathSP2)); // set the file path
+
+                                softwareFilesList.Fieldsets.Add(fieldsetFiles);
+
+                                string fileListJson = JsonConvert.SerializeObject(softwareFilesList, Newtonsoft.Json.Formatting.None, jsonSettings);
+                                fieldsetSoftware.Properties.Add(new Property("fileDownloads", fileListJson)); // set the large text information
+                            }
+                            // LOOP END for files
+                        }
+
+                        softwareItem.Fieldsets.Add(fieldsetSoftware);
+                        // Last, we set the ApiProperty for "carouselSlide"
+                        filePackageJson = JsonConvert.SerializeObject(softwareItem, Newtonsoft.Json.Formatting.None, jsonSettings);
+                        properties.Add(new ApiProperty("software", filePackageJson));
+                        // LOOP END
+                    }
+
 
 
 
@@ -1421,7 +1573,30 @@ namespace USDA_ARS.LocationsWebApp
             return dataTable3;
 
         }
+        public static List<string> ReadFromTextfile(int softwareId)
+        {
+            string[] lines = File.ReadAllLines("C:\\get_files.txt");
+            List<string> myCollection = new List<string>();
+            for (int i = 0; i < lines.Length; i++)
+            {
+                if (lines.Contains("\\" + softwareId.ToString()))
 
+                {
+                    myCollection.Add(lines[i]);
+                }
+
+            }
+
+            return myCollection;
+
+        }
+
+        protected void getSoftwareFoldersFiles_Click(object sender, EventArgs e)
+        {
+            int SoftwareId = Convert.ToInt32(txtgetSoftwareFoldersFiles.Text);
+            List<string> myCollection = new List<string>();
+            myCollection = ReadFromTextfile(SoftwareId);
+        }
     }
 
 

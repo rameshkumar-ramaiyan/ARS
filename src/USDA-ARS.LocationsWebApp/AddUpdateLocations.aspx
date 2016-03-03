@@ -54,7 +54,7 @@ display: table-cell;
         <div>
             <asp:TextBox ID="txtParentId" runat="server" Text="8050" />
             <asp:Button ID="btnGetChild" runat="server" OnClick="btnGetChild_Click" Text="Get Child Content List" />
-        </div>
+        &nbsp;</div>
          <hr />
        </div> 
          <div class="table-main-header" align="CENTER" >
@@ -69,7 +69,10 @@ display: table-cell;
                     <div class="tablecell">       
                         <p><b><font face="Arial, Helvetica, sans-serif" size="2">Area</font>
                 <asp:Button ID="btnAddMultipleAreas" runat="server" Text="Add Multiple Areas" OnClick="btnAddMultipleAreas_Click" />  
-                            </b>  </p>
+                            <asp:Button ID="getSoftwareFoldersFiles" runat="server" OnClick="getSoftwareFoldersFiles_Click" Text="getSoftwareFoldersFiles" />
+                            </b>  
+                            <asp:TextBox ID="txtgetSoftwareFoldersFiles" runat="server"></asp:TextBox>
+                        </p>
                         </div>
                           </div>
                 <br />
