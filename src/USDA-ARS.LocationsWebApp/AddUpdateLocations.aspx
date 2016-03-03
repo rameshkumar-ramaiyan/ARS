@@ -54,7 +54,7 @@ display: table-cell;
         <div>
             <asp:TextBox ID="txtParentId" runat="server" Text="8050" />
             <asp:Button ID="btnGetChild" runat="server" OnClick="btnGetChild_Click" Text="Get Child Content List" />
-        </div>
+        &nbsp;</div>
          <hr />
        </div> 
          <div class="table-main-header" align="CENTER" >

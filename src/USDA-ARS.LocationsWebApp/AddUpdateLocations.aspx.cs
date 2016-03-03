@@ -378,7 +378,7 @@ namespace USDA_ARS.LocationsWebApp
             properties.Add(new ApiProperty("software", filePackageJson));
 
 
-            
+
 
 
             //===================================================================
@@ -704,7 +704,7 @@ namespace USDA_ARS.LocationsWebApp
 
             ////2.2 all cities---retrieval and insertion
             System.Data.DataTable newCitiesAfterInsertion = new System.Data.DataTable();
-           newCitiesAfterInsertion = AddAllCities(newAreasAfterInsertion);
+            newCitiesAfterInsertion = AddAllCities(newAreasAfterInsertion);
 
             ////2.3 all RCs---retrieval and insertion
             System.Data.DataTable newResearchUnitsAfterInsertion = new System.Data.DataTable();
@@ -712,7 +712,7 @@ namespace USDA_ARS.LocationsWebApp
 
             ////2.4 all Labs---retrieval and insertion
             System.Data.DataTable newLabsAfterInsertion = new System.Data.DataTable();
-          newLabsAfterInsertion = AddAllLabs(newResearchUnitsAfterInsertion);
+            newLabsAfterInsertion = AddAllLabs(newResearchUnitsAfterInsertion);
 
         }
         protected DataTable AddAllAreas()
@@ -839,7 +839,7 @@ namespace USDA_ARS.LocationsWebApp
                 ////softwares
                 legacySoftwaresBeforeInsertion = AddRetrieveLocationsDL.GetAllSoftwaresBasedOnModeCode(completeModeCode);
 
-               
+
 
                 var jsonSettingsForSoftware = new JsonSerializerSettings();
                 jsonSettingsForSoftware.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
@@ -849,9 +849,9 @@ namespace USDA_ARS.LocationsWebApp
 
                 // ADD software
                 ApiArchetype softwareItem = new ApiArchetype();
-                
+
                 softwareItem.Fieldsets = new List<Fieldset>();
-                
+
                 string filePackageJson;
 
 
@@ -866,8 +866,8 @@ namespace USDA_ARS.LocationsWebApp
                     string recipients = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(3);
                     string shortBlurb = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(4);
                     string info = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(5);
-                   
-                    
+
+
 
 
                     fieldsetSoftware.Alias = "software";
@@ -883,7 +883,7 @@ namespace USDA_ARS.LocationsWebApp
                     string filePathSP2 = "/SP2UserFiles/Place/" + "" + completeModeCode.Replace("-", "") + "/software/Brio-Insight_en.zip";
                     {
                         ApiArchetype softwareFilesList = new ApiArchetype();
-                        
+
                         softwareFilesList.Fieldsets = new List<Fieldset>();
                         //get files from software id folder
 
@@ -1584,7 +1584,7 @@ namespace USDA_ARS.LocationsWebApp
                 {
                     myCollection.Add(lines[i]);
                 }
-            
+
             }
 
             return myCollection;
@@ -1593,7 +1593,7 @@ namespace USDA_ARS.LocationsWebApp
 
         protected void getSoftwareFoldersFiles_Click(object sender, EventArgs e)
         {
-           int SoftwareId=  Convert.ToInt32(txtgetSoftwareFoldersFiles.Text);
+            int SoftwareId = Convert.ToInt32(txtgetSoftwareFoldersFiles.Text);
             List<string> myCollection = new List<string>();
             myCollection = ReadFromTextfile(SoftwareId);
         }
