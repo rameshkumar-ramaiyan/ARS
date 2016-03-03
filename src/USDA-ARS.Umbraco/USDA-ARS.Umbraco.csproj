@@ -2987,6 +2987,10 @@
     <Content Include="Views\Project.cshtml" />
     <Content Include="Views\ResearchProjectsSubjects.cshtml" />
     <Content Include="Views\Collaborations.cshtml" />
+    <Content Include="Views\PublicationsTopicalAreas.cshtml" />
+    <Content Include="Views\SearchNewEvents.cshtml" />
+    <Content Include="Views\SearchImageGallery.cshtml" />
+    <Content Include="Views\Publication.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

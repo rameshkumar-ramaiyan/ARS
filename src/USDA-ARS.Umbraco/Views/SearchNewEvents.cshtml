@@ -1,0 +1,69 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+
+}
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+
+
+        <h1>
+            <font face="Arial, Helvetica, sans-serif">@(currentPage.Name)</font>
+        </h1>
+
+        <form name="searchform" method="get" action="http://search.usa.gov/search/docs">
+
+            <input type="hidden" name="affiliate" value="agriculturalresearchservicears">
+
+            <div>
+                <b>Select the scope of your search:</b>
+                <br>
+                <br>
+                <input name="dc" id="all" type="radio" value="932" checked="">	<!-- /is/ -->
+                <label for="all">All News &amp; Events</label>
+                <br>
+
+                <input name="dc" id="magazine" type="radio" value="1216">		<!-- /is/AR -->
+                <label for="magazine">Agricultural Research magazine</label>
+                <br>
+
+                <input name="dc" id="news" type="radio" value="1219">			<!-- /is/pr -->
+                <label for="news">News archive</label>
+                <br>
+
+                <input name="dc" id="food" type="radio" value="1217">			<!-- /is/np/fnrb -->
+                <label for="food">Food &amp; Nutrition Briefs</label>
+                <br>
+
+                <input name="dc" id="photography" type="radio" value="1218">	<!-- /is/graphics -->
+                <label for="photography">Photography</label>
+                <br>
+                <br>
+                <label for="searchString"><b>Enter search term(s):</b></label>
+                <br>
+                <input name="query" type="text" id="searchString" value="" size="30" maxlength="255">
+                <br>
+                <br>
+                <input type="submit" value="Search">
+            </div>
+        </form>
+
+    </div>
+
+</div>

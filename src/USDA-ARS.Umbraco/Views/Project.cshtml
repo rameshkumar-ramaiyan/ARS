@@ -232,7 +232,7 @@
                     <br />
                     @foreach (ProjectPublication publication in projectPublicationByYearList)
                     {
-                        <em><a href="/research/publications/publication/?SEQ_NO_115=@(publication.SeqNo115)" id="anch_60">@(publication.Publication)</a><br></em>
+                        <em><a href="/research/publications/publication/?seqNo115=@(publication.SeqNo115)" id="anch_60">@(publication.Publication)</a><br></em>
                         <p></p>
                     }
                     
@@ -267,7 +267,7 @@
                 foreach (UsdaPublication publication in projectPublicationList)
                 {
                     <p>
-                        <a href=/research/publications/publication/?SEQ_NO_115=@(publication.SeqNo115)" class="projectNav" id="anch_60">@publication.Title</a>
+                        <a href=/research/publications/publication/?seqNo115=@(publication.SeqNo115)" class="projectNav" id="anch_60">@publication.Title</a>
                         @if (false == string.IsNullOrEmpty(publication.ReprintUrl))
                         {
                             <a href="http://@(publication.ReprintUrl)" target="_blank" title="Reprint URL" id="anch_74">

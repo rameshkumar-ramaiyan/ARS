@@ -41,5 +41,10 @@ namespace USDA_ARS.Umbraco.Extensions.Models.Aris
         [Column("prj_type")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public string ProjectType { get; set; }
+
+
+        [Column("web_label")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string WebLabel { get; set; }
     }
 }

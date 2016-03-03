@@ -48,7 +48,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
         public static List<PeopleByCity> GetPeopleByCity(string modeCode)
         {
             List<PeopleByCity> peopleList = null;
-            
+
             List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
 
             var db = new Database("arisPublicWebDbDSN");
@@ -156,7 +156,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             var db = new Database("arisPublicWebDbDSN");
 
-            Sql sql = null;
+            string sql = null;
             string where = "";
 
             if (false == string.IsNullOrWhiteSpace(lname) ||
@@ -169,15 +169,15 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
             {
                 if (false == string.IsNullOrWhiteSpace(lname))
                 {
-                    where += "REPLACE(REPLACE(REPLACE(perlname, '-',''), ' ',''), '.','') LIKE '%" + CleanSqlString(lname) + "%' AND ";
+                    where += "REPLACE(REPLACE(REPLACE(perlname, '-',''), ' ',''), '.','') LIKE '%'+ @lname +'%' AND ";
                 }
                 if (false == string.IsNullOrWhiteSpace(fname))
                 {
-                    where += "(perfname LIKE '%" + CleanSqlString(fname) + "%'  or percommonname like '%" + CleanSqlString(fname) + "%') AND ";
+                    where += "(perfname LIKE '%'+ @fname +'%'  or percommonname like '%'+ @fname +'%') AND ";
                 }
                 if (false == string.IsNullOrWhiteSpace(title))
                 {
-                    where += "(workingtitle LIKE '" + CleanSqlString(title) + "' OR officialtitle LIKE '" + CleanSqlString(title) + "') AND ";
+                    where += "(workingtitle LIKE '%'+ @title +'%' OR officialtitle LIKE '%'+ @title +'%') AND ";
                 }
                 if (false == string.IsNullOrWhiteSpace(phone))
                 {
@@ -185,30 +185,29 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                     phoneText = phoneText.Replace("(", "").Replace(")", "");
                     phoneText = phoneText.Replace("-", "").Replace(" ", "");
 
-                    where += "deskareacode + left(deskphone, 3)+ right(deskphone, 4) LIKE '%" + CleanSqlString(phoneText) + "%' AND ";
+                    phone = phoneText;
+
+                    where += "deskareacode + left(deskphone, 3)+ right(deskphone, 4) LIKE '%'+ @phone +'%' AND ";
                 }
                 if (false == string.IsNullOrWhiteSpace(email))
                 {
-                    where += "email LIKE '%" + CleanSqlString(email) + "%' AND ";
+                    where += "email LIKE '%'+ @email +'%' AND ";
                 }
                 if (false == string.IsNullOrWhiteSpace(city))
                 {
-                    where += "deskcity LIKE '%" + CleanSqlString(city) + "%' AND ";
+                    where += "deskcity LIKE '%'+ @city +'%' AND ";
                 }
                 if (false == string.IsNullOrWhiteSpace(state))
                 {
-                    where += "deskstate = '" + CleanSqlString(state) + "' AND ";
+                    where += "deskstate = @state AND ";
                 }
 
 
                 where += " (status_code = 'a' OR status_code is null)";
 
-                sql = new Sql()
-                 .Select("*")
-                 .From("w_people_info")
-                 .Where(where);
+                sql = "SELECT * FROM w_people_info WHERE " + where;
 
-                peopleList = db.Query<PeopleInfo>(sql).ToList();
+                peopleList = db.Query<PeopleInfo>(sql, new { lname = lname, fname = fname, title = title, phoneText = phone, email = email, city = city, state = state }).ToList();
             }
 
             if (peopleList != null && peopleList.Count > 0)
@@ -321,6 +320,34 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
             {
                 peopleList = peopleList.OrderBy(p => p.LastName).ThenBy(x => x.FirstName).ToList();
             }
+
+            return peopleList;
+        }
+
+
+        public static List<PeopleInfo> GetPeopleByPublication(int seqNo115)
+        {
+            List<PeopleInfo> peopleList = null;
+
+            var db = new Database("arisPublicWebDbDSN");
+
+            string sql = @"select 	a.emp_id, employer, 
+			        ISNULL(p.perlname, ISNULL(r.last_name, a.LAST_NAME)) 	perlname, 
+			        ISNULL(p.perFname, ISNULL(r.firST_NAME, a.firST_NAME)) 	perfname, 
+			        p.percommonname, p.personid
+
+	
+	                from 	SitePublisherii.DBO.people p, 
+			                -- a115_Authors a,		
+			                v_AH115_Authors a,		
+			                ref_personel r
+	
+	                where SEQ_NO_115 = @seqNo115
+	                and r.emp_id =* a.emp_id
+	                and p.empid =* a.emp_id
+	                order by authorship";
+
+            peopleList = db.Query<PeopleInfo>(sql, new { seqNo115 = seqNo115 }).ToList();
 
             return peopleList;
         }
