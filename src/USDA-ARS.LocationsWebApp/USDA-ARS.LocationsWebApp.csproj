@@ -338,6 +338,7 @@
     <Content Include="App_Plugins\Archetype\views\archetype.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.js" />
+    <Content Include="test-script.aspx" />
     <Content Include="delete-regions.aspx" />
     <Content Include="packages.config" />
     <Content Include="StoredProcedures\uspgetAllAreas.sql" />
@@ -352,6 +353,15 @@
     <Content Include="StoredProcedures\uspgetAllResearchUnitsWebTrendsProfileIDs.sql" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DL\ApiCalls.cs" />
+    <Compile Include="DL\GetCalls.cs" />
+    <Compile Include="test-script.aspx.cs">
+      <DependentUpon>test-script.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="test-script.aspx.designer.cs">
+      <DependentUpon>test-script.aspx</DependentUpon>
+    </Compile>
     <Compile Include="delete-regions.aspx.cs">
       <DependentUpon>delete-regions.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -366,6 +376,7 @@
     <Compile Include="AddUpdateLocations.aspx.designer.cs">
       <DependentUpon>AddUpdateLocations.aspx</DependentUpon>
     </Compile>
+    <Compile Include="DL\PersonSite.cs" />
     <Compile Include="DL\AddRetrieveLocationsDL.cs" />
     <Compile Include="DL\Locations.cs" />
     <Compile Include="DL\LowercaseJsonSerializer.cs" />

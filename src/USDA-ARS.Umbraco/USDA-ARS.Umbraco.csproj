@@ -2991,6 +2991,7 @@
     <Content Include="Views\SearchNewEvents.cshtml" />
     <Content Include="Views\SearchImageGallery.cshtml" />
     <Content Include="Views\Publication.cshtml" />
+    <Content Include="Views\PersonSite.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
