@@ -56,10 +56,36 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                     foreach (var navItem in siteNavs)
                     {
                         IEnumerable<Link> links = navItem.GetValue<MultiUrls>("siteLeftNavLocation");
+                        bool navFound = false;
 
-                        Link foundLink = links.Where(p => p.Url.ToLower() == currentNode.Url.ToLower()).FirstOrDefault();
+                        string templateSelect = navItem.GetValue<string>("leftNavTemplate");
+                        string docTypeSelect = navItem.GetValue<string>("leftNavDocType");
 
-                        if (foundLink != null)
+                        if (false == string.IsNullOrEmpty(templateSelect))
+                        {
+                            if (currentNode.TemplateId == Convert.ToInt32(templateSelect))
+                            {
+                                navFound = true;
+                            }
+                        }
+                        else if (false == string.IsNullOrEmpty(docTypeSelect))
+                        {
+                            if (currentNode.DocumentTypeAlias == docTypeSelect)
+                            {
+                                navFound = true;
+                            }
+                        }
+                        else
+                        {
+                            Link foundLink = links.Where(p => p.Url.ToLower() == currentNode.Url.ToLower()).FirstOrDefault();
+
+                            if (foundLink != null)
+                            {
+                                navFound = true;
+                            }
+                        }
+
+                        if (true == navFound)
                         {
                             bool displayOnBottom = navItem.GetValue<bool>("displayOnBottom");
 

@@ -29,6 +29,12 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 
                     _contentService.SaveAndPublishWithStatus(childNode);
                 }
+                else if (node.ContentType.Alias == "NationalProgram" && !cs.HasChildren(node.Id))
+                {
+                    var childNode = _contentService.CreateContent("Docs", node, "NationalProgramFolderContainer");
+
+                    _contentService.SaveAndPublishWithStatus(childNode);
+                }
             }
         }
     }

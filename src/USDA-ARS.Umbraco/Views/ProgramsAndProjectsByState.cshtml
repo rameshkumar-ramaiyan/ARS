@@ -1,0 +1,81 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+    string npCode = "";
+    string state = "";
+
+    if (Request.QueryString["npCode"] != null)
+    {
+        npCode = Request.QueryString.Get("npCode");
+    }
+
+    if (Request.QueryString["state"] != null)
+    {
+        state = Request.QueryString.Get("state");
+    }
+
+    IPublishedContent nationalProgramGroup = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByNpCode(npCode);
+    List<ProjectInfo> projectList = null;
+    IPublishedContent nationalProgramNode = null;
+
+    if (nationalProgramGroup != null)
+    {
+        projectList = Projects.GetProjectsByStateAndProgram(state, npCode);
+
+        nationalProgramNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(projectList[0].ModeCode);
+    }
+
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        <img src="/images/incme/spacer.GIF" alt="" border="0" width="1" height="20">
+
+
+        <b>@(nationalProgramGroup.Name)</b>
+        (<a href="@(nationalProgramGroup.Url)" id="anch_60">National Program @npCode</a>)
+        in @state
+
+        <hr size="1" color="Navy" noshade=""><font face="arial,helvetica" size="-1" color="Navy">
+
+            @if (nationalProgramNode != null)
+            {
+            <a href="@(nationalProgramNode.Url)" id="anch_61"><b>@(nationalProgramNode.Name)</b></a>
+            }
+            else
+            {
+                <a href=""><em><b>National Program Not Found</b></em></a>
+            }
+            <div style="margin-left:15px;">
+                @if (projectList != null && projectList.Any())
+                {
+                    <ul>
+                        @foreach (ProjectInfo project in projectList)
+                        {
+                        <li><a href="/research/project/?accnNo=@(project.AccountNo)" id="anch_62">@(project.ProjectTitle)</a></li>
+                        }
+                    </ul>
+                }
+            </div>
+            <br /><br />
+
+        </font>
+
+    </div>
+</div>

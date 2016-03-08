@@ -370,6 +370,10 @@
     <Content Include="App_Plugins\UsdaDownloadRequests\views\usda.download.requests.html" />
     <Content Include="App_Plugins\UsdaHelpInfo\js\usda.help.info.js" />
     <Content Include="App_Plugins\UsdaHelpInfo\views\usda.help.info.html" />
+    <Content Include="App_Plugins\UsdaDocTypeList\js\usda.doctype.list.js" />
+    <Content Include="App_Plugins\UsdaDocTypeList\views\usda.doctype.list.html" />
+    <Content Include="App_Plugins\UsdaTemplateList\js\usda.template.list.js" />
+    <Content Include="App_Plugins\UsdaTemplateList\views\usda.template.list.html" />
     <Content Include="App_Plugins\UsdaTopicPicker\js\usda.topic.picker.js" />
     <Content Include="App_Plugins\UsdaTopicPicker\views\usda.topic.picker.html" />
     <Content Include="App_Plugins\UsdaPeopleList\js\usda.people.list.js" />
@@ -2937,6 +2941,8 @@
     <Content Include="App_Plugins\UsdaPeopleList\package.manifest" />
     <Content Include="App_Plugins\UsdaTopicPicker\package.manifest" />
     <Content Include="App_Plugins\ArchetypeLabelTemplatesTopicPicker\package.manifest" />
+    <Content Include="App_Plugins\UsdaTemplateList\package.manifest" />
+    <Content Include="App_Plugins\UsdaDocTypeList\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
     <Content Include="Views\SubpageStandard.cshtml" />
@@ -2992,6 +2998,13 @@
     <Content Include="Views\SearchImageGallery.cshtml" />
     <Content Include="Views\Publication.cshtml" />
     <Content Include="Views\PersonSite.cshtml" />
+    <Content Include="Views\ProgramsList.cshtml" />
+    <Content Include="Views\NationalProgramGroup.cshtml" />
+    <Content Include="Views\PeopleLocationsNationalPrograms.cshtml" />
+    <Content Include="Views\Partials\Modules\PeopleListByNationalProgram.cshtml" />
+    <Content Include="Views\NationalProgramPage.cshtml" />
+    <Content Include="Views\ProgramsAndProjectsByState.cshtml" />
+    <Content Include="Views\NationalProgramsUSMapXML.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
