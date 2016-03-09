@@ -1336,6 +1336,7 @@
     <Content Include="umbraco\lib\tinymce\plugins\emoticons\img\smiley-yell.gif" />
     <Content Include="umbraco\lib\tinymce\plugins\emoticons\plugin.js" />
     <Content Include="umbraco\lib\tinymce\plugins\emoticons\plugin.min.js" />
+    <Content Include="umbraco\lib\tinymce\plugins\fsmediapicker\plugin.min.js" />
     <Content Include="umbraco\lib\tinymce\plugins\fullpage\plugin.js" />
     <Content Include="umbraco\lib\tinymce\plugins\fullpage\plugin.min.js" />
     <Content Include="umbraco\lib\tinymce\plugins\fullscreen\plugin.js" />
