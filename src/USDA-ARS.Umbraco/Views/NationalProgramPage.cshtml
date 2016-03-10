@@ -1,0 +1,478 @@
+﻿@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+    string filterForm = null;
+    string filter = null;
+    int projectCount = 0;
+    string projectStatus = null;
+
+    string npCode = currentPage.GetPropertyValue<string>("npCode");
+
+
+    if (Request.QueryString["filterForm"] != null)
+    {
+        filterForm = Request.QueryString.Get("filterForm");
+    }
+    if (Request.QueryString["filter"] != null)
+    {
+        filter = Request.QueryString.Get("filter");
+    }
+
+    if (Request.QueryString["projectStatus"] != null)
+    {
+        projectStatus = Request.QueryString.Get("projectStatus");
+    }
+
+
+
+    List<NationalProgramLocation> programLocationList = NationalPrograms.GetProgramsByNpCodeForMap(npCode);
+
+    List<PeopleInfo> peopleList = null;
+    List<ProjectInfo> projectList = null;
+
+    if (programLocationList != null && programLocationList.Any())
+    {
+        programLocationList = programLocationList.DistinctBy(p => p.StateCode).ToList();
+
+        peopleList = People.GetPeopleByProject(npCode, projectStatus);
+
+        if (false == string.IsNullOrWhiteSpace(filter))
+        {
+            projectList = Projects.GetProjectsByProgramFilter(npCode);
+        }
+    }
+
+}
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        <script language="javascript">
+	<!--
+	window.name = 'nps2000';
+	var remote = null;
+	function rs(n,u,w,h)
+	{
+		remote = window.open(u, n, 'width=' + w + ',height=' + h +',refresh=yes,resizable=yes,scrollbars=yes');
+		if (remote != null)
+		{
+			if (remote.opener == null)
+			remote.opener = self;
+			window.name = 'nps2000';
+			remote.location.href = u;
+		}
+	}
+	//-->
+        </script>
+
+        <div class="pageHeading">
+            National Program @(npCode): @(currentPage.Name)
+        </div>
+
+        @if (true == string.IsNullOrEmpty(filterForm))
+        {
+
+
+
+            <table border="0" cellspacing="2" cellpadding="0">
+                <tbody>
+                    <tr>
+                        <td valign="top">
+                            <table border="0">
+                                <tbody>
+                                    <tr>
+                                        <td>
+
+
+                                            <table border="0" width="100%">
+                                                <tbody>
+                                                    <tr>
+                                                        <td class="pageHeading">Strategic Vision</td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td>
+                                                            <img src="/images/headline_bar.gif" alt="headline bar" width="100%">
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+
+                                            <!-- display URLs of subpages start -->
+                                            <!--  display URLs of subpages end -->
+                                            <!-- document content start -->
+
+                                            @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+
+                                            <!-- document content end -->
+
+                                            <br>
+
+                                            <p>
+
+                                                <font face="verdana,arial" size="-1" color="#000000"><b>  Projects in this Program - by State  </b></font><br><font face="verdana,arial" size="-1"></font>
+                                            </p><div align="left">
+                                                <font face="verdana,arial" size="-1">
+                                                    @if (programLocationList != null && programLocationList.Any())
+                                                    {
+                                                        foreach (NationalProgramLocation programLocation in programLocationList)
+                                                        {
+                                                            <input type="hidden" name="projectURL" value="/research/research-programs-by-state/?state=@programLocation.StateCode&npCode=@npCode">
+                                                        }
+                                                    }
+
+                                                    <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=10,0,0,0" width="350" height="230">
+
+                                                        <param name="allowScriptAccess" value="sameDomain">
+                                                        <param name="allowFullScreen" value="false">
+                                                        <param name="quality" value="high">
+                                                        <param name="movie" value="/images/incme/usmapimages/usmap.swf?xmlPath=/research/national-programs-us-map-xml/@(npCode).xml">
+
+                                                        <embed src="/images/incme/usmapimages/usmap.swf?xmlPath=/research/national-programs-us-map-xml/@(npCode).xml" quality="high" width="350" height="230" allowscriptaccess="sameDomain" allowfullscreen="false" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" wmode="transparent">
+                                                    </object>
+
+
+                                                    <br>
+                                                    <b>
+                                                        Legend:<br>
+                                                        &nbsp;&nbsp;&nbsp; <font color="#660000">Maroon = click to see related projects in these states.</font><br>
+                                                        &nbsp;&nbsp;&nbsp; <font color="#555555">Gray = No related research in this state.</font>
+                                                    </b>
+
+
+                                                    <p>&nbsp;</p>
+
+                                                </font>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <table border="0" cellspacing="2" cellpadding="0">
+                <tbody>
+                    <tr>
+                        <td valign="top">
+                            <table border="0">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <font face="verdana,arial" size="-1" color="#000000">
+                                                <br>
+
+
+                                                <script language="javascript">
+		function redirectCheck(projectStatus)
+		{
+			window.location = "?projectlist=true&np_code=107&projectStatus=" + projectStatus;
+		}
+                                                </script>
+                                                <script type="text/javascript" src="/CFIDE/scripts/cfform.js"> </script>
+                                                <script type="text/javascript">
+	function _CF_checkfilterForm(_CF_this)
+	{
+	        //reset on submit
+	        _CF_error_messages = new Array();
+	        _CF_error_fields = new Object();
+	        _CF_FirstErrorField = null;
+
+        //display error messages and return success
+        if( _CF_error_messages.length > 0 )
+        {
+            // show alert() message
+            _CF_onErrorAlert(_CF_error_messages);
+            // set focus to first form error, if the field supports js focus().
+            if( _CF_this[_CF_FirstErrorField].type == "text" )
+            { _CF_this[_CF_FirstErrorField].focus(); }
+
+            return false;
+        }else {
+            return true;
+        }
+}
+                                                </script><link href="/CFIDE/scripts/css/lightgray_style.css" rel="stylesheet" type="text/css" media="all"><div class="cfform">
+                                                    <form id="filterForm" action="?projectlist=true&filter=true" method="Get" onsubmit="return _CF_checkfilterForm(this);" class="cfHaloSkin" name="filterForm">
+                                                        <table border="0" cellpadding="2" cellspacing="0" width="100%" class="vertical">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td colspan="2">
+                                                                        <table border="0" cellpadding="2" cellspacing="0" width="100%" class="vertical">
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td colspan="2" class="cfHeaderTitle">Filter Project List</td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td colspan="2">
+                                                                                        <table border="0" cellspacing="0" cellpadding="0" class="horizontal">
+                                                                                            <tbody>
+                                                                                                <tr class="cfElementRow">
+                                                                                                    <td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Project Status</td>
+                                                                                                    <td>
+                                                                                                        <input type="radio" id="filterProjectStatus1" name="filterProjectStatus" class="cfRadio " checked="checked" value="A">
+                                                                                                        <label for="filterProjectStatus1">Active</label>
+                                                                                                        <input type="radio" id="filterProjectStatus2" name="filterProjectStatus" class="cfRadio " value="E">
+                                                                                                        <label for="filterProjectStatus2">Terminated</label>
+                                                                                                        <input type="radio" id="filterProjectStatus3" name="filterProjectStatus" class="cfRadio " value="X">
+                                                                                                        <label for="filterProjectStatus3">Expired</label>
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            </tbody>
+                                                                                        </table>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr class="cfElementRow">
+                                                                                    <td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
+                                                                                        <label for="filterName">Name</label>
+                                                                                    </td>
+                                                                                    <td width="1000" align="left">
+                                                                                        <select id="filterName" name="filterName" class="cfSelect " multiple="multiple" size="4">
+                                                                                            <option value="blank">All People</option>
+
+                                                                                            @if (peopleList != null && peopleList.Any())
+                                                                                            {
+                                                                                                foreach (PeopleInfo person in peopleList)
+                                                                                                {
+                                                                                                    <option value="@(person.EmpId)">@(person.FullName)</option>
+                                                                                                }
+                                                                                            }
+                                                                                        </select>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr class="cfElementRow">
+                                                                                    <td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
+                                                                                        <label for="filterProjectType">Project Type</label>
+                                                                                    </td>
+                                                                                    <td width="1000" align="left">
+                                                                                        <select id="filterProjectType" name="filterProjectType" class="cfSelect ">
+                                                                                            <option value="blank">All Project Types</option>
+                                                                                            <option value="D">Appropriated</option>
+                                                                                            <option value="C">Contract</option>
+                                                                                            <option value="A">General Cooperative Agreement</option>
+                                                                                            <option value="G">Grant</option>
+                                                                                            <option value="M">Memorandum of Understanding</option>
+                                                                                            <option value="N">Nonfunded Cooperative Agreement</option>
+                                                                                            <option value="X">Other</option>
+                                                                                            <option value="R">Reimbursable</option>
+                                                                                            <option value="S">Specific Cooperative Agreement</option>
+                                                                                            <option value="T">Trust</option>
+                                                                                        </select>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr class="cfElementRow">
+                                                                                    <td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
+                                                                                        <label for="filterLocation">Location</label>
+                                                                                    </td>
+                                                                                    <td width="1000" align="left">
+                                                                                        <select id="filterLocation" name="filterLocation" class="cfSelect ">
+                                                                                            <option value="blank">All Locations</option>
+                                                                                            @if (programLocationList != null && programLocationList.Any())
+                                                                                            {
+                                                                                                foreach (NationalProgramLocation program in programLocationList)
+                                                                                                {
+                                                                                                    <option value="@(program.ModeCode2Desc)">@(program.ModeCode2Desc)</option>
+                                                                                                }
+                                                                                            }
+                                                                                        </select>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>
+                                                                                        <br>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="2">
+                                                                        <table border="0" cellspacing="0" cellpadding="0" class="horizontal">
+                                                                            <tbody>
+                                                                                <tr class="cfElementRow">
+                                                                                    <td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild">Show all projects</td>
+                                                                                    <td>
+                                                                                        <input type="radio" id="showAllProjects1" name="showAllProjects" class="cfRadio " value="Yes">
+                                                                                        <label for="showAllProjects1">Yes</label>
+                                                                                        <input type="radio" id="showAllProjects2" name="showAllProjects" class="cfRadio " checked="checked" value="No">
+                                                                                        <label for="showAllProjects2">No</label>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="2">
+                                                                        <table border="0" cellspacing="0" cellpadding="0" class="horizontal">
+                                                                            <tbody>
+                                                                                <tr class="cfElementRow">
+                                                                                    <td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Sort By</td>
+                                                                                    <td>
+                                                                                        <input type="radio" id="sortBy1" name="sortBy" class="cfRadio " checked="checked" value="">
+                                                                                        <label for="sortBy1">Location</label>
+                                                                                        <input type="radio" id="sortBy2" name="sortBy" class="cfRadio " value="Project Type">
+                                                                                        <label for="sortBy2">Project Type</label>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td colspan="2">
+                                                                        <table border="0" cellspacing="0" cellpadding="0" class="horizontal">
+                                                                            <tbody>
+                                                                                <tr class="cfElementRow">
+                                                                                    <td>
+                                                                                        <input id="submitFilter" name="submitFilter" class="cfButton " value="Filter" type="submit" style="margin-left:120px;">
+                                                                                    </td>
+                                                                                    <td>
+                                                                                        <input id="resetProjectList" name="resetProjectList" class="cfButton " type="reset" value="Reset">
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td>
+                                                                        <br>
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </form>
+                                                </div>
+
+
+                                                <br>
+                                                <font face="verdana,arial" size="-1" color="#000000">
+                                                    <b>
+                                                        <font face="verdana,arial,helvetica" size="2" color="FF6600">
+                                                            National Program @(projectCount) Project List
+                                                        </font>
+                                                        <br>
+
+
+                                                        <font face="verdana,arial,helvetica" size="2" color="FF6600">
+                                                             All Project Types Active
+                                                            Projects
+                                                        </font>
+
+
+                                                        <img src="/images/content-divider.gif">
+
+
+                                                        <table border="0" width="368">
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td>
+
+
+                                                                        <a href="/research/projects/projects.htm?accn_no=426640" target="nps2000" class="projectNav" id="anch_60">
+                                                                            Novel Functions and Biomarkers for Vitamins and Minerals
+                                                                        </a>
+
+                                                                        <table border="0">
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td width="25">&nbsp;</td>
+                                                                                    <td><font style="font-size:11px;">Western Human Nutrition Research Center: Obesity and Metabolism Research</font></td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>&nbsp;</td>
+                                                                                    <td><font style="font-size:11px;">Davis, CA</font></td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>&nbsp;</td>
+                                                                                    <td>
+
+
+                                                                                        <font style="font-size:11px;">
+
+
+                                                                                            Appropriated
+
+                                                                                            (D)
+                                                                                        </font>
+                                                                                    </td>
+                                                                                </tr>
+                                                                                <tr>
+                                                                                    <td>&nbsp;</td>
+                                                                                    <td>
+                                                                                        <table border="0" cellpadding="0" cellspacing="0">
+                                                                                            <tbody>
+                                                                                                <tr>
+                                                                                                    <td width="80" align="left" valign="top" style="font-size:11px;">Scientists:</td>
+                                                                                                    <td valign="top">
+
+                                                                                                        <font style="font-size:11px;">
+                                                                                                            Huang, Liping
+                                                                                                            <br>
+                                                                                                        </font>
+
+                                                                                                        <font style="font-size:11px;">
+                                                                                                            Van Loan, Marta
+                                                                                                            <br>
+                                                                                                        </font>
+
+                                                                                                        <font style="font-size:11px;">
+                                                                                                            Allen, Lindsay
+                                                                                                            <br>
+                                                                                                        </font>
+
+                                                                                                        <font style="font-size:11px;">
+                                                                                                            Woodhouse, Leslie
+                                                                                                            <br>
+                                                                                                        </font>
+
+                                                                                                    </td>
+                                                                                                </tr>
+                                                                                            </tbody>
+                                                                                        </table>
+                                                                                    </td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+
+                                                                        <table>
+                                                                            <tbody>
+                                                                                <tr>
+                                                                                    <td><img src="/images/content-divider.gif"></td>
+                                                                                </tr>
+                                                                            </tbody>
+                                                                        </table>
+                                                              </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+
+                                                    </b>
+                                                </font>
+                                            </font>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        }
+
+    </div>
+</div>

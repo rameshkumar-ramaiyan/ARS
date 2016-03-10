@@ -38,9 +38,17 @@ namespace USDA_ARS.Umbraco.Extensions.Models.Aris
         [NullSetting(NullSetting = NullSettings.Null)]
         public string CommonName { get; set; }
 
-        [Column("officialtitle")]
+        [Column("fullName")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string FullName { get; set; }
+
+        [Column("postialtitle")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public string TitleOfficial { get; set; }
+
+        [Column("PositionTitle")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string PositionTitle { get; set; }
 
         [Column("workingtitle")]
         [NullSetting(NullSetting = NullSettings.Null)]

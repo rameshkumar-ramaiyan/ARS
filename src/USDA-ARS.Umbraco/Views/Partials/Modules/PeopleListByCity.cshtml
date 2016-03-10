@@ -6,12 +6,21 @@
 @{
     IPublishedContent currentNode = Model;
     string modeCode = Model.GetPropertyValue<string>("modeCode");
+    string javascriptInsert = "";
 
     if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
     {
         modeCode = Request.QueryString.Get("modeCode");
 
         currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode);
+
+        //     javascriptInsert += @"
+        //         // Open the panel by modecode
+        //$('#accordion').accordion('activate', 0);
+
+        //         // auto scroll to a div
+        //$('html, body').animate({";
+        //     javascriptInsert += " scrollTop: $('#"+ modeCode + "').offset().top}, 2000);";
     }
 
     List<PeopleByCity> peopleFullList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByCity(modeCode);
@@ -44,6 +53,9 @@
         $('.collapse').click(function () {
             $('.ui-widget-content').hide();
         });
+
+
+        @Html.Raw(javascriptInsert)
 
         /*
         $('.toggle').click(function() {

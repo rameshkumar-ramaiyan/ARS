@@ -55,10 +55,18 @@
                                     <td valign="top"><img src="/images/incme/bullet.gif" border="0" alt="item"></td>
                                     <td valign="top" align="left" background="/images/incme/spacer.gif">
                                         <font face="verdana,arial" size="-1">
+                                            @if (false == string.IsNullOrEmpty(person.PersonId))
+                                            {
                                             <a href="/people-locations/person?person-id=@(person.PersonId)" id="anch_57">
                                                 @(person.LastName.ToUpper()), @(person.FirstName.ToUpper())
-                                                @Html.Raw(false == string.IsNullOrEmpty(person.CommonName) ? " <em>" + person.CommonName + "</em>" : "")
+                                                @Html.Raw(false == string.IsNullOrEmpty(person.CommonName) ? " - <em>" + person.CommonName + "</em>" : "")
                                             </a>
+                                            }
+                                            else
+                                            {
+                                                @(person.LastName + ", " + person.FirstName)
+                                                @Html.Raw(false == string.IsNullOrEmpty(person.CommonName) ? " - <em>" + person.CommonName + "</em>" : "")
+                                            }
                                         </font>
                                     </td>
                                 </tr>

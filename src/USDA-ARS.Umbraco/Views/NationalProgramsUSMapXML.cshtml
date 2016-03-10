@@ -1,0 +1,55 @@
+﻿@using Umbraco.Core.Models
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@{
+    Layout = null;
+
+    string npCode = null;
+
+    if (Request.QueryString["npCode"] != null)
+    {
+        npCode = Request.QueryString.Get("npCode");
+    }
+
+    Response.ContentType = "application/xml";
+
+    List<NationalProgramLocation> programLocationList = NationalPrograms.GetProgramsByNpCodeForMap(npCode);
+
+    if (programLocationList != null && programLocationList.Any())
+    {
+        programLocationList = programLocationList.DistinctBy(p => p.StateCode).ToList();
+    }
+}
+<?xml version="1.0" encoding="utf-8" ?>
+<data>
+    <backColor>0xFFFFFF</backColor>
+    <backAlpha>1</backAlpha>
+    <stateColor>0xA9A9A9</stateColor>
+    <stateOverColor>0x800000</stateOverColor>
+    <inactiveColor>0xA9A9A9</inactiveColor>
+    <openurls>_self</openurls>
+    <labelColor>0xd5ddec</labelColor>
+    <states>
+        @if (programLocationList != null && programLocationList.Any())
+        {
+            foreach (NationalProgramLocation programLocation in programLocationList)
+            {
+                List<string> cityState = programLocation.ModeCode2Desc.Split(',').ToList();
+                string stateFullName = programLocation.StateCode;
+
+                if (cityState != null & cityState.Count >= 2)
+                {
+                    stateFullName = cityState[1].Trim().Replace(" (Bhnrc)", "");
+                    stateFullName = stateFullName.Replace(" ", "");
+                }
+                <state name="@stateFullName" id="@programLocation.StateCode">
+                    <description>Click to see related research projects</description>
+                    <url>/research/research-programs-by-state/?state=@programLocation.StateCode&npCode=@npCode</url>
+                    <inactive>no</inactive>
+                    <overwriteover>no</overwriteover>
+                    <overwritecolor>0x800000</overwritecolor>
+                </state>
+            }
+        }
+    </states>
+</data>

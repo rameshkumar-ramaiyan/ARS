@@ -150,6 +150,27 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
         }
 
 
+        public static List<PeopleInfo> GetPeopleByNationalProgram(string modeCode)
+        {
+            List<PeopleInfo> peopleList = null;
+
+            List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
+
+            modeCode = Helpers.ModeCodes.ModeCodeNoDashes(modeCode);
+
+            var db = new Database("arisPublicWebDbDSN");
+            string sql = @"select modecodeconc, personid, perlname, perfname, permname, percommonname, EMail, DeskPhone, deskareacode, officialtitle, workingtitle
+			                        from V_PEOPLE_INFO_2
+			                        where modecodeconc = @modeCode
+			                        and (status_code = 'a' or status_code is null)
+			                        order by perlname, perfname ";
+
+            peopleList = db.Query<PeopleInfo>(sql, new { modeCode = modeCode }).ToList();
+
+            return peopleList;
+        }
+
+
         public static List<PeopleInfo> GetPeople(string lname, string fname, string title, string phone, string email, string city, string state)
         {
             List<PeopleInfo> peopleList = null;
@@ -353,6 +374,37 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
         }
 
 
+        public static List<PeopleInfo> GetPeopleByProject(string npCode, string projectStatus = "A")
+        {
+            List<PeopleInfo> peopleList = null;
+
+            var db = new Database("arisPublicWebDbDSN");
+
+            string sql = @"SELECT DISTINCT v_people_info.emp_id, v_people_info.personid, v_people_info.perlname, 
+					        (v_people_info.perlname + ',' + ' ' + v_people_info.perfname) AS fullName
+                    FROM A416_national_program   A4NP,
+					        w_person_projects_all v_person_projects,
+                            w_people_info           v_people_info,
+					        w_clean_projects_all PROJECTS
+                    WHERE A4NP.NP_CODE = @npCode
+                    AND A4NP.ACCN_NO = PROJECTS.ACCN_NO
+                    AND projects.MODECODE_2 <> '01'
+                    AND projects.STATUS_CODE = @projectStatus -- chg - 02
+                    AND left(projects.MODECODE_1, 2) > 05
+                    AND projects.accn_no = v_person_projects.accn_no
+                    AND v_person_projects.emp_id = v_people_info.emp_id
+                    AND v_person_projects.emp_id IS NOT NULL
+                    AND v_people_info.status_code = 'A'
+                    ORDER BY perlname";
+
+            peopleList = db.Query<PeopleInfo>(sql, new { npCode = npCode, projectStatus = projectStatus }).ToList();
+
+            return peopleList;
+
+            
+        }
+
+
         public static PeopleInfo GetPerson(int personId)
         {
             PeopleInfo personInfo = null;
@@ -368,6 +420,22 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 			        AND 1=1";
 
             personInfo = db.Query<PeopleInfo>(sql, new { personId = personId }).FirstOrDefault();
+
+            return personInfo;
+        }
+
+
+        public static PeopleInfo GetPersonByEmployeeId(string empId)
+        {
+            PeopleInfo personInfo = null;
+
+            var db = new Database("arisPublicWebDbDSN");
+
+            string sql = @"Select * 
+	                    from V_PEOPLE_INFO 
+	                    where EMP_ID = @empId";
+
+            personInfo = db.Query<PeopleInfo>(sql, new { empId = empId }).FirstOrDefault();
 
             return personInfo;
         }

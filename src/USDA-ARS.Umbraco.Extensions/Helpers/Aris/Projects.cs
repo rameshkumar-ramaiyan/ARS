@@ -517,6 +517,109 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
         }
 
 
+        public static List<ProjectInfo> GetProjectsByStateAndProgram(string state, string npCode)
+        {
+            List<ProjectInfo> projectInfoList = null;
+
+            var db = new Database("arisPublicWebDbDSN");
+
+            string sql = @"SELECT	modecodes.MODECODE_3_DESC, 
+				            A4M.PRJ_TITLE, 
+				            A4M.ACCN_NO,
+				            (
+					            right('00' + cast(MODECODES.modecode_1 as varchar(2)), 2) + '-' +
+					            right('00' + cast(MODECODES.modecode_2 as varchar(2)), 2) + '-' +
+					            right('00' + cast(MODECODES.modecode_3 as varchar(2)), 2) + '-' +
+					            right('00' + cast(MODECODES.modecode_4 as varchar(2)), 2) 
+				            ) as modecode
+
+		            FROM	V_CLEAN_PROJECTS		A4M, 
+				            REF_MODECODE 			MODECODES, 
+				            A416_NATIONAL_PROGRAM 	A4NP
+		            where	STATE_CODE = @state
+			            AND	A4NP.np_CODE = @npCode
+
+			            AND a4np.np_type = 'n'
+			            AND A4NP.ACCN_NO = A4M.ACCN_NO
+		
+			            and A4M.MODECODE_1 = modecodes.MODECODE_1
+			            and A4M.MODECODE_2 = modecodes.MODECODE_2
+			            and A4M.MODECODE_3 = modecodes.MODECODE_3
+			            and A4M.MODECODE_4 = modecodes.MODECODE_4
+		
+		            order by	modecode					desc,
+					            modecodes.MODECODE_3_DESC, 
+					            A4M.ACCN_NO";
+
+            projectInfoList = db.Query<ProjectInfo>(sql, new { state = state, npCode = npCode }).ToList();
+
+            return projectInfoList;
+        }
+
+
+        public static List<ProjectInfo> GetProjectsByProgramFilter(string npCode, string projectStatus = "A",
+                string peopleList = "", string projectType = "", string location = "", string orderBy = "")
+        {
+            List<ProjectInfo> projectInfoList = null;
+
+            var db = new Database("arisPublicWebDbDSN");
+
+            string sql = @"SELECT 	projects.accn_no, projects.prj_title, projects.PRJ_TYPE project_type, 
+					                modecodes.Web_Label,city, rtrim(state_CODE) stateabbr, perfname, perlname, 
+					                (city + ',' + ' ' + state_code) AS location
+			                FROM 									
+					                w_people_info			v_people_info,				
+					                v_locations 			MODECODES, 
+					                A416_NATIONAL_PROGRAM 	A4NP,
+					                W_PERSON_PROJECTS_ALL	V_PERSON_PROJECTS,
+					                W_CLEAN_PROJECTS_ALL	PROJECTS
+					
+					
+			                WHERE 	NP_CODE = @npCode
+			                AND		projects.status_code = @projectStatus							
+			                AND 	A4NP.ACCN_NO = PROJECTS.ACCN_NO
+			                AND 	projects.MODECODE_1 = modecodes.MODECODE_1
+			                AND 	projects.MODECODE_2 = modecodes.MODECODE_2
+			                AND 	projects.MODECODE_3 = modecodes.MODECODE_3
+			                AND 	projects.MODECODE_4 = modecodes.MODECODE_4
+			                AND 	projects.MODECODE_2 <> '01'
+			                AND 	MODECODES.STATUS_CODE = 'a'
+			                AND 	left(modecodes.MODECODE_1, 2) > 05
+			                AND 	projects.accn_no = v_person_projects.accn_no
+			                AND 	v_person_projects.emp_id = v_people_info.emp_id 
+			                AND 	v_person_projects.emp_id IS NOT NULL
+			                AND 	v_people_info.status_code = 'A'
+						
+			
+			                AND		(PRJ_TYPE <> 'J')";
+
+            if (false == string.IsNullOrEmpty(peopleList))
+            {
+                sql += " AND v_people_info.personid IN (" + Utilities.Strings.CleanSqlString(peopleList) + ") ";
+            }
+            if (false == string.IsNullOrEmpty(projectType))
+            {
+                sql += " AND projects.prj_type = '" + Utilities.Strings.CleanSqlString(projectType) + "' ";
+            }
+            if (false == string.IsNullOrEmpty(projectType))
+            {
+                sql += " AND (city + ',' + ' ' + state_code) = '" + Utilities.Strings.CleanSqlString(location) + "' ";
+            }
+            sql += " ORDER BY ";
+
+            if (false == string.IsNullOrEmpty(orderBy))
+            {
+                sql += orderBy + ", ";
+            }
+            sql += "modecodes.modecode_1, modecodes.modecode_2, modecodes.modecode_3, modecodes.modecode_4";
+
+
+            projectInfoList = db.Query<ProjectInfo>(sql, new { npCode = npCode, projectStatus = projectStatus }).ToList();
+
+            return projectInfoList;
+        }
+
+
         public static string ProjectTypeByCode(string code)
         {
             if (code == "A")

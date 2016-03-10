@@ -293,6 +293,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\ContentImporterController.cs" />
+    <Compile Include="Controller\DocTypeListController.cs" />
+    <Compile Include="Controller\TemplateListController.cs" />
     <Compile Include="Controller\TopicPickerController.cs" />
     <Compile Include="Controller\PeopleListController.cs" />
     <Compile Include="Controller\DownloadRequestController.cs" />
@@ -301,6 +303,7 @@
     <Compile Include="Controller\DataImporterController.cs" />
     <Compile Include="Helpers\Aris\DownloadRequest.cs" />
     <Compile Include="Helpers\Aris\ModeCodesNew.cs" />
+    <Compile Include="Helpers\Aris\NationalPrograms.cs" />
     <Compile Include="Helpers\Aris\People.cs" />
     <Compile Include="Helpers\Aris\ProjectPrograms.cs" />
     <Compile Include="Helpers\Aris\Publications.cs" />
@@ -318,6 +321,7 @@
     <Compile Include="Helpers\Topics.cs" />
     <Compile Include="Models\Aris\DownloadRequest.cs" />
     <Compile Include="Models\Aris\ModeCodeNew.cs" />
+    <Compile Include="Models\Aris\NationalProgramLocation.cs" />
     <Compile Include="Models\Aris\PeopleByCity.cs" />
     <Compile Include="Models\Aris\PeopleInfo.cs" />
     <Compile Include="Models\Aris\ProjectAnnualReportYear.cs" />
@@ -351,7 +355,6 @@
     <Compile Include="Models\TopicPickerItem.cs" />
     <Compile Include="Models\TopicPickerValue.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RegisterEvents.cs" />
     <Compile Include="Utilities\Strings.cs" />
     <Compile Include="Utilities\UmbEventHandler.cs" />
   </ItemGroup>

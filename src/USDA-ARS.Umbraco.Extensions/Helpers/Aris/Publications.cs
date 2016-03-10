@@ -431,6 +431,26 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
         }
 
 
+        public static List<UsdaPublication> GetPublicationsByStpCode(int stpCode)
+        {
+            List<UsdaPublication> projectPublicationList = null;
+
+            var db = new Database("arisPublicWebDbDSN");
+
+            string sql = @"select  p.seq_no_115, journal_pub_date, manuscript_title
+		                    from	gen_public_115s p,
+				                    v_115_stp_codes stp
+		                    where 	p.seq_no_115 = stp.seq_no_115
+		                    and 	stp_code = @stpCode
+		                    and  	journal_pub_date is not null
+		                    order by journal_pub_date desc";
+
+            projectPublicationList = db.Query<UsdaPublication>(sql, new { stpCode = stpCode }).ToList();
+
+            return projectPublicationList;
+        }
+
+
         public static List<StpCode> GetStpCodeList()
         {
             List<StpCode> stpCodeList = null;

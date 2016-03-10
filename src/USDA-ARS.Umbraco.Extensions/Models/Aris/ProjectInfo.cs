@@ -63,6 +63,22 @@ namespace USDA_ARS.Umbraco.Extensions.Models.Aris
         [NullSetting(NullSetting = NullSettings.Null)]
         public string ModeCode4 { get; set; }
 
+        [Column("MODECODE_1_DESC")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string ModeCode1Desc { get; set; }
+
+        [Column("MODECODE_2_DESC")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string ModeCode2Desc { get; set; }
+
+        [Column("MODECODE_3_DESC")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string ModeCode3Desc { get; set; }
+
+        [Column("MODECODE_4_DESC")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string ModeCode4Desc { get; set; }
+
         [Column("ProjectNumber")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public string ProjectNumber { get; set; }
@@ -98,6 +114,10 @@ namespace USDA_ARS.Umbraco.Extensions.Models.Aris
         [Column("STATE_NAME")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public string State { get; set; }
+
+        [Column("modecode")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string ModeCode { get; set; }
     }
 }
 

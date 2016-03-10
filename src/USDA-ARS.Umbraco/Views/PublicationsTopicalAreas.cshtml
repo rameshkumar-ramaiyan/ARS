@@ -42,6 +42,8 @@
                 actionStpItem = activeStpCode.ShortDesc;
             }
 
+
+            publicationList = Publications.GetPublicationsByStpCode(Convert.ToInt32(stpCode)).ToList();
         }
 
     }
@@ -61,7 +63,7 @@
 
             <tbody>
                 <tr>
-                    <td>
+                    <td colspan="3">
                         @if (true == string.IsNullOrWhiteSpace(stpCode))
                         {
                             <b>Manuscripts by strategic topical areas</b>

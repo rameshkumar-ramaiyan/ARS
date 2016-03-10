@@ -53,9 +53,14 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
         public static IEnumerable<IPublishedContent> NationalProgramsList()
         {
-            IPublishedContent ArsLocations = UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("NationalPrograms"));
+            IPublishedContent NationalProgramsRoot = UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("NationalProgramsRoot"));
 
-            return ArsLocations.Children;
+            if (NationalProgramsRoot != null)
+            {
+                return NationalProgramsRoot.Children.FirstOrDefault().Children;
+            }
+
+            return null;
         }
 
 
@@ -141,6 +146,22 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                 if (node == null)
                 {
                     node = root.Descendants().FirstOrDefault(n => n.GetPropertyValue<string>("modeCode") == modeCode);
+                }
+            }
+
+            return node;
+        }
+
+
+        public static IPublishedContent GetNodeByNpCode(string npCode)
+        {
+            IPublishedContent node = null;
+
+            foreach (IPublishedContent root in UmbHelper.TypedContentAtRoot())
+            {
+                if (node == null)
+                {
+                    node = root.Descendants().FirstOrDefault(n => n.GetPropertyValue<string>("npCode") == npCode);
                 }
             }
 

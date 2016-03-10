@@ -1,0 +1,114 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+    bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
+
+    string bodyText = currentPage.GetPropertyValue<string>("bodyText");
+    string modeCode = "";
+
+    if (Request.QueryString["modeCode"] != null)
+    {
+        modeCode = Request.QueryString.Get("modeCode");
+    }
+
+    bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        @if (false == hideHeaderTitle)
+        {
+            <table border="0" width="100%">
+                <tr>
+                    <td class="pageHeading">@currentPage.Name                                                                                                                                                                                               </td>
+                </tr>
+                <tr>
+                    <td>
+
+                        <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
+                    </td>
+                </tr>
+            </table>
+        }
+
+
+        <!-- display URLs of subpages start -->
+        <!--  display URLs of subpages end -->
+        <!-- document content start -->
+
+        <table width="80%" cellpadding="0" cellspacing="10" align="CENTER">
+            <tbody>
+                <tr>
+                    <td align="left">
+                        <h2><font face="Arial">ARS News by E-Mail</font></h2>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <form action="/elists/" method="post">
+                            <p>
+                                The <a href="mailto:NewsService@ars.usda.gov" id="anch_73">
+                                    ARS
+                                    News Service
+                                </a> provides news reports intended mainly for journalists, but available to anyone with an Internet e-mail address. Our goal is to provide our subscribers with the very latest in interesting, scientifically significant research findings. Please make your selections below:
+                            </p>
+                            <p>
+                                <input type="radio" name="listname" value="arsnews">
+                                <b>News Service:</b> Complete news stories on recent research discoveries. <br><br>
+                                <input type="radio" name="listname" value="newslink">
+                                <b>Newslink:</b> Weekly summary of web links to each of the week's stories; typically issued on Friday.
+                            </p>
+                            <p align="center">
+                                Please carefully enter
+                                your e-mail address:<br>
+                                <input type="text" name="emailaddr" size="50" maxlength="80">
+                                <br>
+                                <input type="radio" name="action" value="Subscribe" checked="CHECKED">
+                                Subscribe&nbsp;&nbsp;&nbsp;&nbsp;
+                                <input type="radio" name="action" value="Unsubscribe">
+                                Unsubscribe<br>
+                                <input type="hidden" name="headerpath" value="/handf/news_head.htm">
+                                <input type="hidden" name="footerpath" value="/handf/news_foot.htm">
+                                <input type="hidden" name="confirmreq" value="true">
+                                <input type="submit" value="Submit">
+                            </p>
+                        </form>
+                    </td>
+                </tr>
+                <tr align="center">
+                    <td>
+                        Trouble subscribing or unsubscribing?
+                        –Please contact the <a href="mailto:NewsService@ars.usda.gov" id="anch_74">
+                            News
+                            Service
+                        </a>.
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- document content end -->
+
+
+        <br />
+
+
+
+        <p></p>
+
+
+    </div>
+</div>
