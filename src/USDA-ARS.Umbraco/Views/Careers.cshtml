@@ -15,9 +15,9 @@
     string usajobUrl = currentPage.GetPropertyValue<string>("usajobUrl", "#badUrl");
     string usajobUrlList = "";
 
-    if (false == string.IsNullOrWhiteSpace(Request.QueryString["mc"]))
+    if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
     {
-        modeCode = Request.QueryString.Get("mc");
+        modeCode = Request.QueryString.Get("modeCode");
     }
     else
     {
@@ -65,8 +65,8 @@
     usajobUrlList += "<a href=\"" + usajobUrl + "\">ARS openings nationwide</a><br />\r\n";
 
     careersBelow = careersBelow.Replace("{{USAJOBS_URLS}}", usajobUrlList);
-    
-    
+
+
 }
 
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)

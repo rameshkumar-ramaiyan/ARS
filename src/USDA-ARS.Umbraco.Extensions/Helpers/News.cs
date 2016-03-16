@@ -5,81 +5,32 @@ using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Core;
 using Umbraco.Core.Logging;
+using Umbraco.Core.Models;
 using Umbraco.Core.Persistence;
+using Umbraco.Web;
 using USDA_ARS.Umbraco.Extensions.Models.Aris;
 
 namespace USDA_ARS.Umbraco.Extensions.Helpers
 {
     public class News
     {
-        public static List<UsdaArsNews> GetNews(int newsCount, string modeCode = null, DateTime? dateStart = null, DateTime? dateEnd = null)
+        public static List<IPublishedContent> GetNews(int newsCount, string modeCode = null, DateTime? dateStart = null, DateTime? dateEnd = null)
         {
-            List<UsdaArsNews> newsItems = null;
+            List<IPublishedContent> newsItems = null;
 
-            var db = ApplicationContext.Current.DatabaseContext.Database;
+            newsItems = Helpers.Nodes.NewsList();
 
-            if (dateStart == null)
+            if (dateStart != null && dateEnd != null)
             {
-                dateStart = DateTime.MinValue;
-            }
-            if (dateEnd == null)
-            {
-                dateEnd = DateTime.MaxValue;
+                newsItems = newsItems.Where(p => p.GetPropertyValue<DateTime>("articleDate") >= dateStart && p.GetPropertyValue<DateTime>("articleDate") <= dateEnd).ToList();
             }
 
-            Sql sql = null;
+            newsItems = newsItems.OrderByDescending(p => p.GetPropertyValue<DateTime>("articleDate")).ToList();
 
-            if (true == string.IsNullOrEmpty(modeCode))
-            {
-                sql = new Sql()
-                 .Select("*")
-                 .From("UsdaArsNews")
-                 .Where("SPSysEndTime is null AND published = 'p' AND originsite_id = 01040000 AND FromField <> 'ARS-Careers <Careers@@ARS.USDA.GOV>' AND NOT SubjectField LIKE 'ARS Newslink%'  AND NOT SubjectField LIKE 'AgResearch Magazine%'")
-                 .OrderByDescending("DateField");
-            }
-            else
-            {
-                sql = new Sql()
-                 .Select("*")
-                 .From("UsdaArsNews")
-                 .Where("published = 'p' AND FromField <> 'ARS-Careers <Careers@@ARS.USDA.GOV>' AND NOT SubjectField LIKE 'ARS Newslink%'  AND NOT SubjectField LIKE 'AgResearch Magazine%' AND OriginSite_ID LIKE '" + modeCode.Substring(0, 1) + "%'")
-                 .OrderByDescending("DateField");
-            }
-
-            try
-            {
-                newsItems = db.Query<UsdaArsNews>(sql).Where(p => p.DateField >= dateStart && p.DateField <= dateEnd).Take(newsCount).ToList();
-
-                if (newsItems != null && newsItems.Count > 0)
-                {
-                    newsItems = newsItems.OrderByDescending(p => p.DateField).ToList();
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Info<News>("ERROR loading news: " + ex.ToString());
-            }
+            newsItems = newsItems.Take(newsCount).ToList();
 
             return newsItems;
         }
 
-
-        public static UsdaArsNews GetNewsById(int newsId)
-        {
-            UsdaArsNews newsItem = null;
-
-            var db = ApplicationContext.Current.DatabaseContext.Database;
-
-            Sql sql = null;
-
-            sql = new Sql()
-                 .Select("*")
-                 .From("UsdaArsNews")
-                 .Where("NewsID = " + newsId);
-
-            newsItem = db.Query<UsdaArsNews>(sql).FirstOrDefault();
-
-            return newsItem;
-        }
     }
 }

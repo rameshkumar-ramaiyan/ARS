@@ -1,0 +1,33 @@
+﻿@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+    if (currentPage.HasValue("latestNewsItem"))
+    {
+        IEnumerable<IPublishedContent> latestNews = Model.Content.GetPropertyValue<IEnumerable<IPublishedContent>>("latestNewsItem");
+
+        if (latestNews != null && latestNews.Any())
+        {
+            IPublishedContent newsFound = latestNews.FirstOrDefault();
+
+            if (newsFound != null)
+            {
+                Response.Redirect(newsFound.Url);
+            }
+            else
+            {
+                Response.Redirect("/news-events/");
+            }
+        }
+        else
+        {
+            Response.Redirect("/news-events/");
+        }
+    }
+    else
+    {
+        Response.Redirect("/news-events/");
+    }
+}

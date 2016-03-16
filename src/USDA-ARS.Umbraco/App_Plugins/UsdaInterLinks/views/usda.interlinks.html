@@ -1,0 +1,29 @@
+﻿<style>
+    #interlinks-table {
+        width: 100%;
+    }
+    #interlinks-table th {
+        text-align: left;
+    }
+    #interlinks-table tr {
+        border: 1px solid #BBB;
+    }
+</style>
+
+
+<div ng-controller="Usda.InterLinks">
+    <p><strong>News InterLinks</strong></p>
+
+    <table id="interlinks-table" cellpadding="4" cellspacing="3" style="border: 1px solid #777;">
+        <tr>
+            <th>Type</th>
+            <th>Id</th>
+            <th>Description</th>
+        </tr>
+        <tr ng-repeat="InterLink in InterLinkList">
+            <td>{{ InterLink.Type }}</td>
+            <td>{{ InterLink.Id }}</td>
+            <td>{{ InterLink.Description }}</td>
+        </tr>
+    </table>
+</div>

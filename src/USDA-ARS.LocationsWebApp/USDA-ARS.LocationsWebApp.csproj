@@ -338,6 +338,7 @@
     <Content Include="App_Plugins\Archetype\views\archetype.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.js" />
+    <Content Include="news-import.aspx" />
     <Content Include="test-script.aspx" />
     <Content Include="delete-regions.aspx" />
     <Content Include="packages.config" />
@@ -355,6 +356,15 @@
   <ItemGroup>
     <Compile Include="DL\ApiCalls.cs" />
     <Compile Include="DL\GetCalls.cs" />
+    <Compile Include="DL\NewsImport.cs" />
+    <Compile Include="Models\News.cs" />
+    <Compile Include="news-import.aspx.cs">
+      <DependentUpon>news-import.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="news-import.aspx.designer.cs">
+      <DependentUpon>news-import.aspx</DependentUpon>
+    </Compile>
     <Compile Include="test-script.aspx.cs">
       <DependentUpon>test-script.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>

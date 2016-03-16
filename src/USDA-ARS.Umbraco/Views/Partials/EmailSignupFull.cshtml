@@ -1,0 +1,34 @@
+﻿@model USDA_ARS.Umbraco.Extensions.Models.EmailSignup
+@{
+
+}
+<table width="80%" cellpadding="0" cellspacing="10" align="CENTER">
+    <tbody>
+        <tr>
+            <td>
+                @using (Html.BeginUmbracoForm<USDA_ARS.Umbraco.Controllers.EmailSignupFullSurfaceController>("HandleFormSubmit"))
+                {
+                    <p>
+                        @Html.RadioButton("ListName", "arsnews")
+                        <b>News Service:</b> Complete news stories on recent research discoveries. <br /><br />
+                        @Html.RadioButton("ListName", "newslink")
+                        <b>Newslink:</b> Weekly summary of web links to each of the week's stories; typically issued on Friday.
+                    </p>
+                    <p align="center">
+                        Please carefully enter
+                        your e-mail address:<br />
+                        @Html.TextBoxFor(p => p.Email, new { @placeholder = "Sign up for ARS News updates", @style = "width: 245px" })
+                        @Html.ValidationMessageFor(p => p.Email)
+                        <br />
+                        @Html.RadioButton("Action", "Subscribe", new { @checked = "checked" })
+                        Subscribe&nbsp;&nbsp;&nbsp;&nbsp;
+                        @Html.RadioButton("Action", "Unsubscribe")
+                        Unsubscribe<br />
+                        <input type="submit" value="Submit">
+                    </p>
+                }
+            </td>
+        </tr>
+    </tbody>
+</table>
+

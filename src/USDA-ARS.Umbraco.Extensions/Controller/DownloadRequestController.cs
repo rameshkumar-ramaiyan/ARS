@@ -56,7 +56,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
             }
             catch (Exception ex)
             {
-                LogHelper.Error<DataImporterController>("Usda Download Request Error", ex);
+                LogHelper.Error<DownloadRequestController>("Usda Download Request Error", ex);
             }
 
             return output;

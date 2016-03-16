@@ -14,6 +14,7 @@
     PeopleInfo peopleInfo = null;
     List<PeoplePublication> peoplePublicationList = null;
     List<ProjectInfo> personProjectList = null;
+    List<IPublishedContent> personNewsList = null;
 
     if (false == string.IsNullOrEmpty(Request.QueryString["person-id"]))
     {
@@ -27,6 +28,7 @@
 
             peoplePublicationList = Publications.PublicationsByPerson(personId);
             personProjectList = Projects.GetProjectsByPerson(peopleInfo.EmpId);
+            personNewsList = NewsInterLinks.GetNewsByPersonId(personId);
         }
         else
         {
@@ -123,13 +125,13 @@ remote.location.href = u;
                         </a><br>
 
 
-                        Phone: @(Strings.FormatPhoneNumber(peopleInfo.PhoneAreaCode + peopleInfo.Phone)) 
+                        Phone: @(Strings.FormatPhoneNumber(peopleInfo.PhoneAreaCode + peopleInfo.Phone))
                         @(false == string.IsNullOrEmpty(peopleInfo.PhoneExt) ? " ext. " + peopleInfo.PhoneExt : "")
                         <br />
 
                         Fax: @(Strings.FormatPhoneNumber(peopleInfo.FaxAreaCode + peopleInfo.Fax))<br />
 
-                        @Html.Raw(false == string.IsNullOrEmpty(peopleInfo.RoomNumber) ? "Room " + peopleInfo.RoomNumber +"<br />" : "")
+                        @Html.Raw(false == string.IsNullOrEmpty(peopleInfo.RoomNumber) ? "Room " + peopleInfo.RoomNumber + "<br />" : "")
 
                         <br />
                         @peopleInfo.Address1<br />
@@ -254,45 +256,31 @@ remote.location.href = u;
 
                     </td>
                     <td valign="top">
+                        @if (personNewsList != null && personNewsList.Any())
+                        {
+                            <font face="verdana,arial" size="-2" color="#014c3e">
+                                <b>ARS News Articles</b>
+                                <br>
+                            </font>
+                            <div align="left">
+                                <table>
+                                    <tbody>
+                                        @foreach (IPublishedContent newsItem in personNewsList)
+                                        {
+                                            <tr>
+                                                <td valign="top"><img src="/images/incme/bullet.gif" border="0" alt="item"></td>
+                                                <td valign="top" align="left" background="/incme/images/spacer.gif">
+                                                    <font face="verdana,arial" size="-1">
+                                                        <a href="@newsItem.Url">@newsItem.Name</a>
+                                                    </font>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
 
-
-                        @*<font face="verdana,arial" size="-2" color="#014c3e">
-                                    <b>
-
-                                        ARS News Articles
-                                        <font face="verdana,arial" size="-2" color="#014c3e">
-                                        </font>
-                                    </b><font face="verdana,arial" size="-2" color="#014c3e">
-                                    </font>
-                                    <br>
-
-                                    <font face="verdana,arial" size="-2">
-                                        <div align="left">
-                                            <table>
-                                                <tbody>
-                                                    <tr>
-                                                        <td valign="top"><img src="/incme/images/bullet.gif" border="0" alt="item"></td>
-                                                        <td valign="top" align="left" background="/incme/images/spacer.gif">
-                                                            <font face="verdana,arial" size="-1">
-                                                                <a href="/is/pr/2007/071127.htm" id="anch_115">Village Wheats May Fend Off Stem Rust</a>
-                                                            </font>
-                                                        </td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td valign="top"><img src="/incme/images/bullet.gif" border="0" alt="item"></td>
-                                                        <td valign="top" align="left" background="/incme/images/spacer.gif">
-                                                            <font face="verdana,arial" size="-1">
-                                                                <a href="/is/pr/2011/111024.htm" id="anch_116">Stem Rust-resistant Wheat Landraces Identified</a>
-                                                            </font>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-
-                                    </div>
-                                </font>
-
-                            </font>*@
+                            </div>
+                        }
                     </td>
 
                 </tr>
