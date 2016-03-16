@@ -474,6 +474,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
             contentObj.Id = content.Id;
             contentObj.Name = content.Name;
+            contentObj.Url = Umbraco.NiceUrl(content.Id);
             contentObj.ParentId = content.ParentId;
             contentObj.DocType = content.ContentType.Alias;
             if (content.Template != null)

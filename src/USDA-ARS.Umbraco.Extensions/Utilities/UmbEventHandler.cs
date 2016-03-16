@@ -7,6 +7,7 @@ using Umbraco.Core;
 using Umbraco.Core.Events;
 using Umbraco.Core.Models;
 using Umbraco.Core.Services;
+using USDA_ARS.Umbraco.Extensions.Helpers.Aris;
 
 namespace USDA_ARS.Umbraco.Extensions.Utilities
 {
@@ -16,10 +17,11 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 
         protected override void ApplicationStarted(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
         {
-            ContentService.Saved += CreateChildNodes;
+            ContentService.Saved += PostProcessSave;
+            ContentService.Deleted += PostProcessDelete;
         }
 
-        private static void CreateChildNodes(IContentService cs, SaveEventArgs<IContent> e)
+        private static void PostProcessSave(IContentService cs, SaveEventArgs<IContent> e)
         {
             foreach (var node in e.SavedEntities)
             {
@@ -34,6 +36,32 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                     var childNode = _contentService.CreateContent("Docs", node, "NationalProgramFolderContainer");
 
                     _contentService.SaveAndPublishWithStatus(childNode);
+                }
+                else if (node.ContentType.Alias == "NewsArticle")
+                {
+                    int nodeId = node.Id;
+
+                    string bodyText = node.GetValue<string>("bodyText");
+
+                    NewsInterLinks.RemoveLinksByNodeId(nodeId);
+
+                    List<LinkItem> linkItemList = NewsInterLinks.FindInterLinks(bodyText);
+
+                    if (linkItemList != null)
+                    {
+                        NewsInterLinks.GenerateInterLinks(node, linkItemList);
+                    }
+                }
+            }
+        }
+
+        private static void PostProcessDelete(IContentService cs, DeleteEventArgs<IContent> e)
+        {
+            foreach (var node in e.DeletedEntities)
+            {
+                if (node.ContentType.Alias == "NewsArticle")
+                {
+                    NewsInterLinks.RemoveLinksByNodeId(node.Id);
                 }
             }
         }

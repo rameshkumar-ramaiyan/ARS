@@ -116,6 +116,26 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
         }
 
 
+        public static List<IPublishedContent> NewsList()
+        {
+            List<IPublishedContent> newsList = new List<IPublishedContent>();
+
+            IPublishedContent homepage = Homepage();
+
+            if (homepage != null)
+            {
+                IPublishedContent newsContainer = homepage.Descendants().FirstOrDefault(n => n.IsDocumentType("News"));
+
+                if (newsContainer != null)
+                {
+                    newsList = newsContainer.Descendants().Where(p => p.IsDocumentType("NewsArticle")).ToList();
+                }
+            }
+
+            return newsList;
+        }
+
+
         public static List<string> StateListFromRegion(IPublishedContent region)
         {
             List<string> stateList = new List<string>();
@@ -146,6 +166,22 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                 if (node == null)
                 {
                     node = root.Descendants().FirstOrDefault(n => n.GetPropertyValue<string>("modeCode") == modeCode);
+                }
+            }
+
+            return node;
+        }
+
+
+        public static IPublishedContent GetNodeByUrl(string url)
+        {
+            IPublishedContent node = null;
+
+            foreach (IPublishedContent root in UmbHelper.TypedContentAtRoot())
+            {
+                if (node == null)
+                {
+                    node = root.Descendants().FirstOrDefault(n => n.Url.ToLower() == url.ToLower());
                 }
             }
 

@@ -10,6 +10,9 @@
 
     IPublishedContent currentPage = Model.Content;
     UsdaPublication publication = null;
+    ProjectInfo projectInfo = null;
+    IPublishedContent location = null;
+
     List<PeopleInfo> peopleList = null;
 
     string seqNo115 = Request.QueryString["seqNo115"];
@@ -20,6 +23,11 @@
 
         peopleList = People.GetPeopleByPublication(Convert.ToInt32(seqNo115));
 
+        projectInfo = Projects.GetProjectInfo(publication.AccountNo);
+
+        string modeCode = publication.ModeCode1 + "-" + publication.ModeCode2 + "-" + publication.ModeCode3 + "-" + publication.ModeCode4;
+
+        location = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode);
     }
 
     if (publication == null)
@@ -35,10 +43,35 @@
     @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
 
     <div id="pageContent">
+        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-1">
+            <strong>Research Project: </strong>
 
-        <font face="verdana,arial,helvetica" size="-1">
+            @if (projectInfo != null)
+            {
+                <a href="/research/project/?accnNo=@publication.AccountNo">
+                    @publication.Title
+                </a>
+            }
+            else
+            {
+                <em>Project @publication.AccountNo was not found.</em>
+            }
+
+            <p>
+                <strong>
+                    Location:
+                    @if (location != null)
+                    {
+                        <a href="@location.Url">@location.Name</a>    
+                    }
+                    else
+                    {
+                        <em>Location not imported yet.</em>
+                    }
+                </strong>
+            </p>
+
             <strong>Title:</strong> @(publication.Title))
-
         </font><p></p>
 
 

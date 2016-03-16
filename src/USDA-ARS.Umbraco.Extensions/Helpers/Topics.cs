@@ -83,6 +83,22 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                             {
                                 navFound = true;
                             }
+
+                            if (false == navFound && true == navItem.GetValue<bool>("displayOnChildPages"))
+                            {
+                                foreach (IPublishedContent testAncestor in currentNode.Ancestors())
+                                {
+                                    if (false == navFound)
+                                    {
+                                        Link foundLinkParent = links.Where(p => p.Url.ToLower() == testAncestor.Url.ToLower()).FirstOrDefault();
+
+                                        if (foundLinkParent != null)
+                                        {
+                                            navFound = true;
+                                        }
+                                    }
+                                }
+                            }
                         }
 
                         if (true == navFound)
