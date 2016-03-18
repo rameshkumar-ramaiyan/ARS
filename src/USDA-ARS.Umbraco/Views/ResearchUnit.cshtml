@@ -4,6 +4,7 @@
 @using RJP.MultiUrlPicker.Models
 @using Umbraco.Core.Persistence
 @using USDA_ARS.Umbraco.Extensions.Models.Aris
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
     Layout = "_Master.cshtml";
@@ -21,11 +22,19 @@
     ArchetypeModel carouselSlides = currentPage.GetPropertyValue<ArchetypeModel>("carouselSlides");
 
     List<UsdaProject> researchList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.Projects.ListProjects(modeCode, 3);
-    IEnumerable<IPublishedContent> newsList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("newsList");
+
+    List<IPublishedContent> newsList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("newsList").ToList();
+    List<IPublishedContent> newsInterLinksList = NewsInterLinks.GetNewsByModeCode(modeCode);
+
+    if (newsInterLinksList != null && newsInterLinksList.Any())
+    {
+        newsList.AddRange(newsInterLinksList);
+    }
 
     if (newsList != null && newsList.Any())
     {
-        newsList = newsList.Take(5);
+        newsList = newsList.OrderByDescending(p => p.GetPropertyValue<DateTime>("articleDate")).ToList();
+        newsList = newsList.Take(5).ToList();
     }
 
     List<UsdaPublication> publicationList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.Publications.ListPublications(modeCode, 3);
@@ -151,13 +160,7 @@
                 @Html.Partial("~/Views/Partials/Modules/SocialLinks.cshtml")
 
                 <!-- sign up email box -->
-                <form action="/elists/elists.htm" method="post">
-                    <input name="emailAddr" type="text" value="Sign up for ARS News updates"
-                           size="28" onfocus="this.value=''" />
-                    <input name="listname" type="hidden" value="arsnews" />
-                    <input name="action" type="hidden" value="Subscribe" />
-                    <input name="commit" type="submit" value="Go" />
-                </form>
+                @Html.Action("Index", "EmailSignupSiteSurface")
 
                 <a href="top" class="section508">Back to Top of Page</a>
             </div>	<!-- Stay Connected -->
@@ -304,15 +307,15 @@
                             foreach (IPublishedContent item in newsList)
                             {
                             <li>
-                                <a href="/news/news-item/@(item.GetPropertyValue<string>("newsId"))">
-                                    @(item.GetPropertyValue<string>("title"))
+                                <a href="@(item.Url)">
+                                    @(item.Name)
                                 </a>
                             </li>
                             }
                         }
 
                         <li class="textAlignRight">
-                            <a href="/news/news.htm?modecode=@modeCode">&gt;&gt;&gt;More</a>
+                            <a href="#TODO">&gt;&gt;&gt;More</a>
                         </li>
                     </ul>
                 </div>

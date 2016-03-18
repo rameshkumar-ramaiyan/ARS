@@ -13,6 +13,7 @@ namespace USDA_ARS.Umbraco.Extensions.Models.Import
         public int ParentId { get; set; }
         public string DocType { get; set; }
         public string Template { get; set; }
+        public string Url { get; set; }
         public List<ApiProperty> Properties { get; set; }
         public int Save { get; set; }
         public List<ApiContent> ChildContentList { get; set; }

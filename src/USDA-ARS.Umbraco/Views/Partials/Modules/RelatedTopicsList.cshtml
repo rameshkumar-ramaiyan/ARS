@@ -7,8 +7,21 @@
 @model IPublishedContent
 @{
     ArchetypeModel parentRelatedTopics = null;
+    string modeCode = "";
+
+    modeCode = Model.GetPropertyValue<string>("modeCode");
 
     IPublishedContent rootPage = Model.AncestorOrSelf(1);
+
+    if (false == string.IsNullOrEmpty(Request.QueryString["modeCode"]))
+    {
+        modeCode = Request.QueryString.Get("modeCode");
+    }
+    if (true == string.IsNullOrEmpty(modeCode))
+    {
+        modeCode = rootPage.GetPropertyValue<string>("modeCode");
+    }
+
 
     ArchetypeModel currentRelatedTopics = Model.GetPropertyValue<ArchetypeModel>("leftNavPicker");
 
@@ -40,7 +53,7 @@
                 {
                     if (siteNavTop != null)
                     {
-                        @Html.Raw(OutputTopic(siteNavTop, ref foundExternalLink))
+                        @Html.Raw(OutputTopic(siteNavTop, modeCode, ref foundExternalLink))
                     }
                 }
             }
@@ -63,7 +76,7 @@
                         {
                             foreach (var item in topicItem)
                             {
-                                @Html.Raw(OutputTopic(item, ref foundExternalLink))
+                                @Html.Raw(OutputTopic(item, modeCode, ref foundExternalLink))
                             }
                         }
                     }
@@ -88,13 +101,14 @@
 
 @functions
 {
-    string OutputTopic(ArchetypeFieldsetModel item, ref bool foundExternalLink)
+    string OutputTopic(ArchetypeFieldsetModel item, string modeCode, ref bool foundExternalLink)
     {
         string html = null;
 
         if (item.Alias == "topicsItem")
         {
             string urlLink = "#";
+            bool appendModeCode = false;
 
             if (item.HasValue("location"))
             {
@@ -104,6 +118,13 @@
                 {
                     urlLink = navLink.Url;
                 }
+            }
+
+            appendModeCode = item.GetValue<bool>("appendModeCode");
+
+            if (true == appendModeCode && false == string.IsNullOrEmpty(modeCode))
+            {
+                urlLink += "?modeCode=" + modeCode;
             }
 
             string externalIcon = "";

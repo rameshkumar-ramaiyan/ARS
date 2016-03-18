@@ -382,6 +382,11 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                  .Where("EMP_ID = '" + peopleInfo.EmpId + "'");
 
                 peoplePublicationsList = db.Query<PeoplePublication>(sql).ToList();
+
+                if (peoplePublicationsList != null)
+                {
+                    peoplePublicationsList = peoplePublicationsList.OrderByDescending(p => p.JournalAcceptDate).ToList();
+                }
             }
 
 

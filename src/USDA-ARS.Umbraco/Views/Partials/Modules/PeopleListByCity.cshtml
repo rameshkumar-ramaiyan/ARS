@@ -6,26 +6,50 @@
 @{
     IPublishedContent currentNode = Model;
     string modeCode = Model.GetPropertyValue<string>("modeCode");
+    string modeCodeCity = modeCode;
     string javascriptInsert = "";
+    int incValue = 0;
 
     if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
     {
         modeCode = Request.QueryString.Get("modeCode");
 
-        currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode);
+        List<string> modeCodeArray = USDA_ARS.Umbraco.Extensions.Helpers.ModeCodes.ModeCodeArray(modeCode);
 
-        //     javascriptInsert += @"
-        //         // Open the panel by modecode
-        //$('#accordion').accordion('activate', 0);
+        modeCodeCity = modeCodeArray[0] + "-" + modeCodeArray[1] + "-00-00";
 
-        //         // auto scroll to a div
-        //$('html, body').animate({";
-        //     javascriptInsert += " scrollTop: $('#"+ modeCode + "').offset().top}, 2000);";
+        currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCodeCity);
     }
 
-    List<PeopleByCity> peopleFullList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByCity(modeCode);
+    List<PeopleByCity> peopleFullList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByCity(modeCodeCity);
 
     List<PeopleByCity> siteLabelList = peopleFullList.DistinctBy(p => p.SiteLabel).ToList();
+
+    if (siteLabelList != null && siteLabelList.Any())
+    {
+        int i = 0;
+        foreach (PeopleByCity peopleByCity in siteLabelList)
+        {
+            if (incValue == 0 && peopleByCity.ModeCode == modeCode)
+            {
+                incValue = i;
+            }
+
+            i++;
+        }
+    }
+
+    if (incValue > 0)
+    {
+        javascriptInsert += @"
+                 // Open the panel by modecode
+        ";
+        javascriptInsert += "$('#accordion').accordion('activate', " + incValue + ");\r\n";
+
+        javascriptInsert += @"         // auto scroll to a div
+        $('html, body').animate({";
+        javascriptInsert += " scrollTop: $('#" + modeCode.Replace("-","") + "').offset().top}, 2000);";
+    }
 }
 
 <!-- jQuery accordion -->

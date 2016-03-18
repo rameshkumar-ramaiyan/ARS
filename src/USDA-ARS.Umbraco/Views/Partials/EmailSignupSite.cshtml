@@ -1,0 +1,15 @@
+﻿@model USDA_ARS.Umbraco.Extensions.Models.EmailSignup
+@{
+
+}
+
+@using (Html.BeginUmbracoForm<USDA_ARS.Umbraco.Controllers.EmailSignupSiteSurfaceController>("HandleFormSubmit"))
+{
+    @Html.TextBoxFor(p => p.Email, new { @placeholder = "Sign up for ARS News updates", @style = "width: 245px" })
+    @Html.ValidationMessageFor(p => p.Email)
+
+    @Html.HiddenFor(p => p.ListName)
+    @Html.HiddenFor(p => p.Action)
+
+    <input name="commit" type="submit" value="Go" />
+}

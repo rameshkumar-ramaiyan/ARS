@@ -366,6 +366,8 @@
     <Content Include="App_Plugins\UsdaDataImporter\js\usda.data.importer.js" />
     <Content Include="App_Plugins\UsdaDataImporter\upload.file.aspx" />
     <Content Include="App_Plugins\UsdaDataImporter\views\usda.data.importer.html" />
+    <Content Include="App_Plugins\UsdaInterLinks\js\usda.interlinks.js" />
+    <Content Include="App_Plugins\UsdaInterLinks\views\usda.interlinks.html" />
     <Content Include="App_Plugins\UsdaDownloadRequests\js\usda.download.requests.js" />
     <Content Include="App_Plugins\UsdaDownloadRequests\views\usda.download.requests.html" />
     <Content Include="App_Plugins\UsdaHelpInfo\js\usda.help.info.js" />
@@ -403,7 +405,7 @@
     <Content Include="css\ARSbranding.css" />
     <Content Include="css\ie8-and-down.css" />
     <Content Include="css\layout.css" />
-    <Content Include="css\umbraco-css.css" />
+    <Content Include="css\rte.css" />
     <Content Include="default.aspx" />
     <Content Include="Global.asax" />
     <Content Include="JQuery\jquery.corner.js" />
@@ -2787,6 +2789,8 @@
     <Compile Include="App_Plugins\UsdaWebtrendsRedirect\webtrends.redirect.aspx.designer.cs">
       <DependentUpon>webtrends.redirect.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\EmailSignupFullSurfaceController.cs" />
+    <Compile Include="Controllers\EmailSignupSiteSurfaceController.cs" />
     <Compile Include="Controllers\DownloadRequestSurfaceController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -2944,9 +2948,10 @@
     <Content Include="App_Plugins\ArchetypeLabelTemplatesTopicPicker\package.manifest" />
     <Content Include="App_Plugins\UsdaTemplateList\package.manifest" />
     <Content Include="App_Plugins\UsdaDocTypeList\package.manifest" />
+    <Content Include="App_Plugins\UsdaInterLinks\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
-    <Content Include="Views\SubpageStandard.cshtml" />
+    <Content Include="Views\StandardWebpage.cshtml" />
     <Content Include="Views\_Master.cshtml" />
     <Content Include="Views\Partials\Archetype\Carousel.cshtml" />
     <Content Include="Views\Region.cshtml" />
@@ -3006,6 +3011,10 @@
     <Content Include="Views\NationalProgramPage.cshtml" />
     <Content Include="Views\ProgramsAndProjectsByState.cshtml" />
     <Content Include="Views\NationalProgramsUSMapXML.cshtml" />
+    <Content Include="Views\Partials\EmailSignupSite.cshtml" />
+    <Content Include="Views\Subscribe.cshtml" />
+    <Content Include="Views\Partials\EmailSignupFull.cshtml" />
+    <Content Include="Views\NewsLatest.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

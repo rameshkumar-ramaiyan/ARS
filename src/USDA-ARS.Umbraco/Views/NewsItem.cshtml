@@ -1,27 +1,24 @@
-﻿@using USDA_ARS.Umbraco.Extensions.Models
-@using USDA_ARS.Umbraco.Extensions.Models.Aris
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
     Layout = "_Master.cshtml";
 
     IPublishedContent currentPage = Model.Content;
-    UsdaArsNews newsItem = null;
-    int newsId = 0;
 
-    if (false == string.IsNullOrWhiteSpace(Request.QueryString["news-id"]))
+    bool hideHeaderTitle = true;
+
+    string bodyText = currentPage.GetPropertyValue<string>("bodyText");
+    string modeCode = "";
+
+    if (Request.QueryString["modeCode"] != null)
     {
-        int.TryParse(Request.QueryString.Get("news-id"), out newsId);
+        modeCode = Request.QueryString.Get("modeCode");
     }
 
-    if (newsId > 0)
-    {
-        newsItem = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNewsById(newsId);
-    }
-
-    if (newsItem == null)
-    {
-        Response.Redirect("/news-events/");
-    }
+    bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
 }
 
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
@@ -32,66 +29,36 @@
 
     <div id="pageContent">
 
-
-        <!--Template for Latest News and source  for docid=1561-->
-        <div align="LEFT">
-            <h2 align="center">Confirming Nutrient Content of Supplements</h2>
-            <table border="0" cellspacing="4" cellpadding="4" align="LEFT" width="12%">
-                <tbody>
-                    <tr>
-                        <td>Read the <a href="http://agresearchmag.ars.usda.gov/2015/dec/database/" id="anch_76">magazine story</a> to find out more.</td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p>
-                                <a href="http://www.ars.usda.gov/is/graphics/photos/dec15/d3524-29.htm" id="anch_77"><img align="top" src="http://www.ars.usda.gov/is/graphics/photos/dec15/d3524-29i.jpg" alt="Dietary supplements and bottles. Link to photo information" border="2" vspace="4"></a><br>
-                                Dietary supplements being prepared for shipment to labs for blind testing of ingredients.<i>
-                                    Click the image for more information about
-                                    it.
-                                </i>
-                            </p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <p align="LEFT"><img src="http://www.ars.usda.gov/is/graphics/For-further-reading.gif" alt="For further reading" border="0" height="15" width="145"></p>
-                            <ul align="LEFT">
-                                <li>
-                                    <a href="http://www.ars.usda.gov/is/pr/2014/140320.htm" id="anch_78">Dietary Products: Some are Under-researched, Over-marketed</a><br>
-                                    &nbsp;
-                                </li>
-                                <li>
-                                    <a href="http://www.ars.usda.gov/is/pr/2012/120427.htm" id="anch_79">Analyzing Green Tea Leaves and Supplements</a><br>
-                                    &nbsp;
-                                </li>
-                                <li>
-                                    <a href="http://www.ars.usda.gov/is/pr/2012/120301.htm" id="anch_80">Monitoring the Population's Food and Supplement Intakes</a><br>
-                                    &nbsp;
-                                </li>
-                                <li> <a href="http://www.ars.usda.gov/is/pr/2012/120326.htm" id="anch_81">Better Analysis Methods for Vitamin D</a></li>
-                            </ul>
-                        </td>
-                    </tr>
-                </tbody>
+        @if (false == hideHeaderTitle)
+        {
+            <table border="0" width="100%">
+                <tr>
+                    <td class="pageHeading">@currentPage.Name</td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
+                    </td>
+                </tr>
             </table>
-            <p>
-                By <a href="http://www.ars.usda.gov/is/contacts.htm#Rosalie" id="anch_82">Rosalie Marion Bliss</a><br>
-                December 10, 2015
-            </p>
-            <p>About half of U.S. adults consume dietary supplements. A database that validates the content of dietary supplements was updated to help researchers more accurately determine relationships between dietary supplement use and public health. The update was released by scientists from the <a href="http://www.usda.gov/wps/portal/usda/usdahome" id="anch_83">U.S. Department of Agriculture</a>'s (USDA) <a href="http://www.ars.usda.gov/main/main.htm" id="anch_84">Agricultural Research Service</a> (ARS) and the <a href="http://www.nih.gov/" id="anch_85">National Institutes of Health</a> (NIH). ARS is the USDA's principal intramural scientific research agency.</p>
-            <p>Research nutritionists translate what people eat into nutrients consumed based on data collected during national dietary intake surveys and studies. The third edition of the data resource—the Dietary Supplement Ingredient Database Version 3.0 (DSID-3)—is designed to help researchers estimate nutrient intakes from dietary supplements, which can be combined with information about the foods and fluids people consume. </p>
-            <p>DSID-3 houses information on the ingredient content in popular dietary supplement products consumed in the United States and has averaged more than 13,500 unique visitors each month. For example, most multivitamin and mineral supplements (MVMs) contain iodine. But the DSID-3 shows that labels for adult, child, and non-prescription prenatal MVMs consistently underreport iodine levels by about 25 percent based on chemical analyses. </p>
-            <p>If iodine intake from multivitamin and mineral supplement use is being tracked for a research study and the amount of iodine consumed is based on label information alone, intake would be underestimated by 25 percent on average, according to ARS project manager <a href="http://www.ars.usda.gov/pandp/people/people.htm?personid=44203" id="anch_86">Karen Andrews</a>. Andrews and other researchers at the ARS <a href="http://www.ars.usda.gov/main/site_main.htm?modecode=80-40-05-25" id="anch_87">Nutrient Data Laboratory</a>, part of the <a href="http://www.ars.usda.gov/main/site_main.htm?modecode=80-40-05-00" id="anch_88">Beltsville Human Nutrition Research Center</a>, and the <a href="https://ods.od.nih.gov/" id="anch_89">NIH Office of Dietary Supplements</a> developed the DSID-3 with other Government collaborators. </p>
-            <p>Updated ingredients in both adult and child MVMs are included in DSID-3. For the first time, analysis-based estimates on nonprescription prenatal MVMs are included. Omega-3 fatty acids in fish and plant oil supplements also are included for the first time, and were defined as fish oil, plant oil, and fish/plant oil blends sold for the primary purpose of increasing the consumer's omega-3 fatty acid intake. </p>
-            <p>To access DSID-3, <a href="http://dsid.usda.nih.gov/" id="anch_90">click this link</a>.</p>
-            <p><a href="http://agresearchmag.ars.usda.gov/2015/dec/database/" id="anch_91">Read more</a> about this work in the December 2015 issue of <em>AgResearch</em>. </p>
-        </div>
+        }
+
+
+        <!-- display URLs of subpages start -->
+        <!--  display URLs of subpages end -->
+        <!-- document content start -->
+
+        @Html.Raw(bodyText)
+
+        <!-- document content end -->
+
+
+        <br />
 
 
 
+        <p></p>
 
 
     </div>
-
-
 </div>

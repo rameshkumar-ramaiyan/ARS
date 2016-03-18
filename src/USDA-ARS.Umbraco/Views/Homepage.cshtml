@@ -18,7 +18,7 @@
     
 
     //IEnumerable<IPublishedContent> newsList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("newsList");
-    IEnumerable<UsdaArsNews> newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNews(6);
+    IEnumerable<IPublishedContent> newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNews(6);
 
     //IEnumerable<IPublishedContent> latestBlogList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("latestBlog");
     List<BlogItem> latestBlogList = USDA_ARS.Umbraco.Extensions.Helpers.Blogs.GetBlogFeed().Take(10).ToList();
@@ -66,13 +66,7 @@
                 @Html.Partial("~/Views/Partials/Modules/SocialLinks.cshtml")
 
                 <!-- sign up email box -->
-                <form action="/elists/" method="post">
-                    <input name="emailAddr" type="text" value="Sign up for ARS News updates"
-                           size="28" onfocus="this.value=''" />
-                    <input name="listname" type="hidden" value="arsnews" />
-                    <input name="action" type="hidden" value="Subscribe" />
-                    <input name="commit" type="submit" value="Go" />
-                </form>
+                @Html.Action("Index", "EmailSignupSiteSurface")
 
                 <a href="top" class="section508">Back to Top of Page</a>
             </div>	<!-- Stay Connected -->
@@ -198,11 +192,11 @@
                         @if (newsList != null && newsList.Any())
                         {
                             <ul>
-                                @foreach (UsdaArsNews item in newsList)
+                                @foreach (IPublishedContent item in newsList)
                                 {
                                     <li>
-                                        <a href="/news/news-item/@item.NewsID">
-                                            @item.SubjectField
+                                        <a href="@item.Url">
+                                            @item.Name
                                         </a>
                                     </li>
                                 }
