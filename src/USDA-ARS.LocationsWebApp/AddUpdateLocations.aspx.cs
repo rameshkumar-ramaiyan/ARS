@@ -16,6 +16,7 @@ using USDA_ARS.LocationsWebApp.DL;
 using System.Data;
 using Archetype.Models;
 using USDA_ARS.LocationsWebApp.Models;
+using System.Text.RegularExpressions;
 
 namespace USDA_ARS.LocationsWebApp
 {
@@ -704,15 +705,15 @@ namespace USDA_ARS.LocationsWebApp
 
             ////2.2 all cities---retrieval and insertion
             System.Data.DataTable newCitiesAfterInsertion = new System.Data.DataTable();
-            newCitiesAfterInsertion = AddAllCities(newAreasAfterInsertion);
+             newCitiesAfterInsertion = AddAllCities(newAreasAfterInsertion);
 
             ////2.3 all RCs---retrieval and insertion
             System.Data.DataTable newResearchUnitsAfterInsertion = new System.Data.DataTable();
-            newResearchUnitsAfterInsertion = AddAllResearchUnits(newCitiesAfterInsertion);
+             newResearchUnitsAfterInsertion = AddAllResearchUnits(newCitiesAfterInsertion);
 
             ////2.4 all Labs---retrieval and insertion
             System.Data.DataTable newLabsAfterInsertion = new System.Data.DataTable();
-            newLabsAfterInsertion = AddAllLabs(newResearchUnitsAfterInsertion);
+             newLabsAfterInsertion = AddAllLabs(newResearchUnitsAfterInsertion);
 
         }
         protected DataTable AddAllAreas()
@@ -840,27 +841,25 @@ namespace USDA_ARS.LocationsWebApp
                 legacySoftwaresBeforeInsertion = AddRetrieveLocationsDL.GetAllSoftwaresBasedOnModeCode(completeModeCode);
 
 
-
+                // USED FOR ALL ARCHETYPE DATA TYPES
                 var jsonSettingsForSoftware = new JsonSerializerSettings();
                 jsonSettingsForSoftware.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
 
-                // USED FOR ALL ARCHETYPE DATA TYPES
+
 
 
                 // ADD software
                 ApiArchetype softwareItem = new ApiArchetype();
-
                 softwareItem.Fieldsets = new List<Fieldset>();
-
                 string filePackageJson;
 
-
+                // Here is where you would loop through each Carousel Slide Link
+                // LOOP START
                 for (int legacySoftwaresRowId = 0; legacySoftwaresRowId < legacySoftwaresBeforeInsertion.Rows.Count; legacySoftwaresRowId++)
                 {
-
                     Fieldset fieldsetSoftware = new Fieldset();
-                    // Here is where you would loop through each Carousel Slide Link
-                    // LOOP START
+
+
                     string softwareID = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<int>(1).ToString();
                     string title = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(2);
                     string recipients = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(3);
@@ -878,26 +877,35 @@ namespace USDA_ARS.LocationsWebApp
                     fieldsetSoftware.Properties.Add(new Property("title", title)); // set the title
                     fieldsetSoftware.Properties.Add(new Property("recipients", info)); // set the recipients email addresses
                     fieldsetSoftware.Properties.Add(new Property("shortBlurb", shortBlurb)); // set the short blurb
-                    fieldsetSoftware.Properties.Add(new Property("info", info)); // set the large text information
-                                                                                 // Files
-                    string filePathSP2 = "/SP2UserFiles/Place/" + "" + completeModeCode.Replace("-", "") + "/software/Brio-Insight_en.zip";
+                    fieldsetSoftware.Properties.Add(new Property("information", info)); // set the large text information
+                                                                                        // Files
+                    List<string> filePathSP2List = new List<string>();
+                    filePathSP2List = ReadFromTextfile(Convert.ToInt32(softwareID));
+
+                    //get files from software id folder
+
                     {
                         ApiArchetype softwareFilesList = new ApiArchetype();
 
                         softwareFilesList.Fieldsets = new List<Fieldset>();
-                        //get files from software id folder
+
 
                         // LOOP Through the list of files
                         {
-                            Fieldset fieldsetFiles = new Fieldset();
 
-                            fieldsetFiles.Alias = "softwareDownloads";
-                            fieldsetFiles.Disabled = false;
-                            fieldsetFiles.Id = Guid.NewGuid();
-                            fieldsetFiles.Properties = new List<Property>();
-                            fieldsetFiles.Properties.Add(new Property("file", filePathSP2)); // set the file path
+                            for (int filePathSP2ListRowId = 0; filePathSP2ListRowId < filePathSP2List.Count; filePathSP2ListRowId++)
+                            {
+                                Fieldset fieldsetFiles = new Fieldset();
 
-                            softwareFilesList.Fieldsets.Add(fieldsetFiles);
+                                fieldsetFiles.Alias = "softwareDownloads";
+                                fieldsetFiles.Disabled = false;
+                                fieldsetFiles.Id = Guid.NewGuid();
+                                fieldsetFiles.Properties = new List<Property>();
+                                string filePathSP2 = "/SP2UserFiles/Place/" + "" + completeModeCode.Replace("-", "") + "/software/" + filePathSP2List[filePathSP2ListRowId];
+                                fieldsetFiles.Properties.Add(new Property("file", filePathSP2)); // set the file path
+                                softwareFilesList.Fieldsets.Add(fieldsetFiles);
+                            }
+
 
                             string fileListJson = JsonConvert.SerializeObject(softwareFilesList, Newtonsoft.Json.Formatting.None, jsonSettings);
                             fieldsetSoftware.Properties.Add(new Property("fileDownloads", fileListJson)); // set the large text information
@@ -906,12 +914,13 @@ namespace USDA_ARS.LocationsWebApp
                     }
 
                     softwareItem.Fieldsets.Add(fieldsetSoftware);
-                    // Last, we set the ApiProperty for "carouselSlide"
-                    filePackageJson = JsonConvert.SerializeObject(softwareItem, Newtonsoft.Json.Formatting.None, jsonSettings);
-                    properties.Add(new ApiProperty("software", filePackageJson));
                     // LOOP END
-                }
 
+
+
+                }
+                filePackageJson = JsonConvert.SerializeObject(softwareItem, Newtonsoft.Json.Formatting.None, jsonSettings);
+                properties.Add(new ApiProperty("software", filePackageJson));
                 content.Properties = properties;
                 content.Save = 2; // 0=Unpublish (update only), 1=Saved, 2=Save And Publish
 
@@ -947,6 +956,11 @@ namespace USDA_ARS.LocationsWebApp
                         }
                     }
                 }
+            }
+            for (int rowId = 0; rowId < newAreasAfterInsertion.Rows.Count; rowId++)
+            {
+
+                DL.PersonSite.AddPeopleSites(newAreasAfterInsertion.Rows[rowId].Field<string>(2));
             }
 
             return newAreasAfterInsertion;
@@ -1302,7 +1316,11 @@ namespace USDA_ARS.LocationsWebApp
                 }
             }
 
+            for (int rowId = 0; rowId < newResearchUnitsAfterInsertion.Rows.Count; rowId++)
+            {
 
+                DL.PersonSite.AddPeopleSites(newResearchUnitsAfterInsertion.Rows[rowId].Field<string>(2));
+            }
 
             return newResearchUnitsAfterInsertion;
         }
@@ -1479,7 +1497,8 @@ namespace USDA_ARS.LocationsWebApp
                         fieldsetSoftware.Properties.Add(new Property("recipients", info)); // set the recipients email addresses
                         fieldsetSoftware.Properties.Add(new Property("shortBlurb", shortBlurb)); // set the short blurb
                         fieldsetSoftware.Properties.Add(new Property("info", info)); // set the large text information
-                                                                                     // Files
+                        List<string> filePathSP2List = new List<string>();
+                        // Files
                         string filePathSP2 = "/SP2UserFiles/Place/" + "" + newModeCodeProperty.Replace("-", "") + "/software/Brio-Insight_en.zip";
                         {
                             ApiArchetype softwareFilesList = new ApiArchetype();
@@ -1553,7 +1572,11 @@ namespace USDA_ARS.LocationsWebApp
                 }
             }
 
+            for (int rowId = 0; rowId < newLabsAfterInsertion.Rows.Count; rowId++)
+            {
 
+                DL.PersonSite.AddPeopleSites(newLabsAfterInsertion.Rows[rowId].Field<string>(2));
+            }
 
             return newLabsAfterInsertion;
         }
@@ -1576,17 +1599,18 @@ namespace USDA_ARS.LocationsWebApp
         public static List<string> ReadFromTextfile(int softwareId)
         {
             string[] lines = File.ReadAllLines("C:\\get_files.txt");
+
             List<string> myCollection = new List<string>();
             for (int i = 0; i < lines.Length; i++)
             {
-                if (lines.Contains("\\" + softwareId.ToString()))
+                if (lines[i].Contains(softwareId.ToString()))
 
                 {
+
                     myCollection.Add(lines[i]);
                 }
 
             }
-
             return myCollection;
 
         }

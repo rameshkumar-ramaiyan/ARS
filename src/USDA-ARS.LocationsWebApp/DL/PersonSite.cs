@@ -4,11 +4,15 @@ using System.Configuration;
 using System.Linq;
 using System.Web;
 using USDA_ARS.Umbraco.Extensions.Models.Import;
-
+using System.Data;
+using System.Data.SqlClient;
 namespace USDA_ARS.LocationsWebApp.DL
 {
     public class PersonSite
     {
+        public static string LocationConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SqlConnectionString"].ConnectionString;
+
+
         protected static string API_KEY = ConfigurationManager.AppSettings.Get("Umbraco:ApiKey");
 
         /// <summary>
@@ -18,6 +22,17 @@ namespace USDA_ARS.LocationsWebApp.DL
         /// <returns></returns>
         public static ApiResponse AddPeopleSites(string modeCode)
         {
+            System.Data.DataTable legacyPeopleBeforeInsertion = new System.Data.DataTable();
+            legacyPeopleBeforeInsertion = GetAllPersonsBasedOnModeCode(modeCode);
+            System.Data.DataTable newPeopleAfterInsertion = new System.Data.DataTable();
+            newPeopleAfterInsertion.Columns.Add("ModeCode");
+            newPeopleAfterInsertion.Columns.Add("PersonId");
+            newPeopleAfterInsertion.Columns.Add("PersonName");
+            System.Data.DataTable legacyDocsBeforeInsertion = new System.Data.DataTable();
+
+
+
+
             ApiResponse responsePage = new ApiResponse();
 
             // Get the umbraco page by the mode code (Region/Area or Research Unit)
@@ -32,10 +47,30 @@ namespace USDA_ARS.LocationsWebApp.DL
                     List<ApiContent> contentPeopleSites = new List<ApiContent>();
 
                     // ADD PEOPLE SITES HERE: (LOOP)
+                    for (int i = 0; i < legacyPeopleBeforeInsertion.Rows.Count; i++)
                     {
-                        int personId = 42111;
-                        string personName = "Colin S. Brent";
-                        string personSiteHtml = "<p>Hello!</p>";
+                        string completeModeCode = legacyPeopleBeforeInsertion.Rows[i].Field<string>(0);
+                        int personId = 0;
+                        string personName = "";
+                        string personSiteHtml = "";
+
+                        personId = int.Parse(legacyPeopleBeforeInsertion.Rows[i].Field<string>(1).Trim());
+                        personName = legacyPeopleBeforeInsertion.Rows[i].Field<string>(2);
+                        //call sp to get doc ids and documents
+                        legacyDocsBeforeInsertion = GetAllDocumentIdsBasedOnPersonId(personId.ToString());
+                        if (legacyDocsBeforeInsertion != null)
+                        {
+                            for (int j = 0; i < legacyDocsBeforeInsertion.Rows.Count; j++)
+                            {
+                                personSiteHtml = legacyDocsBeforeInsertion.Rows[j].Field<string>(0);
+                            }
+
+                        }
+
+
+                        //int personId = 42111;
+                        //string personName = "Colin S. Brent";
+                        //string personSiteHtml = "<p>Hello!</p>";
 
                         ApiContent personSite = GeneratePersonSiteContent(peopleFolder.Id, personId, personName, personSiteHtml);
 
@@ -97,5 +132,98 @@ namespace USDA_ARS.LocationsWebApp.DL
 
             return content;
         }
+        #region  Get All Persons based on Mode Code
+        public static DataTable GetAllPersonsBasedOnModeCode(string modeCode)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "[uspgetAllPersonsBasedOnModeCode]";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@ModeCode", modeCode);
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
+        public static DataTable GetAllDocumentIdsBasedOnPersonId(string personId)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "[uspgetAllDocumentIdsBasedOnPersonId]";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@PersonId", personId);
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
+        #endregion
+
     }
 }
