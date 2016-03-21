@@ -356,6 +356,7 @@
   <ItemGroup>
     <Compile Include="DL\ApiCalls.cs" />
     <Compile Include="DL\GetCalls.cs" />
+    <Compile Include="DL\NationalPrograms.cs" />
     <Compile Include="DL\NewsImport.cs" />
     <Compile Include="Models\News.cs" />
     <Compile Include="news-import.aspx.cs">
