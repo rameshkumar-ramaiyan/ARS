@@ -456,6 +456,23 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
         }
 
 
+        public static List<UsdaPublication> GetPublicationsRecent(DateTime dateStart, DateTime dateEnd)
+        {
+            List<UsdaPublication> projectPublicationList = null;
+
+            var db = new Database("arisPublicWebDbDSN");
+
+            string sql = @"select	* 
+	                from	gen_public_115s
+	                where	journal_pub_date between @dateStart and @dateEnd
+	                order by journal_pub_date desc";
+
+            projectPublicationList = db.Query<UsdaPublication>(sql, new { dateStart = dateStart, dateEnd = dateEnd }).ToList();
+
+            return projectPublicationList;
+        }
+
+
         public static List<StpCode> GetStpCodeList()
         {
             List<StpCode> stpCodeList = null;

@@ -2,6 +2,7 @@
 @using Archetype.Models
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Utilities
 @using USDA_ARS.Umbraco.Extensions.Helpers.Aris
 @using USDA_ARS.Umbraco.Extensions.Models.Aris
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
@@ -23,11 +24,41 @@
 
         peopleList = People.GetPeopleByPublication(Convert.ToInt32(seqNo115));
 
-        projectInfo = Projects.GetProjectInfo(publication.AccountNo);
+        if (publication != null)
+        {
+            projectInfo = Projects.GetProjectInfo(publication.AccountNo);
 
-        string modeCode = publication.ModeCode1 + "-" + publication.ModeCode2 + "-" + publication.ModeCode3 + "-" + publication.ModeCode4;
+            string modeCode = publication.ModeCode1.ToString();
 
-        location = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode);
+            if (publication.ModeCode2.ToString().Length == 1)
+            {
+                modeCode += "-0" + publication.ModeCode2;
+            }
+            else
+            {
+                modeCode += "-" + publication.ModeCode2;
+            }
+
+            if (publication.ModeCode3.ToString().Length == 1)
+            {
+                modeCode += "-0" + publication.ModeCode3;
+            }
+            else
+            {
+                modeCode += "-" + publication.ModeCode3;
+            }
+
+            if (publication.ModeCode4.ToString().Length == 1)
+            {
+                modeCode += "-0" + publication.ModeCode4;
+            }
+            else
+            {
+                modeCode += "-" + publication.ModeCode4;
+            }
+
+            location = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode);
+        }
     }
 
     if (publication == null)
@@ -48,13 +79,13 @@
 
             @if (projectInfo != null)
             {
-                <a href="/research/project/?accnNo=@publication.AccountNo">
-                    @publication.Title
+                <a href="/research/project/?accnNo=@projectInfo.AccountNo">
+                    @projectInfo.ProjectTitle
                 </a>
             }
             else
             {
-                <em>Project @publication.AccountNo was not found.</em>
+                <em>Project @projectInfo.AccountNo was not found.</em>
             }
 
             <p>
@@ -62,7 +93,7 @@
                     Location:
                     @if (location != null)
                     {
-                        <a href="@location.Url">@location.Name</a>    
+                        <a href="@location.Url">@location.Name</a>
                     }
                     else
                     {
@@ -91,14 +122,14 @@
                                             @if (false == string.IsNullOrEmpty(person.PersonId))
                                             {
                                             <a href="/people-locations/person?person-id=@(person.PersonId)" id="anch_57">
-                                                @(person.LastName.ToUpper()), @(person.FirstName.ToUpper())
-                                                @Html.Raw(false == string.IsNullOrEmpty(person.CommonName) ? " - <em>" + person.CommonName + "</em>" : "")
+                                                @(Strings.UppercaseFirst(person.LastName)), @(Strings.UppercaseFirst(person.FirstName))
+                                                @Html.Raw(false == string.IsNullOrEmpty(person.CommonName) ? " - <em>" + Strings.UppercaseFirst(person.CommonName) + "</em>" : "")
                                             </a>
                                             }
                                             else
                                             {
-                                                @(person.LastName + ", " + person.FirstName)
-                                                @Html.Raw(false == string.IsNullOrEmpty(person.CommonName) ? " - <em>" + person.CommonName + "</em>" : "")
+                                                @(Strings.UppercaseFirst(person.LastName) + ", " + Strings.UppercaseFirst(person.FirstName))
+                                                @Html.Raw(false == string.IsNullOrEmpty(person.CommonName) ? " - <em>" + Strings.UppercaseFirst(person.CommonName) + "</em>" : "")
                                             }
                                         </font>
                                     </td>

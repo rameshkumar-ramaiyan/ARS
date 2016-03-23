@@ -10,10 +10,7 @@
     IPublishedContent currentPage = Model.Content;
 
     string modeCode = "";
-    string careersText = currentPage.GetPropertyValue<string>("bodyText"); ;
-    string careersBelow = currentPage.GetPropertyValue<string>("bodyTextBelow");
-    string usajobUrl = currentPage.GetPropertyValue<string>("usajobUrl", "#badUrl");
-    string usajobUrlList = "";
+    string bodyText = currentPage.GetPropertyValue<string>("bodyText"); ;
 
     if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
     {
@@ -23,17 +20,13 @@
 
         if (siteNode != null)
         {
-            IPublishedContent careersNode = siteNode.Children.Where(n => n.IsDocumentType("SitesCareers")).FirstOrDefault();
+            IPublishedContent newsNode = siteNode.Children.Where(n => n.IsDocumentType("SitesNews")).FirstOrDefault();
 
-            if (careersNode != null)
+            if (newsNode != null)
             {
-                Response.Redirect(careersNode.Url);
+                Response.Redirect(newsNode.Url);
             }
         }
-    }
-    else
-    {
-        Response.Redirect("/careers-at-ars-info/");
     }
 
 }
@@ -46,12 +39,10 @@
 
     <div id="pageContent">
 
-        @Html.Raw(careersText)
+        @Html.Raw(bodyText)
 
         <br />
         <p></p>
-
-        @Html.Raw(careersBelow)
 
     </div>
 </div>

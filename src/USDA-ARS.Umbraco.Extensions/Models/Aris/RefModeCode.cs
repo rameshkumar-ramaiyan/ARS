@@ -91,5 +91,9 @@ namespace USDA_ARS.Umbraco.Extensions.Models.Aris
         [Column("modecodeconc")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public string ModeCodeConcat { get; set; }
+
+        [Column("modecode")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string ModeCode { get; set; }
     }
 }

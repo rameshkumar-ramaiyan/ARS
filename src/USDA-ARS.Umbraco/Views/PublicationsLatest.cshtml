@@ -1,0 +1,99 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+    bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
+
+    string bodyText = currentPage.GetPropertyValue<string>("bodyText");
+    string modeCode = "";
+
+    if (Request.QueryString["modeCode"] != null)
+    {
+        modeCode = Request.QueryString.Get("modeCode");
+    }
+
+    bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
+
+    List<UsdaPublication> publicationsRecentList = Publications.GetPublicationsRecent(DateTime.Now.AddDays(-60), DateTime.Now.AddDays(1));
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        @if (false == hideHeaderTitle)
+        {
+            <table border="0" width="100%">
+                <tr>
+                    <td class="pageHeading">@currentPage.Name</td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
+                    </td>
+                </tr>
+            </table>
+        }
+
+
+        <!-- display URLs of subpages start -->
+        <!--  display URLs of subpages end -->
+        <!-- document content start -->
+
+        @Html.Raw(bodyText)
+
+        <!-- document content end -->
+        @if (publicationsRecentList != null)
+        {
+            <b>
+                <br /><br />
+                Last 2 Months
+                <br />
+                Results: @(publicationsRecentList.Count) publication requests found.
+            </b>
+
+            <table border="0" cellpadding="2" cellspacing="2">
+
+                <tbody>
+                    @foreach (UsdaPublication publication in publicationsRecentList)
+                    {
+                    <tr>
+                        <td>
+                            <img src="/images/incme/square.gif">
+                        </td>
+
+                        <td>
+                            <a href="/research/publications/publication/?seqNo115=@(publication.SeqNo115)">
+                                @(publication.Title)
+                            </a>
+                        </td>
+
+                        <td width="70" valign="top">
+                            (@(publication.JournalPublicationDate.ToString("MMM yyyy")))
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+
+        }
+
+
+        
+        <p></p>
+
+
+    </div>
+</div>
