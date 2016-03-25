@@ -99,7 +99,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                     if (newsTopicItem != null)
                     {
-                        output = newsTopicItem.GetValue<string>("")
+                        output = newsTopicItem.GetValue<string>("");
                     }
                 }
             }
