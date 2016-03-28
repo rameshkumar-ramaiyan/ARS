@@ -58,10 +58,18 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                         IEnumerable<Link> links = navItem.GetValue<MultiUrls>("siteLeftNavLocation");
                         bool navFound = false;
 
+                        string navCategorySelect = navItem.GetValue<string>("leftNavCategory");
                         string templateSelect = navItem.GetValue<string>("leftNavTemplate");
                         string docTypeSelect = navItem.GetValue<string>("leftNavDocType");
 
-                        if (false == string.IsNullOrEmpty(templateSelect))
+                        if (false == string.IsNullOrEmpty(navCategorySelect))
+                        {
+                            if (currentNode.HasValue("navigationCategory") && currentNode.GetPropertyValue<string>("navigationCategory").ToLower() == navCategorySelect.ToLower())
+                            {
+                                navFound = true;
+                            }
+                        }
+                        else if (false == string.IsNullOrEmpty(templateSelect))
                         {
                             if (currentNode.TemplateId == Convert.ToInt32(templateSelect))
                             {

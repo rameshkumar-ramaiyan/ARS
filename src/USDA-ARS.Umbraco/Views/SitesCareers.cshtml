@@ -1,0 +1,82 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using System.Text.RegularExpressions
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+    IPublishedContent careersPage = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.Careers();
+    IPublishedContent rootNode = currentPage.Parent;
+
+    string modeCode = "";
+    string careersText = currentPage.GetPropertyValue<string>("bodyText");
+    string careersTextDefault = careersPage.GetPropertyValue<string>("bodyText");
+    string careersBelow = careersPage.GetPropertyValue<string>("bodyTextBelow");
+    string usajobUrl = currentPage.GetPropertyValue<string>("usajobUrl", "#badUrl");
+    string usajobUrlList = "";
+
+    modeCode = rootNode.GetPropertyValue<string>("modeCode");
+
+    if (true == string.IsNullOrWhiteSpace(careersText))
+    {
+        careersText = careersTextDefault;
+    }
+
+    // Get Careers from Site node
+    IPublishedContent cityNode = rootNode.Ancestors().FirstOrDefault(n => n.IsDocumentType("City"));
+    if (cityNode != null)
+    {
+        string cityNameFull = "";
+        string stateName = "";
+        string stateCode = cityNode.GetPropertyValue<string>("state");
+        string locationId = cityNode.GetPropertyValue<string>("usajobsLocationID");
+        List<string> cityStateArray = null;
+
+        stateName = cityNode.Name;
+
+        if (cityNode.Name.IndexOf(',') >= 0)
+        {
+            cityStateArray = cityNode.Name.Split(',').Select(p => p.Trim()).ToList();
+
+            if (cityStateArray.Count == 2)
+            {
+                cityNameFull = cityStateArray[0] + ", " + stateCode;
+                stateName = cityStateArray[1];
+            }
+
+        }
+
+        if (false == string.IsNullOrWhiteSpace(locationId))
+        {
+            usajobUrlList += "<a href=\"" + usajobUrl + "&LocationID=" + locationId + "\">ARS openings in " + cityNameFull + "</a><br />\r\n";
+        }
+        usajobUrlList += "<a href=\"" + usajobUrl + "&CountrySubDivision=" + stateCode + "\">ARS openings in " + stateName + "</a><br />\r\n";
+    }
+
+    usajobUrlList += "<a href=\"" + usajobUrl + "\">ARS openings nationwide</a><br />\r\n";
+
+    careersBelow = careersBelow.Replace("{{USAJOBS_URLS}}", usajobUrlList);
+
+
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        @Html.Raw(careersText)
+
+        <br />
+        <p></p>
+
+        @Html.Raw(careersBelow)
+
+    </div>
+</div>

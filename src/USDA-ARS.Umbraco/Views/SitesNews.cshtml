@@ -1,0 +1,109 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+    IPublishedContent rootNode = currentPage.Parent;
+
+    bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
+
+    string bodyText = currentPage.GetPropertyValue<string>("bodyText");
+    string modeCode = "";
+
+    modeCode = rootNode.GetPropertyValue<string>("modeCode");
+
+    bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
+
+    List<IPublishedContent> newsList = rootNode.GetPropertyValue<IEnumerable<IPublishedContent>>("newsList").ToList();
+    List<IPublishedContent> newsInterLinksList = NewsInterLinks.GetNewsByModeCode(modeCode);
+
+    if (newsInterLinksList != null && newsInterLinksList.Any())
+    {
+        newsList.AddRange(newsInterLinksList);
+    }
+
+    if (newsList != null && newsList.Any())
+    {
+        newsList = newsList.OrderByDescending(p => p.GetPropertyValue<DateTime>("articleDate")).ToList();
+    }
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        @if (false == hideHeaderTitle)
+        {
+            <table border="0" width="100%">
+                <tr>
+                    <td class="pageHeading">@currentPage.Name</td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
+                    </td>
+                </tr>
+            </table>
+        }
+
+
+        <!-- display URLs of subpages start -->
+        <!--  display URLs of subpages end -->
+        <!-- document content start -->
+
+        @Html.Raw(bodyText)
+
+        <!-- document content end -->
+
+
+        <br />
+
+        <hr size="1" noshade="">
+
+        <font face="verdana,arial" size="-2" color="#014c3e">
+            <b>ARS News Articles</b>
+        </font>
+
+        <br />
+        <font face="verdana,arial" size="-2">
+            <br />
+            <div align="left">
+                @if (newsList != null && newsList.Any())
+                {
+                    <table width="368">
+                        <tbody>
+                            @foreach (IPublishedContent item in newsList)
+                            {
+                                <tr>
+                                    <td>
+                                        <a href="@(item.Url)" class="projectNav">@(item.Name)</a>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="bodyTextBlack">@(item.GetPropertyValue<DateTime>("articleDate").ToString("MMM dd, yyyy"))</td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <img src="/images/content-divider.gif">
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                }
+            </div>
+        </font>
+        
+        <p></p>
+
+    </div>
+</div>

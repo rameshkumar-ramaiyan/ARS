@@ -71,7 +71,7 @@
 
         if (slice == "alpha")
         {
-            locationList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.SiteInfo.SearchLocation(query, "alpha");
+            locationList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.SiteInfo.SearchLocationByAlpha(query);
         }
     }
 
@@ -86,10 +86,10 @@
 
     <div id="pageContent">
 
-        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
-
         @if (slice == "")
         {
+            @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+
             <img src="@(countryMap)" border="0" usemap="#usmap" alt="map of areas">
             <map name="usmap">
                 @if (locationMap != null && locationMap.Any())
@@ -97,47 +97,51 @@
                     foreach (var mapCoord in locationMap)
                     {
                         Link navLink = mapCoord.GetValue<MultiUrls>("site").FirstOrDefault();
-                        IPublishedContent siteNode = Umbraco.TypedContent(navLink.Id ?? 0);
 
                         if (navLink != null)
                         {
-                            string title = navLink.Name;
-                            string coords = "";
-                            string shape = "circle";
+                            IPublishedContent siteNode = Umbraco.TypedContent(navLink.Id ?? 0);
 
-                            if (true == mapCoord.GetValue<bool>("isARegion"))
+                            if (navLink != null)
                             {
-                                shape = "rect";
-                                string coordString = mapCoord.GetValue<string>("coordinates");
+                                string title = navLink.Name;
+                                string coords = "";
+                                string shape = "circle";
 
-                                if (false == string.IsNullOrWhiteSpace(coordString) && coordString.IndexOf(",") >= 0)
+                                if (true == mapCoord.GetValue<bool>("isARegion"))
                                 {
-                                    List<int> coordArray = coordString.Split(',').Select(int.Parse).ToList();
+                                    shape = "rect";
+                                    string coordString = mapCoord.GetValue<string>("coordinates");
 
-                                    coords += (coordArray[0] - 40) + "," + (coordArray[1] - 10) + ",";
-                                    coords += (coordArray[0] + 40) + "," + (coordArray[1] + 10);
-                                }
-                            }
-                            else
-                            {
-                                if (siteNode != null)
-                                {
-                                    if (siteNode.DocumentTypeAlias == "City")
+                                    if (false == string.IsNullOrWhiteSpace(coordString) && coordString.IndexOf(",") >= 0)
                                     {
-                                        IPublishedContent parentNode = siteNode.Parent;
+                                        List<int> coordArray = coordString.Split(',').Select(int.Parse).ToList();
 
-                                        if (parentNode != null)
-                                        {
-                                            title = parentNode.Name + "&#013;" + siteNode.Name;
-                                        }
+                                        coords += (coordArray[0] - 40) + "," + (coordArray[1] - 10) + ",";
+                                        coords += (coordArray[0] + 40) + "," + (coordArray[1] + 10);
                                     }
                                 }
+                                else
+                                {
+                                    if (siteNode != null)
+                                    {
+                                        if (siteNode.DocumentTypeAlias == "City")
+                                        {
+                                            IPublishedContent parentNode = siteNode.Parent;
 
-                                coords = mapCoord.GetValue<string>("coordinates") + ",5";
-                            }
-                            if (false == string.IsNullOrWhiteSpace(coords))
-                            {
+                                            if (parentNode != null)
+                                            {
+                                                title = parentNode.Name + "&#013;" + siteNode.Name;
+                                            }
+                                        }
+                                    }
+
+                                    coords = mapCoord.GetValue<string>("coordinates") + ",5";
+                                }
+                                if (false == string.IsNullOrWhiteSpace(coords))
+                                {
                                 <area alt="@Html.Raw(title)" title="@Html.Raw(title)" href="@navLink.Url" coords="@coords" shape="@shape">
+                                }
                             }
                         }
                     }
@@ -182,7 +186,7 @@
                 {
                     string url = "javascript:alert('Location site not found.')";
 
-                    IPublishedContent locationNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(location.ModeCodeConcat);
+                    IPublishedContent locationNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(location.ModeCode);
 
                     if (locationNode != null)
                     {
@@ -233,7 +237,7 @@
                 {
                     string url = "javascript:alert('Location site not found.')";
 
-                    IPublishedContent locationNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(location.ModeCodeConcat);
+                    IPublishedContent locationNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(location.ModeCode);
 
                     if (locationNode != null)
                     {
