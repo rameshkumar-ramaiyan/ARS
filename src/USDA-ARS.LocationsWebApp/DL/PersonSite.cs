@@ -28,6 +28,7 @@ namespace USDA_ARS.LocationsWebApp.DL
             newPeopleAfterInsertion.Columns.Add("ModeCode");
             newPeopleAfterInsertion.Columns.Add("PersonId");
             newPeopleAfterInsertion.Columns.Add("PersonName");
+            newPeopleAfterInsertion.Columns.Add("DocPageContent");
             System.Data.DataTable legacyDocsBeforeInsertion = new System.Data.DataTable();
 
 
@@ -45,7 +46,8 @@ namespace USDA_ARS.LocationsWebApp.DL
                 if (peopleFolder != null)
                 {
                     List<ApiContent> contentPeopleSites = new List<ApiContent>();
-
+                    
+                    
                     // ADD PEOPLE SITES HERE: (LOOP)
                     for (int i = 0; i < legacyPeopleBeforeInsertion.Rows.Count; i++)
                     {
@@ -53,14 +55,16 @@ namespace USDA_ARS.LocationsWebApp.DL
                         int personId = 0;
                         string personName = "";
                         string personSiteHtml = "";
-
-                        personId = int.Parse(legacyPeopleBeforeInsertion.Rows[i].Field<string>(1).Trim());
-                        personName = legacyPeopleBeforeInsertion.Rows[i].Field<string>(2);
+                        if (!string.IsNullOrEmpty(legacyPeopleBeforeInsertion.Rows[i].Field<string>(1)))
+                        {
+                            personId = int.Parse(legacyPeopleBeforeInsertion.Rows[i].Field<string>(1).Trim());
+                            personName = legacyPeopleBeforeInsertion.Rows[i].Field<string>(2);
+                        }
                         //call sp to get doc ids and documents
                         legacyDocsBeforeInsertion = GetAllDocumentIdsBasedOnPersonId(personId.ToString());
                         if (legacyDocsBeforeInsertion != null)
                         {
-                            for (int j = 0; i < legacyDocsBeforeInsertion.Rows.Count; j++)
+                            for (int j = 0; j < legacyDocsBeforeInsertion.Rows.Count; j++)
                             {
                                 personSiteHtml = legacyDocsBeforeInsertion.Rows[j].Field<string>(0);
                             }
@@ -70,7 +74,7 @@ namespace USDA_ARS.LocationsWebApp.DL
 
                         //int personId = 42111;
                         //string personName = "Colin S. Brent";
-                        //string personSiteHtml = "<p>Hello!</p>";
+                        //string  personSiteHtml = "<p>Hello!</p>";
 
                         ApiContent personSite = GeneratePersonSiteContent(peopleFolder.Id, personId, personName, personSiteHtml);
 
