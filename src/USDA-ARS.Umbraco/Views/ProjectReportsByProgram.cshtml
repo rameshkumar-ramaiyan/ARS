@@ -1,0 +1,147 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@using RJP.MultiUrlPicker.Models
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    string npCode = null;
+    string sort = null;
+    IPublishedContent currentPage = Model.Content;
+    IPublishedContent programNode = null;
+
+    if (Request.QueryString["npCode"] != null)
+    {
+        npCode = Request.QueryString.Get("npCode");
+
+        programNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByNpCode(npCode);
+    }
+    if (Request.QueryString["sort"] != null)
+    {
+        sort = Request.QueryString.Get("sort");
+    }
+
+    List<ProjectInfo> projectProgramList = Projects.GetProjectAnnualReportList(npCode, sort);
+    List<ProjectInfo> projectProgramListDistinct = projectProgramList.DistinctBy(p => p.AccountNo).ToList();
+
+}
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+
+
+        <script language="javascript">
+	<!--
+	window.name = 'nps2000';
+	var remote = null;
+	function rs(n,u,w,h)
+	{
+		remote = window.open(u, n, 'width=' + w + ',height=' + h +',refresh=yes,resizable=yes,scrollbars=yes');
+		if (remote != null)
+		{
+			if (remote.opener == null)
+			remote.opener = self;
+			window.name = 'nps2000';
+			remote.location.href = u;
+		}
+	}
+	//-->
+        </script>
+
+        <div class="pageHeading">
+            National Program @npCode: @programNode.Name
+        </div>
+
+        <table border="0" cellspacing="2" cellpadding="0">
+            <tbody>
+                <tr>
+                    <td valign="top">
+                        <table border="0">
+                            <tbody>
+                                <tr>
+                                    <td>
+                                        <br />
+
+                                        <font face="verdana,arial,helvetica" color="FF6600" size="2">
+                                            <b>Project Annual Reports from National Program @npCode</b>
+                                        </font>
+                                        <p>
+
+                                            <b>Current View: <font color="FF3300">@(false == string.IsNullOrWhiteSpace(sort) && sort.ToLower() == "projecttype" ? "Project Type" : "Location")</font></b>
+
+                                            <br /><br />
+
+                                            <b>
+                                                Sort by
+                                                <a href="/research/project-reports-by-program/?npCode=@npCode">Location</a>
+                                                ||
+                                                <a href="/research/project-reports-by-program/?npCode=@npCode&sort=projecttype">Project Type</a>
+                                            </b>
+
+                                            <br />
+                                            <br />
+
+                                        </p><table border="0" cellspacing="0" cellpadding="0">
+                                            @if (projectProgramListDistinct != null && projectProgramListDistinct.Any())
+                                            {
+
+
+                                                <tbody>
+                                                    @foreach (ProjectInfo project in projectProgramListDistinct)
+                                                    {
+                                                        List<ProjectInfo> projectProgramListYears = projectProgramList.Where(p => p.AccountNo == project.AccountNo).ToList();
+
+                                                        <tr>
+                                                            <td><a href="/research/project/?accnNo=@(project.AccountNo)" target="nps2000" class="projectNav">@(project.ProjectTitle)</a></td>
+                                                        </tr>
+
+                                                        <tr>
+                                                            <td class="bodyTextBlackSmall">@(project.WebLabel)</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="bodyTextBlackSmall">@(project.CityName), @(project.StateAbbr)</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td class="bodyTextBlackSmall">
+                                                                @(Projects.ProjectTypeByCode(project.ProjectTypeCode)) (@(project.ProjectTypeCode))
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td>
+                                                                @if (projectProgramListYears != null && projectProgramListYears.Any())
+                                                                {
+                                                                    @Html.Raw("Annual Reports by Year:")
+
+                                                                    foreach (ProjectInfo projectYear in projectProgramListYears)
+                                                                    {
+                                                                        <a href="/research/project/?accnNo=@(project.AccountNo)&fy=@(projectYear.Year)" target="nps2000" class="projectNav" style="margin-right: 10px;">@(projectYear.Year)</a>
+                                                                    }
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td><img src="/images/content-divider.gif"></td>
+                                                        </tr>
+                                                    }
+                                                </tbody>
+                                            }
+                                        </table>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+</div>

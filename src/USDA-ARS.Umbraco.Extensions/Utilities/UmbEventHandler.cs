@@ -27,6 +27,16 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
             {
                 if ((node.ContentType.Alias == "Region" || node.ContentType.Alias == "ResearchUnit"))
                 {
+                    // Docs Folder
+                    IContent docsFolder = node.Descendants().FirstOrDefault(n => n.ContentType.Alias == "DocsFolder");
+
+                    if (docsFolder == null)
+                    {
+                        var childNode = _contentService.CreateContent("Docs", node, "DocsFolder");
+
+                        _contentService.SaveAndPublishWithStatus(childNode);
+                    }
+
                     // Careers Node
                     IContent sitesCareers = node.Descendants().FirstOrDefault(n => n.ContentType.Alias == "SitesCareers");
 
@@ -54,7 +64,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                     }
 
                     // People Folder
-                    IContent peopleFolder = node.Descendants().FirstOrDefault(n => n.ContentType.Alias == "Careers");
+                    IContent peopleFolder = node.Descendants().FirstOrDefault(n => n.ContentType.Alias == "PeopleFolder");
 
                     if (peopleFolder == null)
                     {
@@ -63,7 +73,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                         _contentService.SaveAndPublishWithStatus(childNode);
                     }
 
-                    
+
                 }
                 else if (node.ContentType.Alias == "NationalProgram" && !cs.HasChildren(node.Id))
                 {

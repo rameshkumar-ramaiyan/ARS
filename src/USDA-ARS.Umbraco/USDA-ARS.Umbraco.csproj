@@ -376,6 +376,8 @@
     <Content Include="App_Plugins\UsdaHelpInfo\views\usda.help.info.html" />
     <Content Include="App_Plugins\UsdaDocTypeList\js\usda.doctype.list.js" />
     <Content Include="App_Plugins\UsdaDocTypeList\views\usda.doctype.list.html" />
+    <Content Include="App_Plugins\UsdaNewsProductPicker\js\usda.news.product.picker.js" />
+    <Content Include="App_Plugins\UsdaNewsProductPicker\views\usda.news.product.picker.html" />
     <Content Include="App_Plugins\UsdaNewsTopicPicker\js\usda.news.topic.picker.js" />
     <Content Include="App_Plugins\UsdaNewsTopicPicker\views\usda.news.topic.picker.html" />
     <Content Include="App_Plugins\UsdaTemplateList\js\usda.template.list.js" />
@@ -2932,7 +2934,9 @@
     <Content Include="App_Plugins\RJP.MultiUrlPicker\package.manifest" />
     <Content Include="App_Plugins\FilePicker\package.manifest" />
     <Content Include="Config\UrlRewriting.config" />
-    <Content Include="Config\umbracoSettings.config" />
+    <Content Include="Config\umbracoSettings.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Config\tinyMceConfig.config" />
     <Content Include="Config\scripting.config" />
     <Content Include="Config\metablogConfig.config" />
@@ -2960,6 +2964,7 @@
     <Content Include="App_Plugins\ArchetypeLabelTemplatesNavCategory\package.manifest" />
     <Content Include="App_Plugins\UsdaNewsTopicPicker\package.manifest" />
     <Content Include="App_Plugins\ArchetypeLabelTemplatesNewsTopicPicker\package.manifest" />
+    <Content Include="App_Plugins\UsdaNewsProductPicker\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
     <Content Include="Views\StandardWebpage.cshtml" />
@@ -3031,6 +3036,10 @@
     <Content Include="Views\NewsMain.cshtml" />
     <Content Include="Views\NationalProgramAnnualReport.cshtml" />
     <Content Include="Views\PublicationsLatest.cshtml" />
+    <Content Include="Views\RSSFeeds.cshtml" />
+    <Content Include="Views\ProjectReportsByProgram.cshtml" />
+    <Content Include="Views\404.cshtml" />
+    <Content Include="Views\PageNotFound.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

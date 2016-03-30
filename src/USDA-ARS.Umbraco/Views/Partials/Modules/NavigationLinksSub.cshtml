@@ -1,16 +1,60 @@
 ﻿@using Archetype.Models
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Models
 @model IPublishedContent
 @{
     IEnumerable<IPublishedContent> mainOfficeList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.MainOfficeList();
+
+    IPublishedContent currentPage = Model;
+    IPublishedContent rootNode = currentPage.AncestorOrSelf(2);
+    IPublishedContent breadcrumb = currentPage;
+    string modeCode = "";
+
+    if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
+    {
+        modeCode = Request.QueryString.Get("modeCode");
+    }
+
+    List<NodeBreadcrumb> nodeBreadcrumbList = new List<NodeBreadcrumb>();
+
+    while (breadcrumb.Level >= 2)
+    {
+        nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.GetPropertyValue<string>("breadcrumbLabel", breadcrumb.Name), breadcrumb.Url, breadcrumb.Level));
+
+        breadcrumb = breadcrumb.Parent;
+    }
+
+    if (nodeBreadcrumbList != null && nodeBreadcrumbList.Count > 0)
+    {
+        if (false == string.IsNullOrWhiteSpace(modeCode))
+        {
+            IPublishedContent siteNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode);
+
+            if (siteNode != null)
+            {
+                while (siteNode.Level >= 2)
+                {
+                    nodeBreadcrumbList.Add(new NodeBreadcrumb(siteNode.GetPropertyValue<string>("breadcrumbLabel", siteNode.Name), siteNode.Url, siteNode.Level - 5));
+
+                    siteNode = siteNode.Parent;
+                }
+            }
+        }
+
+        nodeBreadcrumbList = nodeBreadcrumbList.OrderBy(p => p.Level).ToList();
+    }
 }
 <div id="navigationLinks">
     <div id="breadcrumb">
         You are here:
 
         <a href="/">ARS Home</a>
-        / <a href="@Model.Url">@(Model.GetPropertyValue<string>("breadcrumbLabel", Model.Name))</a>
+
+        @foreach (NodeBreadcrumb breadNode in nodeBreadcrumbList)
+        {
+            @Html.Raw("/") <a href="@breadNode.Url">@(breadNode.Name)</a>
+        }
 
     </div>
 
