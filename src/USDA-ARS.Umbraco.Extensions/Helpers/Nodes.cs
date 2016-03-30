@@ -41,7 +41,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
         {
             IPublishedContent ArsLocations = UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("ARSLocations"));
 
-            return ArsLocations.Children;
+            return ArsLocations.Children.Where(n => n.IsDocumentType("Region"));
         }
 
         public static IEnumerable<IPublishedContent> AllLocationsList()
@@ -64,14 +64,27 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
         }
 
 
+        public static IPublishedContent Careers()
+        {
+            IPublishedContent homepage = Homepage();
+
+            if (homepage != null)
+            {
+                return homepage.Descendants().FirstOrDefault(n => n.IsDocumentType("Careers"));
+            }
+
+            return null;
+        }
+
+
         public static IEnumerable<IPublishedContent> RegionCityList(IPublishedContent region)
         {
-            return region.Children;
+            return region.Children.Where(n => n.IsDocumentType("City"));
         }
 
         public static void CityResearchUnitList(ref List<ResearchUnitDisplay> researchUnits, IPublishedContent city, int level)
         {
-            IEnumerable<IPublishedContent> researchUnitList = city.Children;
+            IEnumerable<IPublishedContent> researchUnitList = city.Children.Where(n => n.IsDocumentType("City") || n.IsDocumentType("ResearchUnit"));
 
             foreach (IPublishedContent unit in researchUnitList)
             {
@@ -140,7 +153,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
         {
             List<string> stateList = new List<string>();
 
-            IEnumerable<IPublishedContent> cityList = region.Children;
+            IEnumerable<IPublishedContent> cityList = region.Children.Where(n => n.IsDocumentType("City"));
 
             foreach (IPublishedContent city in cityList)
             {

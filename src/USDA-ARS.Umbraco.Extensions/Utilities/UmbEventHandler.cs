@@ -25,11 +25,45 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
         {
             foreach (var node in e.SavedEntities)
             {
-                if ((node.ContentType.Alias == "Region" || node.ContentType.Alias == "ResearchUnit") && !cs.HasChildren(node.Id))
+                if ((node.ContentType.Alias == "Region" || node.ContentType.Alias == "ResearchUnit"))
                 {
-                    var childNode = _contentService.CreateContent("People", node, "PeopleFolder");
+                    // Careers Node
+                    IContent sitesCareers = node.Descendants().FirstOrDefault(n => n.ContentType.Alias == "SitesCareers");
 
-                    _contentService.SaveAndPublishWithStatus(childNode);
+                    if (sitesCareers == null)
+                    {
+                        string navCategoryGuid = Helpers.NavCategories.GetNavGuidByName("Careers");
+
+                        var childNode = _contentService.CreateContent("Careers", node, "SitesCareers");
+                        childNode.SetValue("navigationCategory", navCategoryGuid);
+
+                        _contentService.SaveAndPublishWithStatus(childNode);
+                    }
+
+                    // News Node
+                    IContent sitesNews = node.Descendants().FirstOrDefault(n => n.ContentType.Alias == "SitesNews");
+
+                    if (sitesNews == null)
+                    {
+                        string navCategoryGuid = Helpers.NavCategories.GetNavGuidByName("News");
+
+                        var childNode = _contentService.CreateContent("News", node, "SitesNews");
+                        childNode.SetValue("navigationCategory", navCategoryGuid);
+
+                        _contentService.SaveAndPublishWithStatus(childNode);
+                    }
+
+                    // People Folder
+                    IContent peopleFolder = node.Descendants().FirstOrDefault(n => n.ContentType.Alias == "Careers");
+
+                    if (peopleFolder == null)
+                    {
+                        var childNode = _contentService.CreateContent("People", node, "PeopleFolder");
+
+                        _contentService.SaveAndPublishWithStatus(childNode);
+                    }
+
+                    
                 }
                 else if (node.ContentType.Alias == "NationalProgram" && !cs.HasChildren(node.Id))
                 {

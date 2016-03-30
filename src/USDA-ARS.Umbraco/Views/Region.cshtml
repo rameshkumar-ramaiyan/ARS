@@ -12,6 +12,7 @@
     IPublishedContent currentPage = Model.Content;
     IPublishedContent rootPage = currentPage.AncestorOrSelf(1);
     string modeCode = currentPage.GetPropertyValue<string>("modeCode");
+    string defaultCarouselImage = rootPage.GetPropertyValue<string>("defaultCarouselImage");
 
     ArchetypeModel defaultPopularTopics = rootPage.GetPropertyValue<ArchetypeModel>("popularTopics");
 
