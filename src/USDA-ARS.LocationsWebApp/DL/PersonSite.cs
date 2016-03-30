@@ -95,13 +95,17 @@ namespace USDA_ARS.LocationsWebApp.DL
                 }
                 else
                 {
-                    throw new Exception("Unable to find Umbraco People Folder within Site: " + responsePage.ContentList[0].Name);
+                  //  ApiResponse responsePage1 = new ApiResponse();
+                  //  return responsePage1;
+                      throw new Exception("Unable to find Umbraco People Folder within Site: " + responsePage.ContentList[0].Name);
                 }
 
             }
             else
             {
-                throw new Exception("Unable to find Umbraco page by Mode Code: " + modeCode);
+                ApiResponse responsePage2 = new ApiResponse();
+                return responsePage2;
+                // throw new Exception("Unable to find Umbraco page by Mode Code: " + modeCode);
             }
         }
 
