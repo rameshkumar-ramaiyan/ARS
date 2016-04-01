@@ -3038,7 +3038,6 @@
     <Content Include="Views\PublicationsLatest.cshtml" />
     <Content Include="Views\RSSFeeds.cshtml" />
     <Content Include="Views\ProjectReportsByProgram.cshtml" />
-    <Content Include="Views\404.cshtml" />
     <Content Include="Views\PageNotFound.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
