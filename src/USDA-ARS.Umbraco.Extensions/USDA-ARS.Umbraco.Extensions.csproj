@@ -295,6 +295,7 @@
     <Compile Include="Controller\ContentImporterController.cs" />
     <Compile Include="Controller\DocTypeListController.cs" />
     <Compile Include="Controller\InterLinksController.cs" />
+    <Compile Include="Controller\NewsProductPickerController.cs" />
     <Compile Include="Controller\NewsTopicPickerController.cs" />
     <Compile Include="Controller\TemplateListController.cs" />
     <Compile Include="Controller\NavCategoryPickerController.cs" />
@@ -353,8 +354,10 @@
     <Compile Include="Models\Import\ApiRequest.cs" />
     <Compile Include="Models\Import\ApiResponse.cs" />
     <Compile Include="Models\InterLinksView.cs" />
+    <Compile Include="Models\NewsProductItem.cs" />
     <Compile Include="Models\NewsTopicItem.cs" />
     <Compile Include="Models\NavCategoryItem.cs" />
+    <Compile Include="Models\NodeBreadcrumb.cs" />
     <Compile Include="Models\NodeDownloadRequestsList.cs" />
     <Compile Include="Models\NodeDownloadRequests.cs" />
     <Compile Include="Models\ResearchUnit.cs" />

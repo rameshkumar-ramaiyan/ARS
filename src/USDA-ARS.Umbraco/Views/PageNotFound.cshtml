@@ -2,6 +2,7 @@
 @using Archetype.Models
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Helpers
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
     Layout = "_Master.cshtml";
@@ -20,7 +21,31 @@
 
     bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
 
-    IEnumerable<IPublishedContent> nationalProgramsList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.NationalProgramsList();
+    string badUrl = "";
+
+    if (HttpContext.Current != null)
+    {
+        var context = HttpContext.Current;
+
+        badUrl = context.Request.QueryString["aspxerrorpath"] ?? context.Request.RawUrl;
+    }
+
+    if (false == string.IsNullOrEmpty(badUrl))
+    {
+        List<IPublishedContent> nodesList = Nodes.NodesWithRedirectsList();
+
+        if (nodesList != null && nodesList.Any())
+        {
+            IPublishedContent redirectNode = nodesList.Where(p => p.GetPropertyValue<string>("oldUrl").Contains(badUrl)).FirstOrDefault();
+            if (redirectNode != null)
+            {
+                Response.RedirectPermanent(redirectNode.Url);
+            }
+        }
+
+    }
+}
+
 }
 
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
@@ -57,23 +82,7 @@
 
         <br />
 
-        
 
-        @if (nationalProgramsList != null && nationalProgramsList.Any())
-        {
-            <ul>
-                @foreach (IPublishedContent item in nationalProgramsList)
-                {
-                    foreach (IPublishedContent itemSub in item.Children)
-                    {
-                        string npCode = itemSub.GetPropertyValue<string>("npCode");
-
-                        <li><a href="/research/project-reports-by-program/?npCode=@(npCode)">@(itemSub.Name)</a> (NP #@(npCode))</li>
-                    }
-                }
-
-            </ul>
-        }
 
         <p></p>
 

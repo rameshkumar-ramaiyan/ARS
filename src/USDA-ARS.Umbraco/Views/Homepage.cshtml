@@ -15,14 +15,14 @@
     ArchetypeModel quickLinks = currentPage.GetPropertyValue<ArchetypeModel>("quickLinks");
 
     var resourceList = currentPage.GetPropertyValue<MultiUrls>("resources");
-    
+
 
     //IEnumerable<IPublishedContent> newsList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("newsList");
     IEnumerable<IPublishedContent> newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNews(6);
 
     //IEnumerable<IPublishedContent> latestBlogList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("latestBlog");
     List<BlogItem> latestBlogList = USDA_ARS.Umbraco.Extensions.Helpers.Blogs.GetBlogFeed().Take(10).ToList();
-    
+
     string middleArea = currentPage.GetPropertyValue<string>("middleArea");
 }
 <div id="bodyContent">
@@ -272,15 +272,21 @@
             {
                 foreach (var quickLink in quickLinks)
                 {
-                    Link navLink = quickLink.GetValue<MultiUrls>("link").FirstOrDefault();
+                    if (quickLink.HasValue("link"))
+                    {
+                        Link navLink = quickLink.GetValue<MultiUrls>("link").FirstOrDefault();
 
-                    <div>
-                        <img src="@quickLink.GetValue("icon")"
-                             alt="@quickLink.GetValue("label")" />
-                        <p>
-                            <a href="@quickLink.GetValue("link")">@quickLink.GetValue("label")</a>
-                        </p>
-                    </div>
+                        if (navLink != null)
+                        {
+                        <div>
+                            <img src="@quickLink.GetValue("icon")"
+                                 alt="@quickLink.GetValue("label")" />
+                            <p>
+                                <a href="@quickLink.GetValue("link")">@quickLink.GetValue("label")</a>
+                            </p>
+                        </div>
+                        }
+                    }
                 }
             }
         </div>
@@ -297,7 +303,8 @@
             <img src="/images/redesign/rounded-topTEAL.png" alt="spacer">
         </div>
     <![endif]-->
-    <div id="bottomContent"><a name="bottomContent"></a>
+    <div id="bottomContent">
+        <a name="bottomContent"></a>
         <a name="areas" href="top" class="section508">Research Areas & Locations Content | Click to go Back to Top</a>
 
         <h1>Key ARS Offices and Locations</h1>

@@ -42,7 +42,7 @@
                     stateFullName = cityState[1].Trim().Replace(" (Bhnrc)", "");
                     stateFullName = stateFullName.Replace(" ", "");
                 }
-                <state name="@stateFullName" id="@programLocation.StateCode">
+                <state name="@(stateFullName.Replace("(Barc)",""))" id="@programLocation.StateCode">
                     <description>Click to see related research projects</description>
                     <url>/research/research-programs-by-state/?state=@programLocation.StateCode&npCode=@npCode</url>
                     <inactive>no</inactive>

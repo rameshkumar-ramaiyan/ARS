@@ -399,6 +399,48 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
         }
 
 
+        public static List<ProjectInfo> GetProjectAnnualReportList(string npCode, string sort)
+        {
+            List<ProjectInfo> projectList = null;
+
+            var db = new Database("arisPublicWebDbDSN");
+
+            string sql = @"SELECT 	distinct p.prj_title, p.accn_no, p.prj_type project_type, q.fy,
+					            modecodes.Web_Label, city, rtrim(state_CODE) stateabbr,
+					            modecodes.modecode_1, modecodes.modecode_2, modecodes.modecode_3, modecodes.modecode_4
+			            FROM 			
+					            w_clean_projects		p,				
+					            a421_questions 			q, 
+					            a416_national_program 	np, 
+					            v_locations MODECODES
+			            WHERE 	q.accn_no = p.accn_no
+			            AND 	q.fy >=  datepart(yyyy, getdate()) -5
+			            AND 	np.accn_no = p.accn_no
+			            AND 	np_code = @npCode
+			            AND 	np_percent >= 30
+			            AND 	p.MODECODE_1 = modecodes.MODECODE_1
+			            AND 	p.MODECODE_2 = modecodes.MODECODE_2
+			            AND 	p.MODECODE_3 = modecodes.MODECODE_3
+			            AND 	p.MODECODE_4 = modecodes.MODECODE_4
+                        
+                        ";
+
+            if (false == string.IsNullOrWhiteSpace(sort) && sort.ToLower() == "projecttype")
+            {
+                sql += "ORDER BY p.prj_type, modecodes.modecode_1, modecodes.modecode_2, modecodes.modecode_3, modecodes.modecode_4";
+            }
+            else
+            {
+                sql += "ORDER BY modecodes.modecode_1, modecodes.modecode_2, modecodes.modecode_3, modecodes.modecode_4, p.prj_type";
+            }
+
+
+            projectList = db.Query<ProjectInfo>(sql, new { npCode = npCode }).ToList();
+
+            return projectList;
+        }
+
+
         public static List<ProjectSubject> GetProjectSubjects()
         {
             List<ProjectSubject> projectSubjectList = null;

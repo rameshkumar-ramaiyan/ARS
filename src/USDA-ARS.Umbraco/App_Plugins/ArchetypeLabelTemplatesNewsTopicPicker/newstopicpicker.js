@@ -1,17 +1,44 @@
 ﻿var NewsTopicPickerTemplate = {};
+NewsTopicPickerTemplate.MyPrevalues = [];
 
-NewsTopicPickerTemplate.getTitle = function (value, scope) {
+NewsTopicPickerTemplate.getTitle = function (id, scope) {
+    if (id != null && id != '') {
+
+        var cachedValue = _.find(NewsTopicPickerTemplate.MyPrevalues, function (prevalue) {
+            return prevalue.id == id;
+        });
+
+        if (cachedValue) {
+            return cachedValue.value;
+        }
+
+        $.ajax({
+            url: '/umbraco/usda/NewsTopicPicker/GetTitle/' + id,
+            type: 'GET',
+            dataType: 'json',
+            async: true
+        }).success(function (data) {
+            NewsTopicPickerTemplate.MyPrevalues.push({ id: id, value: data });
+            return data;
+        });
+
+        return "Loading...";
+
+    } else {
+        return " - ";
+    }
+
+
+
+
 	//this is the property model
-	if (value) {
-		if (value[0]) {
-		    if (value[0].text) {
-				return value[0].text;
-			}
-		}
-		
-	}
+    //if (value) {
+    //    return $.ajax({
+    //        type: "GET",
+    //        url: "/umbraco/usda/NewsTopicPicker/GetTitle/" + value,
+    //        async: false
+    //    }).responseText;
+	//}
 
-	//if you wanted to get the name of the content instead, you'd have to get it from the server here since it's not in the model
-
-	return "";
+    
 };

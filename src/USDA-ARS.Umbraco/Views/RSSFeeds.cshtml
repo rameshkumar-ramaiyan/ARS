@@ -1,0 +1,96 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+    bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
+
+    string bodyText = currentPage.GetPropertyValue<string>("bodyText");
+    string modeCode = "";
+
+    if (Request.QueryString["modeCode"] != null)
+    {
+        modeCode = Request.QueryString.Get("modeCode");
+    }
+
+    bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        @if (false == hideHeaderTitle)
+        {
+            <table border="0" width="100%">
+                <tr>
+                    <td class="pageHeading">@currentPage.Name</td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
+                    </td>
+                </tr>
+            </table>
+        }
+
+
+        <!-- display URLs of subpages start -->
+        <!--  display URLs of subpages end -->
+        <!-- document content start -->
+
+        @Html.Raw(bodyText)
+
+
+        <table cellspacing="0" cellpadding="0" width="400" align="center" border="1">
+            <tbody>
+                <tr>
+                    <th>Feed Category</th>
+                    <th align="center">RSS</th>
+                </tr>
+                <tr>
+                    <td width="80%">Research News</td>
+                    <td width="20%" align="center"><a title="Daily research news" href="/rss/?productName=Research%20News" id="anch_59"><img border="0" src="/images/incme/rss_feed_icon.png"> </a></td>
+                </tr>
+                <tr>
+                    <td width="80%"><em>AgResearch</em> Magazine</td>
+                    <td width="20%" align="center"><a title="AR Magazine" href="/rss/?productName=AgResearch%20Magazine" id="anch_60"><img border="0" src="/images/incme/rss_feed_icon.png"> </a></td>
+                </tr>
+                <tr>
+                    <td><em>Food &amp; Nutrition Research Briefs</em></td>
+                    <td align="center"><a title="FNRB" href="/rss/?productName=Food%20%26%20Nutrition%20Research%20Briefs" id="anch_61"><img border="0" src="/images/incme/rss_feed_icon.png"> </a></td>
+                </tr>
+                <tr>
+                    <td>Briefing Room Materials</td>
+                    <td align="center"><a title="Briefing Room Materials" href="/rss/?productName=Briefing%20Room%20Materials" id="anch_62"><img border="0" src="/images/incme/rss_feed_icon.png"> </a></td>
+                </tr>
+                <tr>
+                    <td colspan="2" align="center">
+                        <br>
+                        <form method="get" action="/rss/">By Key Topic Areas:<br><select name="topic"> <option selected="" value="">select a topic</option><option value="Crops">Crops</option><option value="Animals">Animals</option><option value="Food Safety">Food Safety</option><option value="Nutrition and Health">Nutrition &amp; Health</option><option value="Biofuels">Biofuels</option><option value="Bio Products">Biobased Products</option><option value="Climate Change">Climate Change/Sustainable Agriculture</option><option value="Organics">Organics</option><option value="Bees">Bees/Colony Collapse Disorder</option><option value="Invasive Species">Invasive Species</option></select> <input src="/images/incme/rss_feed_icon.png" type="image"> </form>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p style="margin: 0in 0in 10pt;" class="MsoNormal"><br />If you have problems, questions, or feedback regarding our RSS feeds, please send them to our <a id="anch_63" href="/email/email.htm?email=webmaster@ars.usda.gov">webmaster</a>.<span style="mso-spacerun: yes;"></span></p>
+
+
+        <br />
+
+
+
+        <p></p>
+
+
+    </div>
+</div>

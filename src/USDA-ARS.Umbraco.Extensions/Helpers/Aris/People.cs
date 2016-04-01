@@ -249,6 +249,8 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
             Sql sql = null;
             string where = "";
 
+            alpha = alpha.Trim();
+
             if (false == string.IsNullOrWhiteSpace(alpha))
             {
                 if (alpha.Length == 2)
@@ -269,6 +271,8 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             if (alphaList != null && alphaList.Count > 0)
             {
+                alphaList = alphaList.Where(p => p.Trim().Length >= 2).ToList();
+
                 alphaList = alphaList.OrderBy(p => p).ToList();
             }
 
@@ -306,7 +310,15 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
                 if (alpha.Length == 1)
                 {
-                    peopleList = GetPeopleAlpha(peopleList[0].LastName.Substring(0, 2));
+                    if (peopleList[0].LastName.Substring(0, 2).Trim().Length == 1 && peopleList.Count > 1)
+                    {
+                        peopleList = GetPeopleAlpha(peopleList[1].LastName.Substring(0, 2));
+                    }
+                    else
+                    {
+                        peopleList = GetPeopleAlpha(peopleList[0].LastName.Substring(0, 2));
+                    }
+
                 }
             }
 

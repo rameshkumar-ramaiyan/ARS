@@ -28,7 +28,7 @@ using USDA_ARS.Umbraco.Extensions.Models.Aris;
 namespace USDA_ARS.Umbraco.Extensions.Controller
 {
     [PluginController("Usda")]
-    public class NewsTopicPickerController : UmbracoApiController
+    public class NewsProductPickerController : UmbracoApiController
     {
         private static readonly IContentService _contentService = ApplicationContext.Current.Services.ContentService;
 
@@ -42,26 +42,26 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
             {
                 var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
                 IPublishedContent node = Helpers.Nodes.SiteSettings();
-                List<NewsTopicItem> selectList = new List<NewsTopicItem>();
+                List<NewsProductItem> selectList = new List<NewsProductItem>();
 
                 if (node != null)
                 {
-                    if (node.HasValue("newsTopics"))
+                    if (node.HasValue("newsProducts"))
                     {
-                        ArchetypeModel newsTopics = node.GetPropertyValue<ArchetypeModel>("newsTopics");
+                        ArchetypeModel newsProducts = node.GetPropertyValue<ArchetypeModel>("newsProducts");
 
-                        if (newsTopics != null && newsTopics.Any())
+                        if (newsProducts != null && newsProducts.Any())
                         {
-                            foreach (var newsTopic in newsTopics)
+                            foreach (var newsProduct in newsProducts)
                             {
-                                string newsTopicTitle = newsTopic.GetValue<string>("newsTopic");
+                                string newsProductTitle = newsProduct.GetValue<string>("newsProduct");
 
-                                NewsTopicItem newsTopicItem = new NewsTopicItem();
+                                NewsProductItem newsProductItem = new NewsProductItem();
 
-                                newsTopicItem.Value = newsTopic.Id.ToString();
-                                newsTopicItem.Text = newsTopicTitle;
+                                newsProductItem.Value = newsProduct.Id.ToString();
+                                newsProductItem.Text = newsProductTitle;
 
-                                selectList.Add(newsTopicItem);
+                                selectList.Add(newsProductItem);
                             }
 
                         }
@@ -72,7 +72,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
             }
             catch (Exception ex)
             {
-                LogHelper.Error<DataImporterController>("Usda News Topic Picker Error", ex);
+                LogHelper.Error<DataImporterController>("Usda News Product Picker Error", ex);
             }
 
             return output;
@@ -87,19 +87,19 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
             var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
             IPublishedContent node = Helpers.Nodes.SiteSettings();
-            List<NewsTopicItem> selectList = new List<NewsTopicItem>();
+            List<NewsProductItem> selectList = new List<NewsProductItem>();
 
             if (node != null)
             {
-                if (node.HasValue("newsTopics"))
+                if (node.HasValue("newsProducts"))
                 {
-                    ArchetypeModel newsTopics = node.GetPropertyValue<ArchetypeModel>("newsTopics");
+                    ArchetypeModel newsProducts = node.GetPropertyValue<ArchetypeModel>("newsProducts");
 
-                    var newsTopicItem = newsTopics.Where(p => p.Id.ToString().ToLower() == id.ToLower()).FirstOrDefault();
+                    var newsProductItem = newsProducts.Where(p => p.Id.ToString().ToLower() == id.ToLower()).FirstOrDefault();
 
-                    if (newsTopicItem != null)
+                    if (newsProductItem != null)
                     {
-                        output = newsTopicItem.GetValue<string>("newsTopic");
+                        output = newsProductItem.GetValue<string>("");
                     }
                 }
             }
@@ -111,9 +111,9 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                     //foreach (IPublishedContent node in nodeList)
                     //{
-                    //    List<TopicPickerItem> pickerListParent = GetTopicList(node);
+                    //    List<ProductPickerItem> pickerListParent = GetProductList(node);
 
-                    //    TopicPickerItem pickerItemParent = pickerListParent.Where(p => p.Value.ToLower() == id.ToLower()).FirstOrDefault();
+                    //    ProductPickerItem pickerItemParent = pickerListParent.Where(p => p.Value.ToLower() == id.ToLower()).FirstOrDefault();
 
                     //    if (pickerItemParent != null)
                     //    {
@@ -122,9 +122,9 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                     //    foreach (IPublishedContent subNode in node.Descendants())
                     //    {
-                    //        List<TopicPickerItem> pickerList = GetTopicList(subNode);
+                    //        List<ProductPickerItem> pickerList = GetProductList(subNode);
 
-                    //        TopicPickerItem pickerItem = pickerList.Where(p => p.Value.ToLower() == id.ToLower()).FirstOrDefault();
+                    //        ProductPickerItem pickerItem = pickerList.Where(p => p.Value.ToLower() == id.ToLower()).FirstOrDefault();
 
                     //        if (pickerItem != null)
                     //        {

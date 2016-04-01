@@ -149,6 +149,24 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
         }
 
 
+        public static List<IPublishedContent> NodesWithRedirectsList()
+        {
+            List<IPublishedContent> nodeList = new List<IPublishedContent>();
+
+            IPublishedContent node = null;
+
+            foreach (IPublishedContent root in UmbHelper.TypedContentAtRoot())
+            {
+                if (node == null)
+                {
+                    nodeList.AddRange(root.Descendants().Where(n => false == string.IsNullOrWhiteSpace(n.GetPropertyValue<string>("oldUrl"))).ToList());
+                }
+            }
+
+            return nodeList;
+        }
+
+
         public static List<string> StateListFromRegion(IPublishedContent region)
         {
             List<string> stateList = new List<string>();
