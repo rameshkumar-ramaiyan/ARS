@@ -12,7 +12,7 @@
     string htmlTitleSiteName = siteSettings.GetPropertyValue<string>("siteName");
     string htmlTitlePageName = currentPage.GetPropertyValue<string>("htmlTitle", currentPage.Name);
 
-    string modeCode = rootNode.GetPropertyValue<string>("modeCode");
+    string modeCode = currentPage.GetPropertyValue<string>("modeCode", true);
 
     string pageHeaderScripts = currentPage.GetPropertyValue<string>("pageHeaderScripts");
     string pageFooterScripts = currentPage.GetPropertyValue<string>("pageFooterScripts");

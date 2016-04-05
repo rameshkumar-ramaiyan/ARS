@@ -83,6 +83,10 @@ namespace USDA_ARS.Umbraco.Extensions.Models.Aris
         [NullSetting(NullSetting = NullSettings.Null)]
         public string ProjectNumber { get; set; }
 
+        [Column("project_type")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string ProjectTypeCode { get; set; }
+
         [Column("PRJ_TYPE")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public string ProjectType { get; set; }
@@ -111,13 +115,25 @@ namespace USDA_ARS.Umbraco.Extensions.Models.Aris
         [NullSetting(NullSetting = NullSettings.Null)]
         public string City { get; set; }
 
+        [Column("city")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string CityName { get; set; }
+
         [Column("STATE_NAME")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public string State { get; set; }
 
+        [Column("stateabbr")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string StateAbbr { get; set; }
+
         [Column("modecode")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public string ModeCode { get; set; }
+
+        [Column("Web_Label")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string WebLabel { get; set; }
     }
 }
 

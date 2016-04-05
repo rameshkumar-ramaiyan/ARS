@@ -9,30 +9,63 @@
 @{
     umbraco.library.ChangeContentType("text/xml");
     IPublishedContent currentNode = Model.Content;
-    IEnumerable<UsdaArsNews> newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNews(20);
+    List<IPublishedContent> newsList = null;
 
-    var siteURL = "http://" + Request.Url.Host.ToString();
+    string productName = "Research News";
+    string topic = "";
+
+    if (false == string.IsNullOrEmpty(Request.QueryString["productName"]))
+    {
+        productName = USDA_ARS.Umbraco.Extensions.Utilities.Strings.RemoveHtmlTags(Request.QueryString.Get("productName"));
+
+        newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNewsByProduct(productName, 20);
+    }
+    else if (false == string.IsNullOrEmpty(Request.QueryString["topic"]))
+    {
+        topic = USDA_ARS.Umbraco.Extensions.Utilities.Strings.RemoveHtmlTags(Request.QueryString.Get("topic"));
+
+        newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNewsByTopic(topic, 20);
+    }
+    else
+    {
+        newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNews(20);
+    }
+
+    string siteURL = "http://" + Request.Url.Host.ToString();
 }
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
         <atom:link href="@siteURL/rss" rel="self" type="application/rss+xml" />
-        <title>@(currentNode.GetProperty("feedTitle").Value)</title>
+        <title>@(currentNode.Name)</title>
         @Html.Raw("<link>")@siteURL@Html.Raw("</link>")
-        <description>@(currentNode.GetProperty("feedDescription").Value)</description>
-        <pubDate>@String.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", DateTime.Parse("1/1/2002"))</pubDate>
+        <description>The United States Department of Agriculture</description>
+
+        @if (newsList != null && newsList.Any())
+        {
+            <pubDate>@String.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", newsList[0].GetPropertyValue<DateTime>("articleDate"))</pubDate>
+        }
+
         <lastBuildDate>@String.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", DateTime.Now)</lastBuildDate>
         <language>en</language>
-        <generator>Umbraco</generator>
+        <managingEditor>ARS Information Staff info@ars.usda.gov</managingEditor>
+        <webMaster>USDA ARS Webmaster webmaster@ars.usda.gov</webMaster>
 
-        @foreach (UsdaArsNews article in newsList)
+        @if (newsList != null && newsList.Any())
         {
+            foreach (IPublishedContent article in newsList)
+            {
             <item>
-                <title>@(article.SubjectField)</title>
-                @Html.Raw("<link>")@(siteURL + "/news/news-item/" + article.NewsID)@Html.Raw("</link>")
-                <description>@article.BodyOpener</description>
-                <pubDate>@(string.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", article.DateField))</pubDate>
-                <guid>@(siteURL + "/news/news-item/" + article.NewsID)</guid>
+                <title>@(article.Name)</title>
+                @Html.Raw("<link>")@(siteURL + article.Url)@Html.Raw("</link>")
+                <description>
+                    <![CDATA[
+                    @Html.Raw(article.GetPropertyValue<string>("bodyText"))
+                    ]]>
+                </description>
+                <pubDate>@(string.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", article.GetPropertyValue<DateTime>("articleDate")))</pubDate>
+                <guid>@(siteURL + article.Url)</guid>
             </item>
+            }
         }
     </channel>
 </rss>
