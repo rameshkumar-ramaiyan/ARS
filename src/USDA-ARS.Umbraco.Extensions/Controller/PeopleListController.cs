@@ -42,29 +42,33 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                 var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
                 IPublishedContent node = umbracoHelper.TypedContent(id);
 
-                if (node.DocumentTypeAlias == "PersonSite")
+                if (id != "0")
                 {
-                    node = node.Parent.Parent;
-                }
 
-                if (node != null)
-                {
-                    List<PeopleByCity> peopleList = new List<PeopleByCity>();
-
-                    peopleList = Helpers.Aris.People.GetPeopleByCity(node.GetPropertyValue<string>("modeCode"));
-
-                    if (peopleList != null)
+                    if (node.DocumentTypeAlias == "PersonSite")
                     {
-                        peopleList = peopleList.OrderBy(p => p.LastName).ToList();
+                        node = node.Parent.Parent;
+                    }
 
-                        List<PeopleSelectItem> selectList = new List<PeopleSelectItem>();
+                    if (node != null)
+                    {
+                        List<PeopleByCity> peopleList = new List<PeopleByCity>();
 
-                        foreach(var person in peopleList)
+                        peopleList = Helpers.Aris.People.GetPeopleByCity(node.GetPropertyValue<string>("modeCode"));
+
+                        if (peopleList != null)
                         {
-                            selectList.Add(new PeopleSelectItem(person.PersonId.ToString(), person.LastName + ", " + person.FirstName + " <" + person.Email +">"));
-                        }
+                            peopleList = peopleList.OrderBy(p => p.LastName).ToList();
 
-                        output = JsonConvert.SerializeObject(selectList);
+                            List<PeopleSelectItem> selectList = new List<PeopleSelectItem>();
+
+                            foreach (var person in peopleList)
+                            {
+                                selectList.Add(new PeopleSelectItem(person.PersonId.ToString(), person.LastName + ", " + person.FirstName + " <" + person.Email + ">"));
+                            }
+
+                            output = JsonConvert.SerializeObject(selectList);
+                        }
                     }
                 }
             }

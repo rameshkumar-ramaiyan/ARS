@@ -44,6 +44,8 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                 List<DocTypeCms> docTypeList = null;
                 List<DocTypeSelectItem> selectList = new List<DocTypeSelectItem>();
 
+
+
                 var db = new Database("umbracoDbDSN");
 
                 string sql = @"SELECT DISTINCT(Alias), Name

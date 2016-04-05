@@ -2,9 +2,10 @@
 @using Archetype.Models
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
-@using USDA_ARS.Umbraco.Extensions.Utilities
+@using USDA_ARS.Umbraco.Extensions.Helpers
 @using USDA_ARS.Umbraco.Extensions.Helpers.Aris
 @using USDA_ARS.Umbraco.Extensions.Models.Aris
+@using USDA_ARS.Umbraco.Extensions.Utilities
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
     Layout = "_Master.cshtml";
@@ -28,34 +29,7 @@
         {
             projectInfo = Projects.GetProjectInfo(publication.AccountNo);
 
-            string modeCode = publication.ModeCode1.ToString();
-
-            if (publication.ModeCode2.ToString().Length == 1)
-            {
-                modeCode += "-0" + publication.ModeCode2;
-            }
-            else
-            {
-                modeCode += "-" + publication.ModeCode2;
-            }
-
-            if (publication.ModeCode3.ToString().Length == 1)
-            {
-                modeCode += "-0" + publication.ModeCode3;
-            }
-            else
-            {
-                modeCode += "-" + publication.ModeCode3;
-            }
-
-            if (publication.ModeCode4.ToString().Length == 1)
-            {
-                modeCode += "-0" + publication.ModeCode4;
-            }
-            else
-            {
-                modeCode += "-" + publication.ModeCode4;
-            }
+            string modeCode = ModeCodes.ModeCodeIntsToString(publication.ModeCode1, publication.ModeCode2, publication.ModeCode3, publication.ModeCode4);
 
             location = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode);
         }

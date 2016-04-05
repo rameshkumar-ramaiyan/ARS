@@ -50,6 +50,8 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                 templateList = db.Query<TemplateCms>(sql).ToList();
 
+                selectList.Add(new TemplateSelectItem("", " - "));
+
                 if (templateList != null && templateList.Any())
                 {
                     foreach (TemplateCms template in templateList)
