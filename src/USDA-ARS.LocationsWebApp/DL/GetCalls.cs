@@ -38,5 +38,28 @@ namespace USDA_ARS.LocationsWebApp.DL
 
             return responseBack;
         }
+
+        public static ApiResponse GetNodeByNationalProgramCode(string npCode)
+        {
+            ApiRequest request = new ApiRequest();
+            ApiContent content = new ApiContent();
+
+            request.ApiKey = API_KEY;
+
+            request.ContentList = new List<ApiContent>();
+            content.Properties = new List<ApiProperty>();
+
+            // Get the Umbraco page by Mode Code
+            content.Properties.Add(new ApiProperty("npCode", npCode)); // Region mode code
+
+            request.ContentList.Add(content);
+
+            request.ContentList = new List<ApiContent>();
+            request.ContentList.Add(content);
+
+            ApiResponse responseBack = ApiCalls.PostData(request, "Get");
+
+            return responseBack;
+        }
     }
 }

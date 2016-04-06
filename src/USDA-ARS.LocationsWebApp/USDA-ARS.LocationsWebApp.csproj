@@ -338,6 +338,7 @@
     <Content Include="App_Plugins\Archetype\views\archetype.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.js" />
+    <Content Include="delete-all-national-programs.aspx" />
     <Content Include="news-import.aspx" />
     <Content Include="StoredProcedures\uspgetAllAreasCarouselSlides.sql" />
     <Content Include="StoredProcedures\uspgetAllAreasPopularTopics.sql" />
@@ -362,10 +363,18 @@
     <Content Include="StoredProcedures\uspgetAllResearchUnitsWebTrendsProfileIDs.sql" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="delete-all-national-programs.aspx.cs">
+      <DependentUpon>delete-all-national-programs.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="delete-all-national-programs.aspx.designer.cs">
+      <DependentUpon>delete-all-national-programs.aspx</DependentUpon>
+    </Compile>
     <Compile Include="DL\ApiCalls.cs" />
     <Compile Include="DL\GetCalls.cs" />
     <Compile Include="DL\NationalPrograms.cs" />
     <Compile Include="DL\NewsImport.cs" />
+    <Compile Include="Models\NationalProgramGroup.cs" />
     <Compile Include="Models\News.cs" />
     <Compile Include="news-import.aspx.cs">
       <DependentUpon>news-import.aspx</DependentUpon>
