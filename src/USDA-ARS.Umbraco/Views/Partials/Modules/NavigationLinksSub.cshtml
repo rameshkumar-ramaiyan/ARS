@@ -1,7 +1,10 @@
 ﻿@using Archetype.Models
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Helpers
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
 @using USDA_ARS.Umbraco.Extensions.Models
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
 @model IPublishedContent
 @{
     IEnumerable<IPublishedContent> mainOfficeList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.MainOfficeList();
@@ -9,18 +12,62 @@
     IPublishedContent currentPage = Model;
     IPublishedContent rootNode = currentPage.AncestorOrSelf(2);
     IPublishedContent breadcrumb = currentPage;
-    string modeCode = "";
-
-    if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
-    {
-        modeCode = Request.QueryString.Get("modeCode");
-    }
+    string modeCode = Request.QueryString["modeCode"];
+    string accnNo = Request.QueryString["accnNo"];
+    string seqNo115 = Request.QueryString["seqNo115"];
 
     List<NodeBreadcrumb> nodeBreadcrumbList = new List<NodeBreadcrumb>();
 
     while (breadcrumb.Level >= 2)
     {
-        nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.GetPropertyValue<string>("breadcrumbLabel", breadcrumb.Name), breadcrumb.Url, breadcrumb.Level));
+        if (breadcrumb.Level == 2 && breadcrumb.DocumentTypeAlias == "Research")
+        {
+            IPublishedContent programsAndProjects = Nodes.ProgramsAndProjects();
+
+            if (programsAndProjects != null)
+            {
+                nodeBreadcrumbList.Add(new NodeBreadcrumb(programsAndProjects.GetPropertyValue<string>("breadcrumbLabel", programsAndProjects.Name), programsAndProjects.Url + "?modeCode=" + modeCode, programsAndProjects.Level - 1));
+            }
+        }
+        else if (breadcrumb.Level == 3 && breadcrumb.DocumentTypeAlias == "ProgramsAndProjects")
+        {
+            // Skip
+        }
+        else
+        {
+            if (breadcrumb.DocumentTypeAlias == "Project" && false == string.IsNullOrWhiteSpace(accnNo))
+            {
+                ProjectInfo projectInfo = Projects.GetProjectInfo(Convert.ToInt32(accnNo));
+
+                if (projectInfo != null)
+                {
+                    modeCode = projectInfo.ModeCode1 + projectInfo.ModeCode2 + projectInfo.ModeCode3 + projectInfo.ModeCode4;
+
+                    modeCode = ModeCodes.ModeCodeAddDashes(modeCode);
+
+                    nodeBreadcrumbList.Add(new NodeBreadcrumb("Research Project #" + accnNo, breadcrumb.Url + "?accnNo=" + accnNo, breadcrumb.Level));
+                }
+            }
+            else if (breadcrumb.DocumentTypeAlias == "Publication" && false == string.IsNullOrWhiteSpace(seqNo115))
+            {
+                UsdaPublication publication = Publications.GetPublicationById(Convert.ToInt32(seqNo115));
+
+                if (publication != null)
+                {
+                    modeCode = ModeCodes.ModeCodeIntsToString(publication.ModeCode1, publication.ModeCode2, publication.ModeCode3, publication.ModeCode4);
+
+                    nodeBreadcrumbList.Add(new NodeBreadcrumb("Publication #" + seqNo115, breadcrumb.Url + "?seqNo115=" + seqNo115, breadcrumb.Level));
+                }
+            }
+            else if (breadcrumb.DocumentTypeAlias == "StandardWebpage" && false == string.IsNullOrWhiteSpace(modeCode))
+            {
+                nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.GetPropertyValue<string>("breadcrumbLabel", breadcrumb.Name), breadcrumb.Url + "?modeCode=" + modeCode, breadcrumb.Level));
+            }
+            else
+            {
+                nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.GetPropertyValue<string>("breadcrumbLabel", breadcrumb.Name), breadcrumb.Url, breadcrumb.Level));
+            }
+        }
 
         breadcrumb = breadcrumb.Parent;
     }
@@ -29,7 +76,7 @@
     {
         if (false == string.IsNullOrWhiteSpace(modeCode))
         {
-            IPublishedContent siteNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode);
+            IPublishedContent siteNode = Nodes.GetNodeByModeCode(modeCode);
 
             if (siteNode != null)
             {
@@ -51,9 +98,22 @@
 
         <a href="/">ARS Home</a>
 
-        @foreach (NodeBreadcrumb breadNode in nodeBreadcrumbList)
-        {
-            @Html.Raw("/") <a href="@breadNode.Url">@(breadNode.Name)</a>
+        @{
+            int i = 0;
+
+            foreach (NodeBreadcrumb breadNode in nodeBreadcrumbList)
+            {
+                if (i == (nodeBreadcrumbList.Count - 1))
+                {
+                    @Html.Raw("/ ") @(breadNode.Name)
+                }
+                else
+                {
+                    @Html.Raw("/") <a href="@breadNode.Url">@(breadNode.Name)</a>
+                }
+
+                i++;
+            }
         }
 
     </div>

@@ -63,6 +63,17 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             return null;
         }
 
+        public static IPublishedContent FindALocation()
+        {
+            IPublishedContent homepage = Homepage();
+
+            if (homepage != null)
+            {
+                return homepage.Descendants().FirstOrDefault(n => n.IsDocumentType("FindALocation"));
+            }
+
+            return null;
+        }
 
         public static IPublishedContent Careers()
         {
@@ -71,6 +82,18 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             if (homepage != null)
             {
                 return homepage.Descendants().FirstOrDefault(n => n.IsDocumentType("Careers"));
+            }
+
+            return null;
+        }
+
+        public static IPublishedContent ProgramsAndProjects()
+        {
+            IPublishedContent homepage = Homepage();
+
+            if (homepage != null)
+            {
+                return homepage.Descendants().FirstOrDefault(n => n.IsDocumentType("ProgramsAndProjects"));
             }
 
             return null;

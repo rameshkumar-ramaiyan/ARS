@@ -1621,6 +1621,11 @@ namespace USDA_ARS.LocationsWebApp
             List<string> myCollection = new List<string>();
             myCollection = ReadFromTextfile(SoftwareId);
         }
+
+        protected void btnAddMultipleNationalPrograms_Click(object sender, EventArgs e)
+        {
+            NationalPrograms.ImportNationPrograms();
+        }
     }
 
 

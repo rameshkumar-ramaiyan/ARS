@@ -44,6 +44,10 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                 IPublishedContent node = Helpers.Nodes.SiteSettings();
                 List<NavCategoryItem> selectList = new List<NavCategoryItem>();
 
+
+
+                selectList.Add(new NavCategoryItem { Text = " - ", Value = "" });
+
                 if (node != null)
                 {
                     if (node.HasValue("navigationCategories"))

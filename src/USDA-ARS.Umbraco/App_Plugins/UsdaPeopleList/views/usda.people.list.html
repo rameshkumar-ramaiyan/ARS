@@ -1,3 +1,4 @@
 ﻿<div ng-controller="Usda.People.List">
-    <select ng-model="model.value" ng-options="p.Id as p.Person for p in people" style="width: 100%"></select>
+    <select class="usda-people-picker-select" ng-model="model.value" ng-options="p.Id as p.Person for p in people" style="width: 100%"></select>
+    <span class="usda-people-picker-message"></span>
 </div>
