@@ -172,18 +172,18 @@
 
                         if (secondNavigation.Any())
                         {
-                        <ul>
-                            @foreach (var item in secondNavigation)
+                            <ul>
+                                @foreach (var item in secondNavigation)
                                 {
                                     if (secondMenuCount > 0)
                                     {
-                                <li>|</li>
+                                        <li>|</li>
                                     }
-                                <li><a title="@item.Name" href="@item.Url?modeCode=@(modeCode)" target="@item.Target"><b>@item.Name</b></a></li>
+                                    <li><a title="@item.Name" href="@item.Url?modeCode=@(modeCode)" target="@item.Target"><b>@item.Name</b></a></li>
 
                                     secondMenuCount++;
                                 }
-                        </ul>
+                            </ul>
                         }
                     }
                 </div>
@@ -238,36 +238,36 @@
                                     linkAttr = " style=\"border-right: 0px;\" id=\"lastTab\"";
                                 }
 
-                            <li class="level1">
-                                <a @Html.Raw(linkAttr) href="#" class="level1">@(navPrefix + navItem.Name)</a>
-                                <div>
-                                    <ul>
-                                        @foreach (IPublishedContent subItem in navItem.Children)
+                                <li class="level1">
+                                    <a @Html.Raw(linkAttr) href="#" class="level1">@(navPrefix + navItem.Name)</a>
+                                    <div>
+                                        <ul>
+                                            @foreach (IPublishedContent subItem in navItem.Children)
                                             {
-                                        string urlLink = "#";
-                                        string urlTarget = "";
+                                                string urlLink = "#";
+                                                string urlTarget = "";
 
                                                 if (subItem.HasValue("navigationLink"))
                                                 {
                                                     Link navLink = null;
 
-                                        if (subItem.GetPropertyValue<MultiUrls>("navigationLink").FirstOrDefault() != null)
-                                        {
-                                            navLink = subItem.GetPropertyValue<MultiUrls>("navigationLink").FirstOrDefault();
-                                            urlLink = navLink.Url;
-                                        urlTarget = navLink.Target;
-                                        }
+                                                    if (subItem.GetPropertyValue<MultiUrls>("navigationLink").FirstOrDefault() != null)
+                                                    {
+                                                        navLink = subItem.GetPropertyValue<MultiUrls>("navigationLink").FirstOrDefault();
+                                                        urlLink = navLink.Url;
+                                                        urlTarget = navLink.Target;
+                                                    }
 
-                                            <li><a href="@urlLink" target="@urlTarget">@(subItem.Name)</a></li>
+                                                    <li><a href="@urlLink" target="@urlTarget">@(subItem.Name)</a></li>
                                                 }
                                                 else
                                                 {
-                                            <li><a href="#">@(subItem.Name)</a></li>
+                                                    <li><a href="#">@(subItem.Name)</a></li>
                                                 }
                                             }
-                                    </ul>
-                                </div>
-                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
 
                                 mainNavCount++;
                             }
@@ -283,24 +283,24 @@
 
                 <div id="siteNav">
                     @{
-                                // Third Navigation
-                                int thirdMenuCount = 0;
+                        // Third Navigation
+                        int thirdMenuCount = 0;
 
-                                if (thirdNavigation.Any())
+                        if (thirdNavigation.Any())
+                        {
+                            <ul>
+                                @foreach (var item in thirdNavigation)
                                 {
-                        <ul>
-                            @foreach (var item in thirdNavigation)
-                                        {
-                                            if (thirdMenuCount > 0)
-                                            {
-                                <li>|</li>
-                                            }
-                                <li><a title="@item.Name" href="@item.Url" target="@item.Target"><b>@item.Name</b></a></li>
+                                    if (thirdMenuCount > 0)
+                                    {
+                                        <li>|</li>
+                                    }
+                                    <li><a title="@item.Name" href="@item.Url" target="@item.Target"><b>@item.Name</b></a></li>
 
-                                            thirdMenuCount++;
-                                        }
-                        </ul>
+                                    thirdMenuCount++;
                                 }
+                            </ul>
+                        }
                     }
 
                 </div>
@@ -365,8 +365,12 @@
 
 
         <!-- footer table -->
-
-
+        @if (currentPage.DocumentTypeAlias != "Homepage" && currentPage.DocumentTypeAlias != "Region" && currentPage.DocumentTypeAlias != "ResearchUnit")
+            {
+            <div id="lastModifiedContent">
+                @Html.Raw("Last Modified:") @(currentPage.UpdateDate.ToShortDateString())
+            </div>
+        }
 
 
         <div class="clearfloat" id="footerContent" style="width:940px">
@@ -376,40 +380,40 @@
             <div id="footer_content_text">
                 <br>
                 @{
-                                            int footerOneCount = 0;
+                    int footerOneCount = 0;
 
-                                            if (footerNavigationLineOne.Any())
-                                            {
-                                                foreach (var item in footerNavigationLineOne)
-                                                {
-                    <a href="@item.Url" target="@item.Target">@item.Name</a>
-                                                    if (footerOneCount < footerNavigationLineOne.Count() - 1)
-                                                    {
-                    @Html.Raw(" | ");
+                    if (footerNavigationLineOne.Any())
+                    {
+                        foreach (var item in footerNavigationLineOne)
+                        {
+                            <a href="@item.Url" target="@item.Target">@item.Name</a>
+                            if (footerOneCount < footerNavigationLineOne.Count() - 1)
+                            {
+                                @Html.Raw(" | ");
+                            }
+
+                            footerOneCount++;
                         }
-
-                        footerOneCount++;
                     }
-                }
                 }
 
                 <br>
                 @{
-                                            int footerTwoCount = 0;
+                    int footerTwoCount = 0;
 
-                                            if (footerNavigationLineTwo.Any())
-                                            {
-                                                foreach (var item in footerNavigationLineTwo)
-                                                {
-                    <a href="@item.Url" target="@item.Target">@item.Name</a>
-                                                    if (footerTwoCount < footerNavigationLineTwo.Count() - 1)
-                                                    {
-                    @Html.Raw(" | ");
+                    if (footerNavigationLineTwo.Any())
+                    {
+                        foreach (var item in footerNavigationLineTwo)
+                        {
+                            <a href="@item.Url" target="@item.Target">@item.Name</a>
+                            if (footerTwoCount < footerNavigationLineTwo.Count() - 1)
+                            {
+                                @Html.Raw(" | ");
+                            }
+
+                            footerTwoCount++;
                         }
-
-                        footerTwoCount++;
                     }
-                }
                 }
 
 
