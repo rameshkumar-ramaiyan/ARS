@@ -28,7 +28,7 @@ namespace USDA_ARS.LocationsWebApp.DL
                 // or...
                 // NPGroupId: npGroup.NPGroupId
 
-                DataTable legacyNPProgramItems = GetAllNationalProgramItems(npGroup.ModeCode); // The Mode Code must be in xx-xx-xx-xx format
+                DataTable legacyNPProgramItems = GetAllNationalProgramItems(npGroup.NPGroupId); // The Mode Code must be in xx-xx-xx-xx format
 
                 for (int legacyNPProgramsRowId = 0; legacyNPProgramsRowId < legacyNPProgramItems.Rows.Count; legacyNPProgramsRowId++)
                 {
@@ -36,9 +36,13 @@ namespace USDA_ARS.LocationsWebApp.DL
                     // GET THE INFORMATION FOR THE NATIONAL PROGRAM ITEM
                     // ========================
 
-                    string npTitle = "NATIONAL PROGRAM TITLE";
-                    string npCode = "NP_CODE_HERE";
-                    string npText = "BODY TEXT OF NATION PROGRAM ITEM";
+                    //string npTitle = "NATIONAL PROGRAM TITLE";
+                    //string npCode = "NP_CODE_HERE";
+                    //string npText = "BODY TEXT OF NATION PROGRAM ITEM";
+                    string npTitle = legacyNPProgramItems.Rows[legacyNPProgramsRowId].Field<string>(2);
+                    string npCode = legacyNPProgramItems.Rows[legacyNPProgramsRowId].Field<string>(1);
+                    DataTable legacyNPProgramDocuments = GetAllNPDocumentsStrategicVersionOnNPNumber(npCode);
+                    string npText = legacyNPProgramDocuments.Rows[0].Field<string>(0);
 
                     ApiContent content = new ApiContent();
 
@@ -106,7 +110,7 @@ namespace USDA_ARS.LocationsWebApp.DL
                                     }
 
                                     // Add the doc page to the ApiContent
-                                    ApiContent docPage = GenerateNationalProgramDocument(docsFolder.Id, legacyDocTitle, umbracoDocType, legacyDocText, npCode, oldDocId);
+                                    ApiContent docPage = GenerateNationalProgramDocument(docsFolder.Id, legacyDocTitle, umbracoDocType, legacyDocText, npCode.ToString(), oldDocId);
 
                                     if (docPage != null)
                                     {
@@ -256,10 +260,10 @@ namespace USDA_ARS.LocationsWebApp.DL
         //    //return locationsResponse;
         //    return dt;
         //}
-        public static DataTable GetAllNationalProgramItems(string modeCode)
+        public static DataTable GetAllNationalProgramItems(int groupId)
         {
             Locations locationsResponse = new Locations();
-            string sql = "[uspgetAllNPPrograms]";
+            string sql = "[uspgetAllNPGroupItemsBasedOnGroupId]";
             DataTable dt = new DataTable();
             SqlConnection conn = new SqlConnection(LocationConnectionString);
 
@@ -271,7 +275,7 @@ namespace USDA_ARS.LocationsWebApp.DL
 
                 da.SelectCommand = sqlComm;
                 da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                sqlComm.Parameters.AddWithValue("@ModeCode", modeCode);
+                sqlComm.Parameters.AddWithValue("@GroupId", groupId);
 
                 DataSet ds = new DataSet();
                 da.Fill(ds, "Locations");
@@ -301,7 +305,7 @@ namespace USDA_ARS.LocationsWebApp.DL
             //return locationsResponse;
             return dt;
         }
-        public static DataTable GetAllNationalProgramDocuments(string modeCode)
+        public static DataTable GetAllNPDocumentsStrategicVersionOnNPNumber(string nPNumber)
         {
             // YOU WILL NEED TO GET THE DOCUMENTS BY THE NP CODE
 
@@ -321,7 +325,7 @@ namespace USDA_ARS.LocationsWebApp.DL
 
 
             Locations locationsResponse = new Locations();
-            string sql = "[uspgetAllNPProgramDocuments]";
+            string sql = "[uspgetAllNPDocumentsStrategicVersionOnNPNumber]";
             DataTable dt = new DataTable();
             SqlConnection conn = new SqlConnection(LocationConnectionString);
 
@@ -333,7 +337,7 @@ namespace USDA_ARS.LocationsWebApp.DL
 
                 da.SelectCommand = sqlComm;
                 da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                sqlComm.Parameters.AddWithValue("@ModeCode", modeCode);
+                sqlComm.Parameters.AddWithValue("@NPNumber", nPNumber);
 
                 DataSet ds = new DataSet();
                 da.Fill(ds, "Locations");
@@ -363,6 +367,69 @@ namespace USDA_ARS.LocationsWebApp.DL
             //return locationsResponse;
             return dt;
         }
+        public static DataTable GetAllNationalProgramDocuments(string nPNumber)
+        {
+            // YOU WILL NEED TO GET THE DOCUMENTS BY THE NP CODE
+
+            //SELECT title, rtrim(doctype) as doctype, docid
+            //FROM documents d
+            //WHERE d.originsite_type = 'program'
+            //AND d.originsite_id = @npCode
+            //AND d.published = 'p'
+            //AND d.SPSysEndTime is null
+            //ORDER BY rtrim(doctype), title, docid
+
+            // THE ABOVE SQL STATEMENT WILL GET YOU THE DOC TITLE, DOC TYPE, AND DOC ID
+
+
+
+
+
+
+            Locations locationsResponse = new Locations();
+            string sql = "[uspgetAllDocumentsBasedOnNPNumber]";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@NPNumber", nPNumber);
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
+
 
         //inputs-group id , name, , and no mode code
         //out puts-content id
