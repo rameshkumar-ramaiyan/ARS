@@ -58,13 +58,15 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                         if (peopleList != null)
                         {
-                            peopleList = peopleList.OrderBy(p => p.LastName).ToList();
+                            peopleList = peopleList.OrderBy(p => p.LastName).ThenBy(t => t.FirstName).ToList();
 
                             List<PeopleSelectItem> selectList = new List<PeopleSelectItem>();
 
+                            selectList.Add(new PeopleSelectItem("", ""));
+
                             foreach (var person in peopleList)
                             {
-                                selectList.Add(new PeopleSelectItem(person.PersonId.ToString(), person.LastName + ", " + person.FirstName + " <" + person.Email + ">"));
+                                selectList.Add(new PeopleSelectItem(person.PersonId.ToString(), person.LastName + ", " + person.FirstName + " <" + person.Email + ">  ("+ person.ModeCode +")"));
                             }
 
                             output = JsonConvert.SerializeObject(selectList);

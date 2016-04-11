@@ -42,7 +42,7 @@ namespace USDA_ARS.Umbraco.Extensions.Models.Aris
         [NullSetting(NullSetting = NullSettings.Null)]
         public string FullName { get; set; }
 
-        [Column("postialtitle")]
+        [Column("officialtitle")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public string TitleOfficial { get; set; }
 

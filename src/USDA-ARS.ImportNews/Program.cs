@@ -11,9 +11,11 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Umbraco.Core.Persistence;
+using USDA_ARS.ImportNews.Models;
 using USDA_ARS.LocationsWebApp.DL;
 using USDA_ARS.LocationsWebApp.Models;
 using USDA_ARS.Umbraco.Extensions.Models;
+using USDA_ARS.Umbraco.Extensions.Models.Aris;
 using USDA_ARS.Umbraco.Extensions.Models.Import;
 
 namespace USDA_ARS.ImportNews
@@ -23,11 +25,19 @@ namespace USDA_ARS.ImportNews
         static string API_KEY = ConfigurationManager.AppSettings.Get("Umbraco:ApiKey");
         static string API_URL = ConfigurationManager.AppSettings.Get("Umbraco:ApiUrl");
         static List<News> NEWS_LIST = null;
+        static List<ModeCodeLookup> MODE_CODE_LIST = null;
+        static List<ModeCodeNew> MODE_CODE_NEW_LIST = null;
 
         static void Main(string[] args)
         {
             AddLog("Getting News From DB...");
             NEWS_LIST = GetNewsAll();
+
+            AddLog("Getting Mode Codes From Umbraco...");
+            MODE_CODE_LIST = GetModeCodesAll();
+
+            AddLog("Getting New Mode Codes From Umbraco...");
+            MODE_CODE_NEW_LIST = GetNewModeCodesAll();
 
             ImportNews();
 
@@ -36,123 +46,175 @@ namespace USDA_ARS.ImportNews
 
         static void ImportNews()
         {
-            List<ApiContent> apiContentList = new List<ApiContent>();
-
             string htmlPath = ConfigurationManager.AppSettings.Get("NewsArticles:HtmlPath");
 
             List<NewsTopicItem> newsTopicList = GetTopicItemList();
 
-            List<string> files = GetNewsHtmlList(htmlPath);
+            List<string> dirs = new List<string>(Directory.EnumerateDirectories(htmlPath));
 
-            int parentId = 0;
-            string year = "";
-
-            foreach (string fileName in files)
+            foreach (string dirYear in dirs)
             {
-                FileInfo fileInfo = new FileInfo(fileName);
+                List<string> files = GetNewsHtmlList(dirYear);
 
-                AddLog("Filename: " + fileName);
+                int parentId = 0;
+                string year = "";
+                int yearInt = 0;
 
-                List<string> pathArray = fileInfo.FullName.Split('\\').ToList();
+                DirectoryInfo dirInfo = new DirectoryInfo(dirYear);
+                year = dirInfo.Name;
 
-                if (pathArray != null && pathArray.Count > 0)
+                if (int.TryParse(year, out yearInt))
                 {
-                    if (year != pathArray[pathArray.Count - 2])
+                    if (yearInt > 0)
                     {
-                        year = pathArray[pathArray.Count - 2];
-
                         parentId = AddNewsYearNode(year);
 
                         AddLog("========================");
                         AddLog("YEAR ADDED (" + parentId + "): " + year);
                     }
 
+                    List<ApiContent> apiContentList = new List<ApiContent>();
 
-                    News newsItem = NEWS_LIST.Where(p => p.ISFileName.ToLower() == fileInfo.Name.ToLower()).FirstOrDefault();
-
-                    if (newsItem != null)
+                    foreach (string fileName in files)
                     {
+                        FileInfo fileInfo = new FileInfo(fileName);
+
+                        AddLog("Filename: " + fileName);
+
+                        List<string> pathArray = fileInfo.FullName.Split('\\').ToList();
+
                         AddLog("News Item: " + fileName);
 
+                        string newsTitle = "";
                         string bodyText = GetFileText(fileName);
+                        DateTime newsDate = DateTime.MinValue;
 
                         List<string> keywordList = null;
 
                         HtmlDocument doc = new HtmlDocument();
                         doc.LoadHtml(bodyText);
 
-                        if (doc.DocumentNode.SelectSingleNode("/html/body") != null)
+                        News newsItem = NEWS_LIST.Where(p => p.ISFileName.ToLower() == fileInfo.Name.ToLower()).FirstOrDefault();
+
+                        if (newsItem != null)
                         {
-                            bodyText = doc.DocumentNode.SelectSingleNode("/html/body").InnerHtml;
+                            newsDate = newsItem.DateField;
                         }
-                        else
+                        else if (doc.DocumentNode.SelectSingleNode("//meta[@name='RSSDate']") != null)
                         {
-                            RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
-                            Regex regx = new Regex("<body>(?<theBody>.*)</body>", options);
+                            DateTime.TryParse(doc.DocumentNode.SelectSingleNode("//meta[@name='RSSDate']").Attributes["content"].Value, out newsDate);
+                        }
 
-                            Match match = regx.Match(bodyText);
 
-                            if (match.Success)
+                        if (newsDate > DateTime.MinValue)
+                        {
+
+                            if (doc.DocumentNode.SelectSingleNode("/html/head/title") != null)
                             {
-                                bodyText = match.Groups["theBody"].Value;
+                                newsTitle = doc.DocumentNode.SelectSingleNode("/html/head/title").InnerHtml;
                             }
-                        }
-
-                        if (doc.DocumentNode.SelectSingleNode("//meta[@name='keywords']") != null)
-                        {
-                            keywordList = doc.DocumentNode.SelectSingleNode("//meta[@name='keywords']").Attributes["content"].Value.Split(',').ToList();
-                        }
 
 
-                        bodyText = bodyText.Replace("http://www.ars.usda.gov", "");
-                        bodyText = bodyText.Replace("/pandp/people/people.htm?personid=", "/people-locations/person/?person-id=");
-
-                        MatchCollection m1 = Regex.Matches(bodyText, @"/main/site_main\.htm\?modecode=([\d\-]*)", RegexOptions.Singleline);
-
-                        foreach (Match m in m1)
-                        {
-                            string modeCode = m.Groups[1].Value;
-
-                            ApiResponse responsePage = new ApiResponse();
-
-                            // Get the umbraco page by the mode code (Region/Area or Research Unit)
-                            responsePage = GetCalls.GetNodeByModeCode(modeCode);
-
-                            if (responsePage != null && responsePage.ContentList != null && responsePage.ContentList.Count > 0)
+                            if (doc.DocumentNode.SelectSingleNode("/html/body") != null)
                             {
-                                if (responsePage.ContentList[0].Id > 0)
+                                bodyText = doc.DocumentNode.SelectSingleNode("/html/body").InnerHtml;
+                            }
+                            else
+                            {
+                                RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
+                                Regex regx = new Regex("<body>(?<theBody>.*)</body>", options);
+
+                                Match match = regx.Match(bodyText);
+
+                                if (match.Success)
                                 {
-                                    bodyText = bodyText.Replace(m.Groups[0].Value, "/{localLink:" + responsePage.ContentList[0].Id + "}");
+                                    bodyText = match.Groups["theBody"].Value;
                                 }
                             }
+
+                            if (doc.DocumentNode.SelectSingleNode("//meta[@name='keywords']") != null)
+                            {
+                                keywordList = doc.DocumentNode.SelectSingleNode("//meta[@name='keywords']").Attributes["content"].Value.Split(',').ToList();
+                            }
+                            if (keywordList == null)
+                            {
+                                if (doc.DocumentNode.SelectSingleNode("//meta[@name='RSSKeywords']") != null)
+                                {
+                                    keywordList = doc.DocumentNode.SelectSingleNode("//meta[@name='RSSKeywords']").Attributes["content"].Value.Split(',').ToList();
+                                }
+                            }
+
+                            bodyText = bodyText.Replace("http://www.ars.usda.gov", "");
+                            bodyText = bodyText.Replace("/pandp/people/people.htm?personid=", "/people-locations/person/?person-id=");
+
+                            MatchCollection m1 = Regex.Matches(bodyText, @"/main/site_main\.htm\?modecode=([\d\-]*)", RegexOptions.Singleline);
+
+                            foreach (Match m in m1)
+                            {
+                                string modeCode = m.Groups[1].Value;
+
+                                ApiResponse responsePage = new ApiResponse();
+
+                                // Get the umbraco page by the mode code (Region/Area or Research Unit)
+                                ModeCodeLookup modeCodeLookup = MODE_CODE_LIST.Where(p => p.ModeCode == modeCode).FirstOrDefault();
+
+                                if (modeCodeLookup != null)
+                                {
+                                    bodyText = bodyText.Replace(m.Groups[0].Value, "/{localLink:" + modeCodeLookup.UmbracoId + "}");
+                                }
+                                else
+                                {
+                                    ModeCodeNew modeCodeNew = MODE_CODE_NEW_LIST.Where(p => p.ModecodeOld == modeCode).FirstOrDefault();
+
+                                    if (modeCodeNew != null)
+                                    {
+                                        modeCodeLookup = MODE_CODE_LIST.Where(p => p.ModeCode == modeCodeNew.ModecodeNew).FirstOrDefault();
+
+                                        if (modeCodeLookup != null)
+                                        {
+                                            bodyText = bodyText.Replace(m.Groups[0].Value, "/{localLink:" + modeCodeLookup.UmbracoId + "}");
+                                        }
+                                    }
+                                }
+                            }
+
+                            AddLog("Adding News...");
+                            ApiContent apiContent = AddNewsArticle(parentId, newsTitle, newsDate, fileInfo.Name, newsTopicList, keywordList, bodyText, year);
+
+                            apiContentList.Add(apiContent);
                         }
+                    }
 
-                        AddLog("Adding News...");
-                        ApiContent apiContent = AddNewsArticle(parentId, newsItem, newsTopicList, keywordList, bodyText, year);
+                    try
+                    {
+                        if (apiContentList != null && apiContentList.Any())
+                        {
+                            ApiRequest request = new ApiRequest();
 
-                        apiContentList.Add(apiContent);
+                            AddLog("Saving News Articles...");
+
+                            request.ApiKey = API_KEY;
+
+                            request.ContentList = apiContentList;
+
+                            AddLog("DateStamp-A: " + DateTime.Now);
+
+                            ApiResponse responseBack = ApiCalls.PostData(request, "Post");
+
+                            if (responseBack.ContentList != null)
+                            {
+
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        AddLog("DateStamp-E: " + DateTime.Now);
+                        AddLog("ERROR: " + ex.ToString());
                     }
                 }
             }
 
-
-            if (apiContentList != null && apiContentList.Any())
-            {
-                ApiRequest request = new ApiRequest();
-
-                AddLog("Saving News Articles...");
-
-                request.ApiKey = API_KEY;
-
-                request.ContentList = apiContentList;
-
-                ApiResponse responseBack = ApiCalls.PostData(request, "Post");
-
-                if (responseBack.ContentList != null)
-                {
-                    
-                }
-            }
         }
 
 
@@ -198,6 +260,50 @@ namespace USDA_ARS.ImportNews
         }
 
 
+        static List<ModeCodeLookup> GetModeCodesAll()
+        {
+            List<ModeCodeLookup> modeCodeList = new List<ModeCodeLookup>();
+            ApiRequest request = new ApiRequest();
+
+            request.ApiKey = API_KEY;
+
+            ApiResponse responseBack = ApiCalls.PostData(request, "GetAllModeCodeNodes");
+
+            if (responseBack != null && responseBack.Success)
+            {
+                if (responseBack.ContentList != null && responseBack.ContentList.Any())
+                {
+                    foreach (ApiContent node in responseBack.ContentList)
+                    {
+                        if (node != null)
+                        {
+                            ApiProperty modeCode = node.Properties.Where(p => p.Key == "modeCode").FirstOrDefault();
+
+                            if (modeCode != null)
+                            {
+                                modeCodeList.Add(new ModeCodeLookup { ModeCode = modeCode.Value.ToString(), UmbracoId = node.Id, Url = node.Url });
+
+                                AddLog(" - Adding ModeCode (" + modeCode.Value + "):" + node.Name);
+                            }
+                        }
+                    }
+                }
+            }
+
+            return modeCodeList;
+        }
+
+
+        static List<ModeCodeNew> GetNewModeCodesAll()
+        {
+            List<ModeCodeNew> modeCodeNewList = new List<ModeCodeNew>();
+
+            modeCodeNewList = Umbraco.Extensions.Helpers.Aris.ModeCodesNew.GetAllNewModeCode();
+
+            return modeCodeNewList;
+        }
+
+
         static int AddNewsYearNode(string year)
         {
             int nodeId = 0;
@@ -209,7 +315,7 @@ namespace USDA_ARS.ImportNews
 
             content.Id = 0;
             content.Name = year;
-            content.ParentId = 1142;
+            content.ParentId = Convert.ToInt32(ConfigurationManager.AppSettings.Get("NewsArticles:ParentId"));
             content.DocType = "NewsFolder";
             content.Template = ""; // Leave blank
 
@@ -233,25 +339,27 @@ namespace USDA_ARS.ImportNews
         }
 
 
-        static ApiContent AddNewsArticle(int parentId, News newsItem, List<NewsTopicItem> newsTopicList, List<string> keywordList, string htmlText, string year)
+        static ApiContent AddNewsArticle(int parentId, string title, DateTime newsDate, string filename, List<NewsTopicItem> newsTopicList, List<string> keywordList, string htmlText, string year)
         {
             ApiContent content = new ApiContent();
 
-            AddLog(" - News Item: " + newsItem.SubjectField);
+            AddLog(" - News Item: " + title);
 
             content.Id = 0;
-            content.Name = newsItem.SubjectField.Trim();
+            content.Name = title.Trim();
             content.ParentId = parentId;
             content.DocType = "NewsArticle";
             content.Template = "NewsItem";
 
+            string newsProductItem = ConfigurationManager.AppSettings.Get("NewsArticles:NewProductGuid");
+
             List<ApiProperty> properties = new List<ApiProperty>();
 
-            properties.Add(new ApiProperty("newsProductsList", "155a5231-f0d8-4681-810a-1bf1689df114"));
+            properties.Add(new ApiProperty("newsProductsList", newsProductItem));
             properties.Add(new ApiProperty("navigationCategory", "ac79b700-ad67-4179-a4f6-db9705ecce31"));
             properties.Add(new ApiProperty("bodyText", htmlText)); // Body text                                                                       
-            properties.Add(new ApiProperty("oldUrl", "/is/pr/" + year + "/" + newsItem.ISFileName)); // current URL
-            properties.Add(new ApiProperty("articleDate", newsItem.DateField));
+            properties.Add(new ApiProperty("oldUrl", ConfigurationManager.AppSettings.Get("NewsArticles:LegacyUrlPrefix") + year + "/" + filename)); // current URL
+            properties.Add(new ApiProperty("articleDate", newsDate));
 
             if (keywordList != null && keywordList.Any())
             {
@@ -286,7 +394,7 @@ namespace USDA_ARS.ImportNews
                 if (newsTopicArchetypeItem.Fieldsets != null && newsTopicArchetypeItem.Fieldsets.Count > 0)
                 {
                     string newsTopicsJson = JsonConvert.SerializeObject(newsTopicArchetypeItem, Newtonsoft.Json.Formatting.None, jsonSettings);
-                    properties.Add(new ApiProperty("newsTopics", newsTopicsJson));
+                    properties.Add(new ApiProperty("newsTopicsList", newsTopicsJson));
                 }
             }
 
@@ -372,7 +480,7 @@ namespace USDA_ARS.ImportNews
 
             string apiUrl = API_URL;
 
-            var http = (HttpWebRequest)WebRequest.Create(new Uri("http://technik-usda.imulus.io/umbraco/usda/NewsTopicPicker/Get"));
+            var http = (HttpWebRequest)WebRequest.Create(new Uri("http://technik-usda.axial.us/umbraco/usda/NewsTopicPicker/Get"));
             http.Accept = "application/json";
             http.ContentType = "application/json";
             http.Method = "GET";
@@ -400,4 +508,5 @@ namespace USDA_ARS.ImportNews
         }
 
     }
+
 }
