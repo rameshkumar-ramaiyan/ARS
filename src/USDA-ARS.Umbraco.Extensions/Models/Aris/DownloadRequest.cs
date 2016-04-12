@@ -13,7 +13,7 @@ namespace USDA_ARS.Umbraco.Extensions.Models.Aris
         public int Id { get; set; }
 
         [Column("SoftwareId")]
-        public Guid SoftwareId { get; set; }
+        public string SoftwareId { get; set; }
 
         [Column("perfname")]
         [NullSetting(NullSetting = NullSettings.Null)]

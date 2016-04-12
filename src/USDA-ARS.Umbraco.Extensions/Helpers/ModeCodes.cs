@@ -37,6 +37,50 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
         }
 
 
+        public static string ModeCodeIntsToString(int modeCode1, int modeCode2, int modeCode3, int modeCode4)
+        {
+            string modeCode = "";
+
+            if (modeCode1.ToString().Length == 1)
+            {
+                modeCode += "0" + modeCode1;
+            }
+            else
+            {
+                modeCode += modeCode1;
+            }
+
+            if (modeCode2.ToString().Length == 1)
+            {
+                modeCode += "-0" + modeCode2;
+            }
+            else
+            {
+                modeCode += "-" + modeCode2;
+            }
+
+            if (modeCode3.ToString().Length == 1)
+            {
+                modeCode += "-0" + modeCode3;
+            }
+            else
+            {
+                modeCode += "-" + modeCode3;
+            }
+
+            if (modeCode4.ToString().Length == 1)
+            {
+                modeCode += "-0" + modeCode4;
+            }
+            else
+            {
+                modeCode += "-" + modeCode4;
+            }
+
+            return modeCode;
+        }
+
+
         public static List<string> ModeCodeArray(string modeCode)
         {
             if (true == string.IsNullOrWhiteSpace(modeCode))

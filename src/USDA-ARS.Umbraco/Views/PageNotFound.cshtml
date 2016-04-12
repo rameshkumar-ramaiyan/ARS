@@ -32,17 +32,37 @@
 
     if (false == string.IsNullOrEmpty(badUrl))
     {
-        List<IPublishedContent> nodesList = Nodes.NodesWithRedirectsList();
-
-        if (nodesList != null && nodesList.Any())
+        // Is this a AgMagazine URL?
+        if (badUrl.ToLower().IndexOf("/is/ar") >= 0)
         {
-            IPublishedContent redirectNode = nodesList.Where(p => p.GetPropertyValue<string>("oldUrl").Contains(badUrl)).FirstOrDefault();
-            if (redirectNode != null)
+            // /is/AR/2016/mar16/cookies.htm
+
+            List<string> badUrlArray = badUrl.ToLower().Split('/').ToList();
+
+            if (badUrlArray != null && badUrlArray.Count == 6)
             {
-                Response.RedirectPermanent(redirectNode.Url);
+                string agMagUrl = "http://agresearchmag.ars.usda.gov/";
+
+                agMagUrl += badUrlArray[3] + "/";
+                agMagUrl += badUrlArray[4].Substring(0, 3) + "/";
+                agMagUrl += badUrlArray[5].Replace(".htm", "") + "/";
+
+                Response.RedirectPermanent(agMagUrl);
             }
         }
+        else
+        {
+            List<IPublishedContent> nodesList = Nodes.NodesWithRedirectsList();
 
+            if (nodesList != null && nodesList.Any())
+            {
+                IPublishedContent redirectNode = nodesList.Where(p => p.GetPropertyValue<string>("oldUrl").Contains(badUrl)).FirstOrDefault();
+                if (redirectNode != null)
+                {
+                    Response.RedirectPermanent(redirectNode.Url);
+                }
+            }
+        }
     }
 }
 

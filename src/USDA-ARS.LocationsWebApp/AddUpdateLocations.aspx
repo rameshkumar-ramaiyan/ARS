@@ -72,6 +72,9 @@ display: table-cell;
                             <asp:Button ID="getSoftwareFoldersFiles" runat="server" OnClick="getSoftwareFoldersFiles_Click" Text="getSoftwareFoldersFiles" />
                             </b>  
                             <asp:TextBox ID="txtgetSoftwareFoldersFiles" runat="server"></asp:TextBox>
+                            <b>
+                <asp:Button ID="btnAddMultipleNationalPrograms" runat="server" Text="Add Multiple National Programs" OnClick="btnAddMultipleNationalPrograms_Click" />  
+                            </b>  
                         </p>
                         </div>
                           </div>

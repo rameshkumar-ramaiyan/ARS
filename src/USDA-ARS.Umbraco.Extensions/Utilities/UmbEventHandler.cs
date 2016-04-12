@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Archetype.Models;
+using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,6 +9,7 @@ using Umbraco.Core;
 using Umbraco.Core.Events;
 using Umbraco.Core.Models;
 using Umbraco.Core.Services;
+using USDA_ARS.Umbraco.Extensions.Helpers;
 using USDA_ARS.Umbraco.Extensions.Helpers.Aris;
 
 namespace USDA_ARS.Umbraco.Extensions.Utilities
@@ -25,6 +28,48 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
         {
             foreach (var node in e.SavedEntities)
             {
+                if (node.ContentType.Alias == "Homepage" || node.ContentType.Alias == "Region" || node.ContentType.Alias == "ResearchUnit")
+                {
+                    ArchetypeModel software = node.GetValue<ArchetypeModel>("software");
+
+                    string archetypeStr = node.GetValue<string>("software");
+
+                    if (software == null && false == string.IsNullOrEmpty(archetypeStr))
+                    {
+                        software = JsonConvert.DeserializeObject<ArchetypeModel>(archetypeStr);
+                    }
+
+                    bool updateSoftware = false;
+
+                    if (software != null)
+                    {
+                        foreach (ArchetypeFieldsetModel fieldsetModel in software.Fieldsets)
+                        {
+                            string softwareId = fieldsetModel.GetValue<string>("softwareID");
+
+                            if (true == string.IsNullOrEmpty(softwareId))
+                            {
+                                updateSoftware = true;
+
+                                int softwareIdNext = Software.GetLastSoftwareId() + 1;
+
+                                var newSoftwareID = fieldsetModel.Properties.FirstOrDefault(x => x.Alias == "softwareID");
+
+                                if (newSoftwareID != null)
+                                {
+                                    newSoftwareID.Value = softwareIdNext;
+                                }
+                            }
+                        }
+
+                        if (true == updateSoftware)
+                        {
+                            node.SetValue("software", JsonConvert.SerializeObject(software));
+                            _contentService.SaveAndPublishWithStatus(node);
+                        }
+                    }
+                }
+
                 if ((node.ContentType.Alias == "Region" || node.ContentType.Alias == "ResearchUnit"))
                 {
                     // Docs Folder

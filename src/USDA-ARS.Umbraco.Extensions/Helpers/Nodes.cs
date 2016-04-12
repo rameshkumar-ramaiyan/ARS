@@ -87,6 +87,18 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             return null;
         }
 
+        public static IPublishedContent ProgramsAndProjects()
+        {
+            IPublishedContent homepage = Homepage();
+
+            if (homepage != null)
+            {
+                return homepage.Descendants().FirstOrDefault(n => n.IsDocumentType("ProgramsAndProjects"));
+            }
+
+            return null;
+        }
+
 
         public static IEnumerable<IPublishedContent> RegionCityList(IPublishedContent region)
         {
