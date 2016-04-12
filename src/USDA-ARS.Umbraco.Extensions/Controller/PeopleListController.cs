@@ -66,7 +66,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                             foreach (var person in peopleList)
                             {
-                                selectList.Add(new PeopleSelectItem(person.PersonId.ToString(), person.LastName + ", " + person.FirstName + " <" + person.Email + ">  ("+ person.ModeCode +")"));
+                                selectList.Add(new PeopleSelectItem(person.PersonId.ToString(), person.LastName + ", " + person.FirstName + " <" + person.Email + ">  ("+ Helpers.ModeCodes.ModeCodeAddDashes(person.ModeCodeConcat) +")"));
                             }
 
                             output = JsonConvert.SerializeObject(selectList);
