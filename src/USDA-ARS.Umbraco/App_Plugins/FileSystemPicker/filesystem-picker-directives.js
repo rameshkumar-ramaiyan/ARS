@@ -4,7 +4,7 @@
 * @restrict E
 **/
 
-angular.module("umbraco.directives")
+angular.module('umbraco.directives')
 .directive('fsTree', function ($compile, $log, $q, $rootScope, treeService, notificationsService, $timeout, userService) {
 
     return {
@@ -20,7 +20,7 @@ angular.module("umbraco.directives")
             cachekey: '@',
             isdialog: '@',
             title: '@',
-            //Custom query string arguments to pass in to the tree as a string, example: "startnodeid=123&something=value"
+            //Custom query string arguments to pass in to the tree as a string, example: 'startnodeid=123&something=value'
             customtreeparams: '@',
             eventhandler: '=',
             enablecheckboxes: '@',
@@ -30,12 +30,13 @@ angular.module("umbraco.directives")
         compile: function (element, attrs) {
             //config
             //var showheader = (attrs.showheader !== 'false');
-            var hideoptions = (attrs.hideoptions === 'true') ? "hide-options" : "";
+            var hideoptions = (attrs.hideoptions === 'true') ? 'hide-options' : '';
             var template = '<ul class="umb-tree ' + hideoptions + '"><li class="root">';
             template += '<div ng-hide="hideheader" on-right-click="altSelect(tree.root, $event)">' +
                 '<h5>' +
                 '<i ng-if="enablecheckboxes == \'true\'" ng-class="selectEnabledNodeClass(tree.root)"></i>' +
-                '<a href="#/{{section}}" ng-click="select(tree.root, $event)" class="root-link">{{title ? title : tree.name}}</a></h5>' +
+                '<a href="#/{{section}}" ng-click="select(tree.root, $event)" class="root-link">{{tree.name}}</a></h5>' +
+                //'<a href="#/{{section}}" ng-click="select(tree.root, $event)" class="root-link">{{title ? title : tree.name}}</a></h5>' +
                 //'<a class="umb-options" ng-hide="tree.root.isContainer || !tree.root.menuUrl" ng-click="options(tree.root, $event)" ng-swipe-right="options(tree.root, $event)"><i></i><i></i><i></i></a>' +
                 '</div>';
             template += '<ul>' +
@@ -54,7 +55,7 @@ angular.module("umbraco.directives")
                 // entire tree again since we already still have it in memory. Of course if the section is different we will
                 // reload it. This saves a lot on processing if someone is navigating in and out of the same section many times
                 // since it saves on data retreival and DOM processing.
-                var lastSection = "";
+                var lastSection = '';
 
                 //setup a default internal handler
                 if (!scope.eventhandler) {
@@ -112,17 +113,17 @@ angular.module("umbraco.directives")
                         */
                         scope.eventhandler.syncTree = function (args) {
                             if (!args) {
-                                throw "args cannot be null";
+                                throw 'args cannot be null';
                             }
                             if (!args.path) {
-                                throw "args.path cannot be null";
+                                throw 'args.path cannot be null';
                             }
 
                             var deferred = $q.defer();
 
                             //this is super complex but seems to be working in other places, here we're listening for our
                             // own events, once the tree is sycned we'll resolve our promise.
-                            scope.eventhandler.one("treeSynced", function (e, syncArgs) {
+                            scope.eventhandler.one('treeSynced', function (e, syncArgs) {
                                 deferred.resolve(syncArgs);
                             });
 
@@ -141,7 +142,7 @@ angular.module("umbraco.directives")
 
                             //Filter the path for root node ids (we don't want to pass in -1 or 'init')
 
-                            args.path = _.filter(args.path, function (item) { return (item !== "init" && item !== "-1"); });
+                            args.path = _.filter(args.path, function (item) { return (item !== 'init' && item !== '-1'); });
 
                             //Once those are filtered we need to check if the current user has a special start node id, 
                             // if they do, then we're going to trim the start of the array for anything found from that start node
@@ -189,7 +190,7 @@ angular.module("umbraco.directives")
                         syncTree(scope.activeTree, path, forceReload, activate);
                     }
                     else {
-                        scope.eventhandler.one("activeTreeLoaded", function (e, args) {
+                        scope.eventhandler.one('activeTreeLoaded', function (e, args) {
                             syncTree(args.tree, path, forceReload, activate);
                         });
                     }
@@ -213,18 +214,18 @@ angular.module("umbraco.directives")
                         });
 
                         if (!scope.activeTree) {
-                            throw "Could not find the tree " + treeAlias + ", activeTree has not been set";
+                            throw 'Could not find the tree ' + treeAlias + ', activeTree has not been set';
                         }
 
                         //This is only used for the legacy tree method refreshTree!
                         if (loadChildren) {
                             scope.activeTree.expanded = true;
                             scope.loadChildren(scope.activeTree, false).then(function () {
-                                emitEvent("activeTreeLoaded", { tree: scope.activeTree });
+                                emitEvent('activeTreeLoaded', { tree: scope.activeTree });
                             });
                         }
                         else {
-                            emitEvent("activeTreeLoaded", { tree: scope.activeTree });
+                            emitEvent('activeTreeLoaded', { tree: scope.activeTree });
                         }
                     }
 
@@ -232,7 +233,7 @@ angular.module("umbraco.directives")
                         doLoad(scope.tree.root);
                     }
                     else {
-                        scope.eventhandler.one("treeLoaded", function (e, args) {
+                        scope.eventhandler.one('treeLoaded', function (e, args) {
                             doLoad(args.tree.root);
                         });
                     }
@@ -253,7 +254,7 @@ angular.module("umbraco.directives")
 
                         //add the extra query string params if specified
                         if (scope.customtreeparams) {
-                            args["queryString"] = scope.customtreeparams;
+                            args['queryString'] = scope.customtreeparams;
                         }
 
                         treeService.getTree(args)
@@ -267,16 +268,15 @@ angular.module("umbraco.directives")
 
                                 //set the root as the current active tree
                                 scope.activeTree = scope.tree.root;
-                                emitEvent("treeLoaded", { tree: scope.tree });
-                                emitEvent("treeNodeExpanded", { tree: scope.tree, node: scope.tree.root, children: scope.tree.root.children });
-                                if(scope.tree.root.children.length === 1)
-                                {
-                                    
+                                emitEvent('treeLoaded', { tree: scope.tree });
+                                emitEvent('treeNodeExpanded', { tree: scope.tree, node: scope.tree.root, children: scope.tree.root.children });
+                                if (scope.tree.root.children.length === 1) {
+
                                 }
 
                             }, function (reason) {
                                 scope.loading = false;
-                                notificationsService.error("Tree Error", reason);
+                                notificationsService.error('Tree Error', reason);
                             });
                     }
                 }
@@ -296,7 +296,7 @@ angular.module("umbraco.directives")
                             scope.currentNode = data;
                         }
 
-                        emitEvent("treeSynced", { node: data, activate: activate });
+                        emitEvent('treeSynced', { node: data, activate: activate });
 
                         enableDeleteAnimations();
                     });
@@ -329,7 +329,7 @@ angular.module("umbraco.directives")
                     var deferred = $q.defer();
 
                     //emit treeNodeExpanding event, if a callback object is set on the tree
-                    emitEvent("treeNodeExpanding", { tree: scope.tree, node: node });
+                    emitEvent('treeNodeExpanding', { tree: scope.tree, node: node });
 
                     //standardising                
                     if (!node.children) {
@@ -341,7 +341,7 @@ angular.module("umbraco.directives")
                         treeService.loadNodeChildren({ node: node, section: scope.section })
                             .then(function (data) {
                                 //emit expanded event
-                                emitEvent("treeNodeExpanded", { tree: scope.tree, node: node, children: data });
+                                emitEvent('treeNodeExpanded', { tree: scope.tree, node: node, children: data });
 
                                 enableDeleteAnimations();
 
@@ -349,7 +349,7 @@ angular.module("umbraco.directives")
                             });
                     }
                     else {
-                        emitEvent("treeNodeExpanded", { tree: scope.tree, node: node, children: node.children });
+                        emitEvent('treeNodeExpanded', { tree: scope.tree, node: node, children: node.children });
                         node.expanded = true;
 
                         enableDeleteAnimations();
@@ -366,7 +366,7 @@ angular.module("umbraco.directives")
                   about it.
                 */
                 scope.options = function (n, ev) {
-                    emitEvent("treeOptionsClick", { element: elem, node: n, event: ev });
+                    emitEvent('treeOptionsClick', { element: elem, node: n, event: ev });
                 };
 
                 /**
@@ -381,15 +381,15 @@ angular.module("umbraco.directives")
                     //reset current node selection
                     scope.currentNode = null;
 
-                    emitEvent("treeNodeSelect", { element: elem, node: n, event: ev });
+                    emitEvent('treeNodeSelect', { element: elem, node: n, event: ev });
                 };
 
                 scope.altSelect = function (n, ev) {
-                    emitEvent("treeNodeAltSelect", { element: elem, tree: scope.tree, node: n, event: ev });
+                    emitEvent('treeNodeAltSelect', { element: elem, tree: scope.tree, node: n, event: ev });
                 };
 
                 //watch for section changes
-                scope.$watch("section", function (newVal, oldVal) {
+                scope.$watch('section', function (newVal, oldVal) {
 
                     if (!scope.tree) {
                         loadTree();
@@ -438,7 +438,7 @@ angular.module("umbraco.directives")
     </file>
    </example>
  */
-angular.module("umbraco.directives")
+angular.module('umbraco.directives')
 .directive('fsTreeItem', function ($compile, $http, $templateCache, $interpolate, $log, $location, $rootScope, $window, treeService, $timeout, localizationService) {
     return {
         restrict: 'E',
@@ -461,16 +461,16 @@ angular.module("umbraco.directives")
             //'<ins ng-if="tree.enablelistviewsearch && node.metaData.isContainer" class="umb-tree-node-search icon-search" ng-click="searchNode(node, $event)" alt="searchAltText"></ins>' + 
             '<ins ng-class="{\'icon-navigation-right\': !node.expanded, \'icon-navigation-down\': node.expanded}" ng-click="load(node)"></ins>' +
             '<i class="icon umb-tree-icon sprTree"></i>' +
-            '<a ng-click="select(node, $event)"></a>' +
+            '<a class="fs-click" ng-click="select(node, $event)"></a>' +
             //NOTE: These are the 'option' elipses
-            '<a class="fs-upload umb-options" ng-click="options(node, $event)"><span class="umb-options"><i></i><i></i><i></i></span></a>' +
+            '<a class="fs-options umb-options" ng-click="options(node, $event)"><span class="umb-options"><i></i><i></i><i></i></span></a>' +
             '<div ng-show="node.loading" class="l"><div></div></div>' +
             '</div>' +
             '</li>',
 
         link: function (scope, element, attrs) {
 
-            localizationService.localize("general_search").then(function (value) {
+            localizationService.localize('general_search').then(function (value) {
                 scope.searchAltText = value;
             });
 
@@ -489,59 +489,39 @@ angular.module("umbraco.directives")
             function setupNodeDom(node, tree) {
 
                 //get the first div element
-                element.children(":first")
+                element.children(':first')
                     //set the padding
-                    .css("padding-left", (node.level * 20) + "px");
+                    .css('padding-left', (node.level * 20) + 'px');
 
                 //remove first 'ins' if there is no children
                 //show/hide last 'ins' depending on children
                 if (!node.hasChildren) {
-                    element.find("ins:first").remove();
-                    element.find("ins").last().hide();
+                    element.find('ins:first').remove();
+                    element.find('ins').last().hide();
                 }
                 else {
-                    element.find("ins").last().show();
+                    element.find('ins').last().show();
                 }
 
-                var icon = element.find("i:first");
+                var icon = element.find('i:first');
                 icon.addClass(node.cssClass);
-                icon.attr("title", node.routePath);
+                icon.attr('title', node.routePath);
 
                 if (node.name.match(/\.(gif|jpg|jpeg|tiff|png)$/i)) {
                     icon.hide();
-
-                    var thumbnailPath = '/umbraco/backoffice/FileSystemPicker/FileSystemThumbnailApi/GetThumbnail?width=150&amp;imagePath=' + escape(node.id);
-                    element.find("a:first").append($('<img src="' + thumbnailPath + '" /><p>' + node.name + '<span class="image-alert" data-path="' + node.id + '"></span></p>'));
-
-                    checkImageResolution(node.id);
+                    var thumbnailPath = '/umbraco/backoffice/FileSystemPicker/FileSystemThumbnailApi/GetThumbnail?width=150&amp;imagePath=' + node.id;
+                    element.find('a:first').append($('<img src="' + thumbnailPath + '" /><p>' + node.name + '</p>'));
                 } else {
-                    element.find("a:first").text(node.name);
+                    element.find('a:first').text(node.name);
                 }
 
-                if (node.icon === "icon-document") {
-                    //element.find("a.fs-upload").remove();
+                if (node.icon === 'icon-document') {
+                    //element.find('a.fs-options').remove();
                 }
 
                 if (node.style) {
-                    element.find("i:first").attr("style", node.style);
+                    element.find('i:first').attr('style', node.style);
                 }
-            }
-
-            function checkImageResolution(imagePath) {
-                var width = 520; //$rootScope.checkImageWidth;
-                var height = 320; //$rootScope.checkImageHeight;
-                
-                $http.get('/umbraco/backoffice/FileSystemPicker/FileSystemThumbnailApi/ImageCheck?imagePath=' + escape(imagePath) + "&width=" + width + "&height=" + height, null)
-                    .then(function (data) {
-                        if (data) {
-                            $('.image-alert[data-path="' + imagePath + '"]').html(data.data);
-                        }
-                    }, errorCallback);
-
-            }
-
-            function errorCallback(e) {
-                $log.error('Error checking image: ', e);
             }
 
             //This will deleteAnimations to true after the current digest
@@ -565,9 +545,9 @@ angular.module("umbraco.directives")
                     });
                 }
                 if (node.selected) {
-                    css.push("umb-tree-node-checked");
+                    css.push('umb-tree-node-checked');
                 }
-                return css.join(" ");
+                return css.join(' ');
             };
 
             //add a method to the node which we can use to call to update the node data if we need to ,
@@ -583,7 +563,7 @@ angular.module("umbraco.directives")
                 treeService.loadNodeChildren({ node: scope.node, section: scope.section })
                     .then(function (data) {
                         //emit expanded event
-                        emitEvent("treeNodeExpanded", { tree: scope.tree, node: scope.node, children: data });
+                        emitEvent('treeNodeExpanded', { tree: scope.tree, node: scope.node, children: data });
                         enableDeleteAnimations();
                     });
             };
@@ -595,7 +575,7 @@ angular.module("umbraco.directives")
               about it.
             */
             scope.options = function (n, ev) {
-                emitEvent("treeOptionsClick", { element: element, tree: scope.tree, node: n, event: ev });
+                emitEvent('treeOptionsClick', { element: element, tree: scope.tree, node: n, event: ev });
             };
 
             /**
@@ -605,7 +585,7 @@ angular.module("umbraco.directives")
               defined on the tree
             */
             scope.select = function (n, ev) {
-                emitEvent("treeNodeSelect", { element: element, tree: scope.tree, node: n, event: ev });
+                emitEvent('treeNodeSelect', { element: element, tree: scope.tree, node: n, event: ev });
             };
 
             /**
@@ -615,7 +595,7 @@ angular.module("umbraco.directives")
               defined on the tree
             */
             scope.altSelect = function (n, ev) {
-                emitEvent("treeNodeAltSelect", { element: element, tree: scope.tree, node: n, event: ev });
+                emitEvent('treeNodeAltSelect', { element: element, tree: scope.tree, node: n, event: ev });
             };
 
             /** method to set the current animation for the node. 
@@ -642,7 +622,7 @@ angular.module("umbraco.directives")
             scope.load = function (node) {
                 if (node.expanded) {
                     deleteAnimations = false;
-                    emitEvent("treeNodeCollapsing", { tree: scope.tree, node: node, element: element });
+                    emitEvent('treeNodeCollapsing', { tree: scope.tree, node: node, element: element });
                     node.expanded = false;
                 }
                 else {
@@ -653,19 +633,19 @@ angular.module("umbraco.directives")
             /* helper to force reloading children of a tree node */
             scope.loadChildren = function (node, forceReload) {
                 //emit treeNodeExpanding event, if a callback object is set on the tree
-                emitEvent("treeNodeExpanding", { tree: scope.tree, node: node });
+                emitEvent('treeNodeExpanding', { tree: scope.tree, node: node });
 
                 if (node.hasChildren && (forceReload || !node.children || (angular.isArray(node.children) && node.children.length === 0))) {
                     //get the children from the tree service
                     treeService.loadNodeChildren({ node: node, section: scope.section })
                         .then(function (data) {
                             //emit expanded event
-                            emitEvent("treeNodeExpanded", { tree: scope.tree, node: node, children: data });
+                            emitEvent('treeNodeExpanded', { tree: scope.tree, node: node, children: data });
                             enableDeleteAnimations();
                         });
                 }
                 else {
-                    emitEvent("treeNodeExpanded", { tree: scope.tree, node: node, children: node.children });
+                    emitEvent('treeNodeExpanded', { tree: scope.tree, node: node, children: node.children });
                     node.expanded = true;
                     enableDeleteAnimations();
                 }
@@ -684,8 +664,8 @@ angular.module("umbraco.directives")
     };
 });
 
-angular.module("umbraco.directives")
-.directive("umbUploadPreview", function ($parse) {
+angular.module('umbraco.directives')
+.directive('umbUploadPreview', function ($parse) {
     return {
         link: function (scope, element, attr, ctrl) {
             var fn = $parse(attr.umbUploadPreview),
@@ -696,8 +676,7 @@ angular.module("umbraco.directives")
         }
     };
 })
-.directive('fsFileUpload', function ($rootScope, assetsService, $timeout, $log, umbRequestHelper, mediaResource, imageHelper, notificationsService)
-{
+.directive('fsFileUpload', function ($rootScope, assetsService, $timeout, $log, umbRequestHelper, mediaResource, imageHelper, notificationsService) {
     return {
         restrict: 'E',
         replace: true,
@@ -714,7 +693,7 @@ angular.module("umbraco.directives")
             // It's do to with the widget framework in jquery ui changes which must have broken a whole lot of stuff. So don't change it for now.
 
             if (scope.onUploadComplete && !angular.isFunction(scope.onUploadComplete)) {
-                throw "onUploadComplete must be a function callback";
+                throw 'onUploadComplete must be a function callback';
             }
 
             scope.uploading = false;
@@ -730,8 +709,8 @@ angular.module("umbraco.directives")
                 previewMaxWidth: 150,
                 previewMaxHeight: 150,
                 previewCrop: true,
-                dropZone: element.find(".drop-zone"),
-                fileInput: element.find("input.uploader"),
+                dropZone: element.find('.drop-zone'),
+                fileInput: element.find('input.uploader'),
                 formData: {
                     currentFolder: scope.node.id === '-1' ? '~/' + scope.node.metaData.startfolder : '~/' + scope.node.id + '/'
                 }
@@ -806,8 +785,8 @@ angular.module("umbraco.directives")
             //known server error we will tell them to check the logs, otherwise we'll specifically 
             //check for the file size error which can only be done with dodgy string checking
             scope.$on('fileuploadfail', function (e, data) {
-                if (data.jqXHR.status === 500 && data.jqXHR.responseText.indexOf("Maximum request length exceeded") >= 0) {
-                    notificationsService.error(data.errorThrown, "The uploaded file was too large, check with your site administrator to adjust the maximum size allowed");
+                if (data.jqXHR.status === 500 && data.jqXHR.responseText.indexOf('Maximum request length exceeded') >= 0) {
+                    notificationsService.error(data.errorThrown, 'The uploaded file was too large, check with your site administrator to adjust the maximum size allowed');
 
                 }
                 else {

@@ -4,16 +4,13 @@
             <a href="#" prevent-default ng-click="remove()">
                 <i class="icon icon-delete red"></i> {{model.value}}
             </a>
+
             <div ng-show="!model.config.coordinatePicker">
                 <img src="/umbraco/backoffice/FileSystemPicker/FileSystemThumbnailApi/GetThumbnail?width={{model.config.thumbnailSize}}&imagePath={{model.value}}"
-                     ng-show="model.value.length.toLowerCase().indexOf('.jpg') >= 0 || model.value.length.toLowerCase().indexOf('.gif') >= 0" />
+                     ng-show="model.value.toLowerCase().indexOf('.jpg') >= 0 || model.value.toLowerCase().indexOf('.gif') >= 0" />
             </div>
             <div ng-show="model.config.coordinatePicker">
-                <a href="#" ng-click="newWindow(model.value)">
-                    <img id="usda-map-image" src="{{model.value}}" />
-                    <br />
-                    Open image in new window to set map coordinates
-                </a>
+                <img id="usda-map-image" src="{{model.value}}" ng-click="clickMap($event)" style="cursor: crosshair;" />
             </div>
         </li>
     </ul>
@@ -21,7 +18,12 @@
         <li>
             <i class="icon icon-add blue"></i>
             <a href="#" ng-click="openPicker()" prevent-default="">
-                <localize key="general_add">Add</localize>
+                <span ng-hide="model.config.managementMode">
+                    <localize key="general_add">Add</localize>
+                </span>
+                <span ng-show="model.config.managementMode">
+                    Manage Files
+                </span>
             </a>
         </li>
     </ul>

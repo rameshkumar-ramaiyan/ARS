@@ -13,7 +13,6 @@
     IEnumerable<IPublishedContent> allLocationsList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.AllLocationsList();
     ArchetypeModel locationMap = currentPage.GetPropertyValue<ArchetypeModel>("mapCoordinates");
     string countryMap = currentPage.GetPropertyValue<string>("countryMap", "/images/maps/usmap.jpg");
-    countryMap = "/images/maps/usmap.jpg";
     List<string> alphaList = null;
 
     string listRegionContent = "";
