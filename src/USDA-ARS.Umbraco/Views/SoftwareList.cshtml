@@ -51,6 +51,8 @@
             {
                 ArchetypeModel softwareList = softwareNode.GetPropertyValue<ArchetypeModel>("software");
 
+                softwareList.Fieldsets = softwareList.Fieldsets.OrderBy(p => p.GetValue<string>("title"));
+
                 if (softwareList != null && softwareList.Any())
                 {
                     <table cellspacing="2" cellpadding="0" border="0">

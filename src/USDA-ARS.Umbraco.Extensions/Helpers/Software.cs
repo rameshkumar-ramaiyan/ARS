@@ -90,13 +90,24 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
             foreach (IPublishedContent root in UmbHelper.TypedContentAtRoot())
             {
-                nodeList = root.Descendants().Where(n => n.HasValue("software")).ToList();
+                nodeList = root.Descendants().Where(n => n.HasValue("software") && false == string.IsNullOrEmpty(n.GetPropertyValue<string>("modeCode"))).ToList();
 
                 if (nodeList != null && nodeList.Any())
                 {
                     softwareList.AddRange(nodeList);
                 }
+
+                if (root.HasValue("software") && false == string.IsNullOrEmpty(root.GetPropertyValue<string>("modeCode")))
+                {
+                    softwareList.Add(root);
+                }
             }
+
+            if (softwareList != null && softwareList.Any())
+            {
+                softwareList = softwareList.OrderBy(p => p.GetPropertyValue<string>("modeCode")).ToList();
+            }
+
 
             return softwareList;
         }
@@ -118,7 +129,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             }
             else if (node.DocumentTypeAlias == "Homepage")
             {
-                output += "ARS, Washington, D.C.";
+                output = "ARS, Washington, D.C.";
             }
 
             return output;

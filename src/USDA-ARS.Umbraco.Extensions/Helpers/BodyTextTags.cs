@@ -113,7 +113,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                         customEmailTo = emailto;
                     }
 
-                    output += "<li><a href=\"mailto:" + customEmailTo + "?Subject=" + emailSubject + categoryItem.GetValue("category") + "\" target=\"_blank\" id=\"anch_48\">";
+                    output += "<li><a href=\"mailto:" + customEmailTo + "?Subject=" + emailSubject + categoryItem.GetValue("category") + "\" id=\"anch_48\">";
                     output += categoryItem.GetValue("category") + "</a></li>";
                 }
 
@@ -124,32 +124,13 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             {
                 string customEmailTo = "";
 
-                if (node.HasValue("contactPerson"))
-                {
-                    PeopleInfo person = Aris.People.GetPerson(Convert.ToInt32(node.GetPropertyValue("contactPerson")));
-
-                    if (person != null)
-                    {
-                        customEmailTo += person.Email + ";";
-                    }
-                }
-
-                if (false == string.IsNullOrEmpty(node.GetPropertyValue<string>("customContactEmail")))
-                {
-                    customEmailTo += node.GetPropertyValue<string>("customContactEmail") + ";";
-                }
-
-                // Set default if email hasn't been filled out
-                if (true == string.IsNullOrEmpty(customEmailTo))
-                {
-                    customEmailTo = emailto;
-                }
+                customEmailTo = emailto;
 
                 customEmailTo = customEmailTo.TrimEnd(';');
 
                 output += "<tr><td>";
                 output += "<ul>";
-                output += "<li><a href=\"mailto:" + customEmailTo + "?Subject=" + emailSubject + defaultContactLabel + "\" target=\"_blank\" id=\"anch_48\">" + defaultContactLabel + "</a></li>";
+                output += "<li><a href=\"mailto:" + customEmailTo + "?Subject=" + emailSubject + defaultContactLabel + "\" id=\"anch_48\">" + defaultContactLabel + "</a></li>";
                 output += "</ul>";
                 output += "</td></tr>";
             }

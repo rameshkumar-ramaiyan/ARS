@@ -76,6 +76,7 @@ function fileSystemPickerController($scope, $http, $routeParams, dialogService) 
         var $emptyInput = $('input[id*=mapCoordinates]').filter(function () { return !this.value; });
 
         $emptyInput.val(left + ',' + top);
+        //$emptyInput.trigger('input[id*=mapCoordinates]');
     }
 
     $scope.remove = function () {

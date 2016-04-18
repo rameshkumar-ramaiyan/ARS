@@ -106,6 +106,14 @@ namespace USDA_ARS.Umbraco.Extensions.Models.Aris
         [NullSetting(NullSetting = NullSettings.Null)]
         public string PostalCode { get; set; }
 
+        [Column("modecodeconc")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string ModeCodeConc { get; set; }
+
+        [Column("mySiteCode")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string MySiteCode { get; set; }
+
     }
 
 }

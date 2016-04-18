@@ -20,6 +20,7 @@
 
         currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCodeCity);
     }
+    
 
     List<PeopleByCity> peopleFullList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByCity(modeCodeCity);
 
@@ -149,10 +150,12 @@
                                                 <a href="/people-locations/person?person-id=@(person.PersonId)" class="listItems">
                                                     @(person.LastName),
                                                     @(person.FirstName)
-                                                    @Html.Raw(false == string.IsNullOrWhiteSpace(person.CommonName) ? " <em>" + person.CommonName + "</em>" : "")
+                                                    @Html.Raw(false == string.IsNullOrWhiteSpace(person.CommonName) ? " - <em>" + person.CommonName + "</em>" : "")
                                                 </a>
                                                 <br>
                                                 @(USDA_ARS.Umbraco.Extensions.Utilities.Strings.FormatPhoneNumber(person.PhoneAreaCode + person.Phone))
+
+                                                @(false == string.IsNullOrEmpty(person.PhoneExt) ? " ext." + person.PhoneExt : "")
 
                                                 <br /> @(person.Email) <br /> @(person.TitleWorking)
                                                 <br />

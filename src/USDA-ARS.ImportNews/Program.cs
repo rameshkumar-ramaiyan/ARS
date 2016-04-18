@@ -164,11 +164,11 @@ namespace USDA_ARS.ImportNews
                                 }
                                 else
                                 {
-                                    ModeCodeNew modeCodeNew = MODE_CODE_NEW_LIST.Where(p => p.ModecodeOld == modeCode).FirstOrDefault();
+                                    ModeCodeNew modeCodeNew = MODE_CODE_NEW_LIST.Where(p => p.ModecodeOld == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(modeCode)).FirstOrDefault();
 
                                     if (modeCodeNew != null)
                                     {
-                                        modeCodeLookup = MODE_CODE_LIST.Where(p => p.ModeCode == modeCodeNew.ModecodeNew).FirstOrDefault();
+                                        modeCodeLookup = MODE_CODE_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCodeNew.ModecodeNew)).FirstOrDefault();
 
                                         if (modeCodeLookup != null)
                                         {
@@ -380,11 +380,11 @@ namespace USDA_ARS.ImportNews
                         // LOOP START
                         Fieldset fieldsetTopic = new Fieldset();
 
-                        fieldsetTopic.Alias = "newsTopic";
+                        fieldsetTopic.Alias = "newsTopicSelect";
                         fieldsetTopic.Disabled = false;
                         fieldsetTopic.Id = Guid.NewGuid();
                         fieldsetTopic.Properties = new List<Property>();
-                        fieldsetTopic.Properties.Add(new Property("value", topicGuid)); // set the file package name
+                        fieldsetTopic.Properties.Add(new Property("newsTopic", topicGuid)); 
 
                         newsTopicArchetypeItem.Fieldsets.Add(fieldsetTopic);
                         // LOOP END

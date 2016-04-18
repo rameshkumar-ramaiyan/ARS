@@ -10,47 +10,35 @@
 
     IPublishedContent currentPage = Model.Content;
 
-    if (true == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
+    if (currentPage.DocumentTypeAlias == "City")
     {
-        IPublishedContent findALocation = Nodes.FindALocation();
+        List<IPublishedContent> researchUnitList = currentPage.Descendants().ToList();
 
-        if (findALocation != null)
+        if (researchUnitList != null && researchUnitList.Count == 1)
         {
-            Response.Redirect(findALocation.Url);
-        }
-        else
-        {
-            Response.Redirect("/?no-find-location");
+            Response.Redirect(researchUnitList[0].Url);
         }
     }
-    else
+    else if (currentPage.DocumentTypeAlias == "PeopleLocations")
     {
-        if (currentPage.DocumentTypeAlias == "City")
+        if (true == string.IsNullOrEmpty(Request.QueryString["modeCode"]))
         {
-            List<IPublishedContent> researchUnitList = currentPage.Descendants().ToList();
-
-            if (researchUnitList != null && researchUnitList.Count == 1)
-            {
-                Response.Redirect(researchUnitList[0].Url);
-            }
+            Response.Redirect("/people-locations/find-a-location/");
         }
     }
 
 
 }
 
-@if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
-{
-    @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
 
-    <div id="fullPage">
+<div id="fullPage">
 
-        @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
 
-        <div id="pageContent">
+    <div id="pageContent">
 
-            @Html.Partial("~/Views/Partials/Modules/PeopleListByCity.cshtml", currentPage)
+        @Html.Partial("~/Views/Partials/Modules/PeopleListByCity.cshtml", currentPage)
 
-        </div>
     </div>
-}
+</div>
