@@ -40,14 +40,15 @@ namespace USDA_ARS.LocationsWebApp.DL
                     //string npCode = "NP_CODE_HERE";
                     //string npText = "BODY TEXT OF NATION PROGRAM ITEM";
                     string npTitle = legacyNPProgramItems.Rows[legacyNPProgramsRowId].Field<string>(2);
-                    string npCode = legacyNPProgramItems.Rows[legacyNPProgramsRowId].Field<string>(1);
+                    string npCode = legacyNPProgramItems.Rows[legacyNPProgramsRowId].Field<int>(1).ToString();
                     DataTable legacyNPProgramDocuments = GetAllNPDocumentsStrategicVersionOnNPNumber(npCode);
                     string npText = legacyNPProgramDocuments.Rows[0].Field<string>(0);
 
                     ApiContent content = new ApiContent();
 
                     content = GenerateNationalProgramItem(npGroup.UmbracoId, npTitle, npCode, npText);
-
+                    // Get the Documents by National Program.
+                    DataTable legacyNPProgramDocs = GetAllNationalProgramDocuments(npCode);
                     ApiRequest request = new ApiRequest();
 
                     request.ApiKey = API_KEY;
@@ -76,8 +77,8 @@ namespace USDA_ARS.LocationsWebApp.DL
 
                                 List<ApiContent> contentDocPages = new List<ApiContent>(); // Create the ApiContent List for all the docs for a NP item.
 
-                                // Get the Documents by National Program.
-                                DataTable legacyNPProgramDocs = GetAllNationalProgramDocuments(npCode); // SHOULD YOU GET BY NP CODE INSTEAD?
+                                //// Get the Documents by National Program.
+                                //DataTable legacyNPProgramDocs = GetAllNationalProgramDocuments(npCode); // SHOULD YOU GET BY NP CODE INSTEAD?
 
                                 for (int legacyNPProgramsDocRowId = 0; legacyNPProgramsDocRowId < legacyNPProgramDocs.Rows.Count; legacyNPProgramsDocRowId++)
                                 {
@@ -85,10 +86,15 @@ namespace USDA_ARS.LocationsWebApp.DL
                                     // GET THE INFORMATION FOR THE NATIONAL PROGRAM ITEM DOCUMENTS
                                     // ========================
 
-                                    string legacyDocType = "SITEPUBLISHER DOC TYPE";// Get the Legacy sitepublisher doctype. THIS NEEDS TO BE: Program Inputs, Program Planning, or Program Reports
-                                    string legacyDocTitle = "DOC TITLE HERE";
-                                    string legacyDocText = "DOC TITLE HERE";
-                                    string oldDocId = "OLD SITEPUBLSHER DOC ID";
+                                    //string legacyDocType = "SITEPUBLISHER DOC TYPE";// Get the Legacy sitepublisher doctype. THIS NEEDS TO BE: Program Inputs, Program Planning, or Program Reports
+                                    //string legacyDocTitle = "DOC TITLE HERE";
+                                    //string legacyDocText = "DOC TITLE HERE";
+                                    //string oldDocId = "OLD SITEPUBLSHER DOC ID";
+
+                                    string legacyDocType = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(3);// Get the Legacy sitepublisher doctype. THIS NEEDS TO BE: Program Inputs, Program Planning, or Program Reports
+                                    string legacyDocTitle = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(1);
+                                    string legacyDocText = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(1);
+                                    string oldDocId = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(5);
 
                                     string umbracoDocType = "";
 
@@ -387,7 +393,7 @@ namespace USDA_ARS.LocationsWebApp.DL
 
 
             Locations locationsResponse = new Locations();
-            string sql = "[uspgetAllDocumentsBasedOnNPNumber]";
+            string sql = "[uspgetAllNPDocumentsBasedOnNPNumber]";
             DataTable dt = new DataTable();
             SqlConnection conn = new SqlConnection(LocationConnectionString);
 
