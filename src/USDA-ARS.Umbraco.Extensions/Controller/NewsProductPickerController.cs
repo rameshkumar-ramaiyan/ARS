@@ -52,6 +52,8 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                         if (newsProducts != null && newsProducts.Any())
                         {
+                            selectList.Add(new NewsProductItem { Value = "", Text = "" });
+
                             foreach (var newsProduct in newsProducts)
                             {
                                 string newsProductTitle = newsProduct.GetValue<string>("newsProduct");

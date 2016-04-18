@@ -1,6 +1,7 @@
 ﻿@using Archetype.Extensions
 @using Archetype.Models
 @using Umbraco.Core.Models
+@using USDA_ARS.Umbraco.Extensions.Helpers
 @using RJP.MultiUrlPicker.Models
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
@@ -29,30 +30,23 @@
 
     IPublishedContent sitePage = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode);
 
-    ArchetypeModel softwareList = sitePage.GetPropertyValue<ArchetypeModel>("software");
-
+    ArchetypeFieldsetModel softwareItem = Software.GetSoftwareById(softwareId);
     ArchetypeModel softwareDownloadFiles = null;
 
-    if (softwareList != null && softwareList.Any())
+    if (softwareItem != null)
     {
-        Guid softwareIdGuid = Guid.Parse(softwareId);
-        ArchetypeFieldsetModel softwareItem = softwareList.Where(p => p.Id == softwareIdGuid).FirstOrDefault();
-
-        if (softwareItem != null)
+        if (softwareItem.HasValue("title"))
         {
-            if (softwareItem.HasValue("title"))
-            {
-                fileTitle = softwareItem.GetValue<string>("title");
-            }
-            if (softwareItem.HasValue("information"))
-            {
-                fileInfo = softwareItem.GetValue<string>("information");
-            }
+            fileTitle = softwareItem.GetValue<string>("title");
+        }
+        if (softwareItem.HasValue("information"))
+        {
+            fileInfo = softwareItem.GetValue<string>("information");
+        }
 
-            if (softwareItem.HasValue("fileDownloads"))
-            {
-                softwareDownloadFiles = softwareItem.GetValue<ArchetypeModel>("fileDownloads");
-            }
+        if (softwareItem.HasValue("fileDownloads"))
+        {
+            softwareDownloadFiles = softwareItem.GetValue<ArchetypeModel>("fileDownloads");
         }
     }
 

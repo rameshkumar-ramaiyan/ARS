@@ -59,8 +59,9 @@
     <Reference Include="Axial.Umbraco.DecendantsAudit">
       <HintPath>..\..\..\Umbraco.BackofficeTweaking\src\Axial.Umbraco.DecendantAudit\bin\Debug\Axial.Umbraco.DecendantsAudit.dll</HintPath>
     </Reference>
-    <Reference Include="Axial.Umbraco.FileSystemPicker">
-      <HintPath>..\..\..\Umbraco.FileSystemPicker\src\Axial.Umbraco.FileSystemPicker\bin\Debug\Axial.Umbraco.FileSystemPicker.dll</HintPath>
+    <Reference Include="Axial.Umbraco.FileSystemPicker, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Umbraco.BackofficeTweaking\src\Axial.Umbraco.FileSystemPicker\bin\Debug\Axial.Umbraco.FileSystemPicker.dll</HintPath>
     </Reference>
     <Reference Include="Axial.Umbraco.PropertyAccess">
       <HintPath>..\..\..\Umbraco.BackofficeTweaking\src\Axial.Umbraco.BackofficeTweaking\bin\Debug\Axial.Umbraco.PropertyAccess.dll</HintPath>
@@ -3038,7 +3039,6 @@
     <Content Include="Views\PublicationsLatest.cshtml" />
     <Content Include="Views\RSSFeeds.cshtml" />
     <Content Include="Views\ProjectReportsByProgram.cshtml" />
-    <Content Include="Views\404.cshtml" />
     <Content Include="Views\PageNotFound.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
