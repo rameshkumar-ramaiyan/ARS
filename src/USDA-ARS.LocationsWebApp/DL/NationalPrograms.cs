@@ -46,7 +46,7 @@ namespace USDA_ARS.LocationsWebApp.DL
 
                     ApiContent content = new ApiContent();
 
-                    content = GenerateNationalProgramItem(npGroup.UmbracoId, npTitle, npCode, npText);
+                    content = GenerateNationalProgramItem(npGroup.UmbracoId, npTitle.Trim(), npCode.Trim(), npText);
                     // Get the Documents by National Program.
                     DataTable legacyNPProgramDocs = GetAllNationalProgramDocuments(npCode);
                     ApiRequest request = new ApiRequest();
@@ -65,7 +65,7 @@ namespace USDA_ARS.LocationsWebApp.DL
                         ApiResponse responseDocsFolder = new ApiResponse();
 
                         // Get DOCS Folder: The umbraco page by the NP Code
-                        responseDocsFolder = GetCalls.GetNodeByModeCode(npCode);
+                        responseDocsFolder = GetCalls.GetNodeByNationalProgramCode(npCode);
 
                         if (responseDocsFolder != null && true == responseDocsFolder.Success && responseDocsFolder.ContentList != null && responseDocsFolder.ContentList.Count > 0)
                         {
@@ -88,13 +88,13 @@ namespace USDA_ARS.LocationsWebApp.DL
 
                                     //string legacyDocType = "SITEPUBLISHER DOC TYPE";// Get the Legacy sitepublisher doctype. THIS NEEDS TO BE: Program Inputs, Program Planning, or Program Reports
                                     //string legacyDocTitle = "DOC TITLE HERE";
-                                    //string legacyDocText = "DOC TITLE HERE";
+                                    //string legacyDocText = "DOC TEXT HERE";
                                     //string oldDocId = "OLD SITEPUBLSHER DOC ID";
 
-                                    string legacyDocType = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(3);// Get the Legacy sitepublisher doctype. THIS NEEDS TO BE: Program Inputs, Program Planning, or Program Reports
-                                    string legacyDocTitle = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(1);
-                                    string legacyDocText = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(1);
-                                    string oldDocId = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(5);
+                                    string legacyDocType = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(3).Trim();// Get the Legacy sitepublisher doctype. THIS NEEDS TO BE: Program Inputs, Program Planning, or Program Reports
+                                    string legacyDocTitle = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(1).Trim();
+                                    string legacyDocText = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(1).Trim(); // TODO: GET THE PAGE TEXT AND ADD IT HERE
+                                    string oldDocId = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(5).Trim();
 
                                     string umbracoDocType = "";
 
@@ -102,7 +102,7 @@ namespace USDA_ARS.LocationsWebApp.DL
                                     {
                                         umbracoDocType = "NPProgramInputs";
                                     }
-                                    else if (legacyDocType == "Program Inputs")
+                                    else if (legacyDocType == "Program Planning")
                                     {
                                         umbracoDocType = "NPProgramPlanning";
                                     }
