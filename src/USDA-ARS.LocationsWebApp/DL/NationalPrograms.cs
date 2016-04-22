@@ -133,7 +133,7 @@ namespace USDA_ARS.LocationsWebApp.DL
                                 requestDocs.ContentList = new List<ApiContent>();
                                 requestDocs.ContentList = contentDocPages;
 
-                                ApiResponse responseBackDocs = ApiCalls.PostData(request, "Post");
+                                ApiResponse responseBackDocs = ApiCalls.PostData(requestDocs, "Post");
 
                                 if (responseBackDocs.ContentList != null && responseBackDocs.ContentList.Count > 0)
                                 {

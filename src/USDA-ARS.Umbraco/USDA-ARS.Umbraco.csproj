@@ -374,6 +374,18 @@
     <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker-newfolder-dialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker-upload-dialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker.html" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertiesViews\checkbox.html" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertiesViews\dropdown.html" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertiesViews\numeric.html" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertiesViews\readonly.html" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertiesViews\textarea.html" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertiesViews\textbox.html" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertyaccess.dashboard.controller.js" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertyaccess.dashboard.css" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertyaccess.dashboard.html" />
+    <Content Include="App_Plugins\PropertyAccess\propertyaccess.css" />
+    <Content Include="App_Plugins\PropertyAccess\propertyaccess.js" />
+    <Content Include="App_Plugins\PropertyAccess\propertyaccess.resource.js" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.js" />
     <Content Include="App_Plugins\UsdaDataImporter\css\usda.data.importer.css" />
@@ -2796,6 +2808,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Plugins\PropertyAccess\PropertyAccessPropertyEditor.cs" />
     <Compile Include="App_Plugins\UsdaDataImporter\upload.file.aspx.cs">
       <DependentUpon>upload.file.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -2978,6 +2991,7 @@
     <Content Include="App_Plugins\ArchetypeLabelTemplatesNewsTopicPicker\package.manifest" />
     <Content Include="App_Plugins\UsdaNewsProductPicker\package.manifest" />
     <Content Include="App_Plugins\FileSystemPicker\package.manifest" />
+    <Content Include="App_Plugins\PropertyAccess\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
     <Content Include="Views\StandardWebpage.cshtml" />
