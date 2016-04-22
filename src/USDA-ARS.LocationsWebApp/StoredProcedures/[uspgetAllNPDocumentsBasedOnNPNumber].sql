@@ -1,6 +1,6 @@
 USE [aris_public_webNew]
 GO
-/****** Object:  StoredProcedure [dbo].[uspgetAllNPDocumentsBasedOnNPNumber]    Script Date: 4/17/2016 7:05:33 PM ******/
+/****** Object:  StoredProcedure [dbo].[uspgetAllNPDocumentsBasedOnNPNumber]    Script Date: 4/22/2016 7:01:05 AM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -40,7 +40,7 @@ from sitepublisherii.dbo.Documents
 join sitepublisherii.dbo.DocPages
 on sitepublisherii.dbo.Documents.CurrentVersion_ID=sitepublisherii.dbo.DocPages.DocVer_Id
  where 
- OriginSite_ID =  '107'
+Cast(OriginSite_ID as varchar(max) )=  @NPNumber
  and published =  'p'and sitepublisherii.dbo.Documents.SPSysEndTime is  null
  and sitepublisherii.dbo.DocPages.CurrentVersion=1
 -- and DocType='Program Planning'                                                                                    
