@@ -93,8 +93,12 @@ namespace USDA_ARS.LocationsWebApp.DL
 
                                     string legacyDocType = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(3).Trim();// Get the Legacy sitepublisher doctype. THIS NEEDS TO BE: Program Inputs, Program Planning, or Program Reports
                                     string legacyDocTitle = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(1).Trim();
-                                    string legacyDocText = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(6).Trim(); // TODO: GET THE PAGE TEXT AND ADD IT HERE
-                                    string oldDocId = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(5).Trim();
+                                    string legacyDocText = "";
+                                    if (!string.IsNullOrEmpty(legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(6)))
+                                    {
+                                         legacyDocText = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(6).Trim(); // TODO: GET THE PAGE TEXT AND ADD IT HERE
+                                    }
+                                        string oldDocId = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(5).Trim();
 
                                     string umbracoDocType = "";
 
