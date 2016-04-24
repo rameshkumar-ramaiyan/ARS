@@ -32,7 +32,7 @@ BEGIN
 
 
 select DocId,Title,CurrentVersion_ID,DocType,OriginSite_ID,oldURL,
-sitepublisherii.dbo.DocPages.DocPage
+cast(sitepublisherii.dbo.DocPages.DocPage as varchar(max)) as DocPage
 --CAST(CAST(N'' AS XML).value('(sql:variable("@DocPage"))',
 --           'VARBINARY(MAX)') AS VARCHAR(MAX)) 
 --		   AS [DocPageContent]
