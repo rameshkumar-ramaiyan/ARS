@@ -377,6 +377,7 @@
     </Compile>
     <Compile Include="DL\ApiCalls.cs" />
     <Compile Include="DL\GetCalls.cs" />
+    <Compile Include="DL\MapCoordinates.cs" />
     <Compile Include="DL\NationalPrograms.cs" />
     <Compile Include="DL\NewsImport.cs" />
     <Compile Include="Models\NationalProgramGroup.cs" />

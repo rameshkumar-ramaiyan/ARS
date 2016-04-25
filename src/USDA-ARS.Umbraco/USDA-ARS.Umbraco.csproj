@@ -2823,6 +2823,7 @@
     <Compile Include="App_Plugins\UsdaWebtrendsRedirect\webtrends.redirect.aspx.designer.cs">
       <DependentUpon>webtrends.redirect.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\SubscribeFormSurfaceController.cs" />
     <Compile Include="Controllers\EmailSignupFullSurfaceController.cs" />
     <Compile Include="Controllers\EmailSignupSiteSurfaceController.cs" />
     <Compile Include="Controllers\DownloadRequestSurfaceController.cs" />
@@ -3066,6 +3067,13 @@
     <Content Include="Views\RSSFeeds.cshtml" />
     <Content Include="Views\ProjectReportsByProgram.cshtml" />
     <Content Include="Views\PageNotFound.cshtml" />
+    <Content Include="Views\SubscribeArsNews.cshtml" />
+    <Content Include="Views\SubscribeFoodNutrition.cshtml" />
+    <Content Include="Views\SubscribeHealthyAnimals.cshtml" />
+    <Content Include="Views\Partials\SubscribeFormArsNews.cshtml" />
+    <Content Include="Views\Partials\SubscribeFormFoodNutrition.cshtml" />
+    <Content Include="Views\Partials\SubscribeFormHealthyAnimals.cshtml" />
+    <Content Include="Views\AZIndex.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

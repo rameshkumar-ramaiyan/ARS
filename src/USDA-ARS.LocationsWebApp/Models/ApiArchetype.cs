@@ -45,4 +45,21 @@ namespace USDA_ARS.LocationsWebApp.Models
         }
     }
 
+
+    public class Site
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string Url { get; set; }
+        public string Icon { get; set; }
+
+        public Site(string id, string name, string url, string icon)
+        {
+            this.Id = id;
+            this.Name = name;
+            this.Url = url;
+            this.Icon = icon;
+        }
+    }
+
 }

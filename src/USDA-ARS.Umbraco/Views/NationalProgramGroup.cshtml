@@ -51,17 +51,22 @@
                                                 <tbody>
                                                     <tr>
                                                         <td>
+                                                            @if (locationLeader != null)
+                                                            {
+                                                                <a href="/people-locations/person?person-id=@(locationLeader.PersonId)" id="anch_51">
+                                                                    @(locationLeader.LastName), @(locationLeader.FirstName)
 
-                                                            <a href="/people-locations/person?person-id=@(locationLeader.PersonId)" id="anch_51">
-                                                                @(locationLeader.LastName), @(locationLeader.FirstName) 
-
-                                                                @if (false == string.IsNullOrEmpty(locationLeader.CommonName))
-                                                                {
-                                                                    @Html.Raw(" - <em>" + locationLeader.CommonName + "</em>")
-                                                                }
-                                                            </a><br />
-                                                            @(locationLeader.PositionTitle)<br />
-
+                                                                    @if (false == string.IsNullOrEmpty(locationLeader.CommonName))
+                                                                    {
+                                                                        @Html.Raw(" - <em>" + locationLeader.CommonName + "</em>")
+                                                                    }
+                                                                </a><br />
+                                                                @(locationLeader.PositionTitle)<br />
+                                                            }
+                                                            else
+                                                            {
+                                                                <em>Person not found: EmpId = @programLocation.RlEmpId</em><br />
+                                                            }
                                                             <a href="mailto:@(programLocation.Email)?Subject=From ARS website" target="_blank" id="anch_52">@(programLocation.Email)</a>
                                                             <br />
                                                             @(programLocation.Phone)<br />
@@ -193,45 +198,45 @@
 
                         <!-- spotlights begin -->
                         @*<table border="0">
-                            <!-- document content start -->
+                                <!-- document content start -->
 
-                            <tbody>
-                                <tr>
-                                    <td valign="top">
-                                        <p>&nbsp;</p>
-                                        <table style="HEIGHT: 195px; WIDTH: 195px" cellspacing="0" cellpadding="2" width="195" align="center" border="0">
-                                            <tbody>
-                                                <tr>
-                                                    <td colspan="7"><img title="Spotlights header image" alt="Spotlights header image" src="/images/content_head_spotlight_ap.gif"></td>
-                                                </tr><!--- This is the first row of images (limit 2 columns for images) --->
-                                                <tr>
-                                                    <td><img alt=" " src="/images/spacer.gif" width="1" height="1"></td><!--- spacer image is needed ---><!--- image and text display --->
-                                                    <td valign="top"><img border="0" hspace="0" alt="" src="/images/docs/16108_16302/nfsq1web.jpg" width="80" height="70"></td>
-                                                    <td class="BodyTextBlackSmall" valign="top"><a href="/sp2UserFiles/Place/00000000/NP%20107%20Action%20Plan%202014-2019%20final.pdf" id="anch_58">NP 107 Action Plan</a><br />Food Choices for Health</td><!--- spacer image is needed ---><!--- image and text display ---<TD vAlign=top><IMG border=0 hspace=0 alt="" src="/images/docs/16108_16302/nfsq2web.jpg" width=80 height=70><A href="/sp2UserFiles/Program/108/2006-2010ActionPlanFinal108.pdf"></A></TD> <TD class=BodyTextBlackSmall vAlign=top> <P><A href="/sp2UserFiles/Place/00000000/NP108%202011-2015%20Action%20Plan%20for%20web.pdf">NP 108<br />Action Plan</A>Safe and Secure Food Supply &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </P></TD></TR> <TR> <TD colSpan=7><IMG alt=" " src="/images/content-divider.gif"></TD><!--- divider line --->
-                                                </tr><!--- This is the second row of images (limit 2 columns for images) --->
-                                                <tr>
-                                                    <td>&nbsp;</td>
-                                                    <td><img alt="Petri Dishes" src="/images/docs/16108_16302/Petri%20Dish.jpg">&nbsp; </td>
-                                                    <td valign="top">
-                                                        <p><a href="/SP2UserFiles/Place/00000000/2016-2020 NP 108 Action Plan- Revised-final1.pdf" id="anch_59">NP 108 Action Plan</a><br />Safe and Secure Food Supply</p>
-                                                    </td>
-                                                </tr>
-                                                <tr>
-                                                    <td><img alt=" " src="/images/spacer.gif" width="1" height="1"></td><!--- spacer image is needed ---><!--- image and text display --->
-                                                    <td valign="top"><img border="0" hspace="0" alt="" src="/images/docs/16108_16302/nfsq3web.jpg" width="80" height="70"><a href="/research/programs/programs.htm?np_code=306&amp;docid=374" id="anch_60"></a></td>
-                                                    <td class="BodyTextBlackSmall" valign="top"><a href="/SP2UserFiles/Place/00000000/NPS/NFSQ/NP 306 Action Plan 2015-2019.pdf" id="anch_61">NP 306Action Plan</a><br />Innovative Technologies to Expand Market Opportunities for U.S. Agriculture&nbsp;<br /></td><!--- spacer image is needed ---><!--- image and text display --->
-                                                    <td valign="top"><a href="/" id="anch_62"></a></td>
-                                                    <td class="BodyTextBlackSmall" valign="top">
-                                                        <p>&nbsp;</p>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
-                                    </td>
-                                </tr>
+                                <tbody>
+                                    <tr>
+                                        <td valign="top">
+                                            <p>&nbsp;</p>
+                                            <table style="HEIGHT: 195px; WIDTH: 195px" cellspacing="0" cellpadding="2" width="195" align="center" border="0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td colspan="7"><img title="Spotlights header image" alt="Spotlights header image" src="/images/content_head_spotlight_ap.gif"></td>
+                                                    </tr><!--- This is the first row of images (limit 2 columns for images) --->
+                                                    <tr>
+                                                        <td><img alt=" " src="/images/spacer.gif" width="1" height="1"></td><!--- spacer image is needed ---><!--- image and text display --->
+                                                        <td valign="top"><img border="0" hspace="0" alt="" src="/images/docs/16108_16302/nfsq1web.jpg" width="80" height="70"></td>
+                                                        <td class="BodyTextBlackSmall" valign="top"><a href="/sp2UserFiles/Place/00000000/NP%20107%20Action%20Plan%202014-2019%20final.pdf" id="anch_58">NP 107 Action Plan</a><br />Food Choices for Health</td><!--- spacer image is needed ---><!--- image and text display ---<TD vAlign=top><IMG border=0 hspace=0 alt="" src="/images/docs/16108_16302/nfsq2web.jpg" width=80 height=70><A href="/sp2UserFiles/Program/108/2006-2010ActionPlanFinal108.pdf"></A></TD> <TD class=BodyTextBlackSmall vAlign=top> <P><A href="/sp2UserFiles/Place/00000000/NP108%202011-2015%20Action%20Plan%20for%20web.pdf">NP 108<br />Action Plan</A>Safe and Secure Food Supply &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; </P></TD></TR> <TR> <TD colSpan=7><IMG alt=" " src="/images/content-divider.gif"></TD><!--- divider line --->
+                                                    </tr><!--- This is the second row of images (limit 2 columns for images) --->
+                                                    <tr>
+                                                        <td>&nbsp;</td>
+                                                        <td><img alt="Petri Dishes" src="/images/docs/16108_16302/Petri%20Dish.jpg">&nbsp; </td>
+                                                        <td valign="top">
+                                                            <p><a href="/SP2UserFiles/Place/00000000/2016-2020 NP 108 Action Plan- Revised-final1.pdf" id="anch_59">NP 108 Action Plan</a><br />Safe and Secure Food Supply</p>
+                                                        </td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td><img alt=" " src="/images/spacer.gif" width="1" height="1"></td><!--- spacer image is needed ---><!--- image and text display --->
+                                                        <td valign="top"><img border="0" hspace="0" alt="" src="/images/docs/16108_16302/nfsq3web.jpg" width="80" height="70"><a href="/research/programs/programs.htm?np_code=306&amp;docid=374" id="anch_60"></a></td>
+                                                        <td class="BodyTextBlackSmall" valign="top"><a href="/SP2UserFiles/Place/00000000/NPS/NFSQ/NP 306 Action Plan 2015-2019.pdf" id="anch_61">NP 306Action Plan</a><br />Innovative Technologies to Expand Market Opportunities for U.S. Agriculture&nbsp;<br /></td><!--- spacer image is needed ---><!--- image and text display --->
+                                                        <td valign="top"><a href="/" id="anch_62"></a></td>
+                                                        <td class="BodyTextBlackSmall" valign="top">
+                                                            <p>&nbsp;</p>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </td>
+                                    </tr>
 
-                            </tbody>
-                        </table>*@
+                                </tbody>
+                            </table>*@
                         <!-- spotlights end -->
                     </td>
                 </tr>

@@ -12,7 +12,7 @@
 
     if (currentPage.DocumentTypeAlias == "City")
     {
-        List<IPublishedContent> researchUnitList = currentPage.Descendants().ToList();
+        List<IPublishedContent> researchUnitList = currentPage.Descendants().Where(p => p.DocumentTypeAlias == "ResearchUnit").ToList();
 
         if (researchUnitList != null && researchUnitList.Count == 1)
         {

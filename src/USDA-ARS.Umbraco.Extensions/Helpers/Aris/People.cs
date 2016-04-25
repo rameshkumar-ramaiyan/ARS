@@ -310,31 +310,43 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                             where  left(perlname, 2) = @alpha
                             and(status_code = 'a' or status_code is null)
                             order by perlname , perfname asc
-
-                ";
-            string where = "";
+                            ";
 
             if (false == string.IsNullOrWhiteSpace(alpha))
             {
-                peopleList = db.Query<PeopleInfo>(sql, new { alpha = alpha }).ToList();
+                if (alpha.Length == 1)
+                {
+                    sql = @"select personid, perlname, perfname, permname, percommonname,
+                            EMail, DeskPhone, deskareacode, officialtitle
+                            from v_people_info
+                            where  left(perlname, 1) = @alpha
+                            and(status_code = 'a' or status_code is null)
+                            order by perlname , perfname asc
+                            ";
+
+                    peopleList = db.Query<PeopleInfo>(sql, new { alpha = alpha }).ToList();
+
+                    if (peopleList != null && peopleList.Count > 0)
+                    {
+                        if (peopleList[0].LastName.Substring(0, 2).Trim().Length == 1 && peopleList.Count > 1)
+                        {
+                            peopleList = GetPeopleAlpha(peopleList[1].LastName.Substring(0, 2));
+                        }
+                        else
+                        {
+                            peopleList = GetPeopleAlpha(peopleList[0].LastName.Substring(0, 2));
+                        }
+                    }
+                }
+                else
+                {
+                    peopleList = db.Query<PeopleInfo>(sql, new { alpha = alpha }).ToList();
+                }
             }
 
             if (peopleList != null && peopleList.Count > 0)
             {
                 peopleList = peopleList.OrderBy(p => p.LastName).ThenBy(x => x.FirstName).ToList();
-
-                if (alpha.Length == 1)
-                {
-                    if (peopleList[0].LastName.Substring(0, 2).Trim().Length == 1 && peopleList.Count > 1)
-                    {
-                        peopleList = GetPeopleAlpha(peopleList[1].LastName.Substring(0, 2));
-                    }
-                    else
-                    {
-                        peopleList = GetPeopleAlpha(peopleList[0].LastName.Substring(0, 2));
-                    }
-
-                }
             }
 
             return peopleList;

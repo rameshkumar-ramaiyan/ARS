@@ -18,6 +18,8 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             ArchetypeFieldsetModel archetypeFielsetModel = null;
             List<IPublishedContent> softwareList = new List<IPublishedContent>();
 
+            softwareList = GetSoftwareNodes();
+
             if (softwareList != null && softwareList.Any())
             {
                 archetypeFielsetModel = softwareList.SelectMany(p => p.GetPropertyValue<ArchetypeModel>("software")).Where(t => t.GetValue<string>("softwareId") == id).FirstOrDefault();
