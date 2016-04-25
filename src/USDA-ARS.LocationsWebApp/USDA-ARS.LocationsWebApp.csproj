@@ -350,6 +350,7 @@
     <Content Include="StoredProcedures\uspgetAllPersonsBasedOnModeCode.sql" />
     <Content Include="StoredProcedures\uspgetAllResearchUnitsPopularTopics.sql" />
     <Content Include="StoredProcedures\uspgetAllSoftwaresBasedOnModeCode.sql" />
+    <Content Include="StoredProcedures\uspgetAllNPDocPagesDecrypted.sql" />
     <Content Include="StoredProcedures\[uspgetAllNPDocumentsBasedOnNPNumber].sql" />
     <Content Include="StoredProcedures\[uspgetAllNPDocumentsStrategicVersionOnNPNumber].sql" />
     <Content Include="StoredProcedures\[uspgetAllNPGroupItemsBasedOnGroupId].sql" />
