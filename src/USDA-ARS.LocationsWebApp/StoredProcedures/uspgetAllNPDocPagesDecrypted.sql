@@ -24,7 +24,7 @@ BEGIN
            'VARBINARY(MAX)') AS VARCHAR(MAX)) 
 		   AS [DocPageContent]
 
-
+		--
 
 END
 
