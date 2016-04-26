@@ -54,6 +54,10 @@ namespace USDA_ARS.Umbraco.Extensions.Models.Aris
         [NullSetting(NullSetting = NullSettings.Null)]
         public string PhoneAreaCode { get; set; }
 
+        [Column("deskext")]
+        [NullSetting(NullSetting = NullSettings.Null)]
+        public string PhoneExt { get; set; }
+
         [Column("city")]
         [NullSetting(NullSetting = NullSettings.Null)]
         public string City { get; set; }

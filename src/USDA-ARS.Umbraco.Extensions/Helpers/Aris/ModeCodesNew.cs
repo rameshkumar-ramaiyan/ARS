@@ -38,6 +38,24 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
             return output;
         }
 
+        public static List<ModeCodeNew> GetAllNewModeCode()
+        {
+            List<ModeCodeNew> output = null;
+
+            var db = new Database("arisPublicWebDbDSN");
+
+            Sql sql = null;
+
+
+            sql = new Sql()
+             .Select("*")
+             .From("NewModecodes");
+
+            output = db.Query<ModeCodeNew>(sql).ToList();
+
+            return output;
+        }
+
         public static List<ModeCodeNew> GetOldModeCode(string newModeCode)
         {
             List<ModeCodeNew> modeCodeList = null;

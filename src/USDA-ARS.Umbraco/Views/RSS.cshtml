@@ -18,13 +18,30 @@
     {
         productName = USDA_ARS.Umbraco.Extensions.Utilities.Strings.RemoveHtmlTags(Request.QueryString.Get("productName"));
 
-        newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNewsByProduct(productName, 20);
+        if (productName == "Food & Nutrition Research Briefs")
+        {
+            DateTime startDate = DateTime.Parse(DateTime.Now.AddYears(-2).ToString("1/1/yyyy"));
+            DateTime endDate = DateTime.Now.AddDays(1);
+
+            newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNewsByProduct(productName, int.MaxValue, null, startDate, endDate);
+        }
+        else if (productName == "Briefing Room Materials")
+        {
+            newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNewsByProduct(productName, int.MaxValue);
+        }
+        else // Research News
+        {
+            newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNewsByProduct(productName, 8);
+        }
     }
     else if (false == string.IsNullOrEmpty(Request.QueryString["topic"]))
     {
         topic = USDA_ARS.Umbraco.Extensions.Utilities.Strings.RemoveHtmlTags(Request.QueryString.Get("topic"));
 
-        newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNewsByTopic(topic, 20);
+        DateTime startDate = DateTime.Parse(DateTime.Now.AddMonths(-2).ToString("M/1/yyyy"));
+        DateTime endDate = DateTime.Now.AddDays(1);
+
+        newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNewsByTopic(topic, int.MaxValue, null, startDate, endDate);
     }
     else
     {

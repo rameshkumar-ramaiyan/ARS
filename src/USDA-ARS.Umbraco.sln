@@ -26,6 +26,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.LocationsWebApp", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportNews", "USDA-ARS.ImportNews\USDA-ARS.ImportNews.csproj", "{403D4C4B-AF6F-48FB-842A-5208A79AD374}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportLocationMap", "USDA-ARS.ImportLocationMap\USDA-ARS.ImportLocationMap.csproj", "{BCC8C684-507F-4EC5-B6E5-BCAA0A976E9D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -87,6 +89,12 @@ Global
 		{403D4C4B-AF6F-48FB-842A-5208A79AD374}.Release|Any CPU.Build.0 = Release|Any CPU
 		{403D4C4B-AF6F-48FB-842A-5208A79AD374}.Staging|Any CPU.ActiveCfg = Release|Any CPU
 		{403D4C4B-AF6F-48FB-842A-5208A79AD374}.Staging|Any CPU.Build.0 = Release|Any CPU
+		{BCC8C684-507F-4EC5-B6E5-BCAA0A976E9D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BCC8C684-507F-4EC5-B6E5-BCAA0A976E9D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BCC8C684-507F-4EC5-B6E5-BCAA0A976E9D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BCC8C684-507F-4EC5-B6E5-BCAA0A976E9D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BCC8C684-507F-4EC5-B6E5-BCAA0A976E9D}.Staging|Any CPU.ActiveCfg = Release|Any CPU
+		{BCC8C684-507F-4EC5-B6E5-BCAA0A976E9D}.Staging|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

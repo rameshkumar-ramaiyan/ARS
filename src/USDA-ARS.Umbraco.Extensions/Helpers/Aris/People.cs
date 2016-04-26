@@ -28,6 +28,17 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                 where += "MODECODE_3 = '" + modeCodeArray[2] + "' AND ";
                 where += "MODECODE_4 = '" + modeCodeArray[3] + "'";
 
+                if (modeCodeArray[0] == "00")
+                {
+                    where = "";
+                    where += "MODECODE_1 = '00'";
+                    for (int i = 1; i < 10; i++)
+                    {
+                        where += " OR MODECODE_1 = '0"+ i +"'";
+                    }
+                }
+
+
                 sql = new Sql()
                  .Select("*")
                  .From("w_people_info")
@@ -70,6 +81,12 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                 if (modeCodeArray[3] != "00")
                 {
                     modeCodeWhere += modeCodeArray[3];
+                }
+
+
+                if (modeCodeArray[0] == "00")
+                {
+                    modeCodeWhere = "0";
                 }
 
                 modeCodeWhere += "%";
@@ -287,39 +304,49 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             var db = new Database("arisPublicWebDbDSN");
 
-            Sql sql = null;
-            string where = "";
+            string sql = @"select personid, perlname, perfname, permname, percommonname,
+                            EMail, DeskPhone, deskareacode, officialtitle
+                            from v_people_info
+                            where  left(perlname, 2) = @alpha
+                            and(status_code = 'a' or status_code is null)
+                            order by perlname , perfname asc
+                            ";
 
             if (false == string.IsNullOrWhiteSpace(alpha))
             {
-                where += "REPLACE(REPLACE(REPLACE(perlname, '-',''), ' ',''), '.','') LIKE '" + CleanSqlString(alpha) + "%'";
+                if (alpha.Length == 1)
+                {
+                    sql = @"select personid, perlname, perfname, permname, percommonname,
+                            EMail, DeskPhone, deskareacode, officialtitle
+                            from v_people_info
+                            where  left(perlname, 1) = @alpha
+                            and(status_code = 'a' or status_code is null)
+                            order by perlname , perfname asc
+                            ";
 
-                where += " AND (status_code = 'a' OR status_code is null)";
+                    peopleList = db.Query<PeopleInfo>(sql, new { alpha = alpha }).ToList();
 
-                sql = new Sql()
-                 .Select("*")
-                 .From("w_people_info")
-                 .Where(where);
-
-                peopleList = db.Query<PeopleInfo>(sql).ToList();
+                    if (peopleList != null && peopleList.Count > 0)
+                    {
+                        if (peopleList[0].LastName.Substring(0, 2).Trim().Length == 1 && peopleList.Count > 1)
+                        {
+                            peopleList = GetPeopleAlpha(peopleList[1].LastName.Substring(0, 2));
+                        }
+                        else
+                        {
+                            peopleList = GetPeopleAlpha(peopleList[0].LastName.Substring(0, 2));
+                        }
+                    }
+                }
+                else
+                {
+                    peopleList = db.Query<PeopleInfo>(sql, new { alpha = alpha }).ToList();
+                }
             }
 
             if (peopleList != null && peopleList.Count > 0)
             {
                 peopleList = peopleList.OrderBy(p => p.LastName).ThenBy(x => x.FirstName).ToList();
-
-                if (alpha.Length == 1)
-                {
-                    if (peopleList[0].LastName.Substring(0, 2).Trim().Length == 1 && peopleList.Count > 1)
-                    {
-                        peopleList = GetPeopleAlpha(peopleList[1].LastName.Substring(0, 2));
-                    }
-                    else
-                    {
-                        peopleList = GetPeopleAlpha(peopleList[0].LastName.Substring(0, 2));
-                    }
-
-                }
             }
 
             return peopleList;

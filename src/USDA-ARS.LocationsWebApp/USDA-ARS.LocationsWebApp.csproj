@@ -18,9 +18,9 @@
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
-    <IISExpressAnonymousAuthentication />
-    <IISExpressWindowsAuthentication />
-    <IISExpressUseClassicPipelineMode />
+    <IISExpressAnonymousAuthentication>enabled</IISExpressAnonymousAuthentication>
+    <IISExpressWindowsAuthentication>enabled</IISExpressWindowsAuthentication>
+    <IISExpressUseClassicPipelineMode>false</IISExpressUseClassicPipelineMode>
     <UseGlobalApplicationHostFile />
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
@@ -340,6 +340,8 @@
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.js" />
     <Content Include="delete-all-national-programs.aspx" />
     <Content Include="news-import.aspx" />
+    <Content Include="StoredProcedures\dbo.uspgetAllDocumentIdsBasedOnPersonId.sql" />
+    <Content Include="StoredProcedures\dbo.uspgetAllDocumentPagesBasedOnCurrentVersionId.sql" />
     <Content Include="StoredProcedures\uspgetAllAreasCarouselSlides.sql" />
     <Content Include="StoredProcedures\uspgetAllAreasPopularTopics.sql" />
     <Content Include="StoredProcedures\uspgetAllCarouselSlidesBasedOnModeCode.sql" />
@@ -348,6 +350,10 @@
     <Content Include="StoredProcedures\uspgetAllPersonsBasedOnModeCode.sql" />
     <Content Include="StoredProcedures\uspgetAllResearchUnitsPopularTopics.sql" />
     <Content Include="StoredProcedures\uspgetAllSoftwaresBasedOnModeCode.sql" />
+    <Content Include="StoredProcedures\uspgetAllNPDocPagesDecrypted.sql" />
+    <Content Include="StoredProcedures\[uspgetAllNPDocumentsBasedOnNPNumber].sql" />
+    <Content Include="StoredProcedures\[uspgetAllNPDocumentsStrategicVersionOnNPNumber].sql" />
+    <Content Include="StoredProcedures\[uspgetAllNPGroupItemsBasedOnGroupId].sql" />
     <Content Include="test-script.aspx" />
     <Content Include="delete-regions.aspx" />
     <Content Include="packages.config" />
@@ -372,6 +378,7 @@
     </Compile>
     <Compile Include="DL\ApiCalls.cs" />
     <Compile Include="DL\GetCalls.cs" />
+    <Compile Include="DL\MapCoordinates.cs" />
     <Compile Include="DL\NationalPrograms.cs" />
     <Compile Include="DL\NewsImport.cs" />
     <Compile Include="Models\NationalProgramGroup.cs" />

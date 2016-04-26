@@ -565,9 +565,18 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"SELECT	modecodes.MODECODE_3_DESC, 
+            string sql = @"SELECT	
+				            case
+					            when modecodes.modecode_4_desc = '' OR modecodes.modecode_4_desc IS NULL			
+						            then modecodes.modecode_3_desc
+					            when modecodes.modecode_4_desc = 'Office of the Director'
+						            then modecodes.modecode_3_desc
+					            else modecodes.modecode_4_desc										
+				            end as modecode_desc,
+				
 				            A4M.PRJ_TITLE, 
 				            A4M.ACCN_NO,
+								
 				            (
 					            right('00' + cast(MODECODES.modecode_1 as varchar(2)), 2) + '-' +
 					            right('00' + cast(MODECODES.modecode_2 as varchar(2)), 2) + '-' +
@@ -578,20 +587,23 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 		            FROM	V_CLEAN_PROJECTS		A4M, 
 				            REF_MODECODE 			MODECODES, 
 				            A416_NATIONAL_PROGRAM 	A4NP
-		            where	STATE_CODE = @state
-			            AND	A4NP.np_CODE = @npCode
 
-			            AND a4np.np_type = 'n'
-			            AND A4NP.ACCN_NO = A4M.ACCN_NO
+		            where	STATE_CODE = @state AND A4NP.np_CODE = @npCode
+
+		            and a4np.np_type = 'n'
+		            AND A4NP.ACCN_NO = A4M.ACCN_NO
 		
-			            and A4M.MODECODE_1 = modecodes.MODECODE_1
-			            and A4M.MODECODE_2 = modecodes.MODECODE_2
-			            and A4M.MODECODE_3 = modecodes.MODECODE_3
-			            and A4M.MODECODE_4 = modecodes.MODECODE_4
+		            and A4M.MODECODE_1 = modecodes.MODECODE_1
+		            and A4M.MODECODE_2 = modecodes.MODECODE_2
+		            and A4M.MODECODE_3 = modecodes.MODECODE_3
+		            and A4M.MODECODE_4 = modecodes.MODECODE_4
 		
-		            order by	modecode					desc,
-					            modecodes.MODECODE_3_DESC, 
-					            A4M.ACCN_NO";
+		            and modecodes.MODECODE_3_DESC <> ''	-- remove xx-00-00-00 and xx-xx-00-00  (i.e.02-00-00-00 and 02-06-00-00)	
+		
+		            order by	modecode desc,
+						
+					            modecode_desc,							
+					            A4M.ACCN_NO	";
 
             projectInfoList = db.Query<ProjectInfo>(sql, new { state = state, npCode = npCode }).ToList();
 

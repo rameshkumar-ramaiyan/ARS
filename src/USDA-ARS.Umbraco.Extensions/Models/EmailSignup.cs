@@ -12,8 +12,11 @@ namespace USDA_ARS.Umbraco.Extensions.Models
         [EmailAddress(ErrorMessage = "Invalid email address")]
         public string Email { get; set; }
 
+        [Required(ErrorMessage = "Please select a subscription")]
         public string ListName { get; set; }
 
         public string Action { get; set; }
+
+        public int UmbracoId { get; set; }
     }
 }

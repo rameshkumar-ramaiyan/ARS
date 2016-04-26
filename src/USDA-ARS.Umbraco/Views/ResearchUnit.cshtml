@@ -14,6 +14,8 @@
     IPublishedContent rootPage = currentPage.AncestorOrSelf(1);
     string modeCode = currentPage.GetPropertyValue<string>("modeCode");
 
+    string defaultCarouselImage = rootPage.GetPropertyValue<string>("defaultCarouselImage");
+
     ArchetypeModel defaultPopularTopics = rootPage.GetPropertyValue<ArchetypeModel>("popularTopics");
 
     ArchetypeModel softwareDownloads = currentPage.GetPropertyValue<ArchetypeModel>("software");
@@ -74,10 +76,12 @@
         adminDetails = siteInfo.AdminDetails;
     }
 }
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
 <div id="bodyContent">
 
-
-
+    
 
     <!-- top content -->
     <div id="topContent">
@@ -231,15 +235,22 @@
                     </a>
                     }
                 }
+                else
+                {
+                    <img src="@(defaultCarouselImage)" class="carouselPhoto" alt="Welcome" />
+                
+                }
+
 
             </div>
 
 
             <div id="carouselCaption" style="width:115px;height:240px;float:right;">
-                phone caption
+                Welcome to our website
             </div>
 
-
+            @if (carouselSlides != null && carouselSlides.Any())
+            {
             <div id="carouselNavigation" style="width:85px;float:right;">
                 <a href="#" id="prevPhoto"><img src="/images/redesign/prev.png" alt="back"></a>
                 <a href="#" id="pausePhoto"><img src="/images/redesign/pause.png" alt="pause"></a>
@@ -247,6 +258,7 @@
 
                 <div id="carouselCounter"></div>
             </div>
+            }
         </div>
 
 

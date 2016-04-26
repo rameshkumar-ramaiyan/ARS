@@ -323,6 +323,8 @@
     <Compile Include="Helpers\News.cs" />
     <Compile Include="Helpers\Nodes.cs" />
     <Compile Include="Helpers\SelectList.cs" />
+    <Compile Include="Helpers\Software.cs" />
+    <Compile Include="Helpers\SubscriptionForm.cs" />
     <Compile Include="Helpers\Topics.cs" />
     <Compile Include="Models\Aris\DownloadRequest.cs" />
     <Compile Include="Models\Aris\NewsInterLink.cs" />

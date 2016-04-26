@@ -59,8 +59,9 @@
     <Reference Include="Axial.Umbraco.DecendantsAudit">
       <HintPath>..\..\..\Umbraco.BackofficeTweaking\src\Axial.Umbraco.DecendantAudit\bin\Debug\Axial.Umbraco.DecendantsAudit.dll</HintPath>
     </Reference>
-    <Reference Include="Axial.Umbraco.FileSystemPicker">
-      <HintPath>..\..\..\Umbraco.FileSystemPicker\src\Axial.Umbraco.FileSystemPicker\bin\Debug\Axial.Umbraco.FileSystemPicker.dll</HintPath>
+    <Reference Include="Axial.Umbraco.FileSystemPicker, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Umbraco.BackofficeTweaking\src\Axial.Umbraco.FileSystemPicker\bin\Debug\Axial.Umbraco.FileSystemPicker.dll</HintPath>
     </Reference>
     <Reference Include="Axial.Umbraco.PropertyAccess">
       <HintPath>..\..\..\Umbraco.BackofficeTweaking\src\Axial.Umbraco.BackofficeTweaking\bin\Debug\Axial.Umbraco.PropertyAccess.dll</HintPath>
@@ -358,10 +359,33 @@
     <Content Include="App_Plugins\FilePicker\filepickerdialog.html" />
     <Content Include="App_Plugins\FilePicker\folderpicker.html" />
     <Content Include="App_Plugins\FilePicker\folderpickerdialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-controller.js" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-delete-dialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-dialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-directives.css" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-directives.js" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-file-upload.html" />
-    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-new-window.aspx" />
-    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.directives.js" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-newfolder-dialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-options-menu.html" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-rename-dialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-upload-dialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\filesystem-picker.html" />
+    <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker-dialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker-newfolder-dialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker-upload-dialog.html" />
+    <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker.html" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertiesViews\checkbox.html" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertiesViews\dropdown.html" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertiesViews\numeric.html" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertiesViews\readonly.html" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertiesViews\textarea.html" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertiesViews\textbox.html" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertyaccess.dashboard.controller.js" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertyaccess.dashboard.css" />
+    <Content Include="App_Plugins\PropertyAccess\Dashboard\propertyaccess.dashboard.html" />
+    <Content Include="App_Plugins\PropertyAccess\propertyaccess.css" />
+    <Content Include="App_Plugins\PropertyAccess\propertyaccess.js" />
+    <Content Include="App_Plugins\PropertyAccess\propertyaccess.resource.js" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.js" />
     <Content Include="App_Plugins\UsdaDataImporter\css\usda.data.importer.css" />
@@ -2784,6 +2808,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Plugins\PropertyAccess\PropertyAccessPropertyEditor.cs" />
     <Compile Include="App_Plugins\UsdaDataImporter\upload.file.aspx.cs">
       <DependentUpon>upload.file.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -2798,6 +2823,7 @@
     <Compile Include="App_Plugins\UsdaWebtrendsRedirect\webtrends.redirect.aspx.designer.cs">
       <DependentUpon>webtrends.redirect.aspx</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\SubscribeFormSurfaceController.cs" />
     <Compile Include="Controllers\EmailSignupFullSurfaceController.cs" />
     <Compile Include="Controllers\EmailSignupSiteSurfaceController.cs" />
     <Compile Include="Controllers\DownloadRequestSurfaceController.cs" />
@@ -2965,6 +2991,8 @@
     <Content Include="App_Plugins\UsdaNewsTopicPicker\package.manifest" />
     <Content Include="App_Plugins\ArchetypeLabelTemplatesNewsTopicPicker\package.manifest" />
     <Content Include="App_Plugins\UsdaNewsProductPicker\package.manifest" />
+    <Content Include="App_Plugins\FileSystemPicker\package.manifest" />
+    <Content Include="App_Plugins\PropertyAccess\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
     <Content Include="Views\StandardWebpage.cshtml" />
@@ -3038,8 +3066,14 @@
     <Content Include="Views\PublicationsLatest.cshtml" />
     <Content Include="Views\RSSFeeds.cshtml" />
     <Content Include="Views\ProjectReportsByProgram.cshtml" />
-    <Content Include="Views\404.cshtml" />
     <Content Include="Views\PageNotFound.cshtml" />
+    <Content Include="Views\SubscribeArsNews.cshtml" />
+    <Content Include="Views\SubscribeFoodNutrition.cshtml" />
+    <Content Include="Views\SubscribeHealthyAnimals.cshtml" />
+    <Content Include="Views\Partials\SubscribeFormArsNews.cshtml" />
+    <Content Include="Views\Partials\SubscribeFormFoodNutrition.cshtml" />
+    <Content Include="Views\Partials\SubscribeFormHealthyAnimals.cshtml" />
+    <Content Include="Views\AZIndex.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

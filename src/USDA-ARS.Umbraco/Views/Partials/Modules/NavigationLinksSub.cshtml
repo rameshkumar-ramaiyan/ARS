@@ -15,6 +15,7 @@
     string modeCode = Request.QueryString["modeCode"];
     string accnNo = Request.QueryString["accnNo"];
     string seqNo115 = Request.QueryString["seqNo115"];
+    string personId = Request.QueryString["person-id"];
 
     List<NodeBreadcrumb> nodeBreadcrumbList = new List<NodeBreadcrumb>();
 
@@ -35,7 +36,29 @@
         }
         else
         {
-            if (breadcrumb.DocumentTypeAlias == "Project" && false == string.IsNullOrWhiteSpace(accnNo))
+            if (breadcrumb.DocumentTypeAlias == "Person")
+            {
+                if (false == string.IsNullOrWhiteSpace(personId))
+                {
+                    PeopleInfo peopleInfo = People.GetPerson(Convert.ToInt32(personId));
+
+                    if (peopleInfo != null)
+                    {
+                        modeCode = peopleInfo.ModeCode1 + "-" + peopleInfo.ModeCode2.ToString("00") + "-" + peopleInfo.ModeCode3.ToString("00") + "-" + peopleInfo.ModeCode4.ToString("00");
+
+                        string personName = peopleInfo.FirstName + " " + peopleInfo.LastName;
+
+                        if (false == string.IsNullOrEmpty(peopleInfo.CommonName))
+                        {
+                            personName += " (" + peopleInfo.CommonName + ")";
+                        }
+
+                        nodeBreadcrumbList.Add(new NodeBreadcrumb(personName, "/people-locations/person?person-id=" + personId, breadcrumb.Level + 5));
+                    }
+                }
+            }
+
+            else if (breadcrumb.DocumentTypeAlias == "Project" && false == string.IsNullOrWhiteSpace(accnNo))
             {
                 ProjectInfo projectInfo = Projects.GetProjectInfo(Convert.ToInt32(accnNo));
 
@@ -92,20 +115,21 @@
         nodeBreadcrumbList = nodeBreadcrumbList.OrderBy(p => p.Level).ToList();
     }
 }
-<div id="navigationLinks">
-    <div id="breadcrumb">
-        You are here:
 
-        <a href="/">ARS Home</a>
+@if (currentPage.DocumentTypeAlias == "ResearchUnit")
+{
+    <div style="margin: 2px 2px 5px 8px;">
+
+        @Html.Raw("You are here:")
 
         @{
             int i = 0;
 
             foreach (NodeBreadcrumb breadNode in nodeBreadcrumbList)
             {
-                if (i == (nodeBreadcrumbList.Count - 1))
+                if (i == 0)
                 {
-                    @Html.Raw("/ ") @(breadNode.Name)
+                    <a href="@breadNode.Url">@(breadNode.Name + " Home")</a>
                 }
                 else
                 {
@@ -115,15 +139,43 @@
                 i++;
             }
         }
-
     </div>
+            }
+            else
+            {
+                <div id="navigationLinks">
+                    <div id="breadcrumb">
+                        You are here:
 
-    <div id="navigationStayConnected">
-        @Html.Partial("~/Views/Partials/Modules/SocialLinks.cshtml")
-    </div>
+                        <a href="/">ARS Home</a>
 
-    <div style="clear:both;">
-        <hr />
-    </div>
+                        @{
+                            int i = 0;
 
-</div>
+                            foreach (NodeBreadcrumb breadNode in nodeBreadcrumbList)
+                            {
+                                if (i == (nodeBreadcrumbList.Count - 1))
+                                {
+                                    @Html.Raw("/ ") @(breadNode.Name)
+                                }
+                                else
+                                {
+                                    @Html.Raw("/") <a href="@breadNode.Url">@(breadNode.Name)</a>
+                                }
+
+                                i++;
+                            }
+                        }
+
+                    </div>
+
+                    <div id="navigationStayConnected">
+                        @Html.Partial("~/Views/Partials/Modules/SocialLinks.cshtml")
+                    </div>
+
+                    <div style="clear:both;">
+                        <hr />
+                    </div>
+
+                </div>
+                            }

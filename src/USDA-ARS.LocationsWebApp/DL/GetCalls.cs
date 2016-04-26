@@ -61,5 +61,29 @@ namespace USDA_ARS.LocationsWebApp.DL
 
             return responseBack;
         }
+
+
+        public static ApiResponse GetNodeByUmbracoId(int umbracoId)
+        {
+            ApiRequest request = new ApiRequest();
+            ApiContent content = new ApiContent();
+
+            request.ApiKey = API_KEY;
+
+            request.ContentList = new List<ApiContent>();
+            content.Properties = new List<ApiProperty>();
+
+            // Get the Umbraco page by Umbraco ID
+            content.Id = umbracoId;
+
+            request.ContentList.Add(content);
+
+            request.ContentList = new List<ApiContent>();
+            request.ContentList.Add(content);
+
+            ApiResponse responseBack = ApiCalls.PostData(request, "Get");
+
+            return responseBack;
+        }
     }
 }

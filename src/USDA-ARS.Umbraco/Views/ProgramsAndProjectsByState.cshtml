@@ -26,13 +26,16 @@
 
     IPublishedContent nationalProgramGroup = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByNpCode(npCode);
     List<ProjectInfo> projectList = null;
-    IPublishedContent nationalProgramNode = null;
+    List<ProjectInfo> projectLocationList = null;
 
     if (nationalProgramGroup != null)
     {
         projectList = Projects.GetProjectsByStateAndProgram(state, npCode);
 
-        nationalProgramNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(projectList[0].ModeCode);
+        if (projectList != null && projectList.Any())
+        {
+            projectLocationList = projectList.DistinctBy(p => p.ModeCode).ToList();
+        }
     }
 
 }
@@ -52,30 +55,47 @@
         (<a href="@(nationalProgramGroup.Url)" id="anch_60">National Program @npCode</a>)
         in @state
 
-        <hr size="1" color="Navy" noshade=""><font face="arial,helvetica" size="-1" color="Navy">
+        <hr size="1" color="Navy" noshade="">
 
-            @if (nationalProgramNode != null)
+        @if (projectLocationList != null)
             {
-            <a href="@(nationalProgramNode.Url)" id="anch_61"><b>@(nationalProgramNode.Name)</b></a>
-            }
-            else
-            {
-                <a href=""><em><b>National Program Not Found</b></em></a>
-            }
-            <div style="margin-left:15px;">
-                @if (projectList != null && projectList.Any())
+                foreach (ProjectInfo locationInfo in projectLocationList)
                 {
-                    <ul>
-                        @foreach (ProjectInfo project in projectList)
-                        {
-                        <li><a href="/research/project/?accnNo=@(project.AccountNo)" id="anch_62">@(project.ProjectTitle)</a></li>
-                        }
-                    </ul>
-                }
-            </div>
-            <br /><br />
+                    IPublishedContent locationNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(locationInfo.ModeCode);
 
-        </font>
+                    if (locationNode != null)
+                    {
+                    <a href="@(locationNode.Url)" id="anch_61"><b>@(locationNode.Name)</b></a>
+                    }
+                    else
+                    {
+                        <em><b>National Program Not Found</b></em>
+                    }
+
+
+                List<ProjectInfo> filteredProjectList = projectList.Where(p => p.ModeCode == locationInfo.ModeCode).ToList();
+                {
+                    <div>
+                        @if (filteredProjectList != null && filteredProjectList.Any())
+                        {
+                            <ul>
+                                @foreach (ProjectInfo project in filteredProjectList)
+                                {
+                                    <li><a href="/research/project/?accnNo=@(project.AccountNo)" id="anch_62">@(project.ProjectTitle)</a></li>
+                                }
+                            </ul>
+                        }
+                    </div>
+                    <br />
+                }
+            }
+        }
+        else
+        {
+            <em><b>No Projects Found</b></em>
+        }
+
+        <br /><br />
 
     </div>
 </div>

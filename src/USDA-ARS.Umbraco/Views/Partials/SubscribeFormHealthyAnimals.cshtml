@@ -1,0 +1,33 @@
+﻿@model USDA_ARS.Umbraco.Extensions.Models.EmailSignup
+@{
+
+}
+<table width="60%" cellpadding="0" cellspacing="0" align="CENTER">
+    <tbody>
+        <tr>
+            <td>
+                @using (Html.BeginUmbracoForm<USDA_ARS.Umbraco.Controllers.SubscribeFormSurfaceController>("HandleFormSubmit"))
+                {
+                    <p>
+                        Please enter your e-mail address:<br />
+                        @Html.ValidationMessageFor(p => p.Email)
+                        <br />
+                        @Html.TextBoxFor(p => p.Email, new { @placeholder = "Sign up for Healthy Animals Newsletter", @style = "width: 285px" })
+                        <br /><br />
+                        @Html.RadioButton("Action", "Subscribe", new { @checked = "checked" })
+                        Subscribe
+                        <br />
+                        @Html.RadioButton("Action", "Unsubscribe")
+                        Unsubscribe<br /><br />
+                    </p>
+                    <p>
+                        @Html.HiddenFor(p => p.ListName)
+                        @Html.HiddenFor(p => p.UmbracoId)
+                        <input type="submit" value="Submit">
+                    </p>
+                }
+            </td>
+        </tr>
+    </tbody>
+</table>
+
