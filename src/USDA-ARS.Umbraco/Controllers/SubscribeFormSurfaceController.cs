@@ -64,7 +64,7 @@ namespace USDA_ARS.Umbraco.Controllers
                     emailTo = emailTo.Replace("{{LIST_NAME}}", model.ListName.ToLower());
 
                     // TESTING
-                    emailTo = "john.skufca@axial.agency";
+                    //emailTo = "john.skufca@axial.agency";
 
                     SubscriptionForm.SendEmail(emailFrom, emailTo, model.Action + " me to " + model.ListName, "\r\n" + model.Action.ToLower() + "\r\n");
 

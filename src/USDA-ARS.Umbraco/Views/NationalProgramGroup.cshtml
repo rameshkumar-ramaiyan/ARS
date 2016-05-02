@@ -1,6 +1,7 @@
 ﻿@using USDA_ARS.Umbraco.Extensions.Helpers
 @using USDA_ARS.Umbraco.Extensions.Helpers.Aris
 @using USDA_ARS.Umbraco.Extensions.Models.Aris
+@using RJP.MultiUrlPicker.Models
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
     Layout = "_Master.cshtml";
@@ -10,6 +11,9 @@
 
     NationalProgramLocation programLocation = NationalPrograms.GetProgramLocationByModeCode(modeCode);
     PeopleInfo locationLeader = null;
+
+    IPublishedContent peopleListNationalProgram = Umbraco.TypedContent(9127); // people list - national program
+    IPublishedContent nationalProgramsMain = Nodes.NationProgramsMain();
 
     if (programLocation != null)
     {
@@ -39,7 +43,14 @@
                                         <!-- modecode description -->
 
                                         <strong>
-                                            @programLocation.ModeCode2Desc
+                                            @if (false == string.IsNullOrEmpty(programLocation.ModeCode2Desc))
+                                            {
+                                                @(programLocation.ModeCode2Desc)
+                                            }
+                                            else
+                                            {
+                                                @(programLocation.ModeCode1Desc)
+                                            }
                                         </strong>
 
                                         <!-- address and mission statement begin -->
@@ -61,7 +72,7 @@
                                                                         @Html.Raw(" - <em>" + locationLeader.CommonName + "</em>")
                                                                     }
                                                                 </a><br />
-                                                                @(locationLeader.PositionTitle)<br />
+                                                                @(locationLeader.TitleWorking)<br />
                                                             }
                                                             else
                                                             {
@@ -102,43 +113,55 @@
                                         <table border="0" cellspacing="0" cellpadding="0">
                                             <tbody>
                                                 <tr>
-
                                                     <td valign="top" colspan="4" width="188">
-
-
                                                         <font face="arial" size="-2">
-
-                                                            <a href="/research/national-programs/" class="projectNav" id="anch_53">
-                                                                National Programs
-                                                            </a><br />
+                                                            @if (nationalProgramsMain != null && nationalProgramsMain.Id != currentPage.Id)
+                                                            {
+                                                                <a href="@nationalProgramsMain.Url" class="projectNav">National Programs</a>
+                                                            }
+                                                            else
+                                                            {
+                                                                @Html.Raw("National Programs")
+                                                            }
+                                                            <br />
                                                         </font>
                                                     </td>
                                                 </tr>
-
-                                                <tr>
-                                                    <td>&nbsp;</td>
-                                                    <td valign="top" colspan="3" width="188">
-
-
-                                                        <font face="arial" size="-2">
-                                                            @(programLocation.ModeCode2Desc)<br />
-                                                        </font>
-                                                    </td>
-                                                </tr>
-
+                                                @if (nationalProgramsMain != null && nationalProgramsMain.Id != currentPage.Id)
+                                                {
+                                                    <tr>
+                                                        <td>&nbsp;</td>
+                                                        <td valign="top" colspan="3" width="188">
+                                                            <font face="arial" size="-2">
+                                                                @(programLocation.ModeCode2Desc)<br />
+                                                            </font>
+                                                        </td>
+                                                    </tr>
+                                                }
                                             </tbody>
                                         </table>
 
-
-                                        <table width="188" border="0">
-                                            <tbody>
-                                                <tr>
-                                                    <td>
-                                                        <table border="0" cellpadding="4"></table>
-                                                    </td>
-                                                </tr>
-                                            </tbody>
-                                        </table>
+                                        @if (nationalProgramsMain != null && nationalProgramsMain.Id == currentPage.Id)
+                                        {
+                                            <table width="188" border="0">
+                                                <tbody>
+                                                    <tr>
+                                                        <td>
+                                                            <table border="0" cellpadding="4">
+                                                                <tbody>
+                                                                    @foreach (IPublishedContent npItem in nationalProgramsMain.Children)
+                                                                    {
+                                                                        <tr>
+                                                                            <td><a href="@(peopleListNationalProgram.Url + "?modeCode=" + npItem.GetPropertyValue<string>("modeCode"))" class="projectNav">@(npItem.Name)</a></td>
+                                                                        </tr>
+                                                                    }
+                                                                </tbody>
+                                                            </table>
+                                                        </td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        }
 
                                     </td>
                                     <!-- end org tree-->
@@ -148,53 +171,93 @@
                             </tbody>
                         </table>
 
-                        <!-- National Programs releated links begin -->
+                        @if (nationalProgramsMain != null && nationalProgramsMain.Id == currentPage.Id)
+                        {
+                            MultiUrls relatedLinkList = currentPage.GetPropertyValue<MultiUrls>("relatedLinks");
 
-                        <table cellspacing="0" cellpadding="3" colspan="2" border="0">
-                            <tbody>
-                                <tr>
-                                    <td colspan="2">
-                                        <b>National Programs</b>
-                                    </td>
-                                </tr>
-                                @if (currentPage.Children != null)
-                                {
-                                    foreach (IPublishedContent program in currentPage.Children)
-                                    {
+                            if (relatedLinkList != null && relatedLinkList.Any())
+                            {
+                                <table border="0" cellspacing="0" cellpadding="0">
+                                    <tbody>
                                         <tr>
-                                            <td valign="top"><img src="/images/incme/bullet.gif" border="0" alt="item"></td>
-                                            <td valign="top" align="left" background="/incme/images/spacer.gif">
-                                                <font face="verdana,arial" size="-1">
-                                                    <a href="@(program.Url)" id="anch_54">@(program.Name)</a> (NP #@(program.GetPropertyValue<string>("npCode")))
-                                                </font>
+                                            <td>
+                                                <font face="verdana,arial" size="-1" color="#000000">
+                                                    <b>
+                                                        Related Information Links:
+                                                    </b>
+                                                </font><br />
+                                                <div align="left">
+                                                    <table width="100%" cellspacing="0" cellpadding="3">
+                                                        <tbody>
+                                                            @foreach (var linkItem in relatedLinkList)
+                                                            {
+                                                                <tr>
+                                                                    <td valign="top"><img src="/images/incme/bullet.gif" border="0" alt="item"></td>
+                                                                    <td valign="top" align="left">
+                                                                        <font face="arial,helvetica" size="-2">
+                                                                            <a href="@(linkItem.Url)" target="@(linkItem.Target)">@linkItem.Name</a>
+                                                                        </font>
+                                                                    </td>
+                                                                </tr>
+                                                            }
+                                                        </tbody>
+                                                    </table>
+                                                </div>
                                             </td>
                                         </tr>
+                                    </tbody>
+                                </table>
+                            }
+                        }
+                        else
+                        {
+                        <!-- National Programs releated links begin -->
+
+                            <table cellspacing="0" cellpadding="3" colspan="2" border="0">
+                                <tbody>
+                                    <tr>
+                                        <td colspan="2">
+                                            <b>National Programs</b>
+                                        </td>
+                                    </tr>
+                                    @if (currentPage.Children != null)
+                                    {
+                                        foreach (IPublishedContent program in currentPage.Children)
+                                        {
+                                            <tr>
+                                                <td valign="top"><img src="/images/incme/bullet.gif" border="0" alt="item"></td>
+                                                <td valign="top" align="left" background="/incme/images/spacer.gif">
+                                                    <a href="@(program.Url)" id="anch_54">@(program.Name)</a> (NP #@(program.GetPropertyValue<string>("npCode")))
+                                                </td>
+                                            </tr>
+                                        }
                                     }
-                                }
-                            </tbody>
-                        </table>
-                        <br />
+                                </tbody>
+                            </table>
+                            <br />
 
                         <!-- National Programs releated links end -->
                         <!-- Patents and Patent Applications begin -->
                         <!-- Patents and Patent Applications end -->
 
 
-                        <table border="0" cellspacing="0" cellpadding="0">
-                            <tbody>
-                                <tr>
-                                    <td>
-                                        <!-- People list begin -->
+                            <table border="0" cellspacing="0" cellpadding="0">
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <!-- People list begin -->
 
-                                        <a href="/people-locations/people-list-national-program/?modeCode=02-04-00-00" title="Staff Listing" id="anch_57"><strong>Staff Listing</strong></a>
+                                            <a href="/people-locations/people-list-national-program/?modeCode=02-04-00-00" title="Staff Listing" id="anch_57"><strong>Staff Listing</strong></a>
 
-                                        <!-- People list end -->
+                                            <!-- People list end -->
 
 
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        }
 
                         <!-- spotlights begin -->
                         @*<table border="0">

@@ -24,6 +24,10 @@ namespace USDA_ARS.Umbraco.Controllers
             {
                 downloadRequest.ModeCode = Request.QueryString.Get("modeCode");
             }
+            else
+            {
+                downloadRequest.ModeCode = "00-00-00-00";
+            }
             if (false == string.IsNullOrWhiteSpace(Request.QueryString["softwareid"]))
             {
                 downloadRequest.SoftwareId = Request.QueryString.Get("softwareId");
@@ -50,6 +54,11 @@ namespace USDA_ARS.Umbraco.Controllers
             }
             else
             {
+                if (true == string.IsNullOrWhiteSpace(model.ModeCode))
+                {
+                    model.ModeCode = "00-00-00-00";
+                }
+
                 IPublishedContent sitePage = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(model.ModeCode);
 
                 ArchetypeFieldsetModel softwareItem = Software.GetSoftwareById(model.SoftwareId);
