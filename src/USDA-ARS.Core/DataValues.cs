@@ -839,7 +839,9 @@ namespace USDA_ARS.Core
             {
                 columnHeader = "Crop Production & Protection";
             }
-            html += "<div class=\"tablecell\">"
+            if (columnNumber != 4)
+            {
+                html += "<div class=\"tablecell\">"
 
                                          + "       <p>" + System.Environment.NewLine
                                       + "              <b>" + System.Environment.NewLine
@@ -848,9 +850,24 @@ namespace USDA_ARS.Core
                                            + "             </font>" + System.Environment.NewLine
                                           + "          </b>" + System.Environment.NewLine
                                          + "       </p>" + System.Environment.NewLine
+                                         +"<br/>" + System.Environment.NewLine
 
                  + "</div>";
+            }
+            else
+            {
+                html += "<div class=\"tablecell\">"
 
+                                             + "       <p>" + System.Environment.NewLine
+                                          + "              <b>" + System.Environment.NewLine
+                                               + "             <font face=\"Arial, Helvetica, sans-serif\" size=\"2\">" + System.Environment.NewLine
+                                           + columnHeader
+                                               + "             </font>" + System.Environment.NewLine
+                                              + "          </b>" + System.Environment.NewLine
+                                             + "       </p>" + System.Environment.NewLine
+
+                     + "</div>";
+            }
             html += "</div>";
             //add rows
             for (int i = 0; i < dt.Rows.Count; i++)
