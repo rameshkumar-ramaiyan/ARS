@@ -78,6 +78,10 @@ display: table-cell;
                         </p>
                         </div>
                           </div>
+                            <asp:TextBox ID="txtRandomIds" runat="server"></asp:TextBox>
+                            <b>
+                            <asp:Button ID="btnRandomIds" runat="server" Text="Add Multiple Random Ids" OnClick="btnRandomIds_Click"  />  
+                            </b>  
                 <br />
                  <div class="table-main-row"> 
                     <div class=" table-main-cell-left">New Mode Code</div><div class="tablecell">  <asp:TextBox ID="txtNewModeCode" runat="server"></asp:TextBox></div>                    

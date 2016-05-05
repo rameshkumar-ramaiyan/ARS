@@ -18,12 +18,15 @@ using Archetype.Models;
 using USDA_ARS.LocationsWebApp.Models;
 using System.Text.RegularExpressions;
 
+using System.Data.SqlClient;
+
 namespace USDA_ARS.LocationsWebApp
 {
     public partial class AddUpdateLocations : System.Web.UI.Page
     {
         protected string API_URL = ConfigurationManager.AppSettings.Get("Umbraco:ApiUrl");
         protected string API_KEY = ConfigurationManager.AppSettings.Get("Umbraco:ApiKey");
+        public static string LocationConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SqlConnectionString"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -1625,6 +1628,144 @@ namespace USDA_ARS.LocationsWebApp
         protected void btnAddMultipleNationalPrograms_Click(object sender, EventArgs e)
         {
             NationalPrograms.ImportNationPrograms();
+        }
+
+        protected void btnRandomIds_Click(object sender, EventArgs e)
+        {
+            string randomId = txtRandomIds.Text;
+            DataTable legacyRandomDocuments = new DataTable();
+            legacyRandomDocuments=GetAllRandomDocuments(randomId);
+        }
+        public static DataTable GetAllRandomDocuments(string randomId)
+        {
+
+            DataTable legacyRandomDocuments = new DataTable();
+            DataTable legacyRandomDocumentsDocPagesEncrypted = new DataTable();
+            DataTable legacyRandomDocPagesDecrypted = new DataTable();
+
+
+            legacyRandomDocumentsDocPagesEncrypted = GetAllRandomDocumentsDocPagesEncrypted(randomId);
+
+            for (int legacyRandomDocumentsDocPagesEncryptedRowId = 0; legacyRandomDocumentsDocPagesEncryptedRowId < legacyRandomDocumentsDocPagesEncrypted.Rows.Count; legacyRandomDocumentsDocPagesEncryptedRowId++)
+            {
+
+                legacyRandomDocPagesDecrypted = GetAllRandomDocPagesDecrypted(randomId);
+            }
+            return legacyRandomDocuments;
+
+        }
+        public static DataTable GetAllRandomDocumentsDocPagesEncrypted(string randomId)
+        {
+            // YOU WILL NEED TO GET THE DOCUMENTS BY THE NP CODE
+
+            //SELECT title, rtrim(doctype) as doctype, docid
+            //FROM documents d
+            //WHERE d.originsite_type = 'program'
+            //AND d.originsite_id = @npCode
+            //AND d.published = 'p'
+            //AND d.SPSysEndTime is null
+            //ORDER BY rtrim(doctype), title, docid
+
+            // THE ABOVE SQL STATEMENT WILL GET YOU THE DOC TITLE, DOC TYPE, AND DOC ID
+
+
+
+
+
+
+            Locations locationsResponse = new Locations();
+            string sql = "[uspgetAllDocumentsBasedOnRandomDocIds]";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@RandomDocId", randomId);
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
+
+        public static DataTable GetAllRandomDocPagesDecrypted(string docPageEncrypted)
+        {
+
+
+
+
+
+            Locations locationsResponse = new Locations();
+            string sql = "[uspGetAllNPDocPagesDecrypted]";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@DocPageEncrypted", docPageEncrypted);
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
         }
     }
 
