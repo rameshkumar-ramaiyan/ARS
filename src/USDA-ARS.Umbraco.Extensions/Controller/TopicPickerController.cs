@@ -62,7 +62,23 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                         }
                         else
                         {
+                            if (node.Parent.ContentType.Alias == "ResearchUnit")
+                            {
+                                node = node.Parent;
+                            }
+                            else if (node.Parent.Parent.ContentType.Alias == "ResearchUnit")
+                            {
+                                node = node.Parent.Parent;
+                            }
+                            else
+                            {
+                                IPublishedContent checkNode3 = node.AncestorsOrSelf(2).FirstOrDefault();
 
+                                if (checkNode3.ContentType.Alias == "Region")
+                                {
+                                    node = checkNode3;
+                                }
+                            }
                         }
 
                         selectList.AddRange(GetTopicList(node));
