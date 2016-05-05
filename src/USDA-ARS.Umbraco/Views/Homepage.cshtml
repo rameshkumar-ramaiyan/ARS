@@ -138,8 +138,8 @@
                         navLinkUrl = navLink.Url;
                     }
 
-                    <a href="@navLinkUrl" title="@slide.GetValue("slideText")">
-                        <img src="@slide.GetValue("slideImage")" class="carouselPhoto" alt="@slide.GetValue("slideAltText")" />
+                    <a href="@navLinkUrl" title="@slide.GetValue("slideAltText")">
+                        <img src="@slide.GetValue("slideImage")" class="carouselPhoto" alt="@slide.GetValue("slideText")" />
                     </a>
                 }
 
