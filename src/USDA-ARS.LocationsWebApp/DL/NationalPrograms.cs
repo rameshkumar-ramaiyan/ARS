@@ -7,6 +7,7 @@ using USDA_ARS.Umbraco.Extensions.Models.Import;
 using System.Data;
 using System.Data.SqlClient;
 using USDA_ARS.LocationsWebApp.Models;
+using System.Text.RegularExpressions;
 
 namespace USDA_ARS.LocationsWebApp.DL
 {
@@ -100,8 +101,9 @@ namespace USDA_ARS.LocationsWebApp.DL
                                         DataTable dtEncryptedlegacyNPProgramDocs = new DataTable(legacyDocTextEncrypted);
                                         dtEncryptedlegacyNPProgramDocs = GetAllNPDocPagesDecrypted(legacyDocTextEncrypted);
                                         legacyDocText = dtEncryptedlegacyNPProgramDocs.Rows[0].Field<string>(0);
-                                            //legacyDocText = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(6).Trim(); // TODO: GET THE PAGE TEXT AND ADD IT HERE
-
+                                        //legacyDocText = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(6).Trim(); // TODO: GET THE PAGE TEXT AND ADD IT HERE
+                                        legacyDocText = StripHTML(legacyDocText);
+                                        legacyDocText = StripHTMLAdditional(legacyDocText);
                                     }
                                     string oldDocId = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(5).Trim();
 
@@ -582,6 +584,91 @@ namespace USDA_ARS.LocationsWebApp.DL
             return nationalProgramGroupList;
         }
 
+        public static string StripHTML(string htmlString)
 
+        {
+
+            //This pattern Matches everything found inside html tags;
+
+            //(.|\n) - > Look for any character or a new line
+
+            // *?  -> 0 or more occurences, and make a non-greedy search meaning
+
+            //That the match will stop at the first available '>' it sees, and not at the last one
+
+            //(if it stopped at the last one we could have overlooked 
+
+            //nested HTML tags inside a bigger HTML tag..)
+
+
+
+
+
+            //  string pattern = @"<(.|\n)*?>";
+            //  string oldBulletedListString = htmlString;
+
+            //  return Regex.Replace(htmlString, pattern, string.Empty);
+
+
+            // start by completely removing all unwanted tags 
+            htmlString = Regex.Replace(htmlString, @"<[/]?(font|span|xml|del|ins|[ovwxp]:\w+)[^>]*?>", "", RegexOptions.IgnoreCase);
+            // then run another pass over the html (twice), removing unwanted attributes 
+            htmlString = Regex.Replace(htmlString, @"<([^>]*)(?:class|lang|style|size|face|[ovwxp]:\w+)=(?:'[^']*'|""[^""]*""|[^\s>]+)([^>]*)>", "<$1$2>", RegexOptions.IgnoreCase);
+            htmlString = Regex.Replace(htmlString, @"<([^>]*)(?:class|lang|style|size|face|[ovwxp]:\w+)=(?:'[^']*'|""[^""]*""|[^\s>]+)([^>]*)>", "<$1$2>", RegexOptions.IgnoreCase);
+
+            return htmlString;
+
+        }
+        public static string StripHTMLAdditional(string htmlString)
+
+        {
+            List<string> list = new List<string>(
+                               htmlString.Split(new string[] { "\r\n" },
+                               StringSplitOptions.RemoveEmptyEntries));
+            //string nbspspan8 = "< SPAN style = \"FONT-FAMILY: 'Times New Roman','serif'; FONT-SIZE: 8.5pt; mso-fareast-font-family: Symbol\" > &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </ SPAN >";
+            //string nbspspan9 = "< SPAN style = \"FONT-FAMILY: 'Times New Roman','serif'; FONT-SIZE: 8.5pt; mso-fareast-font-family: Symbol\" > &nbsp;&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; </ SPAN >";
+            string nbspspan8 = "<P  >Â·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+            string nbspspan9 = "<P  >Â·&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp";
+            string paraEnd = "</P>";
+            string ulliBegin = "<P  ><ul type=\"square\"><li>";
+            string ulliEnd = "</li></ul></P>";
+
+            //foreach (string s in  list)
+            //{
+            //    if(s.Contains(nbspspan8))
+            //    {
+            //        s.Replace(nbspspan8, ulliBegin);
+            //        s.Replace(paraEnd, ulliEnd);
+
+            //    }
+
+            //    if (s.Contains(nbspspan9))
+            //    {
+            //        s.Replace(nbspspan8, ulliBegin);
+            //        s.Replace(paraEnd, ulliEnd);
+            //    }
+            //}
+
+            for (int i = 0; i < list.Count; i++)
+            {
+                if (list[i].Contains(nbspspan8))
+                {
+                    list[i] = list[i].Replace(nbspspan8, ulliBegin);
+                    list[i] = list[i].Replace(paraEnd, ulliEnd);
+
+                }
+
+                if (list[i].Contains(nbspspan9))
+                {
+                    list[i] = list[i].Replace(nbspspan8, ulliBegin);
+                    list[i] = list[i].Replace(paraEnd, ulliEnd);
+                }
+            }
+
+            htmlString = String.Join(String.Empty, list.ToArray()); ;
+
+
+            return htmlString;
+        }
     }
 }
