@@ -3077,6 +3077,7 @@
     <Content Include="Views\AZIndex.cshtml" />
     <Content Include="Views\SiteMap.cshtml" />
     <Content Include="Views\Partials\Modules\ResearchProgramNavigation.cshtml" />
+    <Content Include="Views\Partials\Modules\PhotoCarousel.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

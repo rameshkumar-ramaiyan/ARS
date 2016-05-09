@@ -1,0 +1,111 @@
+﻿@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@model IPublishedContent
+@{
+    ArchetypeModel carouselSlides = Model.GetPropertyValue<ArchetypeModel>("carouselSlides");
+    IPublishedContent rootPage = Model.AncestorOrSelf(1);
+
+    string defaultCarouselImage = "";
+
+    if (rootPage != null)
+    {
+        defaultCarouselImage = rootPage.GetPropertyValue<string>("defaultCarouselImage");
+    }
+
+    if (true == string.IsNullOrEmpty(defaultCarouselImage))
+    {
+        defaultCarouselImage = "/images/default.jpg";
+    }
+
+}
+<!-- photo carousel -->
+@if (carouselSlides != null && carouselSlides.Any())
+{
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#slideshow').cycle(
+                {
+                    fx: 'fade',
+                    speed: 500, 			// speed of the transition (any valid fx speed value)
+                    timeout: 6000,			// milliseconds between slide transitions
+                    prev: '#prevPhoto',
+                    pause: '#pausePhoto',
+                    next: '#nextPhoto',
+                    after: onAfter,
+                    before: onBefore
+                }
+            );
+
+            $('#pausePhoto').click(function () {
+                $('#slideshow').cycle('pause');
+            });
+        });
+
+        function onBefore(curr, next, opts) {
+            var counter = (opts.currSlide + 1) + ' / ' + opts.slideCount;
+            $('#carouselCounter').html(counter);
+
+            // get the photo carousel caption from the image ALT tag
+
+            $('#carouselCaption').html($('#' + this.children[0].id).data('text'));
+        }
+
+        function onAfter(curr, next, opts) {
+            var counter = (opts.currSlide + 1) + ' / ' + opts.slideCount;
+            $('#carouselCounter').html(counter);
+        }
+    </script>
+}
+<a name="photos" class="section508">Photo Carousel Links</a>
+
+<!--Loading display while images load-->
+
+<div id="carousel">
+    <!--Slides-->
+
+    <div id="slideshow" style="width:520px;height:320px;float:left;">
+        @if (carouselSlides != null && carouselSlides.Any())
+        {
+            int slideNum = 0;
+
+            foreach (var slide in carouselSlides)
+            {
+                string navLinkUrl = "#";
+                if (slide.HasValue("slideUrl"))
+                {
+                    Link navLink = slide.GetValue<MultiUrls>("slideUrl").FirstOrDefault();
+
+                    navLinkUrl = navLink.Url;
+                }
+
+                <a href="@navLinkUrl" title="@slide.GetValue("slideAltText")">
+                    <img id="slide@(slideNum)" src="@slide.GetValue("slideImage")" class="carouselPhoto" alt="@slide.GetValue("slideAltText")" data-text="@slide.GetValue("slideText")" />
+                </a>
+
+                slideNum++;
+            }
+        }
+        else
+        {
+            <img src="@defaultCarouselImage" class="carouselPhoto" alt="" />
+        }
+
+    </div>
+
+
+    <div id="carouselCaption" style="width:115px;height:240px;float:right;">
+        elcome to our website
+    </div>
+
+    @if (carouselSlides != null && carouselSlides.Any())
+    {
+        <div id="carouselNavigation" style="width:85px;float:right;">
+            <a href="#" id="prevPhoto"><img src="/images/redesign/prev.png" alt="back"></a>
+            <a href="#" id="pausePhoto"><img src="/images/redesign/pause.png" alt="pause"></a>
+            <a href="#" id="nextPhoto"><img src="/images/redesign/next.png" alt="forward"></a>
+
+            <div id="carouselCounter"></div>
+        </div>
+    }
+</div>
