@@ -230,8 +230,21 @@
                 {
                     foreach (var slide in carouselSlides)
                     {
-                    <a href="@slide.GetValue("slideUrl")" title="@slide.GetValue("slideText")">
-                        <img src="@slide.GetValue("slideImage")" class="carouselPhoto" alt="@slide.GetValue("slideAltText")" />
+                        string slideUrl = "";
+
+                        if (false == string.IsNullOrEmpty(slide.GetValue("slideUrl")))
+                        {
+                            Link navLink = slide.GetValue<MultiUrls>("slideUrl").FirstOrDefault();
+
+                            slideUrl = navLink.Url;
+                        }
+                        else if (false == string.IsNullOrEmpty(slide.GetValue("slideFile")))
+                        {
+                            slideUrl = slide.GetValue("slideFile");
+                        }
+
+                    <a href="@slideUrl" title="@slide.GetValue("slideAltText")">
+                        <img src="@slide.GetValue("slideImage")" class="carouselPhoto" style="width:520px;height:320px;" alt="@slide.GetValue("slideText")" />
                     </a>
                     }
                 }

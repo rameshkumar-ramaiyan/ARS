@@ -4,9 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Web;
 using Umbraco.Core;
+using Umbraco.Core.IO;
 using Umbraco.Core.Events;
 using Umbraco.Core.Models;
 using Umbraco.Core.Services;
@@ -109,6 +110,33 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                             }
                         }
                     }
+
+                    // Check for File System Folder
+                    if (false == string.IsNullOrEmpty(node.GetValue<string>("modeCode")))
+                    {
+                        string startFolder = ConfigurationManager.AppSettings.Get("Usda:UserFileFolderPath");
+                        string modeCodeFolder = node.GetValue<string>("modeCode").Replace("-", "");
+                        string fullPath = IOHelper.MapPath(startFolder.EnsureStartsWith("~/") + "/" + modeCodeFolder);
+
+                        if (false == Directory.Exists(fullPath))
+                        {
+                            Directory.CreateDirectory(fullPath);
+
+                            if (false == Directory.Exists(fullPath + "\\images"))
+                            {
+                                Directory.CreateDirectory(fullPath + "\\images");
+                            }
+                            if (false == Directory.Exists(fullPath + "\\software"))
+                            {
+                                Directory.CreateDirectory(fullPath + "\\software");
+                            }
+                            if (false == Directory.Exists(fullPath + "\\photoCarousel"))
+                            {
+                                Directory.CreateDirectory(fullPath + "\\photoCarousel");
+                            }
+                        }
+                    }
+                        
                 }
                 else if (node.ContentType.Alias == "NationalProgram" && !cs.HasChildren(node.Id))
                 {
