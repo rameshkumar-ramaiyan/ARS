@@ -6,7 +6,7 @@
 
     IPublishedContent currentPage = Model.Content;
     IPublishedContent siteSettings = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.SiteSettings();
-    IPublishedContent rootNode = currentPage.AncestorOrSelf(2);
+    IPublishedContent rootNode = currentPage.AncestorOrSelf(1);
 
     string siteTitle = siteSettings.GetPropertyValue<string>("siteTitle");
     string htmlTitleSiteName = siteSettings.GetPropertyValue<string>("siteName");

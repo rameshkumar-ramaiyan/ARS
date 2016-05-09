@@ -154,6 +154,11 @@
             @Html.Raw(bodyTextBottom)
         }
 
+        @if (slice == "search")
+        {
+            @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+        }
+
         @if (slice == "" || slice == "search")
         {
             <table>

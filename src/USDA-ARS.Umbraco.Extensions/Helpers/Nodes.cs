@@ -65,11 +65,11 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
         public static IEnumerable<IPublishedContent> NationalProgramsList()
         {
-            IPublishedContent NationalProgramsRoot = UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("NationalProgramsRoot"));
+            IPublishedContent NationalProgramsRoot = UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("NationalProgramMain"));
 
             if (NationalProgramsRoot != null)
             {
-                return NationalProgramsRoot.Children.FirstOrDefault().Children;
+                return NationalProgramsRoot.Children;
             }
 
             return null;

@@ -56,15 +56,17 @@
       <HintPath>..\packages\AutoMapper.3.0.0\lib\net40\AutoMapper.Net4.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Axial.Umbraco.DecendantsAudit">
-      <HintPath>..\..\..\Umbraco.BackofficeTweaking\src\Axial.Umbraco.DecendantAudit\bin\Debug\Axial.Umbraco.DecendantsAudit.dll</HintPath>
+    <Reference Include="Axial.Umbraco.DecendantsAudit, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\DLLs\Axial.Umbraco.DecendantsAudit.dll</HintPath>
     </Reference>
     <Reference Include="Axial.Umbraco.FileSystemPicker, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Umbraco.BackofficeTweaking\src\Axial.Umbraco.FileSystemPicker\bin\Debug\Axial.Umbraco.FileSystemPicker.dll</HintPath>
+      <HintPath>..\DLLs\Axial.Umbraco.FileSystemPicker.dll</HintPath>
     </Reference>
-    <Reference Include="Axial.Umbraco.PropertyAccess">
-      <HintPath>..\..\..\Umbraco.BackofficeTweaking\src\Axial.Umbraco.BackofficeTweaking\bin\Debug\Axial.Umbraco.PropertyAccess.dll</HintPath>
+    <Reference Include="Axial.Umbraco.PropertyAccess, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\DLLs\Axial.Umbraco.PropertyAccess.dll</HintPath>
     </Reference>
     <Reference Include="businesslogic, Version=1.0.5820.25374, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\UmbracoCms.Core.7.3.4\lib\businesslogic.dll</HintPath>
@@ -3074,6 +3076,7 @@
     <Content Include="Views\Partials\SubscribeFormHealthyAnimals.cshtml" />
     <Content Include="Views\AZIndex.cshtml" />
     <Content Include="Views\SiteMap.cshtml" />
+    <Content Include="Views\Partials\Modules\ResearchProgramNavigation.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
