@@ -138,7 +138,7 @@ remote.location.href = u;
                             <br />
                             @peopleInfo.Address1<br />
                             @Html.Raw(false == string.IsNullOrWhiteSpace(peopleInfo.Address2) ? peopleInfo.Address2 + "<br />" : "")
-                            @peopleInfo.City, @peopleInfo.State @peopleInfo.PostalCode<br />
+                            @(peopleInfo.City +",") @peopleInfo.State @peopleInfo.PostalCode<br />
 
 
                             <p> </p>

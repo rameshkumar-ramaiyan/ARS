@@ -17,6 +17,7 @@ using USDA_ARS.LocationsWebApp.Models;
 using USDA_ARS.Umbraco.Extensions.Models;
 using USDA_ARS.Umbraco.Extensions.Models.Aris;
 using USDA_ARS.Umbraco.Extensions.Models.Import;
+using ZetaHtmlCompressor;
 
 namespace USDA_ARS.ImportNews
 {
@@ -88,6 +89,7 @@ namespace USDA_ARS.ImportNews
                         string newsTitle = "";
                         string bodyText = GetFileText(fileName);
                         DateTime newsDate = DateTime.MinValue;
+                        string newsBlurb = "";
 
                         List<string> keywordList = null;
 
@@ -108,10 +110,21 @@ namespace USDA_ARS.ImportNews
 
                         if (newsDate > DateTime.MinValue)
                         {
-
                             if (doc.DocumentNode.SelectSingleNode("/html/head/title") != null)
                             {
                                 newsTitle = doc.DocumentNode.SelectSingleNode("/html/head/title").InnerHtml;
+
+                                string[] newsTitleArray = newsTitle.Split('/');
+
+                                if (newsTitleArray != null && newsTitleArray.Length > 0)
+                                {
+                                    newsTitle = newsTitleArray[0].Trim();
+                                }
+                            }
+
+                            if (doc.DocumentNode.SelectSingleNode("//meta[@name='RSSDescription']") != null)
+                            {
+                                newsBlurb = doc.DocumentNode.SelectSingleNode("//meta[@name='RSSDescription']").Attributes["content"].Value;
                             }
 
 
@@ -130,6 +143,29 @@ namespace USDA_ARS.ImportNews
                                 {
                                     bodyText = match.Groups["theBody"].Value;
                                 }
+                            }
+
+                            if (false == string.IsNullOrEmpty(bodyText))
+                            {
+                                HtmlCompressor htmlCompressor = new HtmlCompressor();
+                                htmlCompressor.setRemoveMultiSpaces(true);
+                                htmlCompressor.setRemoveIntertagSpaces(true);
+
+
+                                bodyText = htmlCompressor.compress(bodyText);
+
+                                bodyText = ReplaceCaseInsensitive(bodyText, "../thelatest.htm", "/{localLink:8001}");
+                                bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/pr/thelatest.htm", "/{localLink:8001}");
+
+                                bodyText = ReplaceCaseInsensitive(bodyText, "../subscribe.htm", "/{localLink:8002}");
+                                bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/pr/subscribe.htm", "/{localLink:8002}");
+
+                                bodyText = ReplaceCaseInsensitive(bodyText, "../../graphics/", "/ARSUserFiles/news/graphics/");
+                                bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/graphics/", "/ARSUserFiles/news/graphics/");
+
+                                bodyText = ReplaceCaseInsensitive(bodyText, "\"../../", "/");
+                                bodyText = ReplaceCaseInsensitive(bodyText, "\"../", "/is/");
+                                bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/", "/");
                             }
 
                             if (doc.DocumentNode.SelectSingleNode("//meta[@name='keywords']") != null)
@@ -179,7 +215,7 @@ namespace USDA_ARS.ImportNews
                             }
 
                             AddLog("Adding News...");
-                            ApiContent apiContent = AddNewsArticle(parentId, newsTitle, newsDate, fileInfo.Name, newsTopicList, keywordList, bodyText, year);
+                            ApiContent apiContent = AddNewsArticle(parentId, newsTitle, newsDate, newsBlurb, fileInfo.Name, newsTopicList, keywordList, bodyText, year);
 
                             apiContentList.Add(apiContent);
                         }
@@ -339,7 +375,7 @@ namespace USDA_ARS.ImportNews
         }
 
 
-        static ApiContent AddNewsArticle(int parentId, string title, DateTime newsDate, string filename, List<NewsTopicItem> newsTopicList, List<string> keywordList, string htmlText, string year)
+        static ApiContent AddNewsArticle(int parentId, string title, DateTime newsDate, string blurb, string filename, List<NewsTopicItem> newsTopicList, List<string> keywordList, string htmlText, string year)
         {
             ApiContent content = new ApiContent();
 
@@ -357,7 +393,9 @@ namespace USDA_ARS.ImportNews
 
             properties.Add(new ApiProperty("newsProductsList", newsProductItem));
             properties.Add(new ApiProperty("navigationCategory", "ac79b700-ad67-4179-a4f6-db9705ecce31"));
-            properties.Add(new ApiProperty("bodyText", htmlText)); // Body text                                                                       
+            properties.Add(new ApiProperty("bodyText", htmlText)); // Body text  
+
+            properties.Add(new ApiProperty("newsBlurb", blurb)); // News Blurb 
             properties.Add(new ApiProperty("oldUrl", ConfigurationManager.AppSettings.Get("NewsArticles:LegacyUrlPrefix") + year + "/" + filename)); // current URL
             properties.Add(new ApiProperty("articleDate", newsDate));
 
@@ -384,7 +422,7 @@ namespace USDA_ARS.ImportNews
                         fieldsetTopic.Disabled = false;
                         fieldsetTopic.Id = Guid.NewGuid();
                         fieldsetTopic.Properties = new List<Property>();
-                        fieldsetTopic.Properties.Add(new Property("newsTopic", topicGuid)); 
+                        fieldsetTopic.Properties.Add(new Property("newsTopic", topicGuid));
 
                         newsTopicArchetypeItem.Fieldsets.Add(fieldsetTopic);
                         // LOOP END
@@ -403,7 +441,7 @@ namespace USDA_ARS.ImportNews
 
             content.Properties = properties;
 
-            content.Save = 2; // 1=Saved, 2=Save And Publish
+            content.Save = 1; // 1=Saved, 2=Save And Publish
 
             return content;
         }
@@ -498,6 +536,18 @@ namespace USDA_ARS.ImportNews
             newsTopicList = JsonConvert.DeserializeObject<List<NewsTopicItem>>(httpApiResponseStr);
 
             return newsTopicList;
+        }
+
+
+        static string ReplaceCaseInsensitive(string input, string search, string replacement)
+        {
+            string result = Regex.Replace(
+                input,
+                Regex.Escape(search),
+                replacement.Replace("$", "$$"),
+                RegexOptions.IgnoreCase
+            );
+            return result;
         }
 
 

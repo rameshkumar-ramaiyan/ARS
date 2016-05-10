@@ -153,6 +153,14 @@
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Pvc.Core, Version=0.0.1.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Pvc.Core.0.0.1.3\lib\net45\Pvc.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Pvc.HtmlCompressor, Version=0.0.1.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Pvc.HtmlCompressor.0.0.1.1\lib\net45\Pvc.HtmlCompressor.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Semver, Version=1.1.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\semver.1.1.2\lib\net451\Semver.dll</HintPath>
       <Private>True</Private>

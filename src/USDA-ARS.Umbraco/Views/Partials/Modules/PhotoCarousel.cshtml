@@ -4,13 +4,13 @@
 @model IPublishedContent
 @{
     ArchetypeModel carouselSlides = Model.GetPropertyValue<ArchetypeModel>("carouselSlides");
-    IPublishedContent rootPage = Model.AncestorOrSelf(1);
+    IPublishedContent siteSettings = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.SiteSettings();
 
     string defaultCarouselImage = "";
 
-    if (rootPage != null)
+    if (siteSettings != null)
     {
-        defaultCarouselImage = rootPage.GetPropertyValue<string>("defaultCarouselImage");
+        defaultCarouselImage = siteSettings.GetPropertyValue<string>("defaultCarouselImage");
     }
 
     if (true == string.IsNullOrEmpty(defaultCarouselImage))
@@ -80,7 +80,7 @@
                 }
 
                 <a href="@navLinkUrl" title="@slide.GetValue("slideAltText")">
-                    <img id="slide@(slideNum)" src="@slide.GetValue("slideImage")" class="carouselPhoto" alt="@slide.GetValue("slideAltText")" data-text="@slide.GetValue("slideText")" />
+                    <img id="slide@(slideNum)" src="@slide.GetValue("slideImage")" class="carouselPhoto" alt="@slide.GetValue("slideAltText")" data-text="@slide.GetValue("slideText")" style="max-width: 520px; max-height: 320px;" />
                 </a>
 
                 slideNum++;
@@ -95,7 +95,7 @@
 
 
     <div id="carouselCaption" style="width:115px;height:240px;float:right;">
-        elcome to our website
+        Welcome to our website
     </div>
 
     @if (carouselSlides != null && carouselSlides.Any())
