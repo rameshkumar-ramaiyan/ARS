@@ -52,6 +52,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\AdHocFolderLookup.cs" />
+    <Compile Include="Models\ImportPage.cs" />
     <Compile Include="Models\PersonLookup.cs" />
     <Compile Include="Models\DocFolderLookup.cs" />
     <Compile Include="Models\ModeCodeLookup.cs" />

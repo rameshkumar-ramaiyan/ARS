@@ -12,11 +12,14 @@ namespace USDA_ARS.LocationsWebApp.DL
         {
             string output = "";
 
-            HtmlCompressor htmlCompressor = new HtmlCompressor();
-            htmlCompressor.setRemoveMultiSpaces(true);
-            htmlCompressor.setRemoveIntertagSpaces(true);
+            if (false == string.IsNullOrEmpty(bodyText))
+            {
+                HtmlCompressor htmlCompressor = new HtmlCompressor();
+                htmlCompressor.setRemoveMultiSpaces(true);
+                htmlCompressor.setRemoveIntertagSpaces(true);
 
-            output = htmlCompressor.compress(bodyText);
+                output = htmlCompressor.compress(bodyText);
+            }
 
             return output;
         }

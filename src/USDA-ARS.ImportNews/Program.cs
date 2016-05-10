@@ -41,7 +41,6 @@ namespace USDA_ARS.ImportNews
             MODE_CODE_NEW_LIST = GetNewModeCodesAll();
 
             ImportNews();
-
         }
 
 
