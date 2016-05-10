@@ -147,12 +147,7 @@ namespace USDA_ARS.ImportNews
 
                             if (false == string.IsNullOrEmpty(bodyText))
                             {
-                                HtmlCompressor htmlCompressor = new HtmlCompressor();
-                                htmlCompressor.setRemoveMultiSpaces(true);
-                                htmlCompressor.setRemoveIntertagSpaces(true);
-
-
-                                bodyText = htmlCompressor.compress(bodyText);
+                                bodyText = CleanHtml.CleanUpHtml(bodyText);
 
                                 bodyText = ReplaceCaseInsensitive(bodyText, "../thelatest.htm", "/{localLink:8001}");
                                 bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/pr/thelatest.htm", "/{localLink:8001}");
