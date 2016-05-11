@@ -46,8 +46,8 @@ namespace USDA_ARS.LocationsWebApp.DL
                 if (peopleFolder != null)
                 {
                     List<ApiContent> contentPeopleSites = new List<ApiContent>();
-                    
-                    
+
+
                     // ADD PEOPLE SITES HERE: (LOOP)
                     for (int i = 0; i < legacyPeopleBeforeInsertion.Rows.Count; i++)
                     {
@@ -67,6 +67,8 @@ namespace USDA_ARS.LocationsWebApp.DL
                             for (int j = 0; j < legacyDocsBeforeInsertion.Rows.Count; j++)
                             {
                                 personSiteHtml = legacyDocsBeforeInsertion.Rows[j].Field<string>(0);
+                                personSiteHtml = replaceSP2withARS(personSiteHtml);
+                                personSiteHtml = DL.CleanHtml.CleanUpHtml(personSiteHtml);
                             }
 
                         }
@@ -95,9 +97,9 @@ namespace USDA_ARS.LocationsWebApp.DL
                 }
                 else
                 {
-                  //  ApiResponse responsePage1 = new ApiResponse();
-                  //  return responsePage1;
-                      throw new Exception("Unable to find Umbraco People Folder within Site: " + responsePage.ContentList[0].Name);
+                    //  ApiResponse responsePage1 = new ApiResponse();
+                    //  return responsePage1;
+                    throw new Exception("Unable to find Umbraco People Folder within Site: " + responsePage.ContentList[0].Name);
                 }
 
             }
@@ -230,6 +232,15 @@ namespace USDA_ARS.LocationsWebApp.DL
 
             //return locationsResponse;
             return dt;
+        }
+
+        public static string replaceSP2withARS(string personSiteHtml)
+        {
+            if (personSiteHtml.Contains("sp2UserFiles/person/"))
+            {
+                personSiteHtml = personSiteHtml.Replace("sp2UserFiles/person/", "ARSUserFiles/");
+            }
+            return personSiteHtml;
         }
         #endregion
 
