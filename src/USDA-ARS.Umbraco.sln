@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.Umbraco", "USDA-ARS.Umbraco\USDA-ARS.Umbraco.csproj", "{5D431EFB-FBF9-4166-95F6-791121B27739}"
 EndProject
@@ -35,8 +35,6 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportContactUs", "USDA-ARS.ImportContactUs\USDA-ARS.ImportContactUs.csproj", "{35AD8F26-AF8D-4168-AB7B-A9085CCF87F8}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportDocsClient", "USDA-ARS.ImportDocsClient\USDA-ARS.ImportDocsClient.csproj", "{1C5E5E23-9B00-451D-A401-7ADF12C05DC0}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportNavigation", "USDA-ARS.ImportNavigation\USDA-ARS.ImportNavigation.csproj", "{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -129,12 +127,6 @@ Global
 		{1C5E5E23-9B00-451D-A401-7ADF12C05DC0}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1C5E5E23-9B00-451D-A401-7ADF12C05DC0}.Staging|Any CPU.ActiveCfg = Release|Any CPU
 		{1C5E5E23-9B00-451D-A401-7ADF12C05DC0}.Staging|Any CPU.Build.0 = Release|Any CPU
-		{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}.Release|Any CPU.Build.0 = Release|Any CPU
-		{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}.Staging|Any CPU.ActiveCfg = Release|Any CPU
-		{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}.Staging|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -6,6 +6,8 @@ using System.Web;
 using USDA_ARS.Umbraco.Extensions.Models.Import;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
+using ZetaHtmlCompressor;
 namespace USDA_ARS.LocationsWebApp.DL
 {
     public class PersonSite
@@ -234,15 +236,44 @@ namespace USDA_ARS.LocationsWebApp.DL
             return dt;
         }
 
+        public static string CleanUpHtml(string bodyText)
+        {
+            string output = "";
+
+            if (false == string.IsNullOrEmpty(bodyText))
+            {
+                HtmlCompressor htmlCompressor = new HtmlCompressor();
+                htmlCompressor.setRemoveMultiSpaces(true);
+                htmlCompressor.setRemoveIntertagSpaces(true);
+
+                output = htmlCompressor.compress(bodyText);
+            }
+
+            return output;
+        }
         public static string replaceSP2withARS(string personSiteHtml)
         {
-            if (personSiteHtml.Contains("sp2UserFiles/person/"))
+            if (containsExtension.CaseInsensitiveContains(personSiteHtml, "sp2UserFiles/person/"))
             {
-                personSiteHtml = personSiteHtml.Replace("sp2UserFiles/person/", "ARSUserFiles/");
+
+
+                string result =
+                   Regex.Replace(personSiteHtml, "sp2UserFiles/person/", "ARSUserFiles/", RegexOptions.IgnoreCase);
+
+
+                personSiteHtml = result;
             }
             return personSiteHtml;
         }
         #endregion
 
+    }
+    public static class containsExtension
+    {
+        public static bool CaseInsensitiveContains(this string text, string value,
+        StringComparison stringComparison = StringComparison.CurrentCultureIgnoreCase)
+        {
+            return text.IndexOf(value, stringComparison) >= 0;
+        }
     }
 }
