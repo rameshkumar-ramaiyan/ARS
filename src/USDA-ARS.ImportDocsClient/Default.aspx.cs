@@ -19,7 +19,7 @@ namespace USDA_ARS.ImportDocsClient
         {
             DataTable dt = new DataTable();
             DataTable dt1 = new DataTable();
-            dt = ImportDocsProject.Program.ImportDocsTemp();
+             ImportDocsProject.Program.ImportDocsTemp();
 
 
         }
