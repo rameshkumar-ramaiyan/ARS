@@ -1,15 +1,12 @@
 USE [aris_public_webNew]
 GO
-
-/****** Object:  StoredProcedure [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]    Script Date: 5/12/2016 3:41:05 AM ******/
+/****** Object:  StoredProcedure [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]    Script Date: 5/12/2016 9:13:13 AM ******/
 SET ANSI_NULLS ON
 GO
-
 SET QUOTED_IDENTIFIER ON
 GO
 
-
-CREATE PROCEDURE [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]
+ALTER PROCEDURE [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]
 
 --@RandomSiteId nvarchar(max) ,
 @SiteType nvarchar(max) 
@@ -20,7 +17,7 @@ BEGIN
 	
 	 if @SiteType = 'place'
 		begin
-		select title,CurrentVersion_ID,doctype,Published,OriginSite_Type,OriginSite_ID,oldURL from sitepublisherii.dbo.Documents 
+		select title,CurrentVersion_ID,doctype,Published,OriginSite_Type,OriginSite_ID,oldURL,DocId from sitepublisherii.dbo.Documents 
 		  
 		 where 
 			--Cast(OriginSite_ID as varchar(max) )=  @RandomSiteId
@@ -37,6 +34,7 @@ BEGIN
 		if @SiteType = 'person'
 		begin
 		select title,CurrentVersion_ID,doctype,Published,OriginSite_Type,OriginSite_ID,oldURL from sitepublisherii.dbo.Documents 
+		join sitepublisherii.dbo.People on cast( sitepublisherii.dbo.People.PersonID as varchar(max))=sitepublisherii.dbo.Documents.OriginSite_ID
 		where --Cast(OriginSite_ID as varchar(max) )=  @RandomSiteId
 			--and 
 			published =  'p'
@@ -48,6 +46,7 @@ BEGIN
 		if @SiteType = 'ad_hoc'
 		begin
 		select title,CurrentVersion_ID,doctype,Published,OriginSite_Type,OriginSite_ID,oldURL from sitepublisherii.dbo.Documents 
+		join  sitepublisherii.dbo.Sites on sitepublisherii.dbo.Sites.site_code=sitepublisherii.dbo.Documents.OriginSite_ID
 		where --Cast(OriginSite_ID as varchar(max) )=  @RandomSiteId
 			--and 
 			--published =  'p'
@@ -86,11 +85,9 @@ END
 	-- select * from  sitepublisherii.dbo.DocPages order by  docver_id,docpagenum
 	--where DocVer_ID =(4877)  and CurrentVersion = 1
 
+	--select * from sitepublisherii.dbo.Documents where originsite_type='ad_hoc'
 
 
 
-
-
-GO
 
 
