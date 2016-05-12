@@ -34,6 +34,7 @@ BEGIN
 		if @SiteType = 'person'
 		begin
 		select title,CurrentVersion_ID,doctype,Published,OriginSite_Type,OriginSite_ID,oldURL from sitepublisherii.dbo.Documents 
+		join sitepublisherii.dbo.People on cast( sitepublisherii.dbo.People.PersonID as varchar(max))=sitepublisherii.dbo.Documents.OriginSite_ID
 		where --Cast(OriginSite_ID as varchar(max) )=  @RandomSiteId
 			--and 
 			published =  'p'
