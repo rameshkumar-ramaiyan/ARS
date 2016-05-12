@@ -32,6 +32,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportDocs", "USDA
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportInfoStaff", "USDA-ARS.ImportInfoStaff\USDA-ARS.ImportInfoStaff.csproj", "{1BE34930-55CD-4218-9D6F-FCA070433E85}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportContactUs", "USDA-ARS.ImportContactUs\USDA-ARS.ImportContactUs.csproj", "{35AD8F26-AF8D-4168-AB7B-A9085CCF87F8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -111,6 +113,12 @@ Global
 		{1BE34930-55CD-4218-9D6F-FCA070433E85}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1BE34930-55CD-4218-9D6F-FCA070433E85}.Staging|Any CPU.ActiveCfg = Release|Any CPU
 		{1BE34930-55CD-4218-9D6F-FCA070433E85}.Staging|Any CPU.Build.0 = Release|Any CPU
+		{35AD8F26-AF8D-4168-AB7B-A9085CCF87F8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{35AD8F26-AF8D-4168-AB7B-A9085CCF87F8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{35AD8F26-AF8D-4168-AB7B-A9085CCF87F8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{35AD8F26-AF8D-4168-AB7B-A9085CCF87F8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{35AD8F26-AF8D-4168-AB7B-A9085CCF87F8}.Staging|Any CPU.ActiveCfg = Release|Any CPU
+		{35AD8F26-AF8D-4168-AB7B-A9085CCF87F8}.Staging|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
