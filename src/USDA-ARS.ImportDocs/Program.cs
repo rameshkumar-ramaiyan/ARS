@@ -8,11 +8,23 @@ using System.Threading.Tasks;
 using USDA_ARS.ImportDocs.Models;
 using USDA_ARS.LocationsWebApp.DL;
 using USDA_ARS.Umbraco.Extensions.Models.Import;
+using System.Xml;
 
+using System.Data;
+
+using USDA_ARS.LocationsWebApp.Models;
+using System.Text.RegularExpressions;
+
+using System.Data.SqlClient;
+
+using ZetaHtmlCompressor;
 namespace USDA_ARS.ImportDocs
 {
-    class Program
+    public class Program
     {
+
+        public static string LocationConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SqlConnectionString"].ConnectionString;
+
         static string API_KEY = ConfigurationManager.AppSettings.Get("Umbraco:ApiKey");
         static string API_URL = ConfigurationManager.AppSettings.Get("Umbraco:ApiUrl");
         static List<ModeCodeLookup> MODE_CODE_LIST = null;
@@ -94,7 +106,77 @@ namespace USDA_ARS.ImportDocs
 
         }
 
+        public static void ImportDocsTemp()
+        {
+            // Get List of documents
 
+            //1. get all site codes and doctypes
+
+            //DataTable dtAllDocumentIdsBasedOnDocTypeWithoutParam = new DataTable();          
+            //dtAllDocumentIdsBasedOnDocTypeWithoutParam = GetAllDocumentIdsBasedOnDocTypeWithoutParam();
+           // DataTable dtAllDocumentIdsBasedOnDocTypeWithParamPlace = new DataTable();
+            //DataTable dtAllDocumentIdsBasedOnDocTypeWithParamAdhoc = new DataTable();
+            //DataTable dtAllDocumentIdsBasedOnDocTypeWithParamPerson = new DataTable();
+            
+            //dtAllDocumentIdsBasedOnDocTypeWithParamAdhoc = GetAllDocumentIdsBasedOnDocTypeWithParam("ad_hoc");
+            //dtAllDocumentIdsBasedOnDocTypeWithParamPerson = GetAllDocumentIdsBasedOnDocTypeWithParam("person");
+            ////2. send to doctype sp---not require now
+            List<string> list = new List<string>();
+            list.Add("Place");
+            list.Add("ad_hoc");
+            list.Add("person");
+
+            for (int k = 0; k < list.Count; k++) // Loop through List with for
+            {
+                DataTable dtAllDocumentIdsBasedOnDocTypeWithParam = new DataTable();
+                dtAllDocumentIdsBasedOnDocTypeWithParam = GetAllDocumentIdsBasedOnDocTypeWithParam(list[k]);
+                for (int i = 0; i < dtAllDocumentIdsBasedOnDocTypeWithParamPlace.Rows.Count; i++)
+                {
+
+                    DataTable dtAllDocumentIdPagesBasedOnCurrentVersion = new DataTable();
+                    DataTable newDocpagesAfterDecryption = new DataTable();
+                    newDocpagesAfterDecryption.Columns.Add("DocPageNum");
+                    newDocpagesAfterDecryption.Columns.Add("EncDocPage");
+                    newDocpagesAfterDecryption.Columns.Add("CurrentVersion");
+                    newDocpagesAfterDecryption.Columns.Add("DecDocPage");
+                    DataTable newDocpagesAfterDecryption1 = new DataTable();
+                    //3. send to doc pages sp
+                    string currentversion = dtAllDocumentIdsBasedOnDocTypeWithParamPlace.Rows[i].Field<int>(1).ToString();
+                    dtAllDocumentIdPagesBasedOnCurrentVersion = GetAllDocumentIdPagesBasedOnCurrentVersion(currentversion);
+                    for (int j = 0; j < dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count; j++)
+                    {
+
+                        string docpageNum = dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<int>(0).ToString();
+
+                        string encString = ""; string decString = "";
+                        if (!string.IsNullOrEmpty(dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<string>(1)))
+                            encString = dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<string>(1).ToString();
+                        else encString = string.Empty;
+                        string currentVersion = dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<int>(2).ToString();
+                        DataTable decStringtable = new DataTable();
+                        if (!string.IsNullOrEmpty(dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<string>(1)))
+                        {
+                            decStringtable = GetAllRandomDocPagesDecrypted(encString);
+                            decString = decStringtable.Rows[0].Field<string>(0);
+                            decString = CleanUpHtml(decString);
+                        }
+
+                        else decString = "";
+                        newDocpagesAfterDecryption.Rows.Add(docpageNum, encString, currentVersion, decString);
+
+                    }
+
+
+                }
+
+
+
+            }
+
+
+            //      return dtAllDocumentIdsBasedOnDocTypeWithoutParam;
+
+        }
 
 
 
@@ -460,6 +542,207 @@ namespace USDA_ARS.ImportDocs
         {
             Debug.WriteLine(line);
             Console.WriteLine(line);
+        }
+
+        public static DataTable GetAllDocumentIdsBasedOnDocTypeWithoutParam()
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "[uspgetAllDocumentIdsBasedOnDocTypeWithoutParam]";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                //sqlComm.Parameters.AddWithValue("@PersonId", personId);
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
+        public static DataTable GetAllDocumentIdsBasedOnDocTypeWithParam(string siteType)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "[uspgetAllDocumentIdsBasedOnDocTypeWithParam]";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                //sqlComm.Parameters.AddWithValue("@SiteType", siteType);
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
+        public static DataTable GetAllDocumentIdPagesBasedOnCurrentVersion(string currentversion)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "[uspgetAllDocumentIdPagesBasedOnCurrentVersion]";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@CurrentVersionId", Convert.ToInt32(currentversion));
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
+        public static DataTable GetAllRandomDocPagesDecrypted(string docPageEncrypted)
+        {
+
+
+
+
+
+            Locations locationsResponse = new Locations();
+            string sql = "[uspGetAllNPDocPagesDecrypted]";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@DocPageEncrypted", docPageEncrypted);
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
+        public static string CleanUpHtml(string bodyText)
+        {
+            string output = "";
+
+            if (false == string.IsNullOrEmpty(bodyText))
+            {
+                HtmlCompressor htmlCompressor = new HtmlCompressor();
+                htmlCompressor.setRemoveMultiSpaces(true);
+                htmlCompressor.setRemoveIntertagSpaces(true);
+
+                output = htmlCompressor.compress(bodyText);
+            }
+
+            return output;
         }
     }
 }
