@@ -53,7 +53,7 @@
         }
     ],
     javascript: [
-		'~/App_Plugins/FileSystemPicker/filesystem-picker.directives.js',
-		'~/App_Plugins/FileSystemPicker/filesystem-picker.controller.js'
+		'~/App_Plugins/FileSystemPicker/filesystem-picker-directives.js',
+		'~/App_Plugins/FileSystemPicker/filesystem-picker-controller.js'
 	]
 }
