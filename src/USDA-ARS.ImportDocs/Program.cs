@@ -18,6 +18,8 @@ using System.Text.RegularExpressions;
 using System.Data.SqlClient;
 
 using ZetaHtmlCompressor;
+using System.IO;
+
 namespace USDA_ARS.ImportDocs
 {
     public class Program
@@ -36,19 +38,25 @@ namespace USDA_ARS.ImportDocs
 
         static void Main(string[] args)
         {
+            bool forceCacheUpdate = false;
+
+            if (args != null && args.Length == 1)
+            {
+                forceCacheUpdate = true;
+            }
 
             AddLog("Getting People Sites From Umbraco...");
-            PEOPLE_LIST = GetPeopleAll();
+            GeneratePeopleList(forceCacheUpdate);
             AddLog("Done. Count: " + PEOPLE_LIST.Count);
             AddLog("");
 
             AddLog("Getting Mode Codes From Umbraco...");
-            MODE_CODE_LIST = GetModeCodesAll();
+            GenerateModeCodeList(forceCacheUpdate);
             AddLog("Done. Count: " + MODE_CODE_LIST.Count);
             AddLog("");
 
             AddLog("Getting Doc Folders From Umbraco...");
-            DOC_FOLDER_ID_LIST = GetDocFoldersAll();
+            GenerateDocFolderList(forceCacheUpdate);
             AddLog("Done. Count: " + DOC_FOLDER_ID_LIST.Count);
             AddLog("");
 
@@ -60,7 +68,7 @@ namespace USDA_ARS.ImportDocs
 
 
             AddLog("Importing Docs");
-            ImportDocs();
+            ImportDocsTemp();
 
 
 
@@ -128,7 +136,11 @@ namespace USDA_ARS.ImportDocs
 
             for (int k = 0; k < list.Count; k++) // Loop through List with for
             {
+                AddLog("Looping through: " + list[k]);
+                AddLog("");
+
                 DataTable dtAllDocumentIdsBasedOnDocTypeWithParam = new DataTable();
+                AddLog("Getting docs based on doc type with parameter: " + list[k]);
                 dtAllDocumentIdsBasedOnDocTypeWithParam = GetAllDocumentIdsBasedOnDocTypeWithParam(list[k]);
                 for (int i = 0; i < dtAllDocumentIdsBasedOnDocTypeWithParam.Rows.Count; i++)
                 {
@@ -140,6 +152,7 @@ namespace USDA_ARS.ImportDocs
                     string originSite_ID = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(5).ToString();
                     string oldURL = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(6).ToString();
                     int docId = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<int>(7);
+                    string adHocFolderName = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(8).ToString();
 
                     ImportPage newPage = new ImportPage();
 
@@ -156,6 +169,8 @@ namespace USDA_ARS.ImportDocs
 
                     if (dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count > 0)
                     {
+                        AddLog(" - Found Doc: " + title);
+
                         // CHECK IF THE DOC HAS MUTLIPLE PAGES
                         if (dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count > 1)
                         {
@@ -186,6 +201,7 @@ namespace USDA_ARS.ImportDocs
                             // GET PAGE 1 (MAIN DOC)
                             if (j == 0)
                             {
+                                AddLog(" - Adding main page: " + title);
                                 newPage.OldDocId = 0; // Current SitePublisher Doc ID
                                 newPage.Title = title; // Document Title
                                 newPage.BodyText = decString; // Document Body Text
@@ -194,7 +210,8 @@ namespace USDA_ARS.ImportDocs
                             }
                             else
                             {
-                                newPage.SubPages.Add(new ImportPage() { PageNumber = (j + 1), BodyText = decString });
+                                AddLog(" - Adding sub page: " + docpageNum);
+                                newPage.SubPages.Add(new ImportPage() { PageNumber = docpageNum, BodyText = decString });
                             }
                         }
 
@@ -207,7 +224,7 @@ namespace USDA_ARS.ImportDocs
                         if (list[k] == "ad_hoc")
                         {
                             // IS IT A PAGE FOR A MODE CODE BUT ALSO HAS AN AD HOC?
-                            AddDocToAdHoc(originSite_ID, "{{AD HOC FOLDER NAME}}", newPage);
+                            AddDocToAdHoc(originSite_ID, adHocFolderName, newPage);
                         }
 
                         if (list[k] == "person")
@@ -789,6 +806,189 @@ namespace USDA_ARS.ImportDocs
             }
 
             return output;
+        }
+
+
+        static void GenerateDocFolderList(bool forceCacheUpdate)
+        {
+            DOC_FOLDER_ID_LIST = GetDocFolderCache();
+
+            if (true == forceCacheUpdate || DOC_FOLDER_ID_LIST == null || DOC_FOLDER_ID_LIST.Count <= 0)
+            {
+                DOC_FOLDER_ID_LIST = CreateDocFolderCache();
+            }
+        }
+
+
+        static void GenerateModeCodeList(bool forceCacheUpdate)
+        {
+            MODE_CODE_LIST = GetModeCodeLookupCache();
+
+            if (true == forceCacheUpdate || MODE_CODE_LIST == null || MODE_CODE_LIST.Count <= 0)
+            {
+                MODE_CODE_LIST = CreateModeCodeLookupCache();
+            }
+        }
+
+
+        static void GeneratePeopleList(bool forceCacheUpdate)
+        {
+            PEOPLE_LIST = GetPersonLookupCache();
+
+            if (true == forceCacheUpdate || PEOPLE_LIST == null || PEOPLE_LIST.Count <= 0)
+            {
+                PEOPLE_LIST = CreatePersonLookupCache();
+            }
+        }
+
+
+        static List<DocFolderLookup> CreateDocFolderCache()
+        {
+            List<DocFolderLookup> docFoldersList = new List<DocFolderLookup>();
+
+            docFoldersList = GetDocFoldersAll();
+
+            StringBuilder sb = new StringBuilder();
+
+            if (docFoldersList != null)
+            {
+                foreach (DocFolderLookup docFolder in docFoldersList)
+                {
+                    sb.AppendLine(docFolder.ModeCode + "|" + docFolder.UmbracoDocFolderId);
+                }
+
+                using (FileStream fs = File.Create("doc-folder-cache.txt"))
+                {
+                    // Add some text to file
+                    Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
+                    fs.Write(fileText, 0, fileText.Length);
+                }
+            }
+
+            return docFoldersList;
+        }
+
+
+        static List<DocFolderLookup> GetDocFolderCache()
+        {
+            string filename = "doc-folder-cache.txt";
+            List<DocFolderLookup> docFoldersList = new List<DocFolderLookup>();
+
+            if (true == File.Exists(filename))
+            {
+                using (StreamReader sr = File.OpenText(filename))
+                {
+                    string s = "";
+                    while ((s = sr.ReadLine()) != null)
+                    {
+                        string[] lineArray = s.Split('|');
+
+                        docFoldersList.Add(new DocFolderLookup() { ModeCode = lineArray[0], UmbracoDocFolderId = Convert.ToInt32(lineArray[1]) });
+                    }
+                }
+            }
+
+            return docFoldersList;
+        }
+
+
+        static List<ModeCodeLookup> CreateModeCodeLookupCache()
+        {
+            List<ModeCodeLookup> modeCodeList = new List<ModeCodeLookup>();
+
+            modeCodeList = GetModeCodesAll();
+
+            StringBuilder sb = new StringBuilder();
+
+            if (modeCodeList != null)
+            {
+                foreach (ModeCodeLookup modeCodeItem in modeCodeList)
+                {
+                    sb.AppendLine(modeCodeItem.ModeCode + "|" + modeCodeItem.UmbracoId + "|" + modeCodeItem.Url);
+                }
+
+                using (FileStream fs = File.Create("mode-code-cache.txt"))
+                {
+                    // Add some text to file
+                    Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
+                    fs.Write(fileText, 0, fileText.Length);
+                }
+            }
+
+            return modeCodeList;
+        }
+
+
+        static List<ModeCodeLookup> GetModeCodeLookupCache()
+        {
+            string filename = "mode-code-cache.txt";
+            List<ModeCodeLookup> modeCodeList = new List<ModeCodeLookup>();
+
+            if (true == File.Exists(filename))
+            {
+                using (StreamReader sr = File.OpenText(filename))
+                {
+                    string s = "";
+                    while ((s = sr.ReadLine()) != null)
+                    {
+                        string[] lineArray = s.Split('|');
+
+                        modeCodeList.Add(new ModeCodeLookup() { ModeCode = lineArray[0], UmbracoId = Convert.ToInt32(lineArray[1]), Url = lineArray[2] });
+                    }
+                }
+            }
+
+            return modeCodeList;
+        }
+
+
+        static List<PersonLookup> CreatePersonLookupCache()
+        {
+            List<PersonLookup> personList = new List<PersonLookup>();
+
+            personList = GetPeopleAll();
+
+            StringBuilder sb = new StringBuilder();
+
+            if (personList != null)
+            {
+                foreach (PersonLookup personItem in personList)
+                {
+                    sb.AppendLine(personItem.PersonId + "|" + personItem.UmbracoPersonId);
+                }
+
+                using (FileStream fs = File.Create("person-cache.txt"))
+                {
+                    // Add some text to file
+                    Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
+                    fs.Write(fileText, 0, fileText.Length);
+                }
+            }
+
+            return personList;
+        }
+
+
+        static List<PersonLookup> GetPersonLookupCache()
+        {
+            string filename = "person-cache.txt";
+            List<PersonLookup> personList = new List<PersonLookup>();
+
+            if (true == File.Exists(filename))
+            {
+                using (StreamReader sr = File.OpenText(filename))
+                {
+                    string s = "";
+                    while ((s = sr.ReadLine()) != null)
+                    {
+                        string[] lineArray = s.Split('|');
+
+                        personList.Add(new PersonLookup() { PersonId = Convert.ToInt32(lineArray[0]), UmbracoPersonId = Convert.ToInt32(lineArray[1]) });
+                    }
+                }
+            }
+
+            return personList;
         }
     }
 }
