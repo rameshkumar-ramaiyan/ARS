@@ -152,8 +152,11 @@ namespace USDA_ARS.ImportDocs
                     string originSite_ID = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(5).ToString();
                     string oldURL = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(6).ToString();
                     int docId = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<int>(7);
-                    string adHocFolderName = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(8).ToString();
-
+                    string adHocFolderName = string.Empty;
+                    if (list[k].ToString().Trim()=="ad_hoc")
+                    {
+                         adHocFolderName = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(8).ToString();
+                    }
                     ImportPage newPage = new ImportPage();
 
                     DataTable dtAllDocumentIdPagesBasedOnCurrentVersion = new DataTable();
