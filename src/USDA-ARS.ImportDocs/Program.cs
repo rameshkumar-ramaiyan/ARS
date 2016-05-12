@@ -114,10 +114,10 @@ namespace USDA_ARS.ImportDocs
 
             //DataTable dtAllDocumentIdsBasedOnDocTypeWithoutParam = new DataTable();          
             //dtAllDocumentIdsBasedOnDocTypeWithoutParam = GetAllDocumentIdsBasedOnDocTypeWithoutParam();
-           // DataTable dtAllDocumentIdsBasedOnDocTypeWithParamPlace = new DataTable();
+            // DataTable dtAllDocumentIdsBasedOnDocTypeWithParamPlace = new DataTable();
             //DataTable dtAllDocumentIdsBasedOnDocTypeWithParamAdhoc = new DataTable();
             //DataTable dtAllDocumentIdsBasedOnDocTypeWithParamPerson = new DataTable();
-            
+
             //dtAllDocumentIdsBasedOnDocTypeWithParamAdhoc = GetAllDocumentIdsBasedOnDocTypeWithParam("ad_hoc");
             //dtAllDocumentIdsBasedOnDocTypeWithParamPerson = GetAllDocumentIdsBasedOnDocTypeWithParam("person");
             ////2. send to doctype sp---not require now
@@ -132,7 +132,20 @@ namespace USDA_ARS.ImportDocs
                 dtAllDocumentIdsBasedOnDocTypeWithParam = GetAllDocumentIdsBasedOnDocTypeWithParam(list[k]);
                 for (int i = 0; i < dtAllDocumentIdsBasedOnDocTypeWithParam.Rows.Count; i++)
                 {
+                    string title = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(0).ToString();
+                    string currentversion = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<int>(1).ToString();
+                    string doctype = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(2).ToString();
+                    string published = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(3).ToString();
+                    string originSite_Type = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(4).ToString();
+                    string originSite_ID = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(5).ToString();
+                    string oldURL = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(6).ToString();
+                    ImportPage newPage = new ImportPage();
 
+                    newPage.OldDocId = 0; // Current SitePublisher Doc ID
+                    newPage.Title = title; // Document Title
+                    newPage.BodyText = "{{PAGE_TEXT}}"; // Document Body Text
+                    newPage.OldDocType =  doctype ; // SitePublisher Doc Type
+                    newPage.PageNumber = 1;
                     DataTable dtAllDocumentIdPagesBasedOnCurrentVersion = new DataTable();
                     DataTable newDocpagesAfterDecryption = new DataTable();
                     newDocpagesAfterDecryption.Columns.Add("DocPageNum");
@@ -141,12 +154,14 @@ namespace USDA_ARS.ImportDocs
                     newDocpagesAfterDecryption.Columns.Add("DecDocPage");
                     DataTable newDocpagesAfterDecryption1 = new DataTable();
                     //3. send to doc pages sp
-                    string currentversion = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<int>(1).ToString();
+
                     dtAllDocumentIdPagesBasedOnCurrentVersion = GetAllDocumentIdPagesBasedOnCurrentVersion(currentversion);
+
+
                     for (int j = 0; j < dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count; j++)
                     {
 
-                        string docpageNum = dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<int>(0).ToString();
+                        int docpageNum = dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<int>(0);
 
                         string encString = ""; string decString = "";
                         if (!string.IsNullOrEmpty(dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<string>(1)))
@@ -164,22 +179,55 @@ namespace USDA_ARS.ImportDocs
                         else decString = "";
                         newDocpagesAfterDecryption.Rows.Add(docpageNum, encString, currentVersion, decString);
 
+                        // DOES IT HAVE DOC PAGES?
+                        {
+                            newPage.SubPages = new List<ImportPage>();
+
+                            // LOOP THOUGH DOCUMENT PAGES (IF THERE ARE ANY)
+                            {
+                                newPage.SubPages.Add(new ImportPage() { PageNumber = docpageNum, BodyText = decString });
+                            }
+                        }
+
+
                     }
+                    if (k == 0)
+                    {
+                        // PICK ONLY 1 OF THE 3 METHODS BELOW
+
+                        // IS IT A PAGE FOR A MODE CODE?
+                        AddDocToModeCode("{{MODE CODE}}", newPage);
+                    }
+                    if (k == 1)
+                    {
+
+                        // IS IT A PAGE FOR A MODE CODE BUT ALSO HAS AN AD HOC?
+                        AddDocToAdHoc("{{MODE CODE}}", "{{AD HOC FOLDER NAME}}", newPage);
+
+
+
+                    }
+
+                    if (k == 2)
+                    {
+
+                        // OR IS IT A PAGE FOR A PERSON?
+                        AddDocToPersonSite(0, newPage);
+
+                    }
+
+
 
 
                 }
 
 
+                //      return dtAllDocumentIdsBasedOnDocTypeWithoutParam;
 
             }
 
 
-            //      return dtAllDocumentIdsBasedOnDocTypeWithoutParam;
-
         }
-
-
-
 
 
 
@@ -604,7 +652,7 @@ namespace USDA_ARS.ImportDocs
 
                 da.SelectCommand = sqlComm;
                 da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                //sqlComm.Parameters.AddWithValue("@SiteType", siteType);
+                sqlComm.Parameters.AddWithValue("@SiteType", siteType);
 
                 DataSet ds = new DataSet();
                 da.Fill(ds, "Locations");
