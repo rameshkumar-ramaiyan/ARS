@@ -139,13 +139,10 @@ namespace USDA_ARS.ImportDocs
                     string originSite_Type = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(4).ToString();
                     string originSite_ID = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(5).ToString();
                     string oldURL = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(6).ToString();
+                    int docId = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<int>(7);
+
                     ImportPage newPage = new ImportPage();
 
-                    newPage.OldDocId = 0; // Current SitePublisher Doc ID
-                    newPage.Title = title; // Document Title
-                    newPage.BodyText = "{{PAGE_TEXT}}"; // Document Body Text
-                    newPage.OldDocType =  doctype ; // SitePublisher Doc Type
-                    newPage.PageNumber = 1;
                     DataTable dtAllDocumentIdPagesBasedOnCurrentVersion = new DataTable();
                     DataTable newDocpagesAfterDecryption = new DataTable();
                     newDocpagesAfterDecryption.Columns.Add("DocPageNum");
@@ -157,64 +154,73 @@ namespace USDA_ARS.ImportDocs
 
                     dtAllDocumentIdPagesBasedOnCurrentVersion = GetAllDocumentIdPagesBasedOnCurrentVersion(currentversion);
 
-
-                    for (int j = 0; j < dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count; j++)
+                    if (dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count > 0)
                     {
-
-                        int docpageNum = dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<int>(0);
-
-                        string encString = ""; string decString = "";
-                        if (!string.IsNullOrEmpty(dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<string>(1)))
-                            encString = dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<string>(1).ToString();
-                        else encString = string.Empty;
-                        string currentVersion = dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<int>(2).ToString();
-                        DataTable decStringtable = new DataTable();
-                        if (!string.IsNullOrEmpty(dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<string>(1)))
+                        // CHECK IF THE DOC HAS MUTLIPLE PAGES
+                        if (dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count > 1)
                         {
-                            decStringtable = GetAllRandomDocPagesDecrypted(encString);
-                            decString = decStringtable.Rows[0].Field<string>(0);
-                            decString = CleanUpHtml(decString);
+                            // CREATE THE SUBPAGE OBJECT LIST
+                            newPage.SubPages = new List<ImportPage>();
                         }
 
-                        else decString = "";
-                        newDocpagesAfterDecryption.Rows.Add(docpageNum, encString, currentVersion, decString);
-
-                        // DOES IT HAVE DOC PAGES?
+                        for (int j = 0; j < dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count; j++)
                         {
-                            newPage.SubPages = new List<ImportPage>();
+                            int docpageNum = dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<int>(0);
 
-                            // LOOP THOUGH DOCUMENT PAGES (IF THERE ARE ANY)
+                            string encString = ""; string decString = "";
+                            if (!string.IsNullOrEmpty(dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<string>(1)))
+                                encString = dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<string>(1).ToString();
+                            else encString = string.Empty;
+                            string currentVersion = dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<int>(2).ToString();
+                            DataTable decStringtable = new DataTable();
+                            if (!string.IsNullOrEmpty(dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<string>(1)))
                             {
-                                newPage.SubPages.Add(new ImportPage() { PageNumber = docpageNum, BodyText = decString });
+                                decStringtable = GetAllRandomDocPagesDecrypted(encString);
+                                decString = decStringtable.Rows[0].Field<string>(0);
+                                decString = CleanUpHtml(decString);
+                            }
+
+                            else decString = "";
+                            newDocpagesAfterDecryption.Rows.Add(docpageNum, encString, currentVersion, decString);
+
+                            // GET PAGE 1 (MAIN DOC)
+                            if (j == 0)
+                            {
+                                newPage.OldDocId = 0; // Current SitePublisher Doc ID
+                                newPage.Title = title; // Document Title
+                                newPage.BodyText = decString; // Document Body Text
+                                newPage.OldDocType = doctype; // SitePublisher Doc Type
+                                newPage.PageNumber = 1;
+                            }
+                            else
+                            {
+                                newPage.SubPages.Add(new ImportPage() { PageNumber = (j + 1), BodyText = decString });
                             }
                         }
 
-
-                    }
-                    if (k == 0)
-                    {
                         // PICK ONLY 1 OF THE 3 METHODS BELOW
+                        if (list[k] == "Place")
+                        {
+                            // IS IT A PAGE FOR A MODE CODE?
+                            AddDocToModeCode(originSite_ID, newPage);
+                        }
+                        if (list[k] == "ad_hoc")
+                        {
+                            // IS IT A PAGE FOR A MODE CODE BUT ALSO HAS AN AD HOC?
+                            AddDocToAdHoc(originSite_ID, "{{AD HOC FOLDER NAME}}", newPage);
+                        }
 
-                        // IS IT A PAGE FOR A MODE CODE?
-                        AddDocToModeCode("{{MODE CODE}}", newPage);
+                        if (list[k] == "person")
+                        {
+                            // OR IS IT A PAGE FOR A PERSON?
+                            AddDocToPersonSite(Convert.ToInt32(originSite_ID), newPage);
+
+                        }
                     }
-                    if (k == 1)
-                    {
-
-                        // IS IT A PAGE FOR A MODE CODE BUT ALSO HAS AN AD HOC?
-                        AddDocToAdHoc("{{MODE CODE}}", "{{AD HOC FOLDER NAME}}", newPage);
 
 
 
-                    }
 
-                    if (k == 2)
-                    {
-
-                        // OR IS IT A PAGE FOR A PERSON?
-                        AddDocToPersonSite(0, newPage);
-
-                    }
 
 
 
