@@ -790,5 +790,29 @@ namespace USDA_ARS.ImportDocs
 
             return output;
         }
+        public static string replaceSP2withARS(string personSiteHtml)
+        {
+            if (containsExtension.CaseInsensitiveContains(personSiteHtml,"sp2UserFiles/person/"))
+            {
+
+                
+                string result =
+                   Regex.Replace(personSiteHtml, "sp2UserFiles/person/", "ARSUserFiles/", RegexOptions.IgnoreCase);
+
+
+                personSiteHtml = result;
+            }
+            return personSiteHtml;
+        }
+        
+
+    }
+    public static class containsExtension
+    {
+        public static bool CaseInsensitiveContains(this string text, string value,
+        StringComparison stringComparison = StringComparison.CurrentCultureIgnoreCase)
+        {
+            return text.IndexOf(value, stringComparison) >= 0;
+        }
     }
 }
