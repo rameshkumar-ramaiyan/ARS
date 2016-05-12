@@ -33,7 +33,7 @@ BEGIN
 		
 		if @SiteType = 'person'
 		begin
-		select title,CurrentVersion_ID,doctype,Published,OriginSite_Type,OriginSite_ID,oldURL from sitepublisherii.dbo.Documents 
+		select title,CurrentVersion_ID,doctype,Published,OriginSite_Type,OriginSite_ID,oldURL,DocId from sitepublisherii.dbo.Documents 
 		join sitepublisherii.dbo.People on cast( sitepublisherii.dbo.People.PersonID as varchar(max))=sitepublisherii.dbo.Documents.OriginSite_ID
 		where --Cast(OriginSite_ID as varchar(max) )=  @RandomSiteId
 			--and 
@@ -45,7 +45,7 @@ BEGIN
 		end
 		if @SiteType = 'ad_hoc'
 		begin
-		select title,CurrentVersion_ID,doctype,Published,OriginSite_Type,OriginSite_ID,oldURL from sitepublisherii.dbo.Documents 
+		select title,CurrentVersion_ID,doctype,Published,OriginSite_Type,OriginSite_ID,oldURL,DocId,sitepublisherii.dbo.Sites.siteLabel from sitepublisherii.dbo.Documents 
 		join  sitepublisherii.dbo.Sites on sitepublisherii.dbo.Sites.site_code=sitepublisherii.dbo.Documents.OriginSite_ID
 		where --Cast(OriginSite_ID as varchar(max) )=  @RandomSiteId
 			--and 
