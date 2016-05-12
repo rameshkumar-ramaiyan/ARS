@@ -217,20 +217,12 @@ namespace USDA_ARS.ImportDocs
 
                         }
                     }
-
-
-
-
-
-
-
-
                 }
 
 
                 //      return dtAllDocumentIdsBasedOnDocTypeWithoutParam;
 
-            }
+            } // for (int i = 0; i < dtAllDocumentIdsBasedOnDocTypeWithParam.Rows.Count; i++)
 
 
         }
