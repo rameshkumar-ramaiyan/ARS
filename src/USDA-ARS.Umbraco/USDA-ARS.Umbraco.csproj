@@ -3078,6 +3078,7 @@
     <Content Include="Views\SiteMap.cshtml" />
     <Content Include="Views\Partials\Modules\ResearchProgramNavigation.cshtml" />
     <Content Include="Views\Partials\Modules\PhotoCarousel.cshtml" />
+    <Content Include="Views\StandardPageList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

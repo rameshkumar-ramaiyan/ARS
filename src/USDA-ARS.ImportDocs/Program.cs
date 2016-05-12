@@ -130,7 +130,7 @@ namespace USDA_ARS.ImportDocs
             {
                 DataTable dtAllDocumentIdsBasedOnDocTypeWithParam = new DataTable();
                 dtAllDocumentIdsBasedOnDocTypeWithParam = GetAllDocumentIdsBasedOnDocTypeWithParam(list[k]);
-                for (int i = 0; i < dtAllDocumentIdsBasedOnDocTypeWithParamPlace.Rows.Count; i++)
+                for (int i = 0; i < dtAllDocumentIdsBasedOnDocTypeWithParam.Rows.Count; i++)
                 {
 
                     DataTable dtAllDocumentIdPagesBasedOnCurrentVersion = new DataTable();
@@ -141,7 +141,7 @@ namespace USDA_ARS.ImportDocs
                     newDocpagesAfterDecryption.Columns.Add("DecDocPage");
                     DataTable newDocpagesAfterDecryption1 = new DataTable();
                     //3. send to doc pages sp
-                    string currentversion = dtAllDocumentIdsBasedOnDocTypeWithParamPlace.Rows[i].Field<int>(1).ToString();
+                    string currentversion = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<int>(1).ToString();
                     dtAllDocumentIdPagesBasedOnCurrentVersion = GetAllDocumentIdPagesBasedOnCurrentVersion(currentversion);
                     for (int j = 0; j < dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count; j++)
                     {

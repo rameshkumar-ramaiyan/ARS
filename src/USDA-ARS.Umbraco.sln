@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.Umbraco", "USDA-ARS.Umbraco\USDA-ARS.Umbraco.csproj", "{5D431EFB-FBF9-4166-95F6-791121B27739}"
 EndProject
@@ -30,7 +30,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportLocationMap"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportDocs", "USDA-ARS.ImportDocs\USDA-ARS.ImportDocs.csproj", "{39D4B58E-4AAD-4948-BBDD-1861C7ED776F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportDocsClient", "USDA-ARS.ImportDocsClient\USDA-ARS.ImportDocsClient.csproj", "{1C5E5E23-9B00-451D-A401-7ADF12C05DC0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportInfoStaff", "USDA-ARS.ImportInfoStaff\USDA-ARS.ImportInfoStaff.csproj", "{1BE34930-55CD-4218-9D6F-FCA070433E85}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -105,12 +105,12 @@ Global
 		{39D4B58E-4AAD-4948-BBDD-1861C7ED776F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{39D4B58E-4AAD-4948-BBDD-1861C7ED776F}.Staging|Any CPU.ActiveCfg = Release|Any CPU
 		{39D4B58E-4AAD-4948-BBDD-1861C7ED776F}.Staging|Any CPU.Build.0 = Release|Any CPU
-		{1C5E5E23-9B00-451D-A401-7ADF12C05DC0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1C5E5E23-9B00-451D-A401-7ADF12C05DC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1C5E5E23-9B00-451D-A401-7ADF12C05DC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1C5E5E23-9B00-451D-A401-7ADF12C05DC0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{1C5E5E23-9B00-451D-A401-7ADF12C05DC0}.Staging|Any CPU.ActiveCfg = Release|Any CPU
-		{1C5E5E23-9B00-451D-A401-7ADF12C05DC0}.Staging|Any CPU.Build.0 = Release|Any CPU
+		{1BE34930-55CD-4218-9D6F-FCA070433E85}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1BE34930-55CD-4218-9D6F-FCA070433E85}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1BE34930-55CD-4218-9D6F-FCA070433E85}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1BE34930-55CD-4218-9D6F-FCA070433E85}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1BE34930-55CD-4218-9D6F-FCA070433E85}.Staging|Any CPU.ActiveCfg = Release|Any CPU
+		{1BE34930-55CD-4218-9D6F-FCA070433E85}.Staging|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
