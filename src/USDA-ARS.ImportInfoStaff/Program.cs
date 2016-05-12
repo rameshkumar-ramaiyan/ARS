@@ -31,8 +31,8 @@ namespace USDA_ARS.ImportInfoStaff
         static void Main(string[] args)
         {
             AddLog("Getting Mode Codes From Umbraco...");
-            //MODE_CODE_LIST = GetModeCodesAll();
-            //AddLog("Done. Count: " + MODE_CODE_LIST.Count);
+            MODE_CODE_LIST = GetModeCodesAll();
+            AddLog("Done. Count: " + MODE_CODE_LIST.Count);
             AddLog("");
 
             PATH_LOOKUP_LIST.Add(new InfoStaffPathLookup() { Path = INFO_STAFF_PATH, UmbracoId = UMBRACO_START_NODE });
