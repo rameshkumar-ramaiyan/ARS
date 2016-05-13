@@ -6,7 +6,7 @@
 
     IPublishedContent currentPage = Model.Content;
     IPublishedContent siteSettings = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.SiteSettings();
-    IPublishedContent rootNode = currentPage.AncestorOrSelf(2);
+    IPublishedContent rootNode = currentPage.AncestorOrSelf(1);
 
     string siteTitle = siteSettings.GetPropertyValue<string>("siteTitle");
     string htmlTitleSiteName = siteSettings.GetPropertyValue<string>("siteName");
@@ -175,11 +175,18 @@
                             <ul>
                                 @foreach (var item in secondNavigation)
                                 {
+                                    string modeCodeQS = "";
+
+                                    if (item.Name.IndexOf("Contact") >= 0)
+                                    {
+                                        modeCodeQS = "?modeCode=" + modeCode;
+                                    }
+
                                     if (secondMenuCount > 0)
                                     {
                                         <li>|</li>
                                     }
-                                    <li><a title="@item.Name" href="@item.Url?modeCode=@(modeCode)" target="@item.Target"><b>@item.Name</b></a></li>
+                                    <li><a title="@item.Name" href="@(item.Url + modeCodeQS)" target="@item.Target"><b>@item.Name</b></a></li>
 
                                     secondMenuCount++;
                                 }

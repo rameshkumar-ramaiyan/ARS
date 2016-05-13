@@ -1,0 +1,68 @@
+﻿@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions
+@using USDA_ARS.Umbraco.Extensions.Models
+@using Newtonsoft.Json
+@model IPublishedContent
+@{
+    IPublishedContent docsFolder = Model.Children.FirstOrDefault(n => n.IsDocumentType("NationalProgramFolderContainer"));
+
+    List<IPublishedContent> programDocsList = null;
+    //List<IPublishedContent> programDocsTypeList = null;
+
+    if (docsFolder != null && docsFolder.Children != null && docsFolder.Children.Any())
+    {
+        programDocsList = docsFolder.Children.ToList();
+    }
+
+}
+@if (programDocsList != null && programDocsList.Any())
+{
+    // Program Inputs
+    List<IPublishedContent> programDocsInputsList = programDocsList.Where(p => p.DocumentTypeAlias == "NPProgramInputs").ToList();
+
+    if (programDocsInputsList != null && programDocsInputsList.Any())
+    {
+        <h2 class="related_topics"><div id="rightNavigation">Program Inputs</div></h2>
+        foreach (IPublishedContent doc in programDocsInputsList)
+        {
+            <li>
+                <a href="@(doc.Url)" title="@(doc.Name)">
+                    @(doc.Name)
+                </a>
+            </li>
+        }
+    }
+    // Program Planning
+    List<IPublishedContent> programDocsPlanningList = programDocsList.Where(p => p.DocumentTypeAlias == "NPProgramPlanning").ToList();
+
+    if (programDocsPlanningList != null && programDocsPlanningList.Any())
+    {
+        <h2 class="related_topics"><div id="rightNavigation">Program Planning</div></h2>
+        foreach (IPublishedContent doc in programDocsPlanningList)
+        {
+            <li>
+                <a href="@(doc.Url)" title="@(doc.Name)">
+                    @(doc.Name)
+                </a>
+            </li>
+        }
+    }
+    // Program Reports
+    List<IPublishedContent> programDocsReportsList = programDocsList.Where(p => p.DocumentTypeAlias == "NPProgramReports").ToList();
+
+    if (programDocsReportsList != null && programDocsReportsList.Any())
+    {
+        <h2 class="related_topics"><div id="rightNavigation">Program Reports</div></h2>
+        foreach (IPublishedContent doc in programDocsReportsList)
+        {
+            <li>
+                <a href="@(doc.Url)" title="@(doc.Name)">
+                    @(doc.Name)
+                </a>
+            </li>
+        }
+    }
+
+}

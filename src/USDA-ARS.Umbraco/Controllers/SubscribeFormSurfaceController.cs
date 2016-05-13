@@ -58,13 +58,18 @@ namespace USDA_ARS.Umbraco.Controllers
 
                 if (formNode != null)
                 {
-                    string emailTo = formNode.GetPropertyValue<string>("emailTo");
+                    string emailTo = formNode.GetPropertyValue<string>("emailToSubscribe");
                     string emailFrom = model.Email;
+
+                    if (model.Action != null && model.Action.ToLower().IndexOf("unsubscribe") >= 0)
+                    {
+                        emailTo = formNode.GetPropertyValue<string>("emailToUnsubscribe");
+                    }
 
                     emailTo = emailTo.Replace("{{LIST_NAME}}", model.ListName.ToLower());
 
                     // TESTING
-                    emailTo = "john.skufca@axial.agency";
+                    //emailTo = "john.skufca@axial.agency";
 
                     SubscriptionForm.SendEmail(emailFrom, emailTo, model.Action + " me to " + model.ListName, "\r\n" + model.Action.ToLower() + "\r\n");
 

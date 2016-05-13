@@ -91,7 +91,7 @@
                                         </tr>
                                         <tr>
                                             <td valign="top">
-                                                <a href="@(currentPage.Url + "download/?softwareid=" + Server.UrlEncode(id) + "&modecode=" + modeCode)" id="anch_54">Download</a>
+                                                <a href="@(currentPage.Url + "download/?softwareid=" + Server.UrlEncode(id) + "&modecode=" + softwareNode.GetPropertyValue<string>("modeCode"))" id="anch_54">Download</a>
                                             </td>
                                         </tr>
                                         <tr>

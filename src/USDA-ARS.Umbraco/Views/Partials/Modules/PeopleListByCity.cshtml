@@ -8,7 +8,7 @@
     string modeCode = Model.GetPropertyValue<string>("modeCode");
     string modeCodeCity = modeCode;
     string javascriptInsert = "";
-    int incValue = 0;
+    int incValue = -1;
 
     if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
     {
@@ -40,7 +40,7 @@
         }
     }
 
-    if (incValue > 0)
+    if (incValue >= 0)
     {
         javascriptInsert += @"
                  // Open the panel by modecode

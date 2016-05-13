@@ -112,6 +112,24 @@ namespace USDA_ARS.LocationsWebApp {
         protected global::System.Web.UI.WebControls.Button btnAddMultipleNationalPrograms;
         
         /// <summary>
+        /// txtRandomIds control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.TextBox txtRandomIds;
+        
+        /// <summary>
+        /// btnRandomIds control.
+        /// </summary>
+        /// <remarks>
+        /// Auto-generated field.
+        /// To modify move field declaration from designer file to code-behind file.
+        /// </remarks>
+        protected global::System.Web.UI.WebControls.Button btnRandomIds;
+        
+        /// <summary>
         /// txtNewModeCode control.
         /// </summary>
         /// <remarks>

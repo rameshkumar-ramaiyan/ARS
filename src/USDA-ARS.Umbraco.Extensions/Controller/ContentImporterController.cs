@@ -361,6 +361,64 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
 
         [System.Web.Http.HttpPost]
+        public Models.Import.ApiResponse PublishWithChildren([FromBody] dynamic json)
+        {
+            Models.Import.ApiResponse response = new Models.Import.ApiResponse();
+
+            Models.Import.ApiRequest request = JsonConvert.DeserializeObject<Models.Import.ApiRequest>(json.ToString());
+
+            try
+            {
+                if (request != null)
+                {
+                    //Check object
+                    if (true == string.IsNullOrWhiteSpace(request.ApiKey))
+                    {
+                        response.Message = "API Key is missing.";
+                    }
+                    else if (request.ApiKey != _apiKey)
+                    {
+                        response.Message = "API Key is invalid.";
+                    }
+                    else
+                    {
+                        response.Success = true;
+                        response.ContentList = new List<Models.Import.ApiContent>();
+
+                        IContent content = _contentService.GetById(request.ContentList[0].Id);
+
+                        if (content != null)
+                        {
+                            _contentService.PublishWithChildrenWithStatus(content, 0, true);
+                        }
+                        else
+                        {
+                            response.Success = false;
+                            response.Message = "Cannot find content with Id.";
+                        }
+
+                        response.Message = "Success";
+                    }
+                }
+                else
+                {
+                    response.Message = "The JSON object was not properly formatted.";
+                    response.Success = false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                //LogHelper.Error<DataImporterController>("Content Import Post Error", ex);
+
+                response.Message = ex.ToString();
+            }
+
+            return response;
+        }
+
+
+        [System.Web.Http.HttpPost]
         public Models.Import.ApiResponse GetAllModeCodeNodes([FromBody] dynamic json)
         {
             Models.Import.ApiResponse response = new Models.Import.ApiResponse();
@@ -400,6 +458,72 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                         response.ContentList = new List<Models.Import.ApiContent>();
 
                         foreach (IContent node in modeCodeNodesList)
+                        {
+                            response.ContentList.Add(ConvertContentObj(node));
+                        }
+
+                        response.Message = "Success";
+                        response.Success = true;
+                    }
+                }
+                else
+                {
+                    response.Message = "The JSON object was not properly formatted.";
+                    response.Success = false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                //LogHelper.Error<DataImporterController>("Content Import Post Error", ex);
+
+                response.Message = ex.ToString();
+            }
+
+            return response;
+        }
+
+
+        [System.Web.Http.HttpPost]
+        public Models.Import.ApiResponse GetAllPeopleNodes([FromBody] dynamic json)
+        {
+            Models.Import.ApiResponse response = new Models.Import.ApiResponse();
+
+            Models.Import.ApiRequest request = JsonConvert.DeserializeObject<Models.Import.ApiRequest>(json.ToString());
+
+            try
+            {
+                if (request != null)
+                {
+                    //Check object
+                    if (true == string.IsNullOrWhiteSpace(request.ApiKey))
+                    {
+                        response.Message = "API Key is missing.";
+                    }
+                    else if (request.ApiKey != _apiKey)
+                    {
+                        response.Message = "API Key is invalid.";
+                    }
+                    else
+                    {
+                        response.Success = true;
+                        response.ContentList = new List<Models.Import.ApiContent>();
+
+                        List<IContent> personNodeList = new List<IContent>();
+
+                        IEnumerable<IContent> rootNodeList = _contentService.GetRootContent();
+
+                        foreach (IContent rootNode in rootNodeList)
+                        {
+                            IEnumerable<IContent> nodeList = _contentService.GetDescendants(rootNode.Id);
+
+                            personNodeList.AddRange(nodeList.Where(p => (p.ContentType.Alias == "PersonSite")
+                                        && p.Properties.Any(s => s.Value != null && s.Alias == "personLink" && false == string.IsNullOrEmpty(s.Value.ToString()))).ToList());
+                        }
+
+                        response.ContentList = new List<Models.Import.ApiContent>();
+
+                        foreach (IContent node in personNodeList)
                         {
                             response.ContentList.Add(ConvertContentObj(node));
                         }

@@ -11,7 +11,7 @@
     IPublishedContent currentPage = Model.Content;
 
     ArchetypeModel popularTopics = currentPage.GetPropertyValue<ArchetypeModel>("popularTopics");
-    ArchetypeModel carouselSlides = currentPage.GetPropertyValue<ArchetypeModel>("carouselSlides");
+    
 
     var resourceList = currentPage.GetPropertyValue<MultiUrls>("resources");
 
@@ -71,95 +71,8 @@
                 <a href="top" class="section508">Back to Top of Page</a>
             </div>	<!-- Stay Connected -->
         </div>	<!-- right top content -->
-        <!-- photo carousel -->
 
-
-
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $('#slideshow').cycle(
-                    {
-                        fx: 'fade',
-                        speed: 500, 			// speed of the transition (any valid fx speed value)
-                        timeout: 6000,			// milliseconds between slide transitions
-                        prev: '#prevPhoto',
-                        pause: '#pausePhoto',
-                        next: '#nextPhoto',
-                        after: onAfter,
-                        before: onBefore
-                    }
-                );
-
-                $('#pausePhoto').click(function () {
-                    $('#slideshow').cycle('pause');
-                }
-                );
-            }
-            );
-
-            function onBefore(curr, next, opts) {
-                var counter = (opts.currSlide + 1) + ' / ' + opts.slideCount;
-                $('#carouselCounter').html(counter);
-
-
-
-                // get the photo carousel caption from the image ALT tag
-
-
-                $('#carouselCaption').html(this.children[0].alt);
-            }
-
-            function onAfter(curr, next, opts) {
-                var counter = (opts.currSlide + 1) + ' / ' + opts.slideCount;
-                $('#carouselCounter').html(counter);
-
-
-
-            }
-        </script>
-
-        <a name="photos" class="section508">Photo Carousel Links</a>
-
-        <!--Loading display while images load-->
-
-        <div id="carousel">
-            <!--Slides-->
-
-            <div id="slideshow" style="width:520px;height:320px;float:left;">
-
-
-                @foreach (var slide in carouselSlides)
-                {
-                    string navLinkUrl = "#";
-                    if (slide.HasValue("slideUrl"))
-                    {
-                        Link navLink = slide.GetValue<MultiUrls>("slideUrl").FirstOrDefault();
-
-                        navLinkUrl = navLink.Url;
-                    }
-
-                    <a href="@navLinkUrl" title="@slide.GetValue("slideText")">
-                        <img src="@slide.GetValue("slideImage")" class="carouselPhoto" alt="@slide.GetValue("slideAltText")" />
-                    </a>
-                }
-
-            </div>
-
-
-            <div id="carouselCaption" style="width:115px;height:240px;float:right;">
-                
-            </div>
-
-
-            <div id="carouselNavigation" style="width:85px;float:right;">
-                <a href="#" id="prevPhoto"><img src="/images/redesign/prev.png" alt="back"></a>
-                <a href="#" id="pausePhoto"><img src="/images/redesign/pause.png" alt="pause"></a>
-                <a href="#" id="nextPhoto"><img src="/images/redesign/next.png" alt="forward"></a>
-
-                <div id="carouselCounter"></div>
-            </div>
-        </div>
-
+        @Html.Partial("~/Views/Partials/Modules/PhotoCarousel.cshtml", currentPage)
 
     </div>	<!-- top content end -->
     <!-- middle content -->

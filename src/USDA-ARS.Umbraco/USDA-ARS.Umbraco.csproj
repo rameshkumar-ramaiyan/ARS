@@ -56,15 +56,17 @@
       <HintPath>..\packages\AutoMapper.3.0.0\lib\net40\AutoMapper.Net4.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Axial.Umbraco.DecendantsAudit">
-      <HintPath>..\..\..\Umbraco.BackofficeTweaking\src\Axial.Umbraco.DecendantAudit\bin\Debug\Axial.Umbraco.DecendantsAudit.dll</HintPath>
+    <Reference Include="Axial.Umbraco.DecendantsAudit, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\DLLs\Axial.Umbraco.DecendantsAudit.dll</HintPath>
     </Reference>
     <Reference Include="Axial.Umbraco.FileSystemPicker, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\Umbraco.BackofficeTweaking\src\Axial.Umbraco.FileSystemPicker\bin\Debug\Axial.Umbraco.FileSystemPicker.dll</HintPath>
+      <HintPath>..\DLLs\Axial.Umbraco.FileSystemPicker.dll</HintPath>
     </Reference>
-    <Reference Include="Axial.Umbraco.PropertyAccess">
-      <HintPath>..\..\..\Umbraco.BackofficeTweaking\src\Axial.Umbraco.BackofficeTweaking\bin\Debug\Axial.Umbraco.PropertyAccess.dll</HintPath>
+    <Reference Include="Axial.Umbraco.PropertyAccess, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\DLLs\Axial.Umbraco.PropertyAccess.dll</HintPath>
     </Reference>
     <Reference Include="businesslogic, Version=1.0.5820.25374, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\UmbracoCms.Core.7.3.4\lib\businesslogic.dll</HintPath>
@@ -2823,9 +2825,8 @@
     <Compile Include="App_Plugins\UsdaWebtrendsRedirect\webtrends.redirect.aspx.designer.cs">
       <DependentUpon>webtrends.redirect.aspx</DependentUpon>
     </Compile>
-    <Compile Include="Controllers\SubscribeFormSurfaceController.cs" />
-    <Compile Include="Controllers\EmailSignupFullSurfaceController.cs" />
     <Compile Include="Controllers\EmailSignupSiteSurfaceController.cs" />
+    <Compile Include="Controllers\SubscribeFormSurfaceController.cs" />
     <Compile Include="Controllers\DownloadRequestSurfaceController.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -3074,6 +3075,10 @@
     <Content Include="Views\Partials\SubscribeFormFoodNutrition.cshtml" />
     <Content Include="Views\Partials\SubscribeFormHealthyAnimals.cshtml" />
     <Content Include="Views\AZIndex.cshtml" />
+    <Content Include="Views\SiteMap.cshtml" />
+    <Content Include="Views\Partials\Modules\ResearchProgramNavigation.cshtml" />
+    <Content Include="Views\Partials\Modules\PhotoCarousel.cshtml" />
+    <Content Include="Views\StandardPageList.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -3092,6 +3097,10 @@
     <Folder Include="Views\MacroPartials\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\USDA-ARS.AuthenticationProvider\USDA-ARS.AuthenticationProvider.csproj">
+      <Project>{e93d3daa-37e7-406d-aff0-57d196f94cab}</Project>
+      <Name>USDA-ARS.AuthenticationProvider</Name>
+    </ProjectReference>
     <ProjectReference Include="..\USDA-ARS.Core\USDA-ARS.Core.csproj">
       <Project>{4679653f-bd09-4ba3-85b6-f3865569277a}</Project>
       <Name>USDA-ARS.Core</Name>

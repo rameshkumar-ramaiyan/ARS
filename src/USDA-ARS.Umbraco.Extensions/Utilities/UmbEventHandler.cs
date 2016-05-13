@@ -2,13 +2,16 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
+using System.Web;
 using Umbraco.Core;
+using Umbraco.Core.IO;
 using Umbraco.Core.Events;
 using Umbraco.Core.Models;
 using Umbraco.Core.Services;
+using Umbraco.Web;
 using USDA_ARS.Umbraco.Extensions.Helpers;
 using USDA_ARS.Umbraco.Extensions.Helpers.Aris;
 
@@ -17,6 +20,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
     public class UmbEventHandler : ApplicationEventHandler
     {
         private static readonly IContentService _contentService = ApplicationContext.Current.Services.ContentService;
+        
 
         protected override void ApplicationStarted(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
         {
@@ -28,6 +32,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
         {
             foreach (var node in e.SavedEntities)
             {
+                // SOFTWARE
                 if (node.ContentType.Alias == "Homepage" || node.ContentType.Alias == "Region" || node.ContentType.Alias == "ResearchUnit")
                 {
                     ArchetypeModel software = node.GetValue<ArchetypeModel>("software");
@@ -70,55 +75,68 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                     }
                 }
 
+                // SUB FOLDERS FOR REGIONS AND RESEARCH UNITS
                 if ((node.ContentType.Alias == "Region" || node.ContentType.Alias == "ResearchUnit"))
                 {
-                    // Docs Folder
-                    IContent docsFolder = node.Descendants().FirstOrDefault(n => n.ContentType.Alias == "DocsFolder");
+                    UmbracoHelper umbHelper = new UmbracoHelper(UmbracoContext.Current);
+                    int siteFolderTemplateNodeId = Convert.ToInt32(ConfigurationManager.AppSettings.Get("Usda:SiteFoldesrTemplateNodeId")); //
 
-                    if (docsFolder == null)
+                    IPublishedContent siteFoldersTemplate = umbHelper.TypedContent(siteFolderTemplateNodeId);
+
+                    if (siteFoldersTemplate != null)
                     {
-                        var childNode = _contentService.CreateContent("Docs", node, "DocsFolder");
+                        List<IPublishedContent> siteFolderSubNodeList = siteFoldersTemplate.Children.ToList();
 
-                        _contentService.SaveAndPublishWithStatus(childNode);
+                        if (siteFolderSubNodeList != null && siteFolderSubNodeList.Any())
+                        {
+                            foreach (IPublishedContent subNode in siteFolderSubNodeList)
+                            {
+                                IContent testSubNode = node.Descendants().FirstOrDefault(n => n.Name == subNode.Name);
+
+                                if (testSubNode == null)
+                                {
+                                    IContent createSubNode = _contentService.GetById(subNode.Id);
+
+                                    if (createSubNode != null)
+                                    {
+                                        IContent newSubNode = _contentService.Copy(createSubNode, node.Id, false);
+
+                                        if (newSubNode != null)
+                                        {
+                                            _contentService.PublishWithChildrenWithStatus(newSubNode);
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
 
-                    // Careers Node
-                    IContent sitesCareers = node.Descendants().FirstOrDefault(n => n.ContentType.Alias == "SitesCareers");
-
-                    if (sitesCareers == null)
+                    // Check for File System Folder
+                    if (false == string.IsNullOrEmpty(node.GetValue<string>("modeCode")))
                     {
-                        string navCategoryGuid = Helpers.NavCategories.GetNavGuidByName("Careers");
+                        string startFolder = ConfigurationManager.AppSettings.Get("Usda:UserFileFolderPath");
+                        string modeCodeFolder = node.GetValue<string>("modeCode").Replace("-", "");
+                        string fullPath = IOHelper.MapPath(startFolder.EnsureStartsWith("~/") + "/" + modeCodeFolder);
 
-                        var childNode = _contentService.CreateContent("Careers", node, "SitesCareers");
-                        childNode.SetValue("navigationCategory", navCategoryGuid);
+                        if (false == Directory.Exists(fullPath))
+                        {
+                            Directory.CreateDirectory(fullPath);
 
-                        _contentService.SaveAndPublishWithStatus(childNode);
+                            if (false == Directory.Exists(fullPath + "\\images"))
+                            {
+                                Directory.CreateDirectory(fullPath + "\\images");
+                            }
+                            if (false == Directory.Exists(fullPath + "\\software"))
+                            {
+                                Directory.CreateDirectory(fullPath + "\\software");
+                            }
+                            if (false == Directory.Exists(fullPath + "\\photoCarousel"))
+                            {
+                                Directory.CreateDirectory(fullPath + "\\photoCarousel");
+                            }
+                        }
                     }
-
-                    // News Node
-                    IContent sitesNews = node.Descendants().FirstOrDefault(n => n.ContentType.Alias == "SitesNews");
-
-                    if (sitesNews == null)
-                    {
-                        string navCategoryGuid = Helpers.NavCategories.GetNavGuidByName("News");
-
-                        var childNode = _contentService.CreateContent("News", node, "SitesNews");
-                        childNode.SetValue("navigationCategory", navCategoryGuid);
-
-                        _contentService.SaveAndPublishWithStatus(childNode);
-                    }
-
-                    // People Folder
-                    IContent peopleFolder = node.Descendants().FirstOrDefault(n => n.ContentType.Alias == "PeopleFolder");
-
-                    if (peopleFolder == null)
-                    {
-                        var childNode = _contentService.CreateContent("People", node, "PeopleFolder");
-
-                        _contentService.SaveAndPublishWithStatus(childNode);
-                    }
-
-
+                        
                 }
                 else if (node.ContentType.Alias == "NationalProgram" && !cs.HasChildren(node.Id))
                 {

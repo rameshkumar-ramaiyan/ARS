@@ -18,12 +18,15 @@ using Archetype.Models;
 using USDA_ARS.LocationsWebApp.Models;
 using System.Text.RegularExpressions;
 
+using System.Data.SqlClient;
+
 namespace USDA_ARS.LocationsWebApp
 {
     public partial class AddUpdateLocations : System.Web.UI.Page
     {
         protected string API_URL = ConfigurationManager.AppSettings.Get("Umbraco:ApiUrl");
         protected string API_KEY = ConfigurationManager.AppSettings.Get("Umbraco:ApiKey");
+        public static string LocationConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SqlConnectionString"].ConnectionString;
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -361,7 +364,7 @@ namespace USDA_ARS.LocationsWebApp
                     fieldsetFiles.Disabled = false;
                     fieldsetFiles.Id = Guid.NewGuid();
                     fieldsetFiles.Properties = new List<Property>();
-                    fieldsetFiles.Properties.Add(new Property("file", "/SP2UserFiles/Place/20000000/software/Brio-Insight_en.zip")); // set the file path
+                    fieldsetFiles.Properties.Add(new Property("file", "/ARSUserFiles/20000000/software/Brio-Insight_en.zip")); // set the file path
 
                     softwareFilesList.Fieldsets.Add(fieldsetFiles);
 
@@ -400,7 +403,7 @@ namespace USDA_ARS.LocationsWebApp
             fieldsetCar.Id = Guid.NewGuid();
             fieldsetCar.Properties = new List<Property>();
             fieldsetCar.Properties.Add(new Property("slideName", "ARS Commitment")); // set the slide name
-            fieldsetCar.Properties.Add(new Property("slideImage", "/SP2UserFiles/Place/00000000/images/PhotoCarousel/ARS1890-B.png")); // set the slide image path
+            fieldsetCar.Properties.Add(new Property("slideImage", "/ARSUserFiles/00000000/images/PhotoCarousel/ARS1890-B.png")); // set the slide image path
             fieldsetCar.Properties.Add(new Property("slideText", "<p>Slide Text Here</p>")); // set the slide html text
             fieldsetCar.Properties.Add(new Property("slideAltText", "Slide Alt Text Here")); // set the slide alt text
 
@@ -792,9 +795,9 @@ namespace USDA_ARS.LocationsWebApp
                     string slideAltText = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(3);
                     string slideURL = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(2);
                     string slideImage = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(1);
-                    string slideImageSP2 = "/SP2UserFiles/Place/" + "" + completeModeCode.Replace("-", "") + "/images/PhotoCarousel/" + slideImage;
+                    string slideImageSP2 = "/ARSUserFiles/" + "" + completeModeCode.Replace("-", "") + "/images/PhotoCarousel/" + slideImage;
                     string slideFilePath = null;
-                    if (slideURL.Contains("/SP2UserFiles/Place/"))
+                    if (slideURL.Contains("/ARSUserFiles/"))
                     {
                         slideFilePath = slideImageSP2; // If a slide links to a file instead of a page, set it here.
                     }
@@ -901,7 +904,7 @@ namespace USDA_ARS.LocationsWebApp
                                 fieldsetFiles.Disabled = false;
                                 fieldsetFiles.Id = Guid.NewGuid();
                                 fieldsetFiles.Properties = new List<Property>();
-                                string filePathSP2 = "/SP2UserFiles/Place/" + "" + completeModeCode.Replace("-", "") + "/software/" + filePathSP2List[filePathSP2ListRowId];
+                                string filePathSP2 = "/ARSUserFiles/" + "" + completeModeCode.Replace("-", "") + "/software/" + filePathSP2List[filePathSP2ListRowId];
                                 fieldsetFiles.Properties.Add(new Property("file", filePathSP2)); // set the file path
                                 softwareFilesList.Fieldsets.Add(fieldsetFiles);
                             }
@@ -1158,9 +1161,9 @@ namespace USDA_ARS.LocationsWebApp
                         string slideAltText = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(3);
                         string slideURL = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(2);
                         string slideImage = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(1);
-                        string slideImageSP2 = "/SP2UserFiles/Place/" + "" + newModeCodeProperty.Replace("-", "") + "/images/PhotoCarousel/" + slideImage;
+                        string slideImageSP2 = "/ARSUserFiles/" + "" + newModeCodeProperty.Replace("-", "") + "/images/PhotoCarousel/" + slideImage;
                         string slideFilePath = null;
-                        if (slideURL.Contains("/SP2UserFiles/Place/"))
+                        if (slideURL.Contains("/ARSUserFiles/"))
                         {
                             slideFilePath = slideImageSP2; // If a slide links to a file instead of a page, set it here.
                         }
@@ -1244,7 +1247,7 @@ namespace USDA_ARS.LocationsWebApp
                         fieldsetSoftware.Properties.Add(new Property("shortBlurb", shortBlurb)); // set the short blurb
                         fieldsetSoftware.Properties.Add(new Property("info", info)); // set the large text information
                                                                                      // Files
-                        string filePathSP2 = "/SP2UserFiles/Place/" + "" + newModeCodeProperty.Replace("-", "") + "/software/Brio-Insight_en.zip";
+                        string filePathSP2 = "/ARSUserFiles/" + "" + newModeCodeProperty.Replace("-", "") + "/software/Brio-Insight_en.zip";
                         {
                             ApiArchetype softwareFilesList = new ApiArchetype();
 
@@ -1410,9 +1413,9 @@ namespace USDA_ARS.LocationsWebApp
                         string slideAltText = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(3);
                         string slideURL = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(2);
                         string slideImage = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(1);
-                        string slideImageSP2 = "/SP2UserFiles/Place/" + "" + newModeCodeProperty.Replace("-", "") + "/images/PhotoCarousel/" + slideImage;
+                        string slideImageSP2 = "/ARSUserFiles/" + "" + newModeCodeProperty.Replace("-", "") + "/images/PhotoCarousel/" + slideImage;
                         string slideFilePath = null;
-                        if (slideURL.Contains("/SP2UserFiles/Place/"))
+                        if (slideURL.Contains("/ARSUserFiles/"))
                         {
                             slideFilePath = slideImageSP2; // If a slide links to a file instead of a page, set it here.
                         }
@@ -1499,7 +1502,7 @@ namespace USDA_ARS.LocationsWebApp
                         fieldsetSoftware.Properties.Add(new Property("info", info)); // set the large text information
                         List<string> filePathSP2List = new List<string>();
                         // Files
-                        string filePathSP2 = "/SP2UserFiles/Place/" + "" + newModeCodeProperty.Replace("-", "") + "/software/Brio-Insight_en.zip";
+                        string filePathSP2 = "/ARSUserFiles/" + "" + newModeCodeProperty.Replace("-", "") + "/software/Brio-Insight_en.zip";
                         {
                             ApiArchetype softwareFilesList = new ApiArchetype();
 
@@ -1625,6 +1628,144 @@ namespace USDA_ARS.LocationsWebApp
         protected void btnAddMultipleNationalPrograms_Click(object sender, EventArgs e)
         {
             NationalPrograms.ImportNationPrograms();
+        }
+
+        protected void btnRandomIds_Click(object sender, EventArgs e)
+        {
+            string randomId = txtRandomIds.Text;
+            DataTable legacyRandomDocuments = new DataTable();
+            legacyRandomDocuments=GetAllRandomDocuments(randomId);
+        }
+        public static DataTable GetAllRandomDocuments(string randomId)
+        {
+
+            DataTable legacyRandomDocuments = new DataTable();
+            DataTable legacyRandomDocumentsDocPagesEncrypted = new DataTable();
+            DataTable legacyRandomDocPagesDecrypted = new DataTable();
+
+
+            legacyRandomDocumentsDocPagesEncrypted = GetAllRandomDocumentsDocPagesEncrypted(randomId);
+
+            for (int legacyRandomDocumentsDocPagesEncryptedRowId = 0; legacyRandomDocumentsDocPagesEncryptedRowId < legacyRandomDocumentsDocPagesEncrypted.Rows.Count; legacyRandomDocumentsDocPagesEncryptedRowId++)
+            {
+
+                legacyRandomDocPagesDecrypted = GetAllRandomDocPagesDecrypted(randomId);
+            }
+            return legacyRandomDocuments;
+
+        }
+        public static DataTable GetAllRandomDocumentsDocPagesEncrypted(string randomId)
+        {
+            // YOU WILL NEED TO GET THE DOCUMENTS BY THE NP CODE
+
+            //SELECT title, rtrim(doctype) as doctype, docid
+            //FROM documents d
+            //WHERE d.originsite_type = 'program'
+            //AND d.originsite_id = @npCode
+            //AND d.published = 'p'
+            //AND d.SPSysEndTime is null
+            //ORDER BY rtrim(doctype), title, docid
+
+            // THE ABOVE SQL STATEMENT WILL GET YOU THE DOC TITLE, DOC TYPE, AND DOC ID
+
+
+
+
+
+
+            Locations locationsResponse = new Locations();
+            string sql = "[uspgetAllDocumentsBasedOnRandomDocIds]";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@RandomDocId", randomId);
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
+
+        public static DataTable GetAllRandomDocPagesDecrypted(string docPageEncrypted)
+        {
+
+
+
+
+
+            Locations locationsResponse = new Locations();
+            string sql = "[uspGetAllNPDocPagesDecrypted]";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@DocPageEncrypted", docPageEncrypted);
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
         }
     }
 

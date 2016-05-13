@@ -2,6 +2,7 @@
 @using Archetype.Models
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Helpers
 @using USDA_ARS.Umbraco.Extensions.Helpers.Aris
 @using USDA_ARS.Umbraco.Extensions.Models.Aris
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
@@ -30,7 +31,7 @@
         nationalProgramList = projectProgramList.DistinctBy(p => p.NpCode).ToList();
     }
 
-    
+
 }
 
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
@@ -83,33 +84,38 @@
                 {
                     foreach (ProjectProgram program in nationalProgramList)
                     {
-                        <tr>
-                            <td colspan="3">
-                                <a href="/research/programs/program/?npCode=@(program.NpCode)" class="programNav" id="anch_55">
-                                    @(program.ShortDescription)
-                                    (NP #@(program.NpCode))
-                                </a>
-                            </td>
-                        </tr>
+                        IPublishedContent nationalProgram = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByNpCode(program.NpCode.ToString());
 
-                        List<ProjectProgram> filterProjects = projectProgramList.Where(p => p.NpCode == program.NpCode).ToList();
-
-                        if (filterProjects != null && filterProjects.Any())
+                        if (nationalProgram != null)
                         {
-                            foreach (ProjectProgram project in filterProjects)
+                            <tr>
+                                <td colspan="3">
+                                    <a href="@(nationalProgram.Url)" class="programNav" id="anch_55">
+                                        @(program.ShortDescription)
+                                        (NP #@(program.NpCode))
+                                    </a>
+                                </td>
+                            </tr>
+
+                            List<ProjectProgram> filterProjects = projectProgramList.Where(p => p.NpCode == program.NpCode).ToList();
+
+                            if (filterProjects != null && filterProjects.Any())
                             {
-                                <tr>
-                                    <td width="20"></td>
-                                    <td valign="top">
-                                        <a href="/research/project/?accnNo=@(project.AccountNo)" class="projectNav" id="anch_56">
-                                            @(project.ProjectTitle)
-                                        </a>
-                                        <br />
-                                        <font size="-1">
-                                            (@(Projects.ProjectTypeByCode(project.ProjectType)))
-                                        </font>
-                                    </td>
-                                </tr>
+                                foreach (ProjectProgram project in filterProjects)
+                                {
+                                    <tr>
+                                        <td width="20"></td>
+                                        <td valign="top">
+                                            <a href="/research/project/?accnNo=@(project.AccountNo)" class="projectNav" id="anch_56">
+                                                @(project.ProjectTitle)
+                                            </a>
+                                            <br />
+                                            <font size="-1">
+                                                (@(Projects.ProjectTypeByCode(project.ProjectType)))
+                                            </font>
+                                        </td>
+                                    </tr>
+                                }
                             }
                         }
                     }

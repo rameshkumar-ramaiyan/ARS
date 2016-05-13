@@ -89,6 +89,8 @@
         {
             @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
 
+            <p>Use our map to find a location - city dots are clickable:</p>
+
             <img src="@(countryMap)" border="0" usemap="#usmap" alt="map of areas">
             <map name="usmap">
                 @if (locationMap != null && locationMap.Any())
@@ -152,6 +154,11 @@
             @Html.Raw(bodyTextBottom)
         }
 
+        @if (slice == "search")
+        {
+            @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+        }
+
         @if (slice == "" || slice == "search")
         {
             <table>
@@ -213,6 +220,10 @@
                 <hr />
                 <p>Alternatively, browse for locations by clicking on a letter to see all locations starting with a specific letter:</p>
             }
+            else
+            {
+                @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+            }
 
             <p>
                 &nbsp;
@@ -220,15 +231,17 @@
                 {
                     if (query == letter)
                     {
-                        <strong>@letter</strong>@Html.Raw("&nbsp;|&nbsp;")
+                        <strong style="padding: 4px;">@letter</strong>@Html.Raw("|")
 
                     }
                     else
                     {
-                        <a href="?slice=alpha&query=@letter" id="anch_59">@letter</a>@Html.Raw("&nbsp;|&nbsp;")
+                        <a href="?slice=alpha&query=@letter" style="padding: 4px;">@letter</a>@Html.Raw("|")
                     }
                 }
             </p>
+
+            <hr size="1" noshade="" style="margin-bottom: 16px;" />
 
             if (locationList != null && locationList.Any())
             {
@@ -243,10 +256,10 @@
                         url = locationNode.Url;
                     }
 
-                    <table span="p">
+                    <table span="p" style="margin-bottom: 6px;">
                         <tbody>
                             <tr>
-                                <td valign="top"><img src="/images/incme/bullet.gif" border="0" alt="item"></td>
+                                <td valign="top" style="width: 18px;"><img src="/images/incme/bullet.gif" border="0" alt="item"></td>
                                 <td valign="top" align="left">
                                     <a href="@url" id="anch_51">@location.WebLabel</a>
                                 </td>

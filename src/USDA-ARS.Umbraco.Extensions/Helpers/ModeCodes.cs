@@ -16,7 +16,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
         public static string ModeCodeAddDashes(string modeCode)
         {
-            if (modeCode.IndexOf("-") >= 0)
+            if (false == string.IsNullOrEmpty(modeCode) && modeCode.IndexOf("-") >= 0)
             {
                 return modeCode;
             }

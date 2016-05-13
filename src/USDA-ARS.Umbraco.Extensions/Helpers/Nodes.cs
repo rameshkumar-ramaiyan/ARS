@@ -23,6 +23,18 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             return UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("SiteSettings"));
         }
 
+        public static IPublishedContent NationProgramsMain()
+        {
+            IPublishedContent NationalProgramsRoot = UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("NationalProgramsRoot"));
+
+            if (NationalProgramsRoot != null)
+            {
+                return NationalProgramsRoot.Children.FirstOrDefault();
+            }
+
+            return null;
+        }
+
         public static IEnumerable<IPublishedContent> MainNavigationList()
         {
             IPublishedContent mainNav = SiteSettings().Children.FirstOrDefault(n => n.IsDocumentType("MainNavigation"));
@@ -53,11 +65,11 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
         public static IEnumerable<IPublishedContent> NationalProgramsList()
         {
-            IPublishedContent NationalProgramsRoot = UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("NationalProgramsRoot"));
+            IPublishedContent NationalProgramsRoot = UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("NationalProgramMain"));
 
             if (NationalProgramsRoot != null)
             {
-                return NationalProgramsRoot.Children.FirstOrDefault().Children;
+                return NationalProgramsRoot.Children;
             }
 
             return null;

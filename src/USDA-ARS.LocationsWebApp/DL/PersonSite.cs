@@ -6,6 +6,8 @@ using System.Web;
 using USDA_ARS.Umbraco.Extensions.Models.Import;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
+using ZetaHtmlCompressor;
 namespace USDA_ARS.LocationsWebApp.DL
 {
     public class PersonSite
@@ -46,8 +48,8 @@ namespace USDA_ARS.LocationsWebApp.DL
                 if (peopleFolder != null)
                 {
                     List<ApiContent> contentPeopleSites = new List<ApiContent>();
-                    
-                    
+
+
                     // ADD PEOPLE SITES HERE: (LOOP)
                     for (int i = 0; i < legacyPeopleBeforeInsertion.Rows.Count; i++)
                     {
@@ -67,6 +69,8 @@ namespace USDA_ARS.LocationsWebApp.DL
                             for (int j = 0; j < legacyDocsBeforeInsertion.Rows.Count; j++)
                             {
                                 personSiteHtml = legacyDocsBeforeInsertion.Rows[j].Field<string>(0);
+                                personSiteHtml = replaceSP2withARS(personSiteHtml);
+                                personSiteHtml = DL.CleanHtml.CleanUpHtml(personSiteHtml);
                             }
 
                         }
@@ -95,9 +99,9 @@ namespace USDA_ARS.LocationsWebApp.DL
                 }
                 else
                 {
-                  //  ApiResponse responsePage1 = new ApiResponse();
-                  //  return responsePage1;
-                      throw new Exception("Unable to find Umbraco People Folder within Site: " + responsePage.ContentList[0].Name);
+                    //  ApiResponse responsePage1 = new ApiResponse();
+                    //  return responsePage1;
+                    throw new Exception("Unable to find Umbraco People Folder within Site: " + responsePage.ContentList[0].Name);
                 }
 
             }
@@ -231,7 +235,45 @@ namespace USDA_ARS.LocationsWebApp.DL
             //return locationsResponse;
             return dt;
         }
+
+        public static string CleanUpHtml(string bodyText)
+        {
+            string output = "";
+
+            if (false == string.IsNullOrEmpty(bodyText))
+            {
+                HtmlCompressor htmlCompressor = new HtmlCompressor();
+                htmlCompressor.setRemoveMultiSpaces(true);
+                htmlCompressor.setRemoveIntertagSpaces(true);
+
+                output = htmlCompressor.compress(bodyText);
+            }
+
+            return output;
+        }
+        public static string replaceSP2withARS(string personSiteHtml)
+        {
+            if (containsExtension.CaseInsensitiveContains(personSiteHtml, "sp2UserFiles/person/"))
+            {
+
+
+                string result =
+                   Regex.Replace(personSiteHtml, "sp2UserFiles/person/", "ARSUserFiles/", RegexOptions.IgnoreCase);
+
+
+                personSiteHtml = result;
+            }
+            return personSiteHtml;
+        }
         #endregion
 
+    }
+    public static class containsExtension
+    {
+        public static bool CaseInsensitiveContains(this string text, string value,
+        StringComparison stringComparison = StringComparison.CurrentCultureIgnoreCase)
+        {
+            return text.IndexOf(value, stringComparison) >= 0;
+        }
     }
 }
