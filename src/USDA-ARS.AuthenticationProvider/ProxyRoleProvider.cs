@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Web.Security;
 using System.Web;
 
-namespace USDA_ARS.AuthenticationProvider
+namespace ARS.AuthenticationProvider
 {
     public class ProxyRoleProvider : RoleProvider
     {

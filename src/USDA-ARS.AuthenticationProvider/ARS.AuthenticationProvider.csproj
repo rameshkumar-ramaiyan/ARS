@@ -7,8 +7,8 @@
     <ProjectGuid>{E93D3DAA-37E7-406D-AFF0-57D196F94CAB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>USDA_ARS.AuthenticationProvider</RootNamespace>
-    <AssemblyName>USDA-ARS.AuthenticationProvider</AssemblyName>
+    <RootNamespace>ARS.AuthenticationProvider</RootNamespace>
+    <AssemblyName>ARS.AuthenticationProvider</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>

@@ -36,7 +36,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportContactUs", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportDocsClient", "USDA-ARS.ImportDocsClient\USDA-ARS.ImportDocsClient.csproj", "{1C5E5E23-9B00-451D-A401-7ADF12C05DC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.AuthenticationProvider", "USDA-ARS.AuthenticationProvider\USDA-ARS.AuthenticationProvider.csproj", "{E93D3DAA-37E7-406D-AFF0-57D196F94CAB}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARS.AuthenticationProvider", "USDA-ARS.AuthenticationProvider\ARS.AuthenticationProvider.csproj", "{E93D3DAA-37E7-406D-AFF0-57D196F94CAB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
