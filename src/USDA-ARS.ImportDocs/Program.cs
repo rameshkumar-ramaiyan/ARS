@@ -19,13 +19,15 @@ using System.Data.SqlClient;
 
 using ZetaHtmlCompressor;
 using System.IO;
+using Umbraco.Core.Persistence;
+using USDA_ARS.Umbraco.Extensions.Models.Aris;
 
 namespace USDA_ARS.ImportDocs
 {
-    public class Program
+    class Program
     {
-
-        public static string LocationConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SqlConnectionString"].ConnectionString;
+        static string LOG_FILE_TEXT = "";
+        static string LocationConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SqlConnectionString"].ConnectionString;
 
         static string API_KEY = ConfigurationManager.AppSettings.Get("Umbraco:ApiKey");
         static string API_URL = ConfigurationManager.AppSettings.Get("Umbraco:ApiUrl");
@@ -34,6 +36,8 @@ namespace USDA_ARS.ImportDocs
         static List<DocFolderLookup> DOC_FOLDER_ID_LIST = null;
         static List<SubSiteLookup> SUB_SITE_LIST = null;
         static List<AdHocFolderLookup> AD_HOC_FOLDER_LIST = null;
+
+        static List<ModeCodeNew> MODE_CODE_NEW_LIST = null;
 
 
         static void Main(string[] args)
@@ -60,10 +64,9 @@ namespace USDA_ARS.ImportDocs
             AddLog("Done. Count: " + DOC_FOLDER_ID_LIST.Count);
             AddLog("");
 
-
-            AddLog("Getting Sub Sites From Umbraco...");
-            SUB_SITE_LIST = GetSubSitesAll();
-            AddLog("Done. Count: " + SUB_SITE_LIST.Count);
+            AddLog("Getting New Mode Codes...");
+            MODE_CODE_NEW_LIST = GetNewModeCodesAll();
+            AddLog("Done. Count: " + MODE_CODE_NEW_LIST.Count);
             AddLog("");
 
 
@@ -114,7 +117,7 @@ namespace USDA_ARS.ImportDocs
 
         }
 
-        public static void ImportDocsTemp()
+        static void ImportDocsTemp()
         {
             // Get List of documents
 
@@ -144,95 +147,122 @@ namespace USDA_ARS.ImportDocs
                 dtAllDocumentIdsBasedOnDocTypeWithParam = GetAllDocumentIdsBasedOnDocTypeWithParam(list[k]);
                 for (int i = 0; i < dtAllDocumentIdsBasedOnDocTypeWithParam.Rows.Count; i++)
                 {
-                    string title = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(0).ToString();
-                    string currentversion = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<int>(1).ToString();
-                    string doctype = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(2).ToString();
-                    string published = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(3).ToString();
-                    string originSite_Type = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(4).ToString();
-                    string originSite_ID = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(5).ToString();
-                    string oldURL = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(6).ToString();
-                    int docId = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<int>(7);
-                    string adHocFolderName = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(8).ToString();
-
-                    ImportPage newPage = new ImportPage();
-
-                    DataTable dtAllDocumentIdPagesBasedOnCurrentVersion = new DataTable();
-                    DataTable newDocpagesAfterDecryption = new DataTable();
-                    newDocpagesAfterDecryption.Columns.Add("DocPageNum");
-                    newDocpagesAfterDecryption.Columns.Add("EncDocPage");
-                    newDocpagesAfterDecryption.Columns.Add("CurrentVersion");
-                    newDocpagesAfterDecryption.Columns.Add("DecDocPage");
-                    DataTable newDocpagesAfterDecryption1 = new DataTable();
-                    //3. send to doc pages sp
-
-                    dtAllDocumentIdPagesBasedOnCurrentVersion = GetAllDocumentIdPagesBasedOnCurrentVersion(currentversion);
-
-                    if (dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count > 0)
+                    try
                     {
-                        AddLog(" - Found Doc: " + title);
-
-                        // CHECK IF THE DOC HAS MUTLIPLE PAGES
-                        if (dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count > 1)
+                        AddLog(list[k] + ": " + i);
+                        string title = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(0).ToString();
+                        string currentversion = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<int>(1).ToString();
+                        string doctype = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(2).ToString();
+                        string published = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(3).ToString();
+                        string originSite_Type = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(4).ToString();
+                        string originSite_ID = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(5).ToString();
+                        //string oldURL = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(6).ToString();
+                        bool displayTitle = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<bool>(7);
+                        int docId = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<int>(8);
+                        string adHocFolderName = string.Empty;
+                        if (list[k].ToString().Trim() == "ad_hoc")
                         {
-                            // CREATE THE SUBPAGE OBJECT LIST
-                            newPage.SubPages = new List<ImportPage>();
+                            adHocFolderName = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(9).ToString();
                         }
 
-                        for (int j = 0; j < dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count; j++)
-                        {
-                            int docpageNum = dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<int>(0);
+                        ImportPage newPage = new ImportPage();
 
-                            string encString = ""; string decString = "";
-                            if (!string.IsNullOrEmpty(dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<string>(1)))
-                                encString = dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<string>(1).ToString();
-                            else encString = string.Empty;
-                            string currentVersion = dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<int>(2).ToString();
-                            DataTable decStringtable = new DataTable();
-                            if (!string.IsNullOrEmpty(dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<string>(1)))
+                        DataTable dtAllDocumentIdPagesBasedOnCurrentVersion = new DataTable();
+                        DataTable newDocpagesAfterDecryption = new DataTable();
+                        newDocpagesAfterDecryption.Columns.Add("DocPageNum");
+                        newDocpagesAfterDecryption.Columns.Add("EncDocPage");
+                        newDocpagesAfterDecryption.Columns.Add("CurrentVersion");
+                        newDocpagesAfterDecryption.Columns.Add("DecDocPage");
+                        DataTable newDocpagesAfterDecryption1 = new DataTable();
+                        //3. send to doc pages sp
+
+                        dtAllDocumentIdPagesBasedOnCurrentVersion = GetAllDocumentIdPagesBasedOnCurrentVersion(currentversion);
+
+                        if (dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count > 0)
+                        {
+                            AddLog(" - Found Doc: " + title);
+
+                            // CHECK IF THE DOC HAS MUTLIPLE PAGES
+                            if (dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count > 1)
                             {
-                                decStringtable = GetAllRandomDocPagesDecrypted(encString);
-                                decString = decStringtable.Rows[0].Field<string>(0);
-                                decString = CleanUpHtml(decString);
+                                // CREATE THE SUBPAGE OBJECT LIST
+                                newPage.SubPages = new List<ImportPage>();
                             }
 
-                            else decString = "";
-                            newDocpagesAfterDecryption.Rows.Add(docpageNum, encString, currentVersion, decString);
-
-                            // GET PAGE 1 (MAIN DOC)
-                            if (j == 0)
+                            for (int j = 0; j < dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count; j++)
                             {
-                                AddLog(" - Adding main page: " + title);
-                                newPage.OldDocId = 0; // Current SitePublisher Doc ID
-                                newPage.Title = title; // Document Title
-                                newPage.BodyText = decString; // Document Body Text
-                                newPage.OldDocType = doctype; // SitePublisher Doc Type
-                                newPage.PageNumber = 1;
+                                int docpageNum = dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<int>(0);
+
+                                string encString = ""; string decString = "";
+                                if (!string.IsNullOrEmpty(dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<string>(1)))
+                                    encString = dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<string>(1).ToString();
+                                else encString = string.Empty;
+                                string currentVersion = dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<int>(2).ToString();
+                                DataTable decStringtable = new DataTable();
+                                if (!string.IsNullOrEmpty(dtAllDocumentIdPagesBasedOnCurrentVersion.Rows[j].Field<string>(1)))
+                                {
+                                    if (encString.IndexOf("<") >= 0 || encString.IndexOf("the") >= 0 || encString.IndexOf("and") >= 0)
+                                    {
+                                        decString = encString;
+                                    }
+                                    else
+                                    {
+                                        decStringtable = GetAllRandomDocPagesDecrypted(encString);
+                                        decString = decStringtable.Rows[0].Field<string>(0);
+                                    }
+
+                                    decString = CleanUpHtml(decString);
+                                }
+
+                                else decString = "";
+                                newDocpagesAfterDecryption.Rows.Add(docpageNum, encString, currentVersion, decString);
+
+                                if (true == string.IsNullOrWhiteSpace(doctype))
+                                {
+                                    doctype = "Main";
+                                }
+
+                                // GET PAGE 1 (MAIN DOC)
+                                if (j == 0)
+                                {
+                                    AddLog(" - Adding main page: " + title);
+                                    newPage.OldDocId = docId; // Current SitePublisher Doc ID
+                                    newPage.Title = title.Trim(); // Document Title
+                                    newPage.DisableTitle = !displayTitle;
+                                    newPage.BodyText = decString.Trim(); // Document Body Text
+                                    newPage.OldDocType = doctype.Trim(); // SitePublisher Doc Type
+                                    newPage.PageNumber = 1;
+                                }
+                                else
+                                {
+                                    AddLog(" - Adding sub page: " + docpageNum);
+                                    newPage.SubPages.Add(new ImportPage() { OldDocId = docId, PageNumber = docpageNum, BodyText = decString.Trim(), DisableTitle = !displayTitle });
+                                }
                             }
-                            else
+
+                            // PICK ONLY 1 OF THE 3 METHODS BELOW
+                            if (list[k] == "Place")
                             {
-                                AddLog(" - Adding sub page: " + docpageNum);
-                                newPage.SubPages.Add(new ImportPage() { PageNumber = docpageNum, BodyText = decString });
+                                // IS IT A PAGE FOR A MODE CODE?
+                                AddDocToModeCode(originSite_ID, newPage);
+                            }
+                            else if (list[k] == "ad_hoc")
+                            {
+                                // IS IT A PAGE FOR A MODE CODE BUT ALSO HAS AN AD HOC?
+                                AddDocToAdHoc(originSite_ID, adHocFolderName, newPage);
+                            }
+                            else if (list[k] == "person")
+                            {
+                                // OR IS IT A PAGE FOR A PERSON?
+                                AddDocToPersonSite(Convert.ToInt32(originSite_ID), newPage);
+
                             }
                         }
-
-                        // PICK ONLY 1 OF THE 3 METHODS BELOW
-                        if (list[k] == "Place")
-                        {
-                            // IS IT A PAGE FOR A MODE CODE?
-                            AddDocToModeCode(originSite_ID, newPage);
-                        }
-                        if (list[k] == "ad_hoc")
-                        {
-                            // IS IT A PAGE FOR A MODE CODE BUT ALSO HAS AN AD HOC?
-                            AddDocToAdHoc(originSite_ID, adHocFolderName, newPage);
-                        }
-
-                        if (list[k] == "person")
-                        {
-                            // OR IS IT A PAGE FOR A PERSON?
-                            AddDocToPersonSite(Convert.ToInt32(originSite_ID), newPage);
-
-                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        AddLog("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                        AddLog("ERROR: " + ex.ToString());
                     }
                 }
 
@@ -241,7 +271,12 @@ namespace USDA_ARS.ImportDocs
 
             } // for (int i = 0; i < dtAllDocumentIdsBasedOnDocTypeWithParam.Rows.Count; i++)
 
-
+            using (FileStream fs = File.Create("LOG_FILE.txt"))
+            {
+                // Add some text to file
+                Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);
+                fs.Write(fileText, 0, fileText.Length);
+            }
         }
 
 
@@ -249,25 +284,38 @@ namespace USDA_ARS.ImportDocs
 
         static void AddDocToModeCode(string modeCode, ImportPage importPage)
         {
-            DocFolderLookup getDocFolder = DOC_FOLDER_ID_LIST.Where(p => p.ModeCode == modeCode).FirstOrDefault();
+            AddLog("Add doc to mode code...");
+            DocFolderLookup getDocFolder = DOC_FOLDER_ID_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCode)).FirstOrDefault();
+
+            if (getDocFolder == null)
+            {
+                ModeCodeNew modeCodeNew = MODE_CODE_NEW_LIST.Where(p => p.ModecodeOld == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(modeCode)).FirstOrDefault();
+
+                if (modeCodeNew != null)
+                {
+                    AddLog("Found Mode Code from old code: " + modeCode + " -> " + modeCodeNew.ModecodeNew);
+                    getDocFolder = DOC_FOLDER_ID_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCodeNew.ModecodeNew)).FirstOrDefault();
+                }
+            }
+
 
             if (getDocFolder != null)
             {
                 int umbracoParentId = getDocFolder.UmbracoDocFolderId;
 
-                ApiResponse response = AddUmbracoPage(umbracoParentId, importPage.Title, importPage.BodyText, importPage.OldDocId, importPage.OldDocType, 1);
+                ApiResponse response = AddUmbracoPage(umbracoParentId, importPage.Title, importPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, 1);
 
                 if (response != null && response.ContentList != null && response.ContentList.Any())
                 {
                     int umbracoId = response.ContentList[0].Id;
 
-                    AddLog("Page added:[" + modeCode + "] (" + umbracoId + ") " + importPage.Title);
+                    AddLog("Page added:[" + modeCode + "] (UmbId: " + umbracoId + ") " + importPage.Title);
 
                     if (importPage.SubPages != null && importPage.SubPages.Any())
                     {
                         foreach (ImportPage subPage in importPage.SubPages)
                         {
-                            ApiResponse subpageResponse = AddUmbracoPage(umbracoId, "Page " + subPage.PageNumber, subPage.BodyText, importPage.OldDocId, importPage.OldDocType, subPage.PageNumber);
+                            ApiResponse subpageResponse = AddUmbracoPage(umbracoId, "Page " + subPage.PageNumber, subPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, subPage.PageNumber);
 
                             if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
                             {
@@ -294,13 +342,15 @@ namespace USDA_ARS.ImportDocs
 
         static void AddDocToPersonSite(int personId, ImportPage importPage)
         {
+            AddLog("Add doc to person site...");
+
             PersonLookup getPersonSite = PEOPLE_LIST.Where(p => p.PersonId == personId).FirstOrDefault();
 
             if (getPersonSite != null)
             {
                 int umbracoParentId = getPersonSite.UmbracoPersonId;
 
-                ApiResponse response = AddUmbracoPage(umbracoParentId, importPage.Title, importPage.BodyText, importPage.OldDocId, importPage.OldDocType, 1);
+                ApiResponse response = AddUmbracoPage(umbracoParentId, importPage.Title, importPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, 1);
 
                 if (response != null && response.ContentList != null && response.ContentList.Any())
                 {
@@ -312,7 +362,7 @@ namespace USDA_ARS.ImportDocs
                     {
                         foreach (ImportPage subPage in importPage.SubPages)
                         {
-                            ApiResponse subpageResponse = AddUmbracoPage(umbracoId, "Page " + subPage.PageNumber, subPage.BodyText, importPage.OldDocId, importPage.OldDocType, subPage.PageNumber);
+                            ApiResponse subpageResponse = AddUmbracoPage(umbracoId, "Page " + subPage.PageNumber, subPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, subPage.PageNumber);
 
                             if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
                             {
@@ -339,9 +389,22 @@ namespace USDA_ARS.ImportDocs
 
         static void AddDocToAdHoc(string modeCode, string adHocFolderName, ImportPage importPage)
         {
+            AddLog("Add doc to mode code with ad hoc folder: " + adHocFolderName + "...");
+
             int umbracoParentId = 0;
 
-            AdHocFolderLookup testAdHocFolder = AD_HOC_FOLDER_LIST.Where(p => p.ModeCode == modeCode && p.AdHocFolderName.ToLower() == adHocFolderName.ToLower()).FirstOrDefault();
+            AdHocFolderLookup testAdHocFolder = AD_HOC_FOLDER_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCode) && p.AdHocFolderName.ToLower() == adHocFolderName.ToLower()).FirstOrDefault();
+
+            if (testAdHocFolder == null)
+            {
+                ModeCodeNew modeCodeNew = MODE_CODE_NEW_LIST.Where(p => p.ModecodeOld == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(modeCode)).FirstOrDefault();
+
+                if (modeCodeNew != null)
+                {
+                    AddLog("Found Mode Code from old code: " + modeCode + " -> " + modeCodeNew.ModecodeNew);
+                    testAdHocFolder = AD_HOC_FOLDER_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCodeNew.ModecodeNew) && p.AdHocFolderName.ToLower() == adHocFolderName.ToLower()).FirstOrDefault();
+                }
+            }
 
             if (testAdHocFolder != null)
             {
@@ -360,7 +423,7 @@ namespace USDA_ARS.ImportDocs
 
             if (umbracoParentId > 0)
             {
-                ApiResponse response = AddUmbracoPage(umbracoParentId, importPage.Title, importPage.BodyText, importPage.OldDocId, importPage.OldDocType, 1);
+                ApiResponse response = AddUmbracoPage(umbracoParentId, importPage.Title, importPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, 1);
 
                 if (response != null && response.ContentList != null && response.ContentList.Any())
                 {
@@ -372,7 +435,7 @@ namespace USDA_ARS.ImportDocs
                     {
                         foreach (ImportPage subPage in importPage.SubPages)
                         {
-                            ApiResponse subpageResponse = AddUmbracoPage(umbracoId, "Page " + subPage.PageNumber, subPage.BodyText, importPage.OldDocId, importPage.OldDocType, subPage.PageNumber);
+                            ApiResponse subpageResponse = AddUmbracoPage(umbracoId, "Page " + subPage.PageNumber, subPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, subPage.PageNumber);
 
                             if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
                             {
@@ -418,17 +481,22 @@ namespace USDA_ARS.ImportDocs
         }
 
 
-        static ApiResponse AddUmbracoPage(int parentId, string name, string body, int oldId, string oldDocType, int pageNum)
+        static ApiResponse AddUmbracoPage(int parentId, string name, string body, bool hidePageTitle, int oldId, string oldDocType, int pageNum)
         {
             ApiContent content = new ApiContent();
 
             string oldUrl = "";
-            oldUrl = "/" + oldDocType + "/doc.htm?docid=" + oldId;
+            oldUrl = "/" + oldDocType + "/docs.htm?docid=" + oldId;
 
             if (pageNum > 1)
             {
                 oldUrl += "&page=" + pageNum;
                 name = "Page " + pageNum;
+            }
+
+            if (name.Trim().ToLower() == "index")
+            {
+                name = oldDocType;
             }
 
             content.Id = 0;
@@ -443,7 +511,8 @@ namespace USDA_ARS.ImportDocs
 
             properties.Add(new ApiProperty("bodyText", body)); // HTML of person site
             properties.Add(new ApiProperty("oldId", oldId.ToString())); // Person's ID              
-            properties.Add(new ApiProperty("oldUrl", oldUrl)); // current URL               
+            properties.Add(new ApiProperty("oldUrl", oldUrl)); // current URL           
+            properties.Add(new ApiProperty("hidePageTitle", hidePageTitle)); // hide page title
 
             content.Properties = properties;
 
@@ -591,13 +660,25 @@ namespace USDA_ARS.ImportDocs
         }
 
 
-        static List<SubSiteLookup> GetSubSitesAll()
+        static List<DocFolderLookup> GetSubSitesAll()
         {
-            List<SubSiteLookup> subSitesList = new List<SubSiteLookup>();
+            List<DocFolderLookup> subSitesList = new List<DocFolderLookup>();
 
-            subSitesList.Add(new SubSiteLookup { SubSiteName = "", UmbracoId = 0 });
+            subSitesList.Add(new DocFolderLookup { ModeCode = "02-00-00-00", UmbracoDocFolderId = 31703 });
+            subSitesList.Add(new DocFolderLookup { ModeCode = "01-09-00-00", UmbracoDocFolderId = 2220 });
+            //subSitesList.Add(new DocFolderLookup { ModeCode = "01-09-00-00", UmbracoDocFolderId = 2220 });
 
             return subSitesList;
+        }
+
+
+        static List<ModeCodeNew> GetNewModeCodesAll()
+        {
+            List<ModeCodeNew> modeCodeNewList = new List<ModeCodeNew>();
+
+            modeCodeNewList = Umbraco.Extensions.Helpers.Aris.ModeCodesNew.GetAllNewModeCode();
+
+            return modeCodeNewList;
         }
 
 
@@ -605,9 +686,10 @@ namespace USDA_ARS.ImportDocs
         {
             Debug.WriteLine(line);
             Console.WriteLine(line);
+            LOG_FILE_TEXT += line + "\r\n";
         }
 
-        public static DataTable GetAllDocumentIdsBasedOnDocTypeWithoutParam()
+        static DataTable GetAllDocumentIdsBasedOnDocTypeWithoutParam()
         {
             Locations locationsResponse = new Locations();
             string sql = "[uspgetAllDocumentIdsBasedOnDocTypeWithoutParam]";
@@ -652,11 +734,12 @@ namespace USDA_ARS.ImportDocs
             //return locationsResponse;
             return dt;
         }
-        public static DataTable GetAllDocumentIdsBasedOnDocTypeWithParam(string siteType)
+        static DataTable GetAllDocumentIdsBasedOnDocTypeWithParam(string siteType)
         {
             Locations locationsResponse = new Locations();
             string sql = "[uspgetAllDocumentIdsBasedOnDocTypeWithParam]";
             DataTable dt = new DataTable();
+
             SqlConnection conn = new SqlConnection(LocationConnectionString);
 
             try
@@ -697,7 +780,7 @@ namespace USDA_ARS.ImportDocs
             //return locationsResponse;
             return dt;
         }
-        public static DataTable GetAllDocumentIdPagesBasedOnCurrentVersion(string currentversion)
+        static DataTable GetAllDocumentIdPagesBasedOnCurrentVersion(string currentversion)
         {
             Locations locationsResponse = new Locations();
             string sql = "[uspgetAllDocumentIdPagesBasedOnCurrentVersion]";
@@ -742,7 +825,7 @@ namespace USDA_ARS.ImportDocs
             //return locationsResponse;
             return dt;
         }
-        public static DataTable GetAllRandomDocPagesDecrypted(string docPageEncrypted)
+        static DataTable GetAllRandomDocPagesDecrypted(string docPageEncrypted)
         {
 
 
@@ -792,7 +875,7 @@ namespace USDA_ARS.ImportDocs
             //return locationsResponse;
             return dt;
         }
-        public static string CleanUpHtml(string bodyText)
+        static string CleanUpHtml(string bodyText)
         {
             string output = "";
 
@@ -801,6 +884,11 @@ namespace USDA_ARS.ImportDocs
                 HtmlCompressor htmlCompressor = new HtmlCompressor();
                 htmlCompressor.setRemoveMultiSpaces(true);
                 htmlCompressor.setRemoveIntertagSpaces(true);
+
+                bodyText = Regex.Replace(bodyText, @"https://www\.ars\.usda\.gov", "");
+                bodyText = Regex.Replace(bodyText, @"http://www\.ars\.usda\.gov", "");
+
+                bodyText = ReplaceSP2withARS(bodyText);
 
                 output = htmlCompressor.compress(bodyText);
             }
@@ -817,6 +905,8 @@ namespace USDA_ARS.ImportDocs
             {
                 DOC_FOLDER_ID_LIST = CreateDocFolderCache();
             }
+
+            DOC_FOLDER_ID_LIST.AddRange(GetSubSitesAll());
         }
 
 
@@ -990,29 +1080,19 @@ namespace USDA_ARS.ImportDocs
 
             return personList;
         }
-        public static string replaceSP2withARS(string personSiteHtml)
+
+
+        static string ReplaceSP2withARS(string bodyText)
         {
-            if (containsExtension.CaseInsensitiveContains(personSiteHtml,"sp2UserFiles/person/"))
+            if (bodyText.ToLower().IndexOf("sp2userfiles/") >= 0)
             {
-
-                
-                string result =
-                   Regex.Replace(personSiteHtml, "sp2UserFiles/person/", "ARSUserFiles/", RegexOptions.IgnoreCase);
-
-
-                personSiteHtml = result;
+                bodyText = Regex.Replace(bodyText, "sp2UserFiles/person/", "ARSUserFiles/", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                bodyText = Regex.Replace(bodyText, "sp2UserFiles/place/", "ARSUserFiles/", RegexOptions.IgnoreCase | RegexOptions.Singleline);
             }
-            return personSiteHtml;
-        }
-        
 
-    }
-    public static class containsExtension
-    {
-        public static bool CaseInsensitiveContains(this string text, string value,
-        StringComparison stringComparison = StringComparison.CurrentCultureIgnoreCase)
-        {
-            return text.IndexOf(value, stringComparison) >= 0;
+            return bodyText;
         }
+
+
     }
 }

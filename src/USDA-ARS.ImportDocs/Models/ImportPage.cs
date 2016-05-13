@@ -13,6 +13,7 @@ namespace USDA_ARS.ImportDocs.Models
         public string OldDocType { get; set; }
         public int OldDocId { get; set; }
         public int PageNumber { get; set; }
+        public bool DisableTitle { get; set; }
         public List<ImportPage> SubPages { get; set; }
     }
 }

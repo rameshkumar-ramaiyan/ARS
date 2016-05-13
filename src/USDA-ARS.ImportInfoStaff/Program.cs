@@ -17,6 +17,7 @@ namespace USDA_ARS.ImportInfoStaff
 {
     class Program
     {
+        static string LOG_FILE_TEXT = "";
         static string API_KEY = ConfigurationManager.AppSettings.Get("Umbraco:ApiKey");
         static string API_URL = ConfigurationManager.AppSettings.Get("Umbraco:ApiUrl");
         static int UMBRACO_START_NODE = Convert.ToInt32(ConfigurationManager.AppSettings.Get("Umbraco:StartingNodeId"));
@@ -30,8 +31,15 @@ namespace USDA_ARS.ImportInfoStaff
 
         static void Main(string[] args)
         {
+            bool forceCacheUpdate = false;
+
+            if (args != null && args.Length == 1)
+            {
+                forceCacheUpdate = true;
+            }
+
             AddLog("Getting Mode Codes From Umbraco...");
-            MODE_CODE_LIST = GetModeCodesAll();
+            GenerateModeCodeList(forceCacheUpdate);
             AddLog("Done. Count: " + MODE_CODE_LIST.Count);
             AddLog("");
 
@@ -63,64 +71,58 @@ namespace USDA_ARS.ImportInfoStaff
             {
                 AddLog("DIR: " + dir);
 
-                bool indexFound = false;
-
                 InfoStaffPathLookup getPathLookup = PATH_LOOKUP_LIST.Where(p => p.Path == dir).FirstOrDefault();
 
                 if (getPathLookup == null)
                 {
+                    //Create Umbraco Doc Folder
+                    DirectoryInfo dirInfo = new DirectoryInfo(dir);
+                    string title = dirInfo.Name;
+
+                    // Creates a TextInfo based on the "en-US" culture.
+                    TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+
+                    // Changes a string to titlecase.
+                    title = textInfo.ToTitleCase(title);
+
+                    int parentNodeIdParent = GetParentDirId(dir);
+
+                    parentNodeId = AddUmbracoFolder(parentNodeIdParent, title);
+
+                    if (parentNodeId <= 0)
+                    {
+                        throw new Exception("Invalid umbraco id returned.");
+                    }
+                    else
+                    {
+                        PATH_LOOKUP_LIST.Add(new InfoStaffPathLookup() { Path = dir, UmbracoId = parentNodeId });
+                    }
+
+
+                    // Look for index page
                     List<string> indexList = Directory.GetFiles(dir, "*.*").Where(s => s.ToLower().EndsWith("\\index.html") || s.ToLower().EndsWith("\\index.htm")).ToList();
 
                     if (indexList != null && indexList.Count > 0)
                     {
                         // Create Index page in Umbraco
-                        indexFound = true;
                         PageImport pageImport = GetPageData(indexList[0]);
 
                         if (pageImport != null)
                         {
-                            int parentNodeIdParent = GetParentDirId(dir);
+                            int pageId = AddUmbracoPage(parentNodeId, pageImport);
 
-                            parentNodeId = AddUmbracoPage(parentNodeIdParent, pageImport);
-
-                            if (parentNodeId <= 0)
+                            if (pageId <= 0)
                             {
                                 throw new Exception("Invalid umbraco id returned.");
                             }
                             else
                             {
-                                PATH_LOOKUP_LIST.Add(new InfoStaffPathLookup() { Path = dir, UmbracoId = parentNodeId });
+                                UpdateUmbracoPageRedirect(parentNodeId, pageId);
                             }
                         }
                         else
                         {
-                            AddLog("** WARNING: Page (folder) not added: " + indexList[0]);
-                        }
-                    }
-
-                    if (false == indexFound)
-                    {
-                        //Create Umbraco Doc Folder
-                        DirectoryInfo dirInfo = new DirectoryInfo(dir);
-                        string title = dirInfo.Name;
-
-                        // Creates a TextInfo based on the "en-US" culture.
-                        TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
-
-                        // Changes a string to titlecase.
-                        title = textInfo.ToTitleCase(title);
-
-                        int parentNodeIdParent = GetParentDirId(dir);
-
-                        parentNodeId = AddUmbracoFolder(parentNodeIdParent, title);
-
-                        if (parentNodeId <= 0)
-                        {
-                            throw new Exception("Invalid umbraco id returned.");
-                        }
-                        else
-                        {
-                            PATH_LOOKUP_LIST.Add(new InfoStaffPathLookup() { Path = dir, UmbracoId = parentNodeId });
+                            AddLog("** WARNING: Page not added: " + indexList[0]);
                         }
                     }
                 }
@@ -153,7 +155,12 @@ namespace USDA_ARS.ImportInfoStaff
             }
 
 
-
+            using (FileStream fs = File.Create("LOG_FILE.txt"))
+            {
+                // Add some text to file
+                Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);
+                fs.Write(fileText, 0, fileText.Length);
+            }
         }
 
 
@@ -201,20 +208,27 @@ namespace USDA_ARS.ImportInfoStaff
                 }
                 if (title.ToLower() == "title")
                 {
-                    if (doc.DocumentNode.SelectSingleNode("/html/body/div/h3") != null)
-                    {
-                        title = doc.DocumentNode.SelectSingleNode("/html/body/div/h3").InnerHtml;
-                    }
-                }
-                else
-                {
-                    if (doc.DocumentNode.SelectSingleNode("/html/body/h3") != null)
-                    {
-                        title = doc.DocumentNode.SelectSingleNode("/html/body/h3").InnerHtml;
-                    }
+                    title = "";
                 }
             }
-            else
+
+            if (true == string.IsNullOrEmpty(title))
+            {
+                if (doc.DocumentNode.SelectSingleNode("/html/body/h3") != null)
+                {
+                    title = doc.DocumentNode.SelectSingleNode("/html/body/h3").InnerHtml;
+                }
+            }
+
+            if (true == string.IsNullOrEmpty(title))
+            {
+                if (doc.DocumentNode.SelectSingleNode("/html/body/h3") != null)
+                {
+                    title = doc.DocumentNode.SelectSingleNode("/html/body/h3").InnerHtml;
+                }
+            }
+
+            if (true == string.IsNullOrEmpty(title))
             {
                 if (doc.DocumentNode.SelectSingleNode("/h1/font") != null)
                 {
@@ -298,7 +312,8 @@ namespace USDA_ARS.ImportInfoStaff
 
             properties.Add(new ApiProperty("bodyText", pageImport.BodyText)); // HTML of person site
             properties.Add(new ApiProperty("navigationCategory", UMBRACO_NAV_CATEGORY_GUID)); // Nav Category Guid
-            properties.Add(new ApiProperty("oldUrl", pageImport.OldPath)); // Old Path            
+            properties.Add(new ApiProperty("oldUrl", pageImport.OldPath)); // Old Path 
+            properties.Add(new ApiProperty("hidePageTitle", true));
 
             if (pageImport.Title == "ARS: Photo Images")
             {
@@ -329,6 +344,32 @@ namespace USDA_ARS.ImportInfoStaff
             }
 
             return umbracoId;
+        }
+
+
+        static ApiResponse UpdateUmbracoPageRedirect(int id, int umbracoRedirect)
+        {
+            ApiContent content = new ApiContent();
+
+            content.Id = id;
+
+            List<ApiProperty> properties = new List<ApiProperty>();
+
+            properties.Add(new ApiProperty("umbracoRedirect", umbracoRedirect)); // Contact Category Info
+
+            content.Properties = properties;
+
+            content.Save = 2;
+
+            ApiRequest request = new ApiRequest();
+
+            request.ContentList = new List<ApiContent>();
+            request.ContentList.Add(content);
+            request.ApiKey = API_KEY;
+
+            ApiResponse responseBack = ApiCalls.PostData(request, "Post");
+
+            return responseBack;
         }
 
 
@@ -457,12 +498,35 @@ namespace USDA_ARS.ImportInfoStaff
                         //m.Groups[0].Value   "href=\"../../../index.html"    string
                         //newPath "/is/AR/archive_Nacny/apr97/../../../index.html"    string
                     }
+                    else if (true == path.ToLower().StartsWith("/is"))
+                    {
+                        if (m.Groups[1].Value.ToLower() == "href")
+                        {
+                            newPath = path;
+                        }
+                        else
+                        {
+                            newPath = path.ToLower().Replace("/is", INFO_STAFF_FILE_URL);
+                        }
+                    }
+                    else if (true == path.ToLower().StartsWith("/sp2userfiles/place"))
+                    {
+                        newPath = path.ToLower().Replace("/sp2userfiles/place", INFO_STAFF_FILE_URL);
+                    }
 
                     if (false == string.IsNullOrEmpty(newPath))
                     {
                         if (newPath.IndexOf("../") >= 0)
                         {
                             newPath = FixRelativePath(newPath);
+                        }
+
+                        if (m.Groups[1].Value.ToLower() == "href")
+                        {
+                            if (false == newPath.ToLower().EndsWith(".html") && false == newPath.ToLower().EndsWith(".htm") && false == newPath.ToLower().EndsWith("/") && newPath.IndexOf(".htm#") < 0 && newPath.IndexOf(".html#") < 0 && newPath.IndexOf("/#") < 0)
+                            {
+                                newPath = path.ToLower().Replace("/is", INFO_STAFF_FILE_URL);
+                            }
                         }
 
                         bodyText = bodyText.Replace(m.Groups[0].Value, m.Groups[1].Value + "=\"" + newPath);
@@ -535,10 +599,72 @@ namespace USDA_ARS.ImportInfoStaff
         }
 
 
+        static void GenerateModeCodeList(bool forceCacheUpdate)
+        {
+            MODE_CODE_LIST = GetModeCodeLookupCache();
+
+            if (true == forceCacheUpdate || MODE_CODE_LIST == null || MODE_CODE_LIST.Count <= 0)
+            {
+                MODE_CODE_LIST = CreateModeCodeLookupCache();
+            }
+        }
+
+
+        static List<ModeCodeLookup> CreateModeCodeLookupCache()
+        {
+            List<ModeCodeLookup> modeCodeList = new List<ModeCodeLookup>();
+
+            modeCodeList = GetModeCodesAll();
+
+            StringBuilder sb = new StringBuilder();
+
+            if (modeCodeList != null)
+            {
+                foreach (ModeCodeLookup modeCodeItem in modeCodeList)
+                {
+                    sb.AppendLine(modeCodeItem.ModeCode + "|" + modeCodeItem.UmbracoId + "|" + modeCodeItem.Url);
+                }
+
+                using (FileStream fs = File.Create("mode-code-cache.txt"))
+                {
+                    // Add some text to file
+                    Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
+                    fs.Write(fileText, 0, fileText.Length);
+                }
+            }
+
+            return modeCodeList;
+        }
+
+
+        static List<ModeCodeLookup> GetModeCodeLookupCache()
+        {
+            string filename = "mode-code-cache.txt";
+            List<ModeCodeLookup> modeCodeList = new List<ModeCodeLookup>();
+
+            if (true == File.Exists(filename))
+            {
+                using (StreamReader sr = File.OpenText(filename))
+                {
+                    string s = "";
+                    while ((s = sr.ReadLine()) != null)
+                    {
+                        string[] lineArray = s.Split('|');
+
+                        modeCodeList.Add(new ModeCodeLookup() { ModeCode = lineArray[0], UmbracoId = Convert.ToInt32(lineArray[1]), Url = lineArray[2] });
+                    }
+                }
+            }
+
+            return modeCodeList;
+        }
+
+
         static void AddLog(string line)
         {
             Debug.WriteLine(line);
             Console.WriteLine(line);
+            LOG_FILE_TEXT += line + "\r\n";
         }
     }
 }
