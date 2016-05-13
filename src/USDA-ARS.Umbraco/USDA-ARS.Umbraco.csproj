@@ -3097,6 +3097,10 @@
     <Folder Include="Views\MacroPartials\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\USDA-ARS.AuthenticationProvider\USDA-ARS.AuthenticationProvider.csproj">
+      <Project>{e93d3daa-37e7-406d-aff0-57d196f94cab}</Project>
+      <Name>USDA-ARS.AuthenticationProvider</Name>
+    </ProjectReference>
     <ProjectReference Include="..\USDA-ARS.Core\USDA-ARS.Core.csproj">
       <Project>{4679653f-bd09-4ba3-85b6-f3865569277a}</Project>
       <Name>USDA-ARS.Core</Name>
