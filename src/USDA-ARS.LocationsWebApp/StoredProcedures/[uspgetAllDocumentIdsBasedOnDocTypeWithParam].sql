@@ -1,12 +1,15 @@
-USE [aris_public_webNew]
+USE [aris_public_web]
 GO
-/****** Object:  StoredProcedure [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]    Script Date: 5/12/2016 2:03:09 PM ******/
+
+/****** Object:  StoredProcedure [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]    Script Date: 5/13/2016 8:21:15 AM ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
 
-ALTER PROCEDURE [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]
+
+CREATE PROCEDURE [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]
 
 --@RandomSiteId nvarchar(max) ,
 @SiteType nvarchar(max)
@@ -25,6 +28,7 @@ BEGIN
       OriginSite_Type,
       OriginSite_ID,
       oldURL,
+	  DisplayTitle,
       DocId
     FROM sitepublisherii.dbo.Documents
 
@@ -47,14 +51,10 @@ BEGIN
     --checking condition if index page and is published for person then only fetch that page (could be index or other page as well )
     SELECT
       * INTO #TempDataTable
-    FROM (SELECT
-      sitepublisherii.dbo.Documents.Title,
-      Published
-
-
+    FROM (SELECT *
     FROM sitepublisherii.dbo.Documents
 
-    WHERE Documents.Title = 'Index'
+    WHERE Title = 'Index'
     AND published = 'p') AS P
 
     IF (EXISTS (SELECT
@@ -73,6 +73,7 @@ BEGIN
         OriginSite_Type,
         OriginSite_ID,
         oldURL,
+		DisplayTitle,
         DocId
       FROM sitepublisherii.dbo.Documents
       JOIN sitepublisherii.dbo.People
@@ -99,6 +100,7 @@ BEGIN
       OriginSite_Type,
       OriginSite_ID,
       oldURL,
+	  DisplayTitle,
       DocId,
       sitepublisherii.dbo.Sites.siteLabel
     FROM sitepublisherii.dbo.Documents
@@ -143,3 +145,5 @@ END
 --where DocVer_ID =(4877)  and CurrentVersion = 1
 
 --select * from sitepublisherii.dbo.Documents where originsite_type='ad_hoc'
+GO
+
