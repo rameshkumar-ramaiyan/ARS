@@ -1,6 +1,6 @@
 USE [aris_public_webNew]
 GO
-/****** Object:  StoredProcedure [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]    Script Date: 5/12/2016 9:13:13 AM ******/
+/****** Object:  StoredProcedure [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]    Script Date: 5/12/2016 2:03:09 PM ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
