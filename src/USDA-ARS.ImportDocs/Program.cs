@@ -133,9 +133,9 @@ namespace USDA_ARS.ImportDocs
             //dtAllDocumentIdsBasedOnDocTypeWithParamPerson = GetAllDocumentIdsBasedOnDocTypeWithParam("person");
             ////2. send to doctype sp---not require now
             List<string> list = new List<string>();
-            list.Add("Place");
+            //list.Add("Place");
             list.Add("ad_hoc");
-            list.Add("person");
+            //list.Add("person");
 
             for (int k = 0; k < list.Count; k++) // Loop through List with for
             {
@@ -158,12 +158,12 @@ namespace USDA_ARS.ImportDocs
                         string originSite_ID = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(5).ToString();
                         //string oldURL = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(6).ToString();
                         bool displayTitle = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<bool>(7);
-                    string adHocFolderName = string.Empty;
-                    if (list[k].ToString().Trim()=="ad_hoc")
-                    {
-                         adHocFolderName = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(8).ToString();
-                    }
+                        string adHocFolderName = string.Empty;
+                        if (list[k].ToString().Trim() == "ad_hoc")
+                        {
+                            adHocFolderName = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(8).ToString();
                         }
+
                         ImportPage newPage = new ImportPage();
 
                         DataTable dtAllDocumentIdPagesBasedOnCurrentVersion = new DataTable();
