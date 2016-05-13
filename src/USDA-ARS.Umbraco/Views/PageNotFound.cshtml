@@ -43,17 +43,42 @@
             {
                 string agMagUrl = "http://agresearchmag.ars.usda.gov/";
 
-                agMagUrl += badUrlArray[3] + "/";
-                agMagUrl += badUrlArray[4].Substring(0, 3) + "/";
+                int index = 4;
 
-                agMagUrl += badUrlArray[5].Replace(".htm", "") + "/";
+                string month = badUrlArray[index].Substring(0, 3);
+                string year = badUrlArray[index].Substring(3, 2);
+
+                if (Convert.ToInt32(year) <= 99 && Convert.ToInt32(year) >= 50)
+                {
+                    year = "19" + year;
+                }
+                else
+                {
+                    year = "20" + year;
+                }
+
+                agMagUrl += year + "/";
+                agMagUrl += month + "/";
+                index++;
+                string endUrl = badUrlArray[index].Replace(".htm", "");
+
+                if (false == string.IsNullOrEmpty(endUrl))
+                {
+                    if (endUrl.Length >= 4)
+                    {
+                        endUrl = endUrl.Substring(0, endUrl.Length - 4);
+                    }
+                }
+
+                agMagUrl += endUrl;
+
 
                 Response.RedirectPermanent(agMagUrl);
             }
         }
         else if (badUrl.ToLower().IndexOf("/pandp/people/people.htm?personid=") >= 0)
         {
-            Response.RedirectPermanent(badUrl.ToLower().Replace("/pandp/people/people.htm?personid=","/people-locations/person?person-id="));
+            Response.RedirectPermanent(badUrl.ToLower().Replace("/pandp/people/people.htm?personid=", "/people-locations/person?person-id="));
         }
         else
         {
