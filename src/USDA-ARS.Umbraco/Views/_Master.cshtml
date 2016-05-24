@@ -47,7 +47,7 @@
     <link href="/css/ARSbranding.css" rel="stylesheet" type="text/css" />
     <link href="/css/ie8-and-down.css" rel="stylesheet" type="text/css" />
 
-    <script id="_fed_an_ua_tag" src="/incme/handf/Universal-Federated-Analytics-Min.js?agency=USDA&subagency=ARS"></script>
+    @*<script id="_fed_an_ua_tag" src="/incme/handf/Universal-Federated-Analytics-Min.js?agency=USDA&subagency=ARS"></script>*@
 
     <!-- include jQuery library -->
 
@@ -73,13 +73,19 @@
             var TopObj_Topic = document.getElementById("AgencyNewsTop_Topic");
             var TopObj_Blog = document.getElementById("AgencyNewsTop_Blog");
 
-            DetailObj_Latest.style.visibility = "hidden";
-            DetailObj_Topic.style.visibility = "hidden";
-            DetailObj_Blog.style.visibility = "hidden";
+            if (DetailObj_Latest != null)
+                DetailObj_Latest.style.visibility = "hidden";
+            if (DetailObj_Topic != null)
+                DetailObj_Topic.style.visibility = "hidden";
+            if (DetailObj_Blog != null)
+                DetailObj_Blog.style.visibility = "hidden";
 
-            TopObj_Latest.className = "toplink";
-            TopObj_Topic.className = "toplink";
-            TopObj_Blog.className = "toplink";
+            if (TopObj_Latest != null)
+                TopObj_Latest.className = "toplink";
+            if (TopObj_Topic != null)
+                TopObj_Topic.className = "toplink";
+            if (TopObj_Blog != null)
+                TopObj_Blog.className = "toplink";
 
             if (field == "") {
                 field = "Latest";
@@ -87,8 +93,10 @@
             var selectedObj_Top = document.getElementById("AgencyNewsTop_" + field);
             var selectedObj_Detail = document.getElementById("AgencyNewsDetail_" + field);
 
-            selectedObj_Top.className = "selectedTab";
-            selectedObj_Detail.style.visibility = "visible";
+            if (selectedObj_Top != null)
+                selectedObj_Top.className = "selectedTab";
+            if (selectedObj_Detail != null)
+                selectedObj_Detail.style.visibility = "visible";
         }
     </script>
 
@@ -319,7 +327,7 @@
         @RenderBody()
 
 
-        <!-- START OF SmartSource Data Collector TAG -->
+        @*<!-- START OF SmartSource Data Collector TAG -->
         <!-- Copyright (c) 1996-2014 Webtrends Inc.  All rights reserved. -->
         <!-- Version: 9.4.0 -->
         <!-- Tag Builder Version: 4.1  -->
@@ -367,7 +375,7 @@
                 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
             })();
 
-        </script>
+        </script>*@
 
 
 

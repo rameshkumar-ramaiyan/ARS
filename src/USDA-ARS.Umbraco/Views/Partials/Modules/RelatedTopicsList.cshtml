@@ -58,7 +58,7 @@
                 }
             }
         }
-                
+
         @if (currentRelatedTopics != null && currentRelatedTopics.Any())
         {
             foreach (var topicList in currentRelatedTopics)
@@ -85,7 +85,7 @@
 
         @if (Model.DocumentTypeAlias == "NationalProgram")
         {
-        @Html.Partial("~/Views/Partials/Modules/ResearchProgramNavigation.cshtml", Model)
+            @Html.Partial("~/Views/Partials/Modules/ResearchProgramNavigation.cshtml", Model)
         }
 
         @if (siteRelatedTopicsBottom != null && siteRelatedTopicsBottom.Any())

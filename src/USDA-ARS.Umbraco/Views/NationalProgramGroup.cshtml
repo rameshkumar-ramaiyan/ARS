@@ -62,7 +62,7 @@
                                                 <tbody>
                                                     <tr>
                                                         <td>
-                                                            @if (locationLeader != null)
+                                                            @if (locationLeader != null && nationalProgramsMain != null && nationalProgramsMain.Id != currentPage.Id)
                                                             {
                                                                 <a href="/people-locations/person?person-id=@(locationLeader.PersonId)" id="anch_51">
                                                                     @(locationLeader.LastName), @(locationLeader.FirstName)
@@ -81,7 +81,10 @@
                                                                 <em>Person not found: EmpId = @programLocation.RlEmpId</em><br />
                                                             }*@
                                                             
-                                                            @(programLocation.Phone)<br />
+                                                            @if (nationalProgramsMain != null && nationalProgramsMain.Id != currentPage.Id)
+                                                            {
+                                                                @(programLocation.Phone)<br />
+                                                            }
                                                             @(programLocation.Address1)<br />
                                                             @(programLocation.Address2)<br />
                                                             @(programLocation.City) @(programLocation.StateCode) @(programLocation.PostalCode)
