@@ -38,6 +38,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportDocsClient",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.AuthenticationProvider", "USDA-ARS.AuthenticationProvider\USDA-ARS.AuthenticationProvider.csproj", "{E93D3DAA-37E7-406D-AFF0-57D196F94CAB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportNavigation", "USDA-ARS.ImportNavigation\USDA-ARS.ImportNavigation.csproj", "{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -135,6 +137,12 @@ Global
 		{E93D3DAA-37E7-406D-AFF0-57D196F94CAB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E93D3DAA-37E7-406D-AFF0-57D196F94CAB}.Staging|Any CPU.ActiveCfg = Release|Any CPU
 		{E93D3DAA-37E7-406D-AFF0-57D196F94CAB}.Staging|Any CPU.Build.0 = Release|Any CPU
+		{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}.Release|Any CPU.Build.0 = Release|Any CPU
+		{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}.Staging|Any CPU.ActiveCfg = Release|Any CPU
+		{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}.Staging|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
