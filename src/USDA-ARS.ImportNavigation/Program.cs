@@ -27,6 +27,8 @@ namespace USDA_ARS.ImportNavigation
         static List<ModeCodeLookup> MODE_CODE_LIST = null;
         static List<ModeCodeNew> MODE_CODE_NEW_LIST = null;
 
+        static List<Document> VALID_DOCS = null;
+
         static void Main(string[] args)
         {
             AddLog("Getting Mode Codes From Umbraco...");
@@ -40,10 +42,7 @@ namespace USDA_ARS.ImportNavigation
             AddLog("");
 
 
-
             List<NavSystem> navSysModeCodeList = NavSystems.GetNavModeCodeList();
-
-
 
 
             if (navSysModeCodeList != null)

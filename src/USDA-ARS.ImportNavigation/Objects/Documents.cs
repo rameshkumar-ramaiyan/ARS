@@ -20,5 +20,17 @@ namespace USDA_ARS.ImportNavigation.Objects
 
             return docItem;
         }
+
+
+        public static List<Document> GetValidDocList()
+        {
+            var db = new Database("sitePublisherDbDSN");
+
+            string sql = "SELECT * FROM Documents WHERE SPSysEndTime IS NULL";
+
+            List<Document> docList = db.Query<Document>(sql).ToList();
+
+            return docList;
+        }
     }
 }
