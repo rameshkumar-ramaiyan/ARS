@@ -9,7 +9,7 @@ using Umbraco.Core.Persistence.DatabaseAnnotations;
 namespace USDA_ARS.ImportNavigation.Models
 {
     [TableName("Sites")]
-    public class Site
+    public class SubSite
     {
         [Column("siteID")]
         [NullSetting(NullSetting = NullSettings.Null)]

@@ -14,9 +14,21 @@ namespace USDA_ARS.ImportNavigation.Objects
         {
             var db = new Database("sitePublisherDbDSN");
 
-            string sql = "SELECT * FROM Navigation WHERE NavSys_ID = @navSysId";
+            string sql = "SELECT * FROM Navigation WHERE NavSys_ID = @navSysId AND navigation.Parent_NavID = 0";
 
             List<Navigation> itemList = db.Query<Navigation>(sql, new { navSysId = navSysId }).ToList();
+
+            return itemList;
+        }
+
+
+        public static List<Navigation> GetNavigationListByNavId(int navId)
+        {
+            var db = new Database("sitePublisherDbDSN");
+
+            string sql = "SELECT * FROM Navigation WHERE NavID = @navId";
+
+            List<Navigation> itemList = db.Query<Navigation>(sql, new { navId = navId }).ToList();
 
             return itemList;
         }

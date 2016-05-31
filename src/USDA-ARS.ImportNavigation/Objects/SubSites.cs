@@ -8,15 +8,15 @@ using USDA_ARS.ImportNavigation.Models;
 
 namespace USDA_ARS.ImportNavigation.Objects
 {
-    public class Sites
+    public class SubSites
     {
-        public static List<Site> GetValidSiteList()
+        public static List<SubSite> GetValidSiteList()
         {
             var db = new Database("sitePublisherDbDSN");
 
             string sql = "SELECT * FROM Sites WHERE SPSysEndTime IS NULL AND site_status = 1";
 
-            List<Site> siteList = db.Query<Site>(sql).ToList();
+            List<SubSite> siteList = db.Query<SubSite>(sql).ToList();
 
             return siteList;
         }

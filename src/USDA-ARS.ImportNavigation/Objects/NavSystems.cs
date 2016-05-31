@@ -14,11 +14,13 @@ namespace USDA_ARS.ImportNavigation.Objects
         {
             var db = new Database("sitePublisherDbDSN");
 
-            string sql = @"SELECT DISTINCT(OriginSite_ID) FROM NavSystems  WHERE Published = 'p'
-                          AND OriginSite_Type = 'Place'
+            string sql = @"SELECT DISTINCT(OriginSite_ID), OriginSite_Type FROM NavSystems WHERE Published = 'p'
+                          --AND OriginSite_Type = 'Place'
                           AND spsysendtime IS NULL
-                          AND showLabel IN(0, 1)
+                          --AND SPSysBeginTime > '1/1/1990'
+                          --AND showLabel IN(0, 1)
                           AND OriginSite_ID <> '00000000'
+                          AND OriginSite_ID	<> ''
                           ORDER BY OriginSite_ID";
 
             List<NavSystem> itemList = db.Query<NavSystem>(sql).ToList();
@@ -26,19 +28,39 @@ namespace USDA_ARS.ImportNavigation.Objects
             return itemList;
         }
 
-        public static List<NavSystem> GetNavSysListByPlace(string modeCode)
+        public static List<NavSystem> GetNavSysListByPlace(string originSite, string type = "Place")
         {
             var db = new Database("sitePublisherDbDSN");
 
-            string sql = @"SELECT * FROM NavSystems  WHERE Published = 'p'
-                          AND OriginSite_Type = 'Place'
+            string sql = @"SELECT * FROM NavSystems WHERE Published = 'p'
+                          AND OriginSite_Type = @type
                           AND spsysendtime IS NULL
+                          --AND SPSysBeginTime > '1/1/1990'
                           --AND navPageLoc = 'left'
-                          AND showLabel IN(0, 1)
-                          AND OriginSite_ID = @modeCode
+                          --AND showLabel IN(0, 1)
+                          AND OriginSite_ID	 <> ''
+                          AND OriginSite_ID = @originSite
                           ORDER BY BBSect, NavSysLabel";
 
-            List<NavSystem> itemList = db.Query<NavSystem>(sql, new { modeCode = modeCode }).ToList();
+            List<NavSystem> itemList = db.Query<NavSystem>(sql, new { type = type, originSite = originSite }).ToList();
+
+            return itemList;
+        }
+
+
+        public static List<NavSystem> GetNavSysListByIndex(string originSite, string type = "Place")
+        {   
+            var db = new Database("sitePublisherDbDSN");
+
+            string sql = @"SELECT * FROM NavSystems  WHERE Published = 'p'
+                          AND OriginSite_Type = @type
+                          AND spsysendtime IS NULL
+                          --AND navPageLoc = 'left'
+                          --AND showLabel IN(0, 1)
+                          AND OriginSite_ID = @originSite
+                          ORDER BY BBSect, NavSysLabel";
+
+            List<NavSystem> itemList = db.Query<NavSystem>(sql, new { type = type, originSite = originSite }).ToList();
 
             return itemList;
         }
