@@ -21,8 +21,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             ObjectCache cache = MemoryCache.Default;
 
             blogList = cache.Get(cacheKey) as List<BlogItem>;
-            try
-            {          
+
             if (blogList == null)
             {
                 blogList = new List<BlogItem>();
@@ -59,7 +58,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                 }
                 catch (Exception ex)
                 {
-            {
+                    LogHelper.Error(null, "Error getting USDA Blog feed", ex);
                 }
                 finally
                 {
