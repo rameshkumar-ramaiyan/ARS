@@ -362,6 +362,7 @@
     <Compile Include="Models\NodeBreadcrumb.cs" />
     <Compile Include="Models\NodeDownloadRequestsList.cs" />
     <Compile Include="Models\NodeDownloadRequests.cs" />
+    <Compile Include="Models\RedirectItem.cs" />
     <Compile Include="Models\ResearchUnit.cs" />
     <Compile Include="Models\Aris\UsdaArsNews.cs" />
     <Compile Include="Models\Aris\UsdaProject.cs" />

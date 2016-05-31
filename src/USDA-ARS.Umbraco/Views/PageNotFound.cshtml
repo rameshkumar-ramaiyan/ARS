@@ -2,6 +2,7 @@
 @using Archetype.Models
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Models
 @using USDA_ARS.Umbraco.Extensions.Helpers
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
@@ -82,20 +83,26 @@
         }
         else
         {
-            List<IPublishedContent> nodesList = Nodes.NodesWithRedirectsList();
+            List<RedirectItem> nodesList = Nodes.NodesWithRedirectsList();
 
             if (nodesList != null && nodesList.Any())
             {
-                IPublishedContent redirectNode = nodesList.Where(p => p.GetPropertyValue<string>("oldUrl").Contains(badUrl)).FirstOrDefault();
-                if (redirectNode != null)
+                RedirectItem redirectItem = nodesList.Where(p => p.OldUrl == badUrl.ToLower()).FirstOrDefault();
+
+                if (redirectItem != null)
                 {
-                    Response.RedirectPermanent(redirectNode.Url);
+                    int umbracoId = redirectItem.UmbracoId;
+
+                    IPublishedContent foundRedirectNode = Nodes.GetNodeById(umbracoId);
+
+                    if (foundRedirectNode != null)
+                    {
+                        Response.RedirectPermanent(foundRedirectNode.Url);
+                    }
                 }
             }
         }
     }
-}
-
 }
 
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)

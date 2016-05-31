@@ -52,7 +52,7 @@ namespace USDA_ARS.LocationsWebApp
             properties.Add(new ApiProperty("oldUrl", "/PandP/locations/cityPeopleList.cfm?modeCode=50-00-00-00")); // current URL
             properties.Add(new ApiProperty("oldId", "1234")); // sitepublisher ID (So we can reference it later if needed).
 
-
+            content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
 
 
 
@@ -200,6 +200,7 @@ namespace USDA_ARS.LocationsWebApp
             content.Id = 0;
             content.Properties = new List<ApiProperty>();
             content.Properties.Add(new ApiProperty("modeCode", txtModeCode.Text.ToString())); // Load page by property value
+            content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
 
             request.ContentList = new List<ApiContent>();
             request.ContentList.Add(content);
@@ -323,6 +324,8 @@ namespace USDA_ARS.LocationsWebApp
             properties.Add(new ApiProperty("oldUrl", "/PandP/locations/cityPeopleList.cfm?modeCode=" + newModeCodeProperty + "")); // current URL               
             properties.Add(new ApiProperty("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
             properties.Add(new ApiProperty("quickLinks", oldId));
+
+            content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
 
 
 
@@ -539,6 +542,8 @@ namespace USDA_ARS.LocationsWebApp
             properties.Add(new ApiProperty("state", txtStateCode.Text)); // For example: NY (2 letter state code)
             properties.Add(new ApiProperty("navigationTitle", cityStateConcatenatedString)); // All CAPS - For example: GENEVA, NY
 
+            content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
+
             //properties.Add(new ApiProperty("modeCode", "80-10-00-00")); // Region mode code
             //properties.Add(new ApiProperty("oldUrl", "")); // Leave blank since there is no city page on the website.
             //properties.Add(new ApiProperty("oldId", "1234")); // NOT REQUIRED. INTERNAL USE ONLY. sitepublisher ID (So we can reference it later if needed).
@@ -605,6 +610,9 @@ namespace USDA_ARS.LocationsWebApp
             properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
             properties.Add(new ApiProperty("oldUrl", "/PandP/locations/cityPeopleList.cfm?modeCode=" + newModeCodeProperty + "")); // current URL               
             properties.Add(new ApiProperty("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
+
+            content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
+
             //properties.Add(new ApiProperty("state", txtStateCode.Text)); // For example: NY (2 letter state code)
             //properties.Add(new ApiProperty("navigationTitle", cityStateConcatenatedString)); // All CAPS - For example: GENEVA, NY
 
@@ -770,6 +778,9 @@ namespace USDA_ARS.LocationsWebApp
                 properties.Add(new ApiProperty("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
                 properties.Add(new ApiProperty("quickLinks", quickLinks));
                 properties.Add(new ApiProperty("webtrendsProfileID", webtrendsProfileID));
+
+                content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
+
                 legacyCarouselSlidesBeforeInsertion = AddRetrieveLocationsDL.GetAllCarouselSlidesBasedOnModeCode(completeModeCode);
                 var jsonSettings = new JsonSerializerSettings();
                 jsonSettings.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
@@ -1028,6 +1039,9 @@ namespace USDA_ARS.LocationsWebApp
                     properties.Add(new ApiProperty("state", stateCode)); // For example: NY (2 letter state code)
                     properties.Add(new ApiProperty("navigationTitle", cityNameWithStateCodeWithComma)); // All CAPS - For example: GENEVA, NY
                     properties.Add(new ApiProperty("umbracoUrlName", cityNameWithStateCode));
+
+                    content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
+
                     //properties.Add(new ApiProperty("modeCode", "80-10-00-00")); // Region mode code
                     //properties.Add(new ApiProperty("oldUrl", "")); // Leave blank since there is no city page on the website.
                     //properties.Add(new ApiProperty("oldId", "1234")); // NOT REQUIRED. INTERNAL USE ONLY. sitepublisher ID (So we can reference it later if needed).
@@ -1136,6 +1150,9 @@ namespace USDA_ARS.LocationsWebApp
                     properties.Add(new ApiProperty("oldId", "")); // sitepublisher ID (So we can reference it later if needed).
                     properties.Add(new ApiProperty("quickLinks", quickLinks));                                  //properties.Add(new ApiProperty("state", legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Substring(0,legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Length -2))); // For example: NY (2 letter state code)
                     properties.Add(new ApiProperty("webtrendsProfileID", webtrendsProfileID));
+
+                    content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
+
                     legacyCarouselSlidesBeforeInsertion = AddRetrieveLocationsDL.GetAllCarouselSlidesBasedOnModeCode(newModeCodeProperty);
                     var jsonSettings = new JsonSerializerSettings();
                     jsonSettings.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
@@ -1389,6 +1406,9 @@ namespace USDA_ARS.LocationsWebApp
                     properties.Add(new ApiProperty("oldId", "")); // sitepublisher ID (So we can reference it later if needed).
                     properties.Add(new ApiProperty("quickLinks", quickLinks));                                              //properties.Add(new ApiProperty("state", legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Substring(0,legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Length -2))); // For example: NY (2 letter state code)
                     properties.Add(new ApiProperty("webtrendsProfileID", webtrendsProfileID));
+
+                    content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
+
                     legacyCarouselSlidesBeforeInsertion = AddRetrieveLocationsDL.GetAllCarouselSlidesBasedOnModeCode(newModeCodeProperty);
                     var jsonSettings = new JsonSerializerSettings();
                     jsonSettings.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();

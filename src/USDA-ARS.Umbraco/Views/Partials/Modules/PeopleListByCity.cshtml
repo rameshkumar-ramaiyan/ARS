@@ -96,7 +96,8 @@
 <div id="CityPeopleListing">
 
 
-
+    @if (currentNode != null)
+    {
     <b>
         People and Locations at
         @currentNode.Name
@@ -172,4 +173,10 @@
         }
 
     </div>
+    }
+    else
+
+    {
+        <em>Location not found</em>
+    }
 </div>
