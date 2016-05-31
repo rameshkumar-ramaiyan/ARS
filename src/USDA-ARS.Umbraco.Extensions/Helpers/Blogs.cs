@@ -26,39 +26,45 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             if (blogList == null)
             {
                 blogList = new List<BlogItem>();
+                SyndicationFeed feed = null;
 
                 string url = "http://blogs.usda.gov/tag/ars/feed/";
                 XmlReader reader = XmlReader.Create(url);
-                SyndicationFeed feed = SyndicationFeed.Load(reader);
 
-                reader.Close();
-
-                IEnumerable<SyndicationItem> feedList = feed.Items;
-
-                foreach (SyndicationItem item in feedList)
+                try
                 {
-                    if (item.Categories.Where(p => p.Name == "ARS").Count() > 0)
+                    feed = SyndicationFeed.Load(reader);
+
+                    IEnumerable<SyndicationItem> feedList = feed.Items;
+
+                    foreach (SyndicationItem item in feedList)
                     {
-                        BlogItem blogItem = new BlogItem();
+                        if (item.Categories.Where(p => p.Name == "ARS").Count() > 0)
+                        {
+                            BlogItem blogItem = new BlogItem();
 
-                        blogItem.Title = item.Title.Text;
-                        blogItem.Summary = item.Summary.Text;
-                        blogItem.Url = item.Links[0].Uri.AbsoluteUri;
+                            blogItem.Title = item.Title.Text;
+                            blogItem.Summary = item.Summary.Text;
+                            blogItem.Url = item.Links[0].Uri.AbsoluteUri;
 
-                        blogList.Add(blogItem);
+                            blogList.Add(blogItem);
+                        }
+                    }
+
+                    if (blogList.Count > 0)
+                    {
+                        CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(30) };
+                        cache.Add(cacheKey, blogList, policy);
                     }
                 }
-
-                if (blogList.Count > 0)
+                catch (Exception ex)
                 {
-                    CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(30) };
-                    cache.Add(cacheKey, blogList, policy);
-                }
-            }
-            }
-            catch (Exception Ex)
             {
-                LogHelper.Error<Blogs>("Usda Blogs Error", Ex);
+                }
+                finally
+                {
+                    reader.Close();
+                }
             }
 
             return blogList;

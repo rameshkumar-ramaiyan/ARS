@@ -46,6 +46,19 @@ namespace USDA_ARS.LocationsWebApp.Models
     }
 
 
+    public class Dictionary
+    {
+        public string Value { get; set; }
+        public string Text { get; set; }
+
+        public Dictionary(string value, string text)
+        {
+            this.Value = value;
+            this.Text = text;
+        }
+    }
+
+
     public class Site
     {
         public string Id { get; set; }

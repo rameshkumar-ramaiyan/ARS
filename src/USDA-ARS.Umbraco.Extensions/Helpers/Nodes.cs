@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Text;
 using Umbraco.Core.Models;
 using Umbraco.Web;
@@ -25,14 +26,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
         public static IPublishedContent NationProgramsMain()
         {
-            IPublishedContent NationalProgramsRoot = UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("NationalProgramsRoot"));
-
-            if (NationalProgramsRoot != null)
-            {
-                return NationalProgramsRoot.Children.FirstOrDefault();
-            }
-
-            return null;
+            return UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("NationalProgramMain"));
         }
 
         public static IEnumerable<IPublishedContent> MainNavigationList()
@@ -143,7 +137,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             int i = 0;
             int mid = researchUnits.Count / 2;
 
-            foreach(ResearchUnitDisplay unit in researchUnits)
+            foreach (ResearchUnitDisplay unit in researchUnits)
             {
                 if (i < mid)
                 {
@@ -184,21 +178,56 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
         }
 
 
-        public static List<IPublishedContent> NodesWithRedirectsList()
+        public static List<RedirectItem> NodesWithRedirectsList()
         {
-            List<IPublishedContent> nodeList = new List<IPublishedContent>();
+            List<RedirectItem> redirectList = null;
 
-            IPublishedContent node = null;
+            string cacheKey = "RedirectList";
+            ObjectCache cache = MemoryCache.Default;
 
-            foreach (IPublishedContent root in UmbHelper.TypedContentAtRoot())
+            redirectList = cache.Get(cacheKey) as List<RedirectItem>;
+
+            if (redirectList == null)
             {
-                if (node == null)
+                redirectList = new List<RedirectItem>();
+
+                foreach (IPublishedContent root in UmbHelper.TypedContentAtRoot())
                 {
-                    nodeList.AddRange(root.Descendants().Where(n => false == string.IsNullOrWhiteSpace(n.GetPropertyValue<string>("oldUrl"))).ToList());
+                    if (root != null)
+                    {
+                        if (false == string.IsNullOrWhiteSpace(root.GetPropertyValue<string>("oldUrl")))
+                        {
+                            List<string> oldUrlArray = root.GetPropertyValue<string>("oldUrl").Split(',').ToList();
+
+                            if (oldUrlArray != null && oldUrlArray.Count > 0)
+                            {
+                                foreach (string oldUrl in oldUrlArray)
+                                {
+                                    redirectList.Add(new RedirectItem { OldUrl = oldUrl.ToLower(), UmbracoId = root.Id });
+                                }
+                            }
+                        }
+
+                        foreach (IPublishedContent subNode in root.Descendants().Where(n => false == string.IsNullOrWhiteSpace(n.GetPropertyValue<string>("oldUrl"))))
+                        {
+                            List<string> oldUrlArray = subNode.GetPropertyValue<string>("oldUrl").Split(',').ToList();
+
+                            if (oldUrlArray != null && oldUrlArray.Count > 0)
+                            {
+                                foreach (string oldUrl in oldUrlArray)
+                                {
+                                    redirectList.Add(new RedirectItem { OldUrl = oldUrl.ToLower(), UmbracoId = subNode.Id });
+                                }
+                            }
+                        }
+                    }
                 }
+
+                CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(240) };
+                cache.Add(cacheKey, redirectList, policy);
             }
 
-            return nodeList;
+            return redirectList;
         }
 
 
@@ -231,7 +260,14 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             {
                 if (node == null)
                 {
-                    node = root.Descendants().FirstOrDefault(n => n.GetPropertyValue<string>("modeCode") == modeCode);
+                    if (root.GetPropertyValue<string>("modeCode") == modeCode)
+                    {
+                        node = root;
+                    }
+                    else
+                    {
+                        node = root.Descendants().FirstOrDefault(n => n.GetPropertyValue<string>("modeCode") == modeCode);
+                    }
                 }
             }
 
