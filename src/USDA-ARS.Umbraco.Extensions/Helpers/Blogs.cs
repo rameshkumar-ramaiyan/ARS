@@ -8,6 +8,7 @@ using System.ServiceModel;
 using System.Xml;
 using System.ServiceModel.Syndication;
 using USDA_ARS.Umbraco.Extensions.Models;
+using Umbraco.Core.Logging;
 
 namespace USDA_ARS.Umbraco.Extensions.Helpers
 {
@@ -20,7 +21,8 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             ObjectCache cache = MemoryCache.Default;
 
             blogList = cache.Get(cacheKey) as List<BlogItem>;
-
+            try
+            {          
             if (blogList == null)
             {
                 blogList = new List<BlogItem>();
@@ -53,7 +55,11 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                     cache.Add(cacheKey, blogList, policy);
                 }
             }
-
+            }
+            catch (Exception Ex)
+            {
+                LogHelper.Error<Blogs>("Usda Blogs Error", Ex);
+            }
 
             return blogList;
         }
