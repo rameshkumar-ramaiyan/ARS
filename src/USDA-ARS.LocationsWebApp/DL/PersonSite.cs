@@ -69,7 +69,7 @@ namespace USDA_ARS.LocationsWebApp.DL
                             for (int j = 0; j < legacyDocsBeforeInsertion.Rows.Count; j++)
                             {
                                 personSiteHtml = legacyDocsBeforeInsertion.Rows[j].Field<string>(0);
-                                personSiteHtml = replaceSP2withARS(personSiteHtml);
+                                //personSiteHtml = replaceSP2withARS(personSiteHtml);
                                 personSiteHtml = DL.CleanHtml.CleanUpHtml(personSiteHtml);
                             }
 
