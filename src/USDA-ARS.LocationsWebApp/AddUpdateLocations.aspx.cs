@@ -52,7 +52,7 @@ namespace USDA_ARS.LocationsWebApp
             properties.Add(new ApiProperty("oldUrl", "/PandP/locations/cityPeopleList.cfm?modeCode=50-00-00-00")); // current URL
             properties.Add(new ApiProperty("oldId", "1234")); // sitepublisher ID (So we can reference it later if needed).
 
-            content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
+            properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
 
 
 
@@ -325,7 +325,7 @@ namespace USDA_ARS.LocationsWebApp
             properties.Add(new ApiProperty("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
             properties.Add(new ApiProperty("quickLinks", oldId));
 
-            content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
+            properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
 
 
 
@@ -542,7 +542,9 @@ namespace USDA_ARS.LocationsWebApp
             properties.Add(new ApiProperty("state", txtStateCode.Text)); // For example: NY (2 letter state code)
             properties.Add(new ApiProperty("navigationTitle", cityStateConcatenatedString)); // All CAPS - For example: GENEVA, NY
 
-            content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
+            properties.Add(new ApiProperty("usajobsLocationID", "USAJOBS LOCATION ID HERE")); // USDAJOBS Location ID
+
+            properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
 
             //properties.Add(new ApiProperty("modeCode", "80-10-00-00")); // Region mode code
             //properties.Add(new ApiProperty("oldUrl", "")); // Leave blank since there is no city page on the website.
@@ -611,7 +613,7 @@ namespace USDA_ARS.LocationsWebApp
             properties.Add(new ApiProperty("oldUrl", "/PandP/locations/cityPeopleList.cfm?modeCode=" + newModeCodeProperty + "")); // current URL               
             properties.Add(new ApiProperty("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
 
-            content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
+            properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
 
             //properties.Add(new ApiProperty("state", txtStateCode.Text)); // For example: NY (2 letter state code)
             //properties.Add(new ApiProperty("navigationTitle", cityStateConcatenatedString)); // All CAPS - For example: GENEVA, NY
@@ -1041,6 +1043,8 @@ namespace USDA_ARS.LocationsWebApp
                     properties.Add(new ApiProperty("umbracoUrlName", cityNameWithStateCode));
 
                   //////  content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
+
+                    properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
 
                     //properties.Add(new ApiProperty("modeCode", "80-10-00-00")); // Region mode code
                     //properties.Add(new ApiProperty("oldUrl", "")); // Leave blank since there is no city page on the website.

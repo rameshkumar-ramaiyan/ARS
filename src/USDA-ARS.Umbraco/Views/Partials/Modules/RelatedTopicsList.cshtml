@@ -137,6 +137,11 @@
                     urlLink = navLink.Url;
                 }
             }
+            else if (item.HasValue("linkToFile"))
+            {
+                urlLink = item.GetValue<string>("linkToFile");
+            }
+
 
             appendModeCode = item.GetValue<bool>("appendModeCode");
 

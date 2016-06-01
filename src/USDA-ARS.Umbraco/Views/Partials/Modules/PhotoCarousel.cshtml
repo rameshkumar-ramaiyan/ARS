@@ -78,6 +78,10 @@
 
                     navLinkUrl = navLink.Url;
                 }
+                else if (slide.HasValue("slideFile"))
+                {
+                    navLinkUrl = slide.GetValue<string>("slideFile");
+                }
 
                 <a href="@navLinkUrl" title="@slide.GetValue("slideAltText")">
                     <img id="slide@(slideNum)" src="@slide.GetValue("slideImage")" class="carouselPhoto" alt="@slide.GetValue("slideAltText")" data-text="@slide.GetValue("slideText")" style="max-width: 520px; max-height: 320px;" />

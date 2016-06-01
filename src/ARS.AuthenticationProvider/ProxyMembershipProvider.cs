@@ -15,7 +15,7 @@ using Umbraco.Core.Security;
 using Umbraco.Core.Services;
 using Umbraco.Web.Security.Providers;
 
-namespace USDA_ARS.AuthenticationProvider
+namespace ARS.AuthenticationProvider
 {
     public class ProxyMembershipProvider : UmbracoMembershipProvider<IMembershipUserService, IUser>
     {
