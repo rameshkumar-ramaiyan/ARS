@@ -718,15 +718,15 @@ namespace USDA_ARS.LocationsWebApp
 
             ////2.2 all cities---retrieval and insertion
             System.Data.DataTable newCitiesAfterInsertion = new System.Data.DataTable();
-             newCitiesAfterInsertion = AddAllCities(newAreasAfterInsertion);
+            newCitiesAfterInsertion = AddAllCities(newAreasAfterInsertion);
 
             ////2.3 all RCs---retrieval and insertion
             System.Data.DataTable newResearchUnitsAfterInsertion = new System.Data.DataTable();
-             newResearchUnitsAfterInsertion = AddAllResearchUnits(newCitiesAfterInsertion);
+            newResearchUnitsAfterInsertion = AddAllResearchUnits(newCitiesAfterInsertion);
 
             ////2.4 all Labs---retrieval and insertion
             System.Data.DataTable newLabsAfterInsertion = new System.Data.DataTable();
-             newLabsAfterInsertion = AddAllLabs(newResearchUnitsAfterInsertion);
+            newLabsAfterInsertion = AddAllLabs(newResearchUnitsAfterInsertion);
 
         }
         protected DataTable AddAllAreas()
@@ -781,7 +781,7 @@ namespace USDA_ARS.LocationsWebApp
                 properties.Add(new ApiProperty("quickLinks", quickLinks));
                 properties.Add(new ApiProperty("webtrendsProfileID", webtrendsProfileID));
 
-              //  content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
+                properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
 
                 legacyCarouselSlidesBeforeInsertion = AddRetrieveLocationsDL.GetAllCarouselSlidesBasedOnModeCode(completeModeCode);
                 var jsonSettings = new JsonSerializerSettings();
@@ -1042,7 +1042,7 @@ namespace USDA_ARS.LocationsWebApp
                     properties.Add(new ApiProperty("navigationTitle", cityNameWithStateCodeWithComma)); // All CAPS - For example: GENEVA, NY
                     properties.Add(new ApiProperty("umbracoUrlName", cityNameWithStateCode));
 
-                  //////  content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
+                    properties.Add(new ApiProperty("usajobsLocationID", "USAJOBS LOCATION ID HERE")); // USDAJOBS Location ID
 
                     properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
 
@@ -1155,7 +1155,7 @@ namespace USDA_ARS.LocationsWebApp
                     properties.Add(new ApiProperty("quickLinks", quickLinks));                                  //properties.Add(new ApiProperty("state", legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Substring(0,legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Length -2))); // For example: NY (2 letter state code)
                     properties.Add(new ApiProperty("webtrendsProfileID", webtrendsProfileID));
 
-                   ////// content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
+                    properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
 
                     legacyCarouselSlidesBeforeInsertion = AddRetrieveLocationsDL.GetAllCarouselSlidesBasedOnModeCode(newModeCodeProperty);
                     var jsonSettings = new JsonSerializerSettings();
@@ -1411,7 +1411,7 @@ namespace USDA_ARS.LocationsWebApp
                     properties.Add(new ApiProperty("quickLinks", quickLinks));                                              //properties.Add(new ApiProperty("state", legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Substring(0,legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Length -2))); // For example: NY (2 letter state code)
                     properties.Add(new ApiProperty("webtrendsProfileID", webtrendsProfileID));
 
-               //     content.Properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
+                    properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
 
                     legacyCarouselSlidesBeforeInsertion = AddRetrieveLocationsDL.GetAllCarouselSlidesBasedOnModeCode(newModeCodeProperty);
                     var jsonSettings = new JsonSerializerSettings();
@@ -1658,7 +1658,7 @@ namespace USDA_ARS.LocationsWebApp
         {
             string randomId = txtRandomIds.Text;
             DataTable legacyRandomDocuments = new DataTable();
-            legacyRandomDocuments=GetAllRandomDocuments(randomId);
+            legacyRandomDocuments = GetAllRandomDocuments(randomId);
         }
         public static DataTable GetAllRandomDocuments(string randomId)
         {
