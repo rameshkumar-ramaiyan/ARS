@@ -650,7 +650,7 @@ namespace USDA_ARS.LocationsWebApp.DL
             //return locationsResponse;
             return dt;
         }
-
+        #endregion
         #region  Get All Job Location Ids Based On CityName
         public static DataTable GetAllJobLocationIdsBasedOnCityName(string cityName)
         {
@@ -667,7 +667,7 @@ namespace USDA_ARS.LocationsWebApp.DL
 
                 da.SelectCommand = sqlComm;
                 da.SelectCommand.CommandType = CommandType.StoredProcedure;
-                sqlComm.Parameters.AddWithValue("@ModeCode", modeCode);
+                sqlComm.Parameters.AddWithValue("@CityNameUpper ", cityName);
 
                 DataSet ds = new DataSet();
                 da.Fill(ds, "Locations");
@@ -698,6 +698,7 @@ namespace USDA_ARS.LocationsWebApp.DL
             return dt;
         }
         #endregion
+
 
     }
 }
