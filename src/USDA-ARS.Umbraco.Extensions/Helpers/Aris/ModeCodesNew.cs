@@ -13,27 +13,27 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
         public static string GetNewModeCode(string oldModeCode)
         {
             string output = null;
-            ModeCodeNew modeCodeNew = null;
+            //ModeCodeNew modeCodeNew = null;
 
-            var db = new Database("arisPublicWebDbDSN");
+            //var db = new Database("arisPublicWebDbDSN");
 
-            Sql sql = null;
+            //Sql sql = null;
 
-            oldModeCode = oldModeCode.Replace("-", "");
+            //oldModeCode = oldModeCode.Replace("-", "");
 
-            string where = "OldModecode = '" + oldModeCode + "'";
+            //string where = "OldModecode = '" + oldModeCode + "'";
 
-            sql = new Sql()
-             .Select("*")
-             .From("NewModecodes")
-             .Where(where);
+            //sql = new Sql()
+            // .Select("*")
+            // .From("NewModecodes")
+            // .Where(where);
 
-            modeCodeNew = db.Query<ModeCodeNew>(sql).FirstOrDefault();
+            //modeCodeNew = db.Query<ModeCodeNew>(sql).FirstOrDefault();
 
-            if (modeCodeNew != null)
-            {
-                output = modeCodeNew.ModecodeNew;
-            }
+            //if (modeCodeNew != null)
+            //{
+            //    output = modeCodeNew.ModecodeNew;
+            //}
 
             return output;
         }
@@ -42,16 +42,16 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
         {
             List<ModeCodeNew> output = null;
 
-            var db = new Database("arisPublicWebDbDSN");
+            //var db = new Database("arisPublicWebDbDSN");
 
-            Sql sql = null;
+            //Sql sql = null;
 
 
-            sql = new Sql()
-             .Select("*")
-             .From("NewModecodes");
+            //sql = new Sql()
+            // .Select("*")
+            // .From("NewModecodes");
 
-            output = db.Query<ModeCodeNew>(sql).ToList();
+            //output = db.Query<ModeCodeNew>(sql).ToList();
 
             return output;
         }
@@ -60,20 +60,20 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
         {
             List<ModeCodeNew> modeCodeList = null;
 
-            var db = new Database("arisPublicWebDbDSN");
+            //var db = new Database("arisPublicWebDbDSN");
 
-            Sql sql = null;
+            //Sql sql = null;
 
-            newModeCode = newModeCode.Replace("-", "");
+            //newModeCode = newModeCode.Replace("-", "");
 
-            string where = "NewModecode = '" + newModeCode + "'";
+            //string where = "NewModecode = '" + newModeCode + "'";
 
-            sql = new Sql()
-             .Select("*")
-             .From("NewModecodes")
-             .Where(where);
+            //sql = new Sql()
+            // .Select("*")
+            // .From("NewModecodes")
+            // .Where(where);
 
-            modeCodeList = db.Query<ModeCodeNew>(sql).ToList();
+            //modeCodeList = db.Query<ModeCodeNew>(sql).ToList();
 
             return modeCodeList;
         }
