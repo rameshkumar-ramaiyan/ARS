@@ -56,54 +56,57 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             List<ModeCodeNew> modeCodeList = Helpers.Aris.ModeCodesNew.GetOldModeCode(modeCode);
 
-            foreach (ModeCodeNew modeCodeItem in modeCodeList)
+            if (modeCodeList != null)
             {
-                Sql sql2 = null;
-                List<UsdaPublication> publicationList2 = null;
-
-                List<string> modeCodeArray2 = Helpers.ModeCodes.ModeCodeArray(modeCodeItem.ModecodeOld);
-
-                if (modeCodeArray2 != null && modeCodeArray2.Count == 4)
+                foreach (ModeCodeNew modeCodeItem in modeCodeList)
                 {
-                    string where = "MODECODE_1 = '" + modeCodeArray2[0] + "' AND ";
+                    Sql sql2 = null;
+                    List<UsdaPublication> publicationList2 = null;
 
-                    if (modeCodeArray2[1] != "00")
+                    List<string> modeCodeArray2 = Helpers.ModeCodes.ModeCodeArray(modeCodeItem.ModecodeOld);
+
+                    if (modeCodeArray2 != null && modeCodeArray2.Count == 4)
                     {
-                        where += "MODECODE_2 = '" + modeCodeArray2[1] + "' AND ";
-                    }
-                    if (modeCodeArray2[2] != "00")
-                    {
-                        where += "MODECODE_3 = '" + modeCodeArray2[2] + "' AND ";
-                    }
-                    if (modeCodeArray2[3] != "00")
-                    {
-                        where += "MODECODE_4 = '" + modeCodeArray2[3] + "' AND ";
+                        string where = "MODECODE_1 = '" + modeCodeArray2[0] + "' AND ";
+
+                        if (modeCodeArray2[1] != "00")
+                        {
+                            where += "MODECODE_2 = '" + modeCodeArray2[1] + "' AND ";
+                        }
+                        if (modeCodeArray2[2] != "00")
+                        {
+                            where += "MODECODE_3 = '" + modeCodeArray2[2] + "' AND ";
+                        }
+                        if (modeCodeArray2[3] != "00")
+                        {
+                            where += "MODECODE_4 = '" + modeCodeArray2[3] + "' AND ";
+                        }
+
+                        if (where.EndsWith(" AND "))
+                        {
+                            where = where.Substring(0, where.LastIndexOf(" AND "));
+                        }
+
+                        where += " AND LEFT(DATEPART(yyyy,journal_accpt_date), 4) = '" + DateTime.Now.Year + "'";
+
+                        sql2 = new Sql()
+                         .Select("*")
+                         .From("gen_public_115s")
+                         .Where(where);
+
+                        publicationList2 = db.Query<UsdaPublication>(sql2).ToList();
+
+                        if (publicationList == null)
+                        {
+                            publicationList = publicationList2;
+                        }
+                        else
+                        {
+                            publicationList.AddRange(publicationList2);
+                        }
                     }
 
-                    if (where.EndsWith(" AND "))
-                    {
-                        where = where.Substring(0, where.LastIndexOf(" AND "));
-                    }
-
-                    where += " AND LEFT(DATEPART(yyyy,journal_accpt_date), 4) = '" + DateTime.Now.Year + "'";
-
-                    sql2 = new Sql()
-                     .Select("*")
-                     .From("gen_public_115s")
-                     .Where(where);
-
-                    publicationList2 = db.Query<UsdaPublication>(sql2).ToList();
-
-                    if (publicationList == null)
-                    {
-                        publicationList = publicationList2;
-                    }
-                    else
-                    {
-                        publicationList.AddRange(publicationList2);
-                    }
                 }
-
             }
 
             if (publicationList != null && publicationList.Count > 0)
