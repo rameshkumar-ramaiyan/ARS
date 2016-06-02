@@ -20,13 +20,21 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
     public class UmbEventHandler : ApplicationEventHandler
     {
         private static readonly IContentService _contentService = ApplicationContext.Current.Services.ContentService;
-        
+
 
         protected override void ApplicationStarted(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
         {
+            ContentService.Created += PostProcessCreated;
             ContentService.Saved += PostProcessSave;
             ContentService.Deleted += PostProcessDelete;
         }
+
+        private static void PostProcessCreated(IContentService cs, NewEventArgs<IContent> e)
+        {
+            IContent node = e.Entity;
+            
+        }
+
 
         private static void PostProcessSave(IContentService cs, SaveEventArgs<IContent> e)
         {
@@ -75,6 +83,97 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                     }
                 }
 
+
+                /////////////
+                // When a Doc Folder or Site Standard Webpage is Created...
+                if ((node.ContentType.Alias == "DocsFolder" || node.ContentType.Alias == "SiteStandardWebpage"))
+                {
+                    // SET DEFAULT NAVIGATION CATEGORY
+                    Property navCategory = node.Properties.Where(p => p.Alias == "navigationCategory").FirstOrDefault();
+                    IContent parentNode = node.Parent();
+
+                    if (navCategory.Value == null || true == string.IsNullOrEmpty(navCategory.Value.ToString()))
+                    {
+
+
+                        if (parentNode != null && parentNode.ContentType.Alias != "Region" && parentNode.ContentType.Alias != "ResearchUnit")
+                        {
+                            Property parentNavCategory = parentNode.Properties.Where(p => p.Alias == "navigationCategory").FirstOrDefault();
+
+                            if (parentNavCategory.Value != null && false == string.IsNullOrEmpty(parentNavCategory.Value.ToString()))
+                            {
+                                navCategory.Value = parentNavCategory.Value;
+
+                                _contentService.SaveAndPublishWithStatus(node);
+                            }
+                        }
+                    }
+
+
+                    // UPDATE SORT ORDER
+                    //if (parentNode.ContentType.Alias == "Region" || parentNode.ContentType.Alias == "ResearchUnit" || parentNode.ContentType.Alias == "City")
+                    //{
+                    //    int sortOrder = 0;
+
+                    //    // 
+                    //    List<IContent> docsAndFoldersList = parentNode.Children().Where(p => p.ContentType.Alias != "Region"
+                    //            && p.ContentType.Alias != "ResearchUnit"
+                    //            && p.ContentType.Alias != "City").OrderBy(s => s.Name).ToList();
+
+                    //    if (docsAndFoldersList != null && docsAndFoldersList.Any())
+                    //    {
+                    //        foreach (IContent subNode in docsAndFoldersList)
+                    //        {
+                    //            subNode.SortOrder = sortOrder;
+
+                    //            if (true == subNode.Published)
+                    //            {
+                    //                _contentService.SaveAndPublishWithStatus(node);
+                    //            }
+                    //            else
+                    //            {
+                    //                _contentService.Save(node);
+                    //            }
+
+                    //            sortOrder++;
+                    //        }
+                    //    }
+
+
+                    //    List<IContent> nonDocsAndFoldersList = null;
+
+                    //    if (parentNode.ContentType.Alias == "City" || parentNode.ContentType.Alias == "ResearchUnit")
+                    //    {
+                    //        nonDocsAndFoldersList = parentNode.Children().Where(p => p.ContentType.Alias == "ResearchUnit").ToList();
+
+                    //        if (nonDocsAndFoldersList != null && nonDocsAndFoldersList.Any())
+                    //        {
+                    //            nonDocsAndFoldersList = nonDocsAndFoldersList.OrderBy(p => p.Name).ToList();
+                    //        }
+                    //    }
+
+                    //    if (nonDocsAndFoldersList != null && nonDocsAndFoldersList.Any())
+                    //    {
+                    //        foreach (IContent subNode in nonDocsAndFoldersList)
+                    //        {
+                    //            subNode.SortOrder = sortOrder;
+
+                    //            if (true == subNode.Published)
+                    //            {
+                    //                _contentService.SaveAndPublishWithStatus(node);
+                    //            }
+                    //            else
+                    //            {
+                    //                _contentService.Save(node);
+                    //            }
+
+                    //            sortOrder++;
+                    //        }
+                    //    }
+                    //}
+                }
+
+
                 // SUB FOLDERS FOR REGIONS AND RESEARCH UNITS
                 if ((node.ContentType.Alias == "Region" || node.ContentType.Alias == "ResearchUnit"))
                 {
@@ -104,6 +203,14 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                                         if (newSubNode != null)
                                         {
                                             _contentService.PublishWithChildrenWithStatus(newSubNode);
+
+                                            if (newSubNode != null && newSubNode.Children().Any())
+                                            {
+                                                foreach (IContent newSubSubNode in newSubNode.Children())
+                                                {
+                                                    _contentService.PublishWithChildrenWithStatus(newSubSubNode);
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -136,7 +243,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                             }
                         }
                     }
-                        
+
                 }
                 else if (node.ContentType.Alias == "NationalProgram" && !cs.HasChildren(node.Id))
                 {

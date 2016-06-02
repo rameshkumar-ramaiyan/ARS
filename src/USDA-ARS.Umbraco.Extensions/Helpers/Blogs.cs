@@ -58,7 +58,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                 }
                 catch (Exception ex)
                 {
-                    LogHelper.Error(null, "Error getting USDA Blog feed", ex);
+                    LogHelper.Error<Blogs>("Error getting USDA Blog feed", ex);
                 }
                 finally
                 {

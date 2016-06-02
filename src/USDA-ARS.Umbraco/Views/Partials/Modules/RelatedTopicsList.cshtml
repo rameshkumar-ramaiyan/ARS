@@ -126,6 +126,7 @@
         if (item.Alias == "topicsItem")
         {
             string urlLink = "#";
+            string targetLink = "";
             bool appendModeCode = false;
 
             if (item.HasValue("location"))
@@ -137,6 +138,12 @@
                     urlLink = navLink.Url;
                 }
             }
+            else if (item.HasValue("linkToFile"))
+            {
+                urlLink = item.GetValue<string>("linkToFile");
+                targetLink = " target=\"_blank\"";
+            }
+
 
             appendModeCode = item.GetValue<bool>("appendModeCode");
 
@@ -157,7 +164,7 @@
                 }
             }
 
-            html = "<li><a href=\"" + urlLink + "\">" + item.GetValue<string>("title") + externalIcon + "</a></li>";
+            html = "<li><a href=\"" + urlLink + "\""+ targetLink +">" + item.GetValue<string>("title") + externalIcon + "</a></li>";
         }
         else if (item.Alias == "topicsHeader")
         {

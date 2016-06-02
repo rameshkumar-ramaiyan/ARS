@@ -65,21 +65,27 @@
     <!--Slides-->
 
     <div id="slideshow" style="width:520px;height:320px;float:left;">
-        @if (carouselSlides != null && carouselSlides.Any())
+                        @if (carouselSlides != null && carouselSlides.Any())
         {
             int slideNum = 0;
 
             foreach (var slide in carouselSlides)
             {
                 string navLinkUrl = "#";
+                string targetLink = "";
                 if (slide.HasValue("slideUrl"))
                 {
                     Link navLink = slide.GetValue<MultiUrls>("slideUrl").FirstOrDefault();
 
                     navLinkUrl = navLink.Url;
                 }
+                else if (slide.HasValue("slideFile"))
+                {
+                    navLinkUrl = slide.GetValue<string>("slideFile");
+                    targetLink = " target=\"_blank\"";
+                }
 
-                <a href="@navLinkUrl" title="@slide.GetValue("slideAltText")">
+                <a href="@navLinkUrl" title="@slide.GetValue("slideAltText")"@Html.Raw(targetLink)>
                     <img id="slide@(slideNum)" src="@slide.GetValue("slideImage")" class="carouselPhoto" alt="@slide.GetValue("slideAltText")" data-text="@slide.GetValue("slideText")" style="max-width: 520px; max-height: 320px;" />
                 </a>
 

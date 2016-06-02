@@ -1080,78 +1080,85 @@ namespace USDA_ARS.ImportNavigation
 
             string urlAddress = "http://www.ars.usda.gov" + url;
 
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlAddress);
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-
-            if (response.StatusCode == HttpStatusCode.OK)
+            try
             {
-                Stream receiveStream = response.GetResponseStream();
-                StreamReader readStream = null;
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlAddress);
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
-                if (response.CharacterSet == null)
+                if (response.StatusCode == HttpStatusCode.OK)
                 {
-                    readStream = new StreamReader(receiveStream);
-                }
-                else
-                {
-                    readStream = new StreamReader(receiveStream, Encoding.GetEncoding(response.CharacterSet));
-                }
+                    Stream receiveStream = response.GetResponseStream();
+                    StreamReader readStream = null;
 
-                string data = readStream.ReadToEnd();
-
-                response.Close();
-                readStream.Close();
-
-
-                if (false == string.IsNullOrEmpty(data))
-                {
-                    int findLeftSysId = 0;
-                    int findRightSysId = 0;
-
-                    int findLeft = 0;
-                    int findRight = 0;
-
-                    Match m2 = Regex.Match(data, @"<!--LT:navid:([\d]*)-->", RegexOptions.Singleline);
-                    if (m2.Success)
+                    if (response.CharacterSet == null)
                     {
-                        int.TryParse(m2.Groups[1].Value, out findLeft);
+                        readStream = new StreamReader(receiveStream);
+                    }
+                    else
+                    {
+                        readStream = new StreamReader(receiveStream, Encoding.GetEncoding(response.CharacterSet));
                     }
 
-                    Match m3 = Regex.Match(data, @"<!--RT:navid:([\d]*)-->", RegexOptions.Singleline);
-                    if (m3.Success)
+                    string data = readStream.ReadToEnd();
+
+                    response.Close();
+                    readStream.Close();
+
+
+                    if (false == string.IsNullOrEmpty(data))
                     {
-                        int.TryParse(m3.Groups[1].Value, out findRight);
-                    }
+                        int findLeftSysId = 0;
+                        int findRightSysId = 0;
 
+                        int findLeft = 0;
+                        int findRight = 0;
 
-                    if (findLeft > 0)
-                    {
-                        List<Navigation> navList = Navigations.GetNavigationListByNavId(findLeft);
-
-                        if (navList != null && navList.Any())
+                        Match m2 = Regex.Match(data, @"<!--LT:navid:([\d]*)-->", RegexOptions.Singleline);
+                        if (m2.Success)
                         {
-                            findLeftSysId = navList[0].NavSysId;
+                            int.TryParse(m2.Groups[1].Value, out findLeft);
+                        }
+
+                        Match m3 = Regex.Match(data, @"<!--RT:navid:([\d]*)-->", RegexOptions.Singleline);
+                        if (m3.Success)
+                        {
+                            int.TryParse(m3.Groups[1].Value, out findRight);
+                        }
+
+
+                        if (findLeft > 0)
+                        {
+                            List<Navigation> navList = Navigations.GetNavigationListByNavId(findLeft);
+
+                            if (navList != null && navList.Any())
+                            {
+                                findLeftSysId = navList[0].NavSysId;
+                            }
+                        }
+
+                        if (findRight > 0)
+                        {
+                            List<Navigation> navList = Navigations.GetNavigationListByNavId(findRight);
+
+                            if (navList != null && navList.Any())
+                            {
+                                findRightSysId = navList[0].NavSysId;
+                            }
+                        }
+
+                        if (findLeftSysId > 0 || findRightSysId > 0)
+                        {
+                            navByPage = new NavByPage();
+
+                            navByPage.NavLeft = findLeftSysId;
+                            navByPage.NavRight = findRightSysId;
                         }
                     }
-
-                    if (findRight > 0)
-                    {
-                        List<Navigation> navList = Navigations.GetNavigationListByNavId(findRight);
-
-                        if (navList != null && navList.Any())
-                        {
-                            findRightSysId = navList[0].NavSysId;
-                        }
-                    }
-
-                    if (findLeftSysId > 0 || findRightSysId > 0)
-                    {
-                        navByPage = new NavByPage();
-
-                        navByPage.NavLeft = findLeftSysId;
-                        navByPage.NavRight = findRightSysId;
-                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                AddLog("!!! Can't get website page. !!!" + url);
             }
 
             return navByPage;

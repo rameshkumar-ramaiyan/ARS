@@ -45,8 +45,8 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                 List<NavCategoryItem> selectList = new List<NavCategoryItem>();
 
 
-
-                selectList.Add(new NavCategoryItem { Text = " - None/Disabled - ", Value = "" });
+                selectList.Add(new NavCategoryItem { Text = "", Value = "" });
+                selectList.Add(new NavCategoryItem { Text = " - None/Disabled - ", Value = Guid.Empty.ToString() });
 
                 if (node != null)
                 {
