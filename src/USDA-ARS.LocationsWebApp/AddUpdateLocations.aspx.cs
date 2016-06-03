@@ -773,7 +773,7 @@ namespace USDA_ARS.LocationsWebApp
 
                 List<ApiProperty> properties = new List<ApiProperty>();
                 string newModeCodeProperty = completeModeCode;
-                string oldModeCodeProperty = completeModeCode;
+                string oldModeCodeProperty = "";
 
                 properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
                 properties.Add(new ApiProperty("oldUrl", "/PandP/locations/cityPeopleList.cfm?modeCode=" + newModeCodeProperty + "")); // current URL               
@@ -1038,7 +1038,7 @@ namespace USDA_ARS.LocationsWebApp
 
                     List<ApiProperty> properties = new List<ApiProperty>();
                     string newModeCodeProperty = legacyCitiesBeforeInsertion.Rows[j].Field<string>(1);
-                    string oldModeCodeProperty = legacyCitiesBeforeInsertion.Rows[j].Field<string>(1);
+                    string oldModeCodeProperty = "";
 
                     properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
                     properties.Add(new ApiProperty("oldUrl", "/PandP/locations/cityPeopleList.cfm?modeCode=" + newModeCodeProperty + "")); // current URL               
@@ -1059,7 +1059,6 @@ namespace USDA_ARS.LocationsWebApp
                     
                     properties.Add(new ApiProperty("usajobsLocationID", usaJobsLocationIDproperty)); // USDAJOBS Location ID
 
-                    properties.Add(new ApiProperty("oldModeCodes", oldModeCodeProperty)); // Separate old modes codes by a comma ,
                     System.Data.DataTable legacyOldModeCodes = new System.Data.DataTable();
                     legacyOldModeCodes = AddRetrieveLocationsDL.GetAllOldModeCodesBasedOnNewModeCodes(newModeCodeProperty);
                     if (legacyOldModeCodes.Rows.Count > 0)
@@ -1169,7 +1168,7 @@ namespace USDA_ARS.LocationsWebApp
 
                     List<ApiProperty> properties = new List<ApiProperty>();
                     string newModeCodeProperty = legacyResearchUnitsBeforeInsertion.Rows[j].Field<string>(2);
-                    string oldModeCodeProperty = legacyResearchUnitsBeforeInsertion.Rows[j].Field<string>(2);
+                    string oldModeCodeProperty = "";
 
                     properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
                     properties.Add(new ApiProperty("oldUrl", "/PandP/locations/cityPeopleList.cfm?modeCode=" + newModeCodeProperty + "")); // current URL               
@@ -1432,15 +1431,14 @@ namespace USDA_ARS.LocationsWebApp
 
                     List<ApiProperty> properties = new List<ApiProperty>();
                     string newModeCodeProperty = legacyLabsBeforeInsertion.Rows[j].Field<string>(3);
-                    string oldModeCodeProperty = legacyLabsBeforeInsertion.Rows[j].Field<string>(3);
+                    string oldModeCodeProperty = "";
 
                     properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
                     properties.Add(new ApiProperty("oldUrl", "/PandP/locations/cityPeopleList.cfm?modeCode=" + newModeCodeProperty + "")); // current URL               
                     properties.Add(new ApiProperty("oldId", "")); // sitepublisher ID (So we can reference it later if needed).
                     properties.Add(new ApiProperty("quickLinks", quickLinks));                                              //properties.Add(new ApiProperty("state", legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Substring(0,legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Length -2))); // For example: NY (2 letter state code)
                     properties.Add(new ApiProperty("webtrendsProfileID", webtrendsProfileID));
-                    properties.Add(new ApiProperty("oldModeCodes", oldModeCodeProperty)); // Separate old modes codes by a comma ,
-
+                    
                     System.Data.DataTable legacyOldModeCodes = new System.Data.DataTable();
                     legacyOldModeCodes = AddRetrieveLocationsDL.GetAllOldModeCodesBasedOnNewModeCodes(newModeCodeProperty);
                     if (legacyOldModeCodes.Rows.Count > 0)
