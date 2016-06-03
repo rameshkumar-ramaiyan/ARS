@@ -783,7 +783,10 @@ namespace USDA_ARS.LocationsWebApp
 
                 System.Data.DataTable legacyOldModeCodes = new System.Data.DataTable();
                 legacyOldModeCodes = AddRetrieveLocationsDL.GetAllOldModeCodesBasedOnNewModeCodes(newModeCodeProperty);
-                oldModeCodeProperty = legacyOldModeCodes.Rows[0].Field<string>(1);
+                if (legacyOldModeCodes.Rows.Count > 0)
+                {
+                    oldModeCodeProperty = legacyOldModeCodes.Rows[0].Field<string>(1);
+                }
                 properties.Add(new ApiProperty("oldModeCode", oldModeCodeProperty)); // Separate old modes codes by a comma ,
 
                 legacyCarouselSlidesBeforeInsertion = AddRetrieveLocationsDL.GetAllCarouselSlidesBasedOnModeCode(completeModeCode);
@@ -1045,18 +1048,25 @@ namespace USDA_ARS.LocationsWebApp
                     properties.Add(new ApiProperty("navigationTitle", cityNameWithStateCodeWithComma)); // All CAPS - For example: GENEVA, NY
                     properties.Add(new ApiProperty("umbracoUrlName", cityNameWithStateCode));
                     //input is city name in upper case removing state code
+                    string usaJobsLocationIDproperty = "";
                     System.Data.DataTable legacyUsaJobsLocationCities = new System.Data.DataTable();
-                    legacyUsaJobsLocationCities = AddRetrieveLocationsDL.GetAllJobLocationIdsBasedOnCityName(cityNameUpperOnly);
-                   string usaJobsLocationIDproperty = legacyUsaJobsLocationCities.Rows[0].Field<string>(0);
-                    properties.Add(new ApiProperty("oldModeCode", oldModeCodeProperty)); // Separate old modes codes by a comma ,
 
+                    legacyUsaJobsLocationCities = AddRetrieveLocationsDL.GetAllJobLocationIdsBasedOnCityName(cityNameUpperOnly);
+                    if (legacyUsaJobsLocationCities.Rows.Count > 0)
+                    {
+                         usaJobsLocationIDproperty = legacyUsaJobsLocationCities.Rows[0].Field<string>(0);
+                    }
+                    
                     properties.Add(new ApiProperty("usajobsLocationID", usaJobsLocationIDproperty)); // USDAJOBS Location ID
 
+                    properties.Add(new ApiProperty("oldModeCode", oldModeCodeProperty)); // Separate old modes codes by a comma ,
                     System.Data.DataTable legacyOldModeCodes = new System.Data.DataTable();
                     legacyOldModeCodes = AddRetrieveLocationsDL.GetAllOldModeCodesBasedOnNewModeCodes(newModeCodeProperty);
-                    oldModeCodeProperty = legacyOldModeCodes.Rows[0].Field<string>(1);
+                    if (legacyOldModeCodes.Rows.Count > 0)
+                    {
+                        oldModeCodeProperty = legacyOldModeCodes.Rows[0].Field<string>(1);
+                    }
                     properties.Add(new ApiProperty("oldModeCode", oldModeCodeProperty)); // Separate old modes codes by a comma ,
-
 
                     //properties.Add(new ApiProperty("modeCode", "80-10-00-00")); // Region mode code
                     //properties.Add(new ApiProperty("oldUrl", "")); // Leave blank since there is no city page on the website.
@@ -1167,9 +1177,13 @@ namespace USDA_ARS.LocationsWebApp
                     properties.Add(new ApiProperty("quickLinks", quickLinks));                                  //properties.Add(new ApiProperty("state", legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Substring(0,legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Length -2))); // For example: NY (2 letter state code)
                     properties.Add(new ApiProperty("webtrendsProfileID", webtrendsProfileID));
 
+
                     System.Data.DataTable legacyOldModeCodes = new System.Data.DataTable();
                     legacyOldModeCodes = AddRetrieveLocationsDL.GetAllOldModeCodesBasedOnNewModeCodes(newModeCodeProperty);
-                    oldModeCodeProperty = legacyOldModeCodes.Rows[0].Field<string>(1);
+                    if (legacyOldModeCodes.Rows.Count > 0)
+                    {
+                        oldModeCodeProperty = legacyOldModeCodes.Rows[0].Field<string>(1);
+                    }
                     properties.Add(new ApiProperty("oldModeCode", oldModeCodeProperty)); // Separate old modes codes by a comma ,
 
                     legacyCarouselSlidesBeforeInsertion = AddRetrieveLocationsDL.GetAllCarouselSlidesBasedOnModeCode(newModeCodeProperty);
@@ -1426,11 +1440,14 @@ namespace USDA_ARS.LocationsWebApp
                     properties.Add(new ApiProperty("quickLinks", quickLinks));                                              //properties.Add(new ApiProperty("state", legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Substring(0,legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Length -2))); // For example: NY (2 letter state code)
                     properties.Add(new ApiProperty("webtrendsProfileID", webtrendsProfileID));
 
+
                     System.Data.DataTable legacyOldModeCodes = new System.Data.DataTable();
                     legacyOldModeCodes = AddRetrieveLocationsDL.GetAllOldModeCodesBasedOnNewModeCodes(newModeCodeProperty);
-                    oldModeCodeProperty = legacyOldModeCodes.Rows[0].Field<string>(1);
+                    if (legacyOldModeCodes.Rows.Count > 0)
+                    {
+                        oldModeCodeProperty = legacyOldModeCodes.Rows[0].Field<string>(1);
+                    }
                     properties.Add(new ApiProperty("oldModeCode", oldModeCodeProperty)); // Separate old modes codes by a comma ,
-
 
                     legacyCarouselSlidesBeforeInsertion = AddRetrieveLocationsDL.GetAllCarouselSlidesBasedOnModeCode(newModeCodeProperty);
                     var jsonSettings = new JsonSerializerSettings();
