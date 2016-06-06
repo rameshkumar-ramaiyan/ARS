@@ -1,39 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Core.Models;
 using Umbraco.Core.Persistence;
+using Umbraco.Web;
 using USDA_ARS.Umbraco.Extensions.Models.Aris;
 
 namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 {
     public class ModeCodesNew
     {
+        public static UmbracoHelper UmbHelper = new UmbracoHelper(UmbracoContext.Current);
+
         public static string GetNewModeCode(string oldModeCode)
         {
             string output = null;
-            //ModeCodeNew modeCodeNew = null;
+            oldModeCode = oldModeCode.Replace("-", "");
 
-            //var db = new Database("arisPublicWebDbDSN");
+            List<ModeCodeNew> allModeCodeList = GetAllNewModeCode();
 
-            //Sql sql = null;
+            if (allModeCodeList != null)
+            {
+                ModeCodeNew modeCodeNew = allModeCodeList.Where(p => p.ModecodeOld == oldModeCode).FirstOrDefault();
 
-            //oldModeCode = oldModeCode.Replace("-", "");
-
-            //string where = "OldModecode = '" + oldModeCode + "'";
-
-            //sql = new Sql()
-            // .Select("*")
-            // .From("NewModecodes")
-            // .Where(where);
-
-            //modeCodeNew = db.Query<ModeCodeNew>(sql).FirstOrDefault();
-
-            //if (modeCodeNew != null)
-            //{
-            //    output = modeCodeNew.ModecodeNew;
-            //}
+                if (modeCodeNew != null)
+                {
+                    output = modeCodeNew.ModecodeNew;
+                }
+            }
 
             return output;
         }
@@ -42,38 +39,76 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
         {
             List<ModeCodeNew> output = null;
 
-            //var db = new Database("arisPublicWebDbDSN");
+            string cacheKey = "NodeListByOldModeCodes";
+            int cacheUpdateIntMinutes = 1440;
 
-            //Sql sql = null;
+            ObjectCache cache = MemoryCache.Default;
 
+            output = cache.Get(cacheKey) as List<ModeCodeNew>;
 
-            //sql = new Sql()
-            // .Select("*")
-            // .From("NewModecodes");
+            if (output == null)
+            {
+                List<IPublishedContent> nodeList = new List<IPublishedContent>();
 
-            //output = db.Query<ModeCodeNew>(sql).ToList();
+                foreach (IPublishedContent root in UmbHelper.TypedContentAtRoot())
+                {
+                    if (false == string.IsNullOrEmpty(root.GetPropertyValue<string>("oldModeCodes")))
+                    {
+                        List<string> oldCodeArray = root.GetPropertyValue<string>("oldModeCodes").Split(',').ToList();
+
+                        if (oldCodeArray != null)
+                        {
+                            foreach (string oldCode in oldCodeArray)
+                            {
+                                output.Add(new ModeCodeNew() { ModecodeNew = root.GetPropertyValue<string>("modeCode").Replace("-", ""), ModecodeOld = oldCode.Replace("-", "") });
+                            }
+                        }
+                    }
+                    else
+                    {
+                        List<IPublishedContent> nodeDescendantsList = root.Descendants().Where(n => false == string.IsNullOrEmpty(n.GetPropertyValue<string>("oldModeCodes"))).ToList();
+
+                        if (nodeDescendantsList != null)
+                        {
+                            foreach (IPublishedContent node in nodeDescendantsList)
+                            {
+                                List<string> oldCodeArray = node.GetPropertyValue<string>("oldModeCodes").Split(',').ToList();
+
+                                if (oldCodeArray != null)
+                                {
+                                    foreach (string oldCode in oldCodeArray)
+                                    {
+                                        output.Add(new ModeCodeNew() { ModecodeNew = node.GetPropertyValue<string>("modeCode").Replace("-", ""), ModecodeOld = oldCode.Replace("-", "") });
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheUpdateIntMinutes) };
+                cache.Add(cacheKey, output, policy);
+            }
 
             return output;
         }
+
 
         public static List<ModeCodeNew> GetOldModeCode(string newModeCode)
         {
             List<ModeCodeNew> modeCodeList = null;
 
-            //var db = new Database("arisPublicWebDbDSN");
+            if (false == string.IsNullOrEmpty(newModeCode))
+            {
+                newModeCode = newModeCode.Replace("-", "");
 
-            //Sql sql = null;
+                List<ModeCodeNew> allModeCodeList = GetAllNewModeCode();
 
-            //newModeCode = newModeCode.Replace("-", "");
-
-            //string where = "NewModecode = '" + newModeCode + "'";
-
-            //sql = new Sql()
-            // .Select("*")
-            // .From("NewModecodes")
-            // .Where(where);
-
-            //modeCodeList = db.Query<ModeCodeNew>(sql).ToList();
+                if (allModeCodeList != null)
+                {
+                    modeCodeList = allModeCodeList.Where(p => p.ModecodeNew == newModeCode).ToList();
+                }
+            }
 
             return modeCodeList;
         }
