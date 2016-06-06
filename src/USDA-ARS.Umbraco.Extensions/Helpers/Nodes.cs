@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Caching;
 using System.Text;
+using System.Runtime.Caching;
 using Umbraco.Core.Models;
 using Umbraco.Web;
 using USDA_ARS.Umbraco.Extensions.Models;
@@ -256,22 +257,46 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             IPublishedContent node = null;
             modeCode = Helpers.ModeCodes.ModeCodeAddDashes(modeCode);
 
-            foreach (IPublishedContent root in UmbHelper.TypedContentAtRoot())
+            List<IPublishedContent> nodeList = GetNodesListOfModeCodes();
+
+            node = nodeList.Where(p => p.GetPropertyValue<string>("modeCode") == modeCode).FirstOrDefault();
+
+            return node;
+        }
+
+
+        public static List<IPublishedContent> GetNodesListOfModeCodes()
+        {
+            List<IPublishedContent> nodeList = null;
+            string cacheKey = "NodeListByModeCodes";
+            int cacheUpdateIntMinutes = 1440;
+
+            ObjectCache cache = MemoryCache.Default;
+
+            nodeList = cache.Get(cacheKey) as List<IPublishedContent>;
+
+            if (nodeList == null)
             {
-                if (node == null)
+                nodeList = new List<IPublishedContent>();
+
+                foreach (IPublishedContent root in UmbHelper.TypedContentAtRoot())
                 {
-                    if (root.GetPropertyValue<string>("modeCode") == modeCode)
+                    if (false == string.IsNullOrEmpty(root.GetPropertyValue<string>("modeCode")))
                     {
-                        node = root;
+                        nodeList.Add(root);
                     }
                     else
                     {
-                        node = root.Descendants().FirstOrDefault(n => n.GetPropertyValue<string>("modeCode") == modeCode);
+                        nodeList.AddRange(root.Descendants().Where(n => false == string.IsNullOrEmpty(n.GetPropertyValue<string>("modeCode"))));
                     }
                 }
+
+                CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheUpdateIntMinutes) };
+                cache.Add(cacheKey, nodeList, policy);
             }
 
-            return node;
+
+            return nodeList;
         }
 
 

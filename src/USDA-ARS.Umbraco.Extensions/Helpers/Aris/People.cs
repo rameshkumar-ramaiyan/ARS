@@ -450,9 +450,9 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"SELECT perfname,EMP_ID,p_emp_id,POSITIONID,permname,perlname,percommonname,PERSONID,
-			        MODECODE_1,MODECODE_2,MODECODE_3,MODECODE_4,category,PositionTitle,officialtitle,SERIES_CODE,
-			        workingtitle,email,IMAGEURL,Expertise,DESKPHONE,deskareacode,deskext,deskbldgabbr,ofcfax,ofcfaxareacode,
+            string sql = @"SELECT perfname,EMP_ID,p_emp_id,permname,perlname,percommonname,PERSONID,
+			        MODECODE_1,MODECODE_2,MODECODE_3,MODECODE_4,category,officialtitle,SERIES_CODE,
+			        workingtitle,email,IMAGEURL,DESKPHONE,deskareacode,deskext,deskbldgabbr,ofcfax,ofcfaxareacode,
 			        deskroomnum,DESKADDR1,deskaddr2,deskcity,deskstate,homepageurl,deskzip4,status_code,modecodeconc,mySiteCode 
 			        FROM V_PEOPLE_INFO_2_DIRECTORY
 			        WHERE personid = @personId
