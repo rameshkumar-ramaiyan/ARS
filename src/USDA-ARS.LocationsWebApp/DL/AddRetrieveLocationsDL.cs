@@ -604,6 +604,101 @@ namespace USDA_ARS.LocationsWebApp.DL
             return dt;
         }
         #endregion
+        #region  Get All Old Mode Codes Based On New Mode Codes
+        public static DataTable GetAllOldModeCodesBasedOnNewModeCodes(string modeCode)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "[uspgetAllOldModeCodesBasedOnNewModeCodes]";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@ModeCode", modeCode);
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
+        #endregion
+        #region  Get All Job Location Ids Based On CityName
+        public static DataTable GetAllJobLocationIdsBasedOnCityName(string cityName)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "[uspgetAllJobLocationIdsBasedOnCityName]";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@CityNameUpper ", cityName);
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
+        #endregion
+
 
     }
 }

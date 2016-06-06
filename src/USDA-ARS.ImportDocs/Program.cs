@@ -133,9 +133,9 @@ namespace USDA_ARS.ImportDocs
             //dtAllDocumentIdsBasedOnDocTypeWithParamPerson = GetAllDocumentIdsBasedOnDocTypeWithParam("person");
             ////2. send to doctype sp---not require now
             List<string> list = new List<string>();
-            //list.Add("Place");
+            list.Add("Place");
             list.Add("ad_hoc");
-            //list.Add("person");
+            list.Add("person");
 
             for (int k = 0; k < list.Count; k++) // Loop through List with for
             {
@@ -287,16 +287,16 @@ namespace USDA_ARS.ImportDocs
             AddLog("Add doc to mode code...");
             DocFolderLookup getDocFolder = DOC_FOLDER_ID_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCode)).FirstOrDefault();
 
-            if (getDocFolder == null)
-            {
-                ModeCodeNew modeCodeNew = MODE_CODE_NEW_LIST.Where(p => p.ModecodeOld == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(modeCode)).FirstOrDefault();
+            //if (getDocFolder == null)
+            //{
+            //    ModeCodeNew modeCodeNew = MODE_CODE_NEW_LIST.Where(p => p.ModecodeOld == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(modeCode)).FirstOrDefault();
 
-                if (modeCodeNew != null)
-                {
-                    AddLog("Found Mode Code from old code: " + modeCode + " -> " + modeCodeNew.ModecodeNew);
-                    getDocFolder = DOC_FOLDER_ID_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCodeNew.ModecodeNew)).FirstOrDefault();
-                }
-            }
+            //    if (modeCodeNew != null)
+            //    {
+            //        AddLog("Found Mode Code from old code: " + modeCode + " -> " + modeCodeNew.ModecodeNew);
+            //        getDocFolder = DOC_FOLDER_ID_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCodeNew.ModecodeNew)).FirstOrDefault();
+            //    }
+            //}
 
 
             if (getDocFolder != null)
@@ -404,17 +404,17 @@ namespace USDA_ARS.ImportDocs
 
                     AdHocFolderLookup testAdHocFolder = AD_HOC_FOLDER_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(getModeCode) && p.AdHocFolderName.ToLower() == adHocFolderName.ToLower()).FirstOrDefault();
 
-                    if (testAdHocFolder == null)
-                    {
-                        ModeCodeNew modeCodeNew = MODE_CODE_NEW_LIST.Where(p => p.ModecodeOld == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(getModeCode)).FirstOrDefault();
+                    //if (testAdHocFolder == null)
+                    //{
+                    //    ModeCodeNew modeCodeNew = MODE_CODE_NEW_LIST.Where(p => p.ModecodeOld == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(getModeCode)).FirstOrDefault();
 
-                        if (modeCodeNew != null)
-                        {
-                            getModeCode = modeCodeNew.ModecodeNew;
-                            AddLog("Found Mode Code from old code: " + getModeCode + " -> " + modeCodeNew.ModecodeNew);
-                            testAdHocFolder = AD_HOC_FOLDER_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCodeNew.ModecodeNew) && p.AdHocFolderName.ToLower() == adHocFolderName.ToLower()).FirstOrDefault();
-                        }
-                    }
+                    //    if (modeCodeNew != null)
+                    //    {
+                    //        getModeCode = modeCodeNew.ModecodeNew;
+                    //        AddLog("Found Mode Code from old code: " + getModeCode + " -> " + modeCodeNew.ModecodeNew);
+                    //        testAdHocFolder = AD_HOC_FOLDER_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCodeNew.ModecodeNew) && p.AdHocFolderName.ToLower() == adHocFolderName.ToLower()).FirstOrDefault();
+                    //    }
+                    //}
 
                     getModeCode = Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(getModeCode);
 

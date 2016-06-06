@@ -1,8 +1,10 @@
 USE [aris_public_webNew]
 GO
-/****** Object:  StoredProcedure [dbo].[uspgetAllPersonsBasedOnModeCode]    Script Date: 6/1/2016 1:47:01 PM ******/
+
+/****** Object:  StoredProcedure [dbo].[uspgetAllPersonsBasedOnModeCode]    Script Date: 6/2/2016 7:23:57 PM ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
 
@@ -16,7 +18,8 @@ GO
 
 
 
-ALTER PROCEDURE [dbo].[uspgetAllPersonsBasedOnModeCode]
+
+CREATE PROCEDURE [dbo].[uspgetAllPersonsBasedOnModeCode]
 @ModeCode nvarchar(max) = NULL
 AS
  
@@ -65,5 +68,9 @@ and parent_Site_Code  = [parent_Site_Code]
 
 
 
+
+
+
+GO
 
 
