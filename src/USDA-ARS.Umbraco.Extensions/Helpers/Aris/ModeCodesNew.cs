@@ -48,6 +48,8 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             if (output == null)
             {
+                output = new List<ModeCodeNew>();
+
                 List<IPublishedContent> nodeList = new List<IPublishedContent>();
 
                 foreach (IPublishedContent root in UmbHelper.TypedContentAtRoot())
@@ -66,19 +68,30 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                     }
                     else
                     {
-                        List<IPublishedContent> nodeDescendantsList = root.Descendants().Where(n => false == string.IsNullOrEmpty(n.GetPropertyValue<string>("oldModeCodes"))).ToList();
+                        List<IPublishedContent> nodeDescendantsList = root.Descendants().Where(n => false == string.IsNullOrEmpty(n.GetPropertyValue<string>("modeCode"))).ToList();
 
                         if (nodeDescendantsList != null)
                         {
                             foreach (IPublishedContent node in nodeDescendantsList)
                             {
-                                List<string> oldCodeArray = node.GetPropertyValue<string>("oldModeCodes").Split(',').ToList();
-
-                                if (oldCodeArray != null)
+                                if (false == string.IsNullOrWhiteSpace(node.GetPropertyValue<string>("oldModeCodes")))
                                 {
-                                    foreach (string oldCode in oldCodeArray)
+                                    List<string> oldCodeArray = node.GetPropertyValue<string>("oldModeCodes").Split(',').ToList();
+
+                                    if (oldCodeArray != null)
                                     {
-                                        output.Add(new ModeCodeNew() { ModecodeNew = node.GetPropertyValue<string>("modeCode").Replace("-", ""), ModecodeOld = oldCode.Replace("-", "") });
+                                        foreach (string oldCode in oldCodeArray)
+                                        {
+                                            if (false == string.IsNullOrWhiteSpace(oldCode))
+                                            {
+                                                string newModeCode = node.GetPropertyValue<string>("modeCode");
+
+                                                if (false == string.IsNullOrWhiteSpace(newModeCode) && false == string.IsNullOrWhiteSpace(oldCode))
+                                                {
+                                                    output.Add(new ModeCodeNew() { ModecodeNew = newModeCode.Replace("-", ""), ModecodeOld = oldCode.Replace("-", "") });
+                                                }
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -87,7 +100,10 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                 }
 
                 CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheUpdateIntMinutes) };
-                cache.Add(cacheKey, output, policy);
+                if (output != null)
+                {
+                    cache.Add(cacheKey, output, policy);
+                }
             }
 
             return output;
