@@ -3,12 +3,13 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Linq;
 using System.IO;
-using System.Web;
+using System.Linq;
+using System.Net.Mail;
 using Umbraco.Core;
-using Umbraco.Core.IO;
 using Umbraco.Core.Events;
+using Umbraco.Core.IO;
+using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
 using Umbraco.Core.Services;
 using Umbraco.Web;
@@ -27,12 +28,35 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
             ContentService.Created += PostProcessCreated;
             ContentService.Saved += PostProcessSave;
             ContentService.Deleted += PostProcessDelete;
+
+            UserService.SavedUser += UserServiceSavedUser;
         }
+
+
 
         private static void PostProcessCreated(IContentService cs, NewEventArgs<IContent> e)
         {
             IContent node = e.Entity;
-            
+
+            if (node.ContentType.Alias == "DocFolder" || node.ContentType.Alias == "SiteStandardWebpage")
+            {
+                IContent nodeParent = node.Parent();
+
+                if (nodeParent != null)
+                {
+                    Property propertyParent = nodeParent.Properties.Where(p => p.Alias == "navigationCategory").FirstOrDefault();
+
+                    if (propertyParent != null)
+                    {
+                        Property propertyNode = node.Properties.Where(p => p.Alias == "navigationCategory").FirstOrDefault();
+
+                        if (propertyNode != null)
+                        {
+                            node.SetValue("navigationCategory", propertyParent.Value);
+                        }
+                    }
+                }
+            }
         }
 
 
@@ -86,91 +110,56 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 
                 /////////////
                 // When a Doc Folder or Site Standard Webpage is Created...
-                if ((node.ContentType.Alias == "DocsFolder" || node.ContentType.Alias == "SiteStandardWebpage"))
+                if (node.IsNewEntity() == true && (node.ContentType.Alias == "DocsFolder" || node.ContentType.Alias == "SiteStandardWebpage"))
                 {
-                    // SET DEFAULT NAVIGATION CATEGORY
-                    Property navCategory = node.Properties.Where(p => p.Alias == "navigationCategory").FirstOrDefault();
                     IContent parentNode = node.Parent();
 
-                    if (navCategory.Value == null || true == string.IsNullOrEmpty(navCategory.Value.ToString()))
+                    // UPDATE SORT ORDER
+                    if (parentNode.ContentType.Alias == "Region" || parentNode.ContentType.Alias == "ResearchUnit" || parentNode.ContentType.Alias == "City")
                     {
+                        int sortOrder = 0;
+                        List<IContent> updatedChildList = new List<IContent>();
 
+                        // Get list of doc folders and pages and order them by name. Add to updatedChildList object list for sorting later
+                        List<IContent> docsAndFoldersList = parentNode.Children().Where(p => p.ContentType.Alias != "Region"
+                                && p.ContentType.Alias != "ResearchUnit"
+                                && p.ContentType.Alias != "City").OrderBy(s => s.Name).ToList();
 
-                        if (parentNode != null && parentNode.ContentType.Alias != "Region" && parentNode.ContentType.Alias != "ResearchUnit")
+                        if (docsAndFoldersList != null && docsAndFoldersList.Any())
                         {
-                            Property parentNavCategory = parentNode.Properties.Where(p => p.Alias == "navigationCategory").FirstOrDefault();
-
-                            if (parentNavCategory.Value != null && false == string.IsNullOrEmpty(parentNavCategory.Value.ToString()))
+                            foreach (IContent subNode in docsAndFoldersList)
                             {
-                                navCategory.Value = parentNavCategory.Value;
+                                updatedChildList.Add(subNode);
 
-                                _contentService.SaveAndPublishWithStatus(node);
+                                sortOrder++;
                             }
                         }
+
+
+                        List<IContent> nonDocsAndFoldersList = null;
+
+                        if (parentNode.ContentType.Alias == "City" || parentNode.ContentType.Alias == "ResearchUnit")
+                        {
+                            nonDocsAndFoldersList = parentNode.Children().Where(p => p.ContentType.Alias == "ResearchUnit").ToList();
+
+                            if (nonDocsAndFoldersList != null && nonDocsAndFoldersList.Any())
+                            {
+                                nonDocsAndFoldersList = nonDocsAndFoldersList.OrderBy(p => p.Name).ToList();
+                            }
+                        }
+
+                        if (nonDocsAndFoldersList != null && nonDocsAndFoldersList.Any())
+                        {
+                            foreach (IContent subNode in nonDocsAndFoldersList)
+                            {
+                                updatedChildList.Add(subNode);
+
+                                sortOrder++;
+                            }
+                        }
+
+                        bool sortSuccess = _contentService.Sort(updatedChildList, raiseEvents: false);
                     }
-
-
-                    // UPDATE SORT ORDER
-                    //if (parentNode.ContentType.Alias == "Region" || parentNode.ContentType.Alias == "ResearchUnit" || parentNode.ContentType.Alias == "City")
-                    //{
-                    //    int sortOrder = 0;
-
-                    //    // 
-                    //    List<IContent> docsAndFoldersList = parentNode.Children().Where(p => p.ContentType.Alias != "Region"
-                    //            && p.ContentType.Alias != "ResearchUnit"
-                    //            && p.ContentType.Alias != "City").OrderBy(s => s.Name).ToList();
-
-                    //    if (docsAndFoldersList != null && docsAndFoldersList.Any())
-                    //    {
-                    //        foreach (IContent subNode in docsAndFoldersList)
-                    //        {
-                    //            subNode.SortOrder = sortOrder;
-
-                    //            if (true == subNode.Published)
-                    //            {
-                    //                _contentService.SaveAndPublishWithStatus(node);
-                    //            }
-                    //            else
-                    //            {
-                    //                _contentService.Save(node);
-                    //            }
-
-                    //            sortOrder++;
-                    //        }
-                    //    }
-
-
-                    //    List<IContent> nonDocsAndFoldersList = null;
-
-                    //    if (parentNode.ContentType.Alias == "City" || parentNode.ContentType.Alias == "ResearchUnit")
-                    //    {
-                    //        nonDocsAndFoldersList = parentNode.Children().Where(p => p.ContentType.Alias == "ResearchUnit").ToList();
-
-                    //        if (nonDocsAndFoldersList != null && nonDocsAndFoldersList.Any())
-                    //        {
-                    //            nonDocsAndFoldersList = nonDocsAndFoldersList.OrderBy(p => p.Name).ToList();
-                    //        }
-                    //    }
-
-                    //    if (nonDocsAndFoldersList != null && nonDocsAndFoldersList.Any())
-                    //    {
-                    //        foreach (IContent subNode in nonDocsAndFoldersList)
-                    //        {
-                    //            subNode.SortOrder = sortOrder;
-
-                    //            if (true == subNode.Published)
-                    //            {
-                    //                _contentService.SaveAndPublishWithStatus(node);
-                    //            }
-                    //            else
-                    //            {
-                    //                _contentService.Save(node);
-                    //            }
-
-                    //            sortOrder++;
-                    //        }
-                    //    }
-                    //}
                 }
 
 
@@ -178,7 +167,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                 if ((node.ContentType.Alias == "Region" || node.ContentType.Alias == "ResearchUnit"))
                 {
                     UmbracoHelper umbHelper = new UmbracoHelper(UmbracoContext.Current);
-                    int siteFolderTemplateNodeId = Convert.ToInt32(ConfigurationManager.AppSettings.Get("Usda:SiteFoldesrTemplateNodeId")); //
+                    int siteFolderTemplateNodeId = Convert.ToInt32(ConfigurationManager.AppSettings.Get("Usda:SiteFoldersTemplateNodeId")); //
 
                     IPublishedContent siteFoldersTemplate = umbHelper.TypedContent(siteFolderTemplateNodeId);
 
@@ -269,6 +258,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
             }
         }
 
+
         private static void PostProcessDelete(IContentService cs, DeleteEventArgs<IContent> e)
         {
             foreach (var node in e.DeletedEntities)
@@ -276,6 +266,81 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                 if (node.ContentType.Alias == "NewsArticle")
                 {
                     NewsInterLinks.RemoveLinksByNodeId(node.Id);
+                }
+            }
+        }
+
+
+        /// <summary>
+        /// Umbraco Event: User Saved
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void UserServiceSavedUser(IUserService sender, SaveEventArgs<global::Umbraco.Core.Models.Membership.IUser> e)
+        {
+            foreach (var user in e.SavedEntities)
+            {
+                var userService = ApplicationContext.Current.Services.UserService;
+
+                // If the user type is "Resend Welcome Email", send the email and then revert the user type back to editor
+                if (user.UserType.Alias == "ResendWelcomeEmail" || user.IsNewEntity() == true)
+                {
+                    user.UserType = userService.GetUserTypeByAlias("editor");
+
+                    IPublishedContent emailTemplate = Nodes.EmailTemplateUserWelcome();
+
+                    if (emailTemplate != null)
+                    {
+                        var message = new MailMessage();
+
+                        message.From = new MailAddress(emailTemplate.GetPropertyValue<string>("emailFrom"));
+                        message.To.Add(new MailAddress(user.Email));
+
+                        string emailCC = emailTemplate.GetPropertyValue<string>("emailCC");
+                        string emailBcc = emailTemplate.GetPropertyValue<string>("emailBcc");
+
+                        foreach (string emailCCItem in emailCC.Split(';'))
+                        {
+                            if (false == string.IsNullOrWhiteSpace(emailCCItem))
+                            {
+                                message.CC.Add(new MailAddress(emailCCItem.Trim()));
+                            }
+                        }
+
+                        foreach (string emailBccItem in emailBcc.Split(';'))
+                        {
+                            if (false == string.IsNullOrWhiteSpace(emailBccItem))
+                            {
+                                message.Bcc.Add(new MailAddress(emailBccItem.Trim()));
+                            }
+                        }
+
+                        message.Subject = emailTemplate.GetPropertyValue<string>("emailSubject").Trim();
+
+                        string body = emailTemplate.GetPropertyValue<string>("emailSubject");
+
+                        body = body.Replace("src=\"/", "src=\"http://www.ars.usda.gov/");
+                        body = body.Replace("href=\"/", "href=\"http://www.ars.usda.gov/");
+
+                        message.Body = body;
+                        message.IsBodyHtml = true;
+
+                        using (var smtp = new SmtpClient())
+                        {
+                            try
+                            {
+                                smtp.Send(message);
+                            }
+                            catch (Exception ex)
+                            {
+                                LogHelper.Error<UmbEventHandler>("Problem sending email.", ex);
+                            }
+                        }
+
+                        userService.Save(user);
+                    }
+
+
                 }
             }
         }

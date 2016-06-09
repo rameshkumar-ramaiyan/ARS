@@ -105,6 +105,18 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             return null;
         }
 
+        public static IPublishedContent EmailTemplateUserWelcome()
+        {
+            IPublishedContent siteSettings = SiteSettings();
+
+            if (siteSettings != null)
+            {
+                return siteSettings.Descendants().FirstOrDefault(n => n.IsDocumentType("EmailTemplate") && n.Name.IndexOf("New User Welcome") >= 0);
+            }
+
+            return null;
+        }
+
 
         public static IEnumerable<IPublishedContent> RegionCityList(IPublishedContent region)
         {
