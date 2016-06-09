@@ -49,32 +49,32 @@
 
     <div id="pageContent">
         <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-1">
-            <strong>Research Project: </strong>
-
             @if (projectInfo != null)
             {
+                <strong>Research Project: </strong>
+
                 <a href="/research/project/?accnNo=@projectInfo.AccountNo">
                     @projectInfo.ProjectTitle
                 </a>
+
+                <p>
+                    <strong>
+                        Location:
+                        @if (location != null)
+                        {
+                            <a href="@location.Url">@location.Name</a>
+                        }
+                        else
+                        {
+                            <em>Location not imported yet.</em>
+                        }
+                    </strong>
+                </p>
             }
             else
             {
-                <em>Project @projectInfo.AccountNo was not found.</em>
+                
             }
-
-            <p>
-                <strong>
-                    Location:
-                    @if (location != null)
-                    {
-                        <a href="@location.Url">@location.Name</a>
-                    }
-                    else
-                    {
-                        <em>Location not imported yet.</em>
-                    }
-                </strong>
-            </p>
 
             <strong>Title:</strong> @(publication.Title))
         </font><p></p>
