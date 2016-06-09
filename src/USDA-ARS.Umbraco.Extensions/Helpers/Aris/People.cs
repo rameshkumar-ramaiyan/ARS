@@ -391,13 +391,13 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"SELECT a.EMP_ID, a.EMPLOYER, ISNULL(p.PerLName, ISNULL(r.LAST_NAME, a.LAST_NAME)) AS perlname, ISNULL(p.PerFName, ISNULL(r.FIRST_NAME, a.FIRST_NAME))
-                        AS perfname, p.PerCommonName, p.PersonID
-                    FROM REF_PERSONEL AS r RIGHT OUTER JOIN
-                        v_AH115_Authors AS a ON r.EMP_ID = a.EMP_ID LEFT OUTER JOIN
-                        sitepublisherii.dbo.People AS p ON a.EMP_ID = p.EmpID
-                    WHERE (a.SEQ_NO_115 = @seqNo115)
-                    ORDER BY a.AUTHORSHIP";
+            string sql = @"SELECT     a.EMP_ID, a.EMPLOYER, ISNULL(p.PerLName, ISNULL(r.LAST_NAME, a.LAST_NAME)) AS perlname, ISNULL(p.PerFName, ISNULL(r.FIRST_NAME, a.FIRST_NAME))
+                                AS perfname, p.PerCommonName, p.PersonID
+                            FROM         REF_PERSONEL AS r RIGHT OUTER JOIN
+                                v_AH115_Authors AS a ON r.EMP_ID = a.EMP_ID LEFT OUTER JOIN
+                                aris_public_web.dbo.People AS p ON a.EMP_ID = p.EmpID
+                            WHERE     (a.SEQ_NO_115 = @seqNo115)
+                            ORDER BY a.AUTHORSHIP";
 
             peopleList = db.Query<PeopleInfo>(sql, new { seqNo115 = seqNo115 }).ToList();
 
