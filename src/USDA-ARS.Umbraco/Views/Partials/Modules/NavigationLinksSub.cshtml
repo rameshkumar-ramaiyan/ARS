@@ -95,6 +95,16 @@
         breadcrumb = breadcrumb.Parent;
     }
 
+    if (currentPage.DocumentTypeAlias == "NationalProgramGroup" || currentPage.DocumentTypeAlias == "NationalProgram")
+    {
+        IPublishedContent nationalProgramsPage = Nodes.NationProgramsPage();
+
+        if (nationalProgramsPage != null)
+        {
+            nodeBreadcrumbList.Add(new NodeBreadcrumb(nationalProgramsPage.GetPropertyValue<string>("breadcrumbLabel", nationalProgramsPage.Name), nationalProgramsPage.Url, 0));
+        }
+    }
+
     if (nodeBreadcrumbList != null && nodeBreadcrumbList.Count > 0)
     {
         if (false == string.IsNullOrWhiteSpace(modeCode))

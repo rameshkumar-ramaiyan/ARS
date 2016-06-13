@@ -29,6 +29,18 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             return UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("NationalProgramMain"));
         }
 
+        public static IPublishedContent NationProgramsPage()
+        {
+            IPublishedContent homepage = Homepage();
+
+            if (homepage != null)
+            {
+                return homepage.Descendants().FirstOrDefault(n => n.IsDocumentType("NationalProgramsPage"));
+            }
+
+            return null;
+        }
+
         public static IEnumerable<IPublishedContent> MainNavigationList()
         {
             IPublishedContent mainNav = SiteSettings().Children.FirstOrDefault(n => n.IsDocumentType("MainNavigation"));
