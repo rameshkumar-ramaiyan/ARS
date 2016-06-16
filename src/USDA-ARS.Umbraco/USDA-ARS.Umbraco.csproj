@@ -353,11 +353,6 @@
     <Content Include="App_Plugins\Archetype\views\archetype.config.stylescript.dialog.html" />
     <Content Include="App_Plugins\Archetype\views\archetype.default.html" />
     <Content Include="App_Plugins\Archetype\views\archetype.html" />
-    <Content Include="App_Plugins\FilePicker\filepicker.controller.js" />
-    <Content Include="App_Plugins\FilePicker\filepicker.html" />
-    <Content Include="App_Plugins\FilePicker\filepickerdialog.html" />
-    <Content Include="App_Plugins\FilePicker\folderpicker.html" />
-    <Content Include="App_Plugins\FilePicker\folderpickerdialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-controller.js" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-delete-dialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-dialog.html" />
@@ -2956,7 +2951,6 @@
     <Content Include="App_Plugins\UsdaDataImporter\package.manifest" />
     <Content Include="App_Plugins\UsdaDataImporter\js\usda.data.importer.resource.js" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\package.manifest" />
-    <Content Include="App_Plugins\FilePicker\package.manifest" />
     <Content Include="Config\UrlRewriting.config" />
     <Content Include="Config\umbracoSettings.config">
       <SubType>Designer</SubType>
@@ -3076,6 +3070,7 @@
     <Content Include="Views\Partials\Modules\ResearchProgramNavigation.cshtml" />
     <Content Include="Views\Partials\Modules\PhotoCarousel.cshtml" />
     <Content Include="Views\StandardPageList.cshtml" />
+    <None Include="Properties\PublishProfiles\Publish2StagingTest.pubxml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -3152,7 +3147,7 @@
     <VisualStudio>
       <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
         <WebProjectProperties>
-          <UseIIS>True</UseIIS>
+          <UseIIS>False</UseIIS>
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>54900</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
