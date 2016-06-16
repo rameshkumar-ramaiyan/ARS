@@ -10,6 +10,7 @@ using System.Web;
 using System.Web.Security;
 using Umbraco.Core;
 using Umbraco.Core.Configuration;
+using Umbraco.Core.Logging;
 using Umbraco.Core.Models.Membership;
 using Umbraco.Core.Security;
 using Umbraco.Core.Services;
@@ -80,7 +81,7 @@ namespace ARS.AuthenticationProvider
                     PrincipalContext ctx = new PrincipalContext(ContextType.Domain, LDAPName, LDAPContainer, username, password);
                     if (ctx.ValidateCredentials(username, password))
                     {
-                        log.Debug(string.Format("Successfully logged in with Active Directory with LDAP name: {0} and LDAPContainer: {1}", LDAPName, LDAPContainer));
+                        LogHelper.Info(typeof(ProxyMembershipProvider), string.Format("Successfully logged in with Active Directory with LDAP name: {0} and LDAPContainer: {1}", LDAPName, LDAPContainer));
                         result = true;
                         break;
                     }
@@ -90,20 +91,19 @@ namespace ARS.AuthenticationProvider
                     _provider = Membership.Providers[UmbracoProviderName];
                     if (_provider.ValidateUser(username, password))
                     {
-                        log.Debug("Successfully logged in with Umbraco Membership");
+                        LogHelper.Info(typeof(ProxyMembershipProvider), "Successfully logged in with Umbraco Membership: " + username);
                         result = true;
                     }
                     else
                     {
-                        log.Debug("Some how AD authentication failed and umbraco authentication failed also");
+                        LogHelper.Warn(typeof(ProxyMembershipProvider), "AD Authentication Failed, Umbraco authentication failed as well: " + username);
                         return false;
                     }
                 }
             }
             catch (Exception e)
             {
-
-                log.Error(string.Format("An error has occurred with logging in with Active Directory with LDAP name: {0} and LDAPContainer: {1}", LDAPName, LDAPContainer), e);
+                LogHelper.Error(typeof(ProxyMembershipProvider), string.Format("An error has occurred with logging in with Active Directory with LDAP name: {0} and LDAPContainer: {1}", LDAPName, LDAPContainer), e);
                 _provider = null;
                 result = false;
             }
