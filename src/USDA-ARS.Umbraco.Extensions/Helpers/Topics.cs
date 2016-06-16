@@ -57,6 +57,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                     {
                         IEnumerable<Link> links = navItem.GetValue<MultiUrls>("siteLeftNavLocation");
                         bool navFound = false;
+                        bool forceNavToBottom = false;
 
                         string navCategorySelect = navItem.GetValue<string>("leftNavCategory");
                         string templateSelect = navItem.GetValue<string>("leftNavTemplate");
@@ -67,6 +68,11 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                             if (currentNode.HasValue("navigationCategory") && currentNode.GetPropertyValue<string>("navigationCategory").ToLower() == navCategorySelect.ToLower())
                             {
                                 navFound = true;
+                            }
+                            if (currentNode.HasValue("navigationCategoryBottom") && currentNode.GetPropertyValue<string>("navigationCategoryBottom").ToLower() == navCategorySelect.ToLower())
+                            {
+                                navFound = true;
+                                forceNavToBottom = true;
                             }
                         }
                         else if (false == string.IsNullOrEmpty(templateSelect))
@@ -118,7 +124,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
                             ArchetypeModel navListFound = navItem.GetValue<ArchetypeModel>("siteLeftNav");
 
-                            if (false == displayOnBottom)
+                            if (false == displayOnBottom && false == forceNavToBottom)
                             {
                                 if (navTopList == null)
                                 {

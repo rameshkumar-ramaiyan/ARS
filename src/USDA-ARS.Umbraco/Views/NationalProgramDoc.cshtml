@@ -1,0 +1,64 @@
+﻿@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+
+    string filterForm = null;
+    string filter = null;
+    int projectCount = 0;
+    string projectStatus = null;
+
+    string npCode = currentPage.Parent.Parent.GetPropertyValue<string>("npCode");
+
+    List<NationalProgramLocation> programLocationList = NationalPrograms.GetProgramsByNpCodeForMap(npCode);
+
+    List<PeopleInfo> peopleList = null;
+    List<ProjectInfo> projectList = null;
+
+    if (programLocationList != null && programLocationList.Any())
+    {
+        programLocationList = programLocationList.DistinctBy(p => p.StateCode).ToList();
+
+        peopleList = People.GetPeopleByProject(npCode, projectStatus);
+
+        if (false == string.IsNullOrWhiteSpace(filter))
+        {
+            projectList = Projects.GetProjectsByProgramFilter(npCode);
+        }
+    }
+
+}
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+    <div id="pageContent">
+
+        <div class="pageHeading">
+            National Program @(npCode): @(currentPage.Parent.Parent.Name)
+        </div>
+
+        <table border="0" width="100%" style="margin-top: 8px;">
+            <tbody>
+                <tr>
+                    <td class="pageHeading">@currentPage.Name</td>
+                </tr>
+                <tr>
+                    <td>
+                        <img src="/images/headline_bar.gif" alt="headline bar" width="100%">
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+
+        <br />
+
+    </div>
+</div>

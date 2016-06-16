@@ -60,10 +60,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\DLLs\Axial.Umbraco.DecendantsAudit.dll</HintPath>
     </Reference>
-    <Reference Include="Axial.Umbraco.FileSystemPicker, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\DLLs\Axial.Umbraco.FileSystemPicker.dll</HintPath>
-    </Reference>
     <Reference Include="Axial.Umbraco.PropertyAccess, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\DLLs\Axial.Umbraco.PropertyAccess.dll</HintPath>
@@ -3109,6 +3105,10 @@
     <ProjectReference Include="..\USDA-ARS.Umbraco.Extensions\USDA-ARS.Umbraco.Extensions.csproj">
       <Project>{94328c72-101b-4a7b-aefb-b0c60cae0180}</Project>
       <Name>USDA-ARS.Umbraco.Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\USDA_ARS.Umbraco.FileSystemPicker\USDA_ARS.Umbraco.FileSystemPicker.csproj">
+      <Project>{c0318ac1-1532-49a6-9828-13f99e722431}</Project>
+      <Name>USDA_ARS.Umbraco.FileSystemPicker</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

@@ -6,7 +6,16 @@
 @using Newtonsoft.Json
 @model IPublishedContent
 @{
-    IPublishedContent docsFolder = Model.Children.FirstOrDefault(n => n.IsDocumentType("NationalProgramFolderContainer"));
+    IPublishedContent docsFolder = null;
+
+    if (Model.DocumentTypeAlias == "NationalProgram")
+    {
+        docsFolder = Model.Children.FirstOrDefault(n => n.IsDocumentType("NationalProgramFolderContainer"));
+    }
+    else if (Model.Parent.DocumentTypeAlias == "NationalProgramFolderContainer")
+    {
+        docsFolder = Model.Parent;
+    }
 
     List<IPublishedContent> programDocsList = null;
     //List<IPublishedContent> programDocsTypeList = null;

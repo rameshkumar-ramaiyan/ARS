@@ -40,6 +40,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARS.AuthenticationProvider"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportNavigation", "USDA-ARS.ImportNavigation\USDA-ARS.ImportNavigation.csproj", "{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA_ARS.Umbraco.FileSystemPicker", "USDA_ARS.Umbraco.FileSystemPicker\USDA_ARS.Umbraco.FileSystemPicker.csproj", "{C0318AC1-1532-49A6-9828-13F99E722431}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -143,6 +145,12 @@ Global
 		{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}.Release|Any CPU.Build.0 = Release|Any CPU
 		{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}.Staging|Any CPU.ActiveCfg = Release|Any CPU
 		{87849EA9-3FAA-4AD1-ACDE-03BE96BD2723}.Staging|Any CPU.Build.0 = Release|Any CPU
+		{C0318AC1-1532-49A6-9828-13F99E722431}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0318AC1-1532-49A6-9828-13F99E722431}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0318AC1-1532-49A6-9828-13F99E722431}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0318AC1-1532-49A6-9828-13F99E722431}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0318AC1-1532-49A6-9828-13F99E722431}.Staging|Any CPU.ActiveCfg = Release|Any CPU
+		{C0318AC1-1532-49A6-9828-13F99E722431}.Staging|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
