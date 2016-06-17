@@ -46,7 +46,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                 {
                     Models.NodeDownloadRequests nodeDownloadRequests = new Models.NodeDownloadRequests();
 
-                    nodeDownloadRequests = Helpers.Aris.DownloadRequest.GetDownloadRequestsByNode(node);
+                    nodeDownloadRequests = Helpers.Aris.DownloadRequests.GetDownloadRequestsByNode(node);
 
                     if (nodeDownloadRequests != null)
                     {

@@ -310,7 +310,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                 {
                     user.UserType = userService.GetUserTypeByAlias("editor");
 
-                    IPublishedContent emailTemplate = Nodes.EmailTemplateUserWelcome();
+                    IPublishedContent emailTemplate = Nodes.GetEmailTemplate("New User Welcome");
 
                     if (emailTemplate != null)
                     {
@@ -340,7 +340,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 
                         message.Subject = emailTemplate.GetPropertyValue<string>("emailSubject").Trim();
 
-                        string body = emailTemplate.GetPropertyValue<string>("emailSubject");
+                        string body = emailTemplate.GetPropertyValue<string>("emailBody");
 
                         body = body.Replace("src=\"/", "src=\"http://www.ars.usda.gov/");
                         body = body.Replace("href=\"/", "href=\"http://www.ars.usda.gov/");

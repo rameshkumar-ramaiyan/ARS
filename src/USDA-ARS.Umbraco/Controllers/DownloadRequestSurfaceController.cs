@@ -44,6 +44,12 @@ namespace USDA_ARS.Umbraco.Controllers
 
         }
 
+
+        /// <summary>
+        /// POST: Download Software Form
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
         [NotChildAction]
         [HttpPost]
         public ActionResult HandleFormSubmit(DownloadRequest model)
@@ -54,6 +60,7 @@ namespace USDA_ARS.Umbraco.Controllers
             }
             else
             {
+                // If the mode code is empty, set the default.
                 if (true == string.IsNullOrWhiteSpace(model.ModeCode))
                 {
                     model.ModeCode = "00-00-00-00";
@@ -63,7 +70,7 @@ namespace USDA_ARS.Umbraco.Controllers
 
                 ArchetypeFieldsetModel softwareItem = Software.GetSoftwareById(model.SoftwareId);
 
-                List<string> recipientsArray = new List<string>();
+                string recipientsArray = "";
 
                 if (softwareItem != null)
                 {
@@ -85,22 +92,28 @@ namespace USDA_ARS.Umbraco.Controllers
                     downloadToSave.Reference = model.Reference;
                     downloadToSave.HttpReferer = Request.UrlReferrer.AbsoluteUri;
 
-                    Extensions.Helpers.Aris.DownloadRequest.SaveDownloadRequest(downloadToSave);
+                    Extensions.Helpers.Aris.DownloadRequests.SaveDownloadRequest(downloadToSave);
 
                     if (softwareItem.HasValue("recipients"))
                     {
-                        recipientsArray = softwareItem.GetValue<string>("recipients").Split(',').ToList();
+                        recipientsArray = softwareItem.GetValue<string>("recipients");
 
-
-
-
-                        //TODO: Send Email
-
+                        // Send email
+                        Software.SendEmail(recipientsArray, softwareItem, downloadToSave);
                     }
 
                     TempData["downloadReady"] = true;
 
-                    return new RedirectResult("/services/software/download?modeCode=" + model.ModeCode + "&softwareid=" + Server.UrlEncode(model.SoftwareId));
+                    string downloadUrl = "/research/software/download/";
+
+                    IPublishedContent downloadFileNode = Nodes.DownloadFile();
+
+                    if (downloadFileNode != null)
+                    {
+                        downloadUrl = downloadFileNode.Url;
+                    }
+
+                    return new RedirectResult(downloadUrl + "?modeCode=" + model.ModeCode + "&softwareid=" + Server.UrlEncode(model.SoftwareId));
                 }
 
 

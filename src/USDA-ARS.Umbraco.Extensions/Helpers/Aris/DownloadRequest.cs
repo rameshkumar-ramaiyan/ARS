@@ -10,7 +10,7 @@ using Umbraco.Web;
 
 namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 {
-    public class DownloadRequest
+    public class DownloadRequests
     {
         public static List<Models.Aris.DownloadRequest> GetDownloadRequests(Guid softwareId)
         {

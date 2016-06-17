@@ -81,6 +81,20 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             return null;
         }
 
+
+        public static IPublishedContent DownloadFile()
+        {
+            IPublishedContent homepage = Homepage();
+
+            if (homepage != null)
+            {
+                return homepage.Descendants().FirstOrDefault(n => n.IsDocumentType("DownloadFile"));
+            }
+
+            return null;
+        }
+
+
         public static IPublishedContent FindALocation()
         {
             IPublishedContent homepage = Homepage();
@@ -117,13 +131,14 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             return null;
         }
 
-        public static IPublishedContent EmailTemplateUserWelcome()
+
+        public static IPublishedContent GetEmailTemplate(string nodeName)
         {
             IPublishedContent siteSettings = SiteSettings();
 
             if (siteSettings != null)
             {
-                return siteSettings.Descendants().FirstOrDefault(n => n.IsDocumentType("EmailTemplate") && n.Name.IndexOf("New User Welcome") >= 0);
+                return siteSettings.Descendants().FirstOrDefault(n => n.IsDocumentType("EmailTemplate") && n.Name.IndexOf(nodeName) >= 0);
             }
 
             return null;
