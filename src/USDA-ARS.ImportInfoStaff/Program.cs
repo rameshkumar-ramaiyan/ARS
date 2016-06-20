@@ -278,7 +278,9 @@ namespace USDA_ARS.ImportInfoStaff
 
             bodyText = UpdateHtml(bodyText, Path.GetDirectoryName(path));
 
-            if (false == string.IsNullOrEmpty(bodyText) || false == string.IsNullOrWhiteSpace(title))
+            title = Path.GetFileNameWithoutExtension(path);
+
+            if (false == string.IsNullOrEmpty(bodyText))
             {
                 pageImport = new PageImport();
 
