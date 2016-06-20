@@ -537,6 +537,7 @@ namespace USDA_ARS.LocationsWebApp.DL
 
             properties.Add(new ApiProperty("bodyText", bodyText)); // Body Text
             properties.Add(new ApiProperty("npCode", npCode)); // NP Code (National Program Code)
+            properties.Add(new ApiProperty("folderLabel", "np" + npCode)); // NP Code (National Program Code)
             properties.Add(new ApiProperty("oldUrl", "/research/programs/programs.htm?NP_CODE=" + npCode)); // current URL               
 
             content.Properties = properties;
