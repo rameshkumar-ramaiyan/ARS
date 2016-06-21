@@ -3071,6 +3071,7 @@
     <Content Include="Views\Partials\Modules\PhotoCarousel.cshtml" />
     <Content Include="Views\StandardPageList.cshtml" />
     <None Include="Properties\PublishProfiles\Publish2StagingTest.pubxml" />
+    <Content Include="Views\NationalProgramDoc.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

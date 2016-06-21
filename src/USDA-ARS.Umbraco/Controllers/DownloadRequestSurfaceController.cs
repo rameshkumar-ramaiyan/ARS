@@ -1,7 +1,10 @@
 ﻿using Archetype.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
+using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using Umbraco.Core.Models;
@@ -54,6 +57,21 @@ namespace USDA_ARS.Umbraco.Controllers
         [HttpPost]
         public ActionResult HandleFormSubmit(DownloadRequest model)
         {
+            // Check recaptcha
+            var response = Request["g-recaptcha-response"];
+            //secret that was generated in key value pair
+            string secret = ConfigurationManager.AppSettings["Google:Recaptcha:Secret"];
+
+            var client = new WebClient();
+            var reply = client.DownloadString(String.Format("https://www.google.com/recaptcha/api/siteverify?secret={0}&response={1}", secret, response));
+
+            var captchaResponse = JsonConvert.DeserializeObject<CaptchaResponse>(reply);
+
+            if (false == captchaResponse.Success)
+            {
+                ModelState.AddModelError("", "The CAPTCHA was invalid.");
+            }
+
             if (false == ModelState.IsValid)
             {
                 return CurrentUmbracoPage();

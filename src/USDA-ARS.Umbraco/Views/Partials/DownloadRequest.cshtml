@@ -1,9 +1,15 @@
 ﻿@model USDA_ARS.Umbraco.Extensions.Models.DownloadRequest
 @{
-
+    string recaptchaKey = System.Configuration.ConfigurationManager.AppSettings.Get("Google:Recaptcha:Key");
 }
 
 <script src='https://www.google.com/recaptcha/api.js'></script>
+<style>
+    .validation-summary-errors {
+        font-weight: bold;
+        color: #ff0000;
+    }
+</style>
 
 @using (Html.BeginUmbracoForm<USDA_ARS.Umbraco.Controllers.DownloadRequestSurfaceController>("HandleFormSubmit"))
 {
@@ -123,18 +129,23 @@
             </tr>
 
             <tr>
+                <td></td>
+                <td>@Html.ValidationSummary()</td>
+            </tr>
+
+            <tr>
                 <td valign="top" align="right">
                     &nbsp;&nbsp;
                 </td>
                 <td>
-                    <div class="g-recaptcha" data-sitekey="6LcQsxcTAAAAAEmuzT5cHktKKjEximXtffcP_VK9"></div>
+                    <div id="grecaptcha1" class="g-recaptcha" data-sitekey="@recaptchaKey" data-callback="onRecaptchaSuccess"></div>
                 </td>
             </tr>
         </tbody>
     </table>
 
     <p align="center">
-        <button type="submit">Take me to the download...</button>
+        <button id="submit-button" type="submit" disabled="disabled">Take me to the download...</button>
     </p>
 
     <script type="text/javascript">
@@ -147,5 +158,26 @@
                 $('#State').val('none');
             });
         });
+
+        var recaptcha1;
+
+        var onloadCallBack = function () {
+            recaptcha1 = grecaptcha.render('grecaptcha1', {
+                'sitekey': '@recaptchaKey',
+                'callback': onRecaptchaSuccess
+            });
+        };
+
+        var onRecaptchaSuccess = function (response) {
+            $('#submit-button').removeAttr('disabled');
+            var errorDivs = $(".recaptcha-error");
+            if (errorDivs.length) {
+                //errorDivs[0].className = "";
+            }
+            var errorMsgs = $(".recaptcha-error-message");
+            if (errorMsgs.length) {
+                //errorMsgs[0].parentNode.removeChild(errorMsgs[0]);
+            }
+        };
     </script>
 }

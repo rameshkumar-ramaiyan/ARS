@@ -350,6 +350,7 @@
     <Compile Include="Models\Aris\UsdaPublicationSearch.cs" />
     <Compile Include="Models\BlogItem.cs" />
     <Compile Include="Models\Aris\RefModeCode.cs" />
+    <Compile Include="Models\CaptchaResponse.cs" />
     <Compile Include="Models\EmailSignup.cs" />
     <Compile Include="Models\Import\ApiContent.cs" />
     <Compile Include="Models\Import\ApiProperty.cs" />
