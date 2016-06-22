@@ -90,7 +90,23 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                     }
                     else
                     {
-                        IEnumerable<IPublishedContent> subNodeList = node.Descendants();
+                        List<IPublishedContent> subNodeList = new List<IPublishedContent>();
+                        IPublishedContent tempNode = node;
+
+                        int level = node.Level;
+
+                        if (level > 1)
+                        {
+                            while (level > 1)
+                            {
+                                tempNode = tempNode.Parent;
+                                level = tempNode.Level;
+
+                                subNodeList.Add(node);
+                            }
+                        }
+
+                        subNodeList.AddRange(node.Descendants());
 
                         foreach (IPublishedContent subNode in subNodeList)
                         {

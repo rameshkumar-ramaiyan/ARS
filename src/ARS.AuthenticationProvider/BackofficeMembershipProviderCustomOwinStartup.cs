@@ -26,6 +26,7 @@ namespace ARS.AuthenticationProvider
         public void Configuration(IAppBuilder app)
         {
             //Configure the Identity user manager for use with Umbraco Back office
+            app.SetUmbracoLoggerFactory();
 
             var applicationContext = ApplicationContext.Current;
             app.ConfigureUserManagerForUmbracoBackOffice<BackOfficeUserManager, BackOfficeIdentityUser>(
@@ -43,6 +44,7 @@ namespace ARS.AuthenticationProvider
 
                     return userManager;
                 });
+
 
             //Ensure owin is configured for Umbraco back office authentication
             app
