@@ -33,11 +33,40 @@ namespace USDA_ARS.ImportInfoStaff
         {
             bool forceCacheUpdate = false;
 
-            if (args != null && args.Length == 1)
+            if (args != null && args.Length >= 1)
             {
-                forceCacheUpdate = true;
-            }
+                if (args[0] == "import")
+                {
+                    if (args.Length == 2)
+                    {
+                        if (args[1] == "force-cache-update")
+                        {
+                            forceCacheUpdate = true;
+                        }
+                    }
 
+                    // Import the Info Staff data
+                    Import(forceCacheUpdate);
+                }
+                else if (args[0] == "delete")
+                {
+                    Delete();
+                }
+            }
+            else
+            {
+                Console.WriteLine("A program attribute is required.");
+                Console.WriteLine("There are 3 options:");
+                Console.WriteLine("");
+                Console.WriteLine("USDA-ARS.ImportInfoStaff.exe import");
+                Console.WriteLine("USDA-ARS.ImportInfoStaff.exe import force-cache-update");
+                Console.WriteLine("USDA-ARS.ImportInfoStaff.exe delete");
+            }
+        }
+
+
+        static void Import(bool forceCacheUpdate)
+        {
             AddLog("Getting Mode Codes From Umbraco...");
             GenerateModeCodeList(forceCacheUpdate);
             AddLog("Done. Count: " + MODE_CODE_LIST.Count);
@@ -161,6 +190,18 @@ namespace USDA_ARS.ImportInfoStaff
                 Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);
                 fs.Write(fileText, 0, fileText.Length);
             }
+        }
+
+
+        static void Delete()
+        {
+            AddLog("Deleting Office of Communication sub-nodes...");
+
+            DeleteUmbracoChildNodes(UMBRACO_START_NODE);
+
+            AddLog("");
+            AddLog("Done.");
+            AddLog("");
         }
 
 
@@ -412,6 +453,52 @@ namespace USDA_ARS.ImportInfoStaff
             else
             {
                 AddLog("!! ERROR: Could not add folder: " + name);
+                if (responseBack != null)
+                {
+                    AddLog("!! ERROR: Success: " + responseBack.Success);
+                    AddLog("!! ERROR: Message: " + responseBack.Message);
+                }
+                else
+                {
+                    AddLog("!! ERROR: Response empty");
+                }
+            }
+
+            return umbracoId;
+        }
+
+
+        static int DeleteUmbracoChildNodes(int parentId)
+        {
+            int umbracoId = 0;
+
+            ApiContent content = new ApiContent();
+
+            content.Id = parentId;
+
+            List<ApiProperty> properties = new List<ApiProperty>();
+
+            content.Properties = properties;
+
+            content.Save = 2;
+
+            ApiRequest request = new ApiRequest();
+
+            request.ContentList = new List<ApiContent>();
+            request.ContentList.Add(content);
+            request.ApiKey = API_KEY;
+
+            ApiResponse responseBack = ApiCalls.PostData(request, "DeleteChildren");
+
+            if (responseBack != null && responseBack.ContentList != null && responseBack.ContentList.Count > 0)
+            {
+                umbracoId = responseBack.ContentList[0].Id;
+
+                AddLog("Children sub-nodes deleted.");
+            }
+            else
+            {
+                AddLog("!! ERROR: Could not delete sub-nodes.");
                 if (responseBack != null)
                 {
                     AddLog("!! ERROR: Success: " + responseBack.Success);

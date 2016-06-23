@@ -651,6 +651,113 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
         }
 
 
+        [System.Web.Http.HttpPost]
+        public Models.Import.ApiResponse DeleteChildren([FromBody] dynamic json)
+        {
+            Models.Import.ApiResponse response = new Models.Import.ApiResponse();
+
+            Models.Import.ApiRequest request = JsonConvert.DeserializeObject<Models.Import.ApiRequest>(json.ToString());
+
+            try
+            {
+                if (request != null)
+                {
+                    //Check object
+                    if (true == string.IsNullOrWhiteSpace(request.ApiKey))
+                    {
+                        response.Message = "API Key is missing.";
+                    }
+                    else if (request.ApiKey != _apiKey)
+                    {
+                        response.Message = "API Key is invalid.";
+                    }
+                    else if (request.ContentList == null || request.ContentList.Count == 0)
+                    {
+                        response.Message = "Content object empty. Needed for GET.";
+                    }
+                    else
+                    {
+                        response.Success = true;
+                        response.ContentList = new List<Models.Import.ApiContent>();
+
+                        foreach (Models.Import.ApiContent contentObj in request.ContentList)
+                        {
+                            IContent content = null;
+                            Models.Import.ApiContent responseContent = new Models.Import.ApiContent();
+
+                            if (contentObj.Id <= 0)
+                            {
+                                if (contentObj.Properties != null && contentObj.Properties.Count > 0)
+                                {
+                                    Models.Import.ApiProperty propObj = contentObj.Properties[0];
+
+                                    IEnumerable<IContent> rootNodeList = _contentService.GetRootContent();
+
+                                    foreach (IContent rootNode in rootNodeList)
+                                    {
+                                        if (content == null)
+                                        {
+                                            IEnumerable<IContent> nodeList = _contentService.GetDescendants(rootNode.Id);
+
+                                            content = nodeList.Where(p => p.Properties.Any(s => s.Value != null && s.Alias == propObj.Key && s.Value.ToString() == propObj.Value.ToString())).FirstOrDefault();
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    responseContent.Message = "Must provide a property key and value to return content on.";
+                                    responseContent.Success = false;
+                                }
+                            }
+                            else // Find by Id
+                            {
+                                content = _contentService.GetById(contentObj.Id);
+                            }
+
+                            if (content != null && content.Id > 0)
+                            {
+                                // Content Found!
+                                responseContent = ConvertContentObj(content);
+
+                                IEnumerable<IContent> childrenNodes = content.Children();
+
+                                if (childrenNodes != null)
+                                {
+                                    foreach (var child in childrenNodes)
+                                    {
+                                        ApplicationContext.Current.Services.ContentService.Delete(child);
+                                    }
+                                }
+
+                                responseContent.Success = true;
+                                responseContent.Message = "Content found and deleted child nodes.";
+                            }
+                            else
+                            {
+                                responseContent.Message = "Content could not be found for deletion.";
+                                responseContent.Success = false;
+                            }
+
+                            response.ContentList.Add(responseContent);
+                        }
+                    }
+                }
+                else
+                {
+                    response.Message = "The JSON object was not properly formatted.";
+                    response.Success = false;
+                }
+
+            }
+            catch (Exception ex)
+            {
+                //LogHelper.Error<DataImporterController>("Content Import Post Error", ex);
+
+                response.Message = ex.ToString();
+            }
+
+            return response;
+        }
 
 
         /// <summary>
