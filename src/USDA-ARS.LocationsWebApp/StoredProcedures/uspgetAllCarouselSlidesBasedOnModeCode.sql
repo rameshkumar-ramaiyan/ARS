@@ -1,4 +1,4 @@
-USE [aris_public_webNew]
+USE [aris_public_web]
 GO
 
 /****** Object:  StoredProcedure [dbo].[uspgetAllCarouselSlidesBasedOnModeCode]    Script Date: 3/18/2016 4:53:38 PM ******/

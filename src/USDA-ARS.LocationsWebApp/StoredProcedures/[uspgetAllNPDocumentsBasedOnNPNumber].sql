@@ -1,4 +1,4 @@
-USE [aris_public_webNew]
+USE [aris_public_web]
 GO
 /****** Object:  StoredProcedure [dbo].[uspgetAllNPDocumentsBasedOnNPNumber]    Script Date: 4/22/2016 7:01:05 AM ******/
 SET ANSI_NULLS ON

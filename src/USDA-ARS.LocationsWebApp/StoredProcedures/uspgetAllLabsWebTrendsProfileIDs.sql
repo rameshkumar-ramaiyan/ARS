@@ -43,7 +43,7 @@ and SUBSTRING ([modecode],5, 2)=@ParentResearchUnitModeCode and SUBSTRING ([mode
 --select * from [redesign].[dbo].[ReplacePeople] where Modecode='60400525'
 	--select * from [redesign].[dbo].[ReplacePeople] where 
 
-	--select *  from aris_public_webNew.dbo.REF_MODECODE 
+	--select *  from aris_public_web.dbo.REF_MODECODE 
 	--where MODECODE_1=60 and MODECODE_2=40 and MODECODE_3=5
 
 
