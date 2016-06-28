@@ -325,7 +325,7 @@ namespace USDA_ARS.LocationsWebApp
             properties.Add(new ApiProperty("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
             properties.Add(new ApiProperty("quickLinks", oldId));
 
-            properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
+           // properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
 
 
 
