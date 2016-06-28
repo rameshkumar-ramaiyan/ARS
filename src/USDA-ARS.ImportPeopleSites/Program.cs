@@ -50,6 +50,7 @@ namespace USDA_ARS.ImportPeopleSites
             {
 
 
+
                 // LOOP THROUGH VALID MODE CODES
                 {
                     string modeCode = ""; // Get the mode code in the xx-xx-xx-xx format
@@ -102,7 +103,7 @@ namespace USDA_ARS.ImportPeopleSites
             content.Name = name;
             content.ParentId = parentId;
             content.DocType = "PersonSite";
-            content.Template = "PersonSite"; // Leave blank
+            content.Template = "PersonSite";
 
             List<ApiProperty> properties = new List<ApiProperty>();
 
