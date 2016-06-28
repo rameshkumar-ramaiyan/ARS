@@ -347,6 +347,7 @@
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.js" />
     <Content Include="delete-all-national-programs.aspx" />
+    <Content Include="getFileNamesForSoftwareIdFolders.txt" />
     <Content Include="news-import.aspx" />
     <Content Include="StoredProcedures\dbo.uspgetAllDocumentIdsBasedOnPersonId.sql" />
     <Content Include="StoredProcedures\dbo.uspgetAllDocumentPagesBasedOnCurrentVersionId.sql" />
