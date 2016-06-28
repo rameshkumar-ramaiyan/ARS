@@ -354,6 +354,7 @@
     <Content Include="StoredProcedures\uspgetAllAreasPopularTopics.sql" />
     <Content Include="StoredProcedures\uspgetAllCarouselSlidesBasedOnModeCode.sql" />
     <Content Include="StoredProcedures\uspgetAllDocumentIdsBasedOnPersonId.sql" />
+    <Content Include="StoredProcedures\uspgetAllDocumentPagesBasedOnCurrentVersionId.sql" />
     <Content Include="StoredProcedures\uspgetAllLabsPopularTopics.sql" />
     <Content Include="StoredProcedures\uspgetAllOldModeCodesBasedOnNewModeCodes.sql" />
     <Content Include="StoredProcedures\uspgetAllJobLocationIdsBasedOnCityName.sql" />
