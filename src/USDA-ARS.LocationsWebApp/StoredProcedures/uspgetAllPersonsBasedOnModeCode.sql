@@ -1,4 +1,4 @@
-USE [aris_public_webNew]
+USE [aris_public_web]
 GO
 
 /****** Object:  StoredProcedure [dbo].[uspgetAllPersonsBasedOnModeCode]    Script Date: 6/2/2016 7:23:57 PM ******/

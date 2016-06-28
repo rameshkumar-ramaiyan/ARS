@@ -24,7 +24,7 @@ AS
      
    
 	--,STATE_CODE
-from aris_public_webNew.dbo.REF_MODECODE 
+from aris_public_web.dbo.REF_MODECODE 
 
 where 
 MODECODE_2=0 and MODECODE_3=0 and MODECODE_4=0 
@@ -38,7 +38,7 @@ and  STATE_CODE is not null
 
 			
 ----select  cast (MODECODE_1 as varchar(2))+'-00-00-00'as 'Area Mode Code',MODECODE_1_DESC As 'Area' 
-----from aris_public_webNew.dbo.REF_MODECODE 
+----from aris_public_web.dbo.REF_MODECODE 
 ----where 
 ----MODECODE_2=0 and MODECODE_3=0 and MODECODE_4=0 
 ----AND STATUS_CODE = 'A' --status code active

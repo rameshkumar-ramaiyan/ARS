@@ -325,7 +325,7 @@ namespace USDA_ARS.LocationsWebApp
             properties.Add(new ApiProperty("oldId", oldId)); // sitepublisher ID (So we can reference it later if needed).
             properties.Add(new ApiProperty("quickLinks", oldId));
 
-            properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
+           // properties.Add(new ApiProperty("oldModeCode", "OLD MODE CODES HERE")); // Separate old modes codes by a comma ,
 
 
 
@@ -1659,7 +1659,11 @@ namespace USDA_ARS.LocationsWebApp
         }
         public static List<string> ReadFromTextfile(int softwareId)
         {
-            string[] lines = File.ReadAllLines("C:\\get_files.txt");
+            //string[] lines = File.ReadAllLines("C:\\get_files.txt");
+
+            string current_path = HttpContext.Current.Server.MapPath("~/getFileNamesForSoftwareIdFolders.txt");
+
+            string[] lines = System.IO.File.ReadAllLines(current_path);
 
             List<string> myCollection = new List<string>();
             for (int i = 0; i < lines.Length; i++)

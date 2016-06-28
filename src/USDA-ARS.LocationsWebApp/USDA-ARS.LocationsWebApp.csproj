@@ -347,6 +347,7 @@
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.js" />
     <Content Include="delete-all-national-programs.aspx" />
+    <Content Include="getFileNamesForSoftwareIdFolders.txt" />
     <Content Include="news-import.aspx" />
     <Content Include="StoredProcedures\dbo.uspgetAllDocumentIdsBasedOnPersonId.sql" />
     <Content Include="StoredProcedures\dbo.uspgetAllDocumentPagesBasedOnCurrentVersionId.sql" />
@@ -354,6 +355,7 @@
     <Content Include="StoredProcedures\uspgetAllAreasPopularTopics.sql" />
     <Content Include="StoredProcedures\uspgetAllCarouselSlidesBasedOnModeCode.sql" />
     <Content Include="StoredProcedures\uspgetAllDocumentIdsBasedOnPersonId.sql" />
+    <Content Include="StoredProcedures\uspgetAllDocumentPagesBasedOnCurrentVersionId.sql" />
     <Content Include="StoredProcedures\uspgetAllLabsPopularTopics.sql" />
     <Content Include="StoredProcedures\uspgetAllOldModeCodesBasedOnNewModeCodes.sql" />
     <Content Include="StoredProcedures\uspgetAllJobLocationIdsBasedOnCityName.sql" />

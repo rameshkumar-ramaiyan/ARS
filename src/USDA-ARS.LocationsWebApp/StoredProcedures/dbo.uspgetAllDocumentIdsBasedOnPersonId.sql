@@ -5,11 +5,6 @@
 
 
 
-
-
-
-
-
 CREATE PROCEDURE [dbo].[uspgetAllDocumentIdsBasedOnPersonId]
 @PersonId varchar(max) =null
 AS

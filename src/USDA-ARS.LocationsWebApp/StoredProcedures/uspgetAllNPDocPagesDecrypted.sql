@@ -1,4 +1,4 @@
-USE [aris_public_webNew]
+USE [aris_public_web]
 GO
 
 /****** Object:  StoredProcedure [dbo].[uspgetAllNPDocPagesDecrypted]    Script Date: 4/25/2016 8:04:08 AM ******/

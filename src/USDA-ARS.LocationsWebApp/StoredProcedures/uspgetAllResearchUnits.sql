@@ -37,7 +37,7 @@ CASE
 
 ,MODECODE_3_DESC as 'Research Unit' 
 --,MODECODE_4 as 'Lab Mode Code',MODECODE_4_DESC as 'Lab'
-from aris_public_webNew.dbo.REF_MODECODE 
+from aris_public_web.dbo.REF_MODECODE 
 where 
 MODECODE_1=@ParentAreaModeCode 
 and MODECODE_2=@ParentCityModeCode and MODECODE_2 <> '1'

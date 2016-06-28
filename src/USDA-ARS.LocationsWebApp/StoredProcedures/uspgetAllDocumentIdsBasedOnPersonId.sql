@@ -1,4 +1,4 @@
-USE [aris_public_webNew]
+USE [aris_public_web]
 GO
 
 /****** Object:  StoredProcedure [dbo].[uspgetAllDocumentIdsBasedOnPersonId]    Script Date: 3/18/2016 4:54:26 PM ******/

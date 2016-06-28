@@ -1,4 +1,4 @@
-USE [aris_public_webNew]
+USE [aris_public_web]
 GO
 
 /****** Object:  StoredProcedure [dbo].[uspgetAllNPGroupItemsBasedOnGroupId]    Script Date: 4/11/2016 7:06:54 AM ******/
