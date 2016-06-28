@@ -4,10 +4,11 @@ using Microsoft.Owin;
 using Microsoft.Owin.Security.OAuth;
 using Owin;
 using Umbraco.IdentityExtensions;
+using Umbraco.Core;
 using Umbraco.Web.Security.Identity;
-using ARS.AuthenticationProvider;
+using USDA_ARS.Umbraco;
 
-namespace ARS.AuthenticationProvider
+namespace USDA_ARS.Umbraco
 {
 
     /// <summary>
@@ -57,7 +58,7 @@ namespace ARS.AuthenticationProvider
                 
                 TokenEndpointPath = new PathString("/umbraco/oauth/token"),
                 //set as different auth type to not interfere with anyone doing this on the front-end
-                AuthenticationType = Umbraco.Core.Constants.Security.BackOfficeTokenAuthenticationType,
+                AuthenticationType = Constants.Security.BackOfficeTokenAuthenticationType,
                 AccessTokenExpireTimeSpan = TimeSpan.FromDays(1),
                 Provider = new BackOfficeAuthServerProvider(backofficeAuthServerProviderOptions)
                 {

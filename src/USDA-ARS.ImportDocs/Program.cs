@@ -1109,6 +1109,7 @@ namespace USDA_ARS.ImportDocs
             {
                 bodyText = Regex.Replace(bodyText, "sp2UserFiles/person/", "ARSUserFiles/", RegexOptions.IgnoreCase | RegexOptions.Singleline);
                 bodyText = Regex.Replace(bodyText, "sp2UserFiles/place/", "ARSUserFiles/", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                bodyText = Regex.Replace(bodyText, "\"/images/", "\"/ARSUserFiles/images/", RegexOptions.IgnoreCase | RegexOptions.Singleline);
             }
 
             return bodyText;

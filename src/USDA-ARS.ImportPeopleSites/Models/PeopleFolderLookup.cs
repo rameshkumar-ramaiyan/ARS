@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace USDA_ARS.ImportPeopleSites.Models
+﻿namespace USDA_ARS.ImportPeopleSites.Models
 {
     public class PeopleFolderLookup
     {

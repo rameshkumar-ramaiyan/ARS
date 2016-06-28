@@ -17,13 +17,13 @@ namespace USDA_ARS.ImportPeopleSites.Objects
         public static string API_KEY = ConfigurationManager.AppSettings.Get("Umbraco:ApiKey");
         public static string API_URL = ConfigurationManager.AppSettings.Get("Umbraco:ApiUrl");
 
-        public static void GenerateModeCodeFolderList(ref List<PeopleFolderLookup> peopleFolderList, ref string LogFileText, bool forceCacheUpdate)
+        public static void GenerateModeCodeFolderList(ref List<PeopleFolderLookup> peopleFolderList, ref string logFileText, List<ModeCodeLookup> modeCodeList, bool forceCacheUpdate)
         {
             peopleFolderList = GetPeopleFolderLookupCache();
 
             if (true == forceCacheUpdate || peopleFolderList == null || peopleFolderList.Count <= 0)
             {
-                peopleFolderList = CreatePeopleFolderLookupCache(ref peopleFolderList, ref LogFileText);
+                peopleFolderList = CreatePeopleFolderLookupCache(ref peopleFolderList, ref logFileText, modeCodeList);
             }
         }
 
@@ -49,11 +49,11 @@ namespace USDA_ARS.ImportPeopleSites.Objects
             return modeCodeList;
         }
 
-        public static List<PeopleFolderLookup> CreatePeopleFolderLookupCache(ref List<PeopleFolderLookup> peopleFolderList, ref string LogFileText)
+        public static List<PeopleFolderLookup> CreatePeopleFolderLookupCache(ref List<PeopleFolderLookup> peopleFolderList, ref string logFileText, List<ModeCodeLookup> modeCodeList)
         {
             List<PeopleFolderLookup> modeCodeFolderList = new List<PeopleFolderLookup>();
 
-            modeCodeFolderList = GetPeopleFoldersAll(ref peopleFolderList, ref LogFileText);
+            modeCodeFolderList = GetPeopleFoldersAll(ref peopleFolderList, ref logFileText, modeCodeList);
 
             StringBuilder sb = new StringBuilder();
 
@@ -75,31 +75,50 @@ namespace USDA_ARS.ImportPeopleSites.Objects
             return modeCodeFolderList;
         }
 
-        public static List<PeopleFolderLookup> GetPeopleFoldersAll(ref List<PeopleFolderLookup> peopleFolderList, ref string LogFileText)
+        public static List<PeopleFolderLookup> GetPeopleFoldersAll(ref List<PeopleFolderLookup> peopleFolderList, ref string logFileText, List<ModeCodeLookup> modeCodeList)
         {
             List<PeopleFolderLookup> modeCodeFolderList = new List<PeopleFolderLookup>();
-            ApiRequest request = new ApiRequest();
 
-            request.ApiKey = API_KEY;
-
-            ApiResponse responseBack = ApiCalls.PostData(request, "GetAllPeopleFolderNodes");
-
-            if (responseBack != null && responseBack.Success)
+            if (modeCodeList != null && modeCodeList.Any())
             {
-                if (responseBack.ContentList != null && responseBack.ContentList.Any())
+                foreach (ModeCodeLookup modeCodeFound in modeCodeList)
                 {
-                    foreach (ApiContent node in responseBack.ContentList)
-                    {
-                        if (node != null)
-                        {
-                            //string 
+                    ApiRequest request = new ApiRequest();
 
-                            //modeCodeFolderList.Add(new PeopleFolderLookup { ModeCode = folderFolder.ModeCode, PeopleFolderUmbracoId = node.Id });
-                            //Logs.AddLog(ref LogFileText, " - Adding: " + node.Name + " (" + node.Id + ")");
+                    request.ApiKey = API_KEY;
+
+                    request.ContentList = new List<ApiContent>();
+
+                    request.ContentList.Add(new ApiContent() { Id = modeCodeFound.UmbracoId });
+
+                    ApiResponse responseBack = ApiCalls.PostData(request, "Post");
+
+                    if (responseBack != null && responseBack.Success)
+                    {
+                        if (responseBack.ContentList != null && responseBack.ContentList.Any() && responseBack.ContentList[0].ChildContentList != null && responseBack.ContentList[0].ChildContentList.Any())
+                        {
+                            ApiContent nodeFolder = responseBack.ContentList[0].ChildContentList.Where(p => p.DocType == "PeopleFolder").FirstOrDefault();
+
+                            if (nodeFolder != null)
+
+                                foreach (ApiContent node in responseBack.ContentList)
+                                {
+                                    if (node != null)
+                                    {
+                                        //string 
+
+                                        modeCodeFolderList.Add(new PeopleFolderLookup { ModeCode = modeCodeFound.ModeCode, PeopleFolderUmbracoId = node.Id });
+                                        Logs.AddLog(ref logFileText, " - Adding People Folder: " + modeCodeFound.ModeCode + " (" + node.Id + ")");
+                                    }
+                                }
                         }
                     }
                 }
             }
+
+
+
+
 
 
             return modeCodeFolderList;

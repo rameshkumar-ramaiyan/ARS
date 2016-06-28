@@ -449,9 +449,14 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                         foreach (IContent rootNode in rootNodeList)
                         {
+                            if (rootNode.HasProperty("modeCode") && false == string.IsNullOrEmpty(rootNode.GetValue<string>("modeCode")))
+                            {
+                                modeCodeNodesList.Add(rootNode);
+                            }
+
                             IEnumerable<IContent> nodeList = _contentService.GetDescendants(rootNode.Id);
 
-                            modeCodeNodesList.AddRange(nodeList.Where(p => (p.ContentType.Alias == "Homepage" || p.ContentType.Alias == "Region" || p.ContentType.Alias == "City" || p.ContentType.Alias == "ResearchUnit" || p.ContentType.Alias == "NationalProgramGroup") 
+                            modeCodeNodesList.AddRange(nodeList.Where(p => (p.ContentType.Alias == "Homepage" || p.ContentType.Alias == "Region" || p.ContentType.Alias == "City" || p.ContentType.Alias == "ResearchUnit" || p.ContentType.Alias == "NationalProgramGroup")
                                         && p.Properties.Any(s => s.Value != null && s.Alias == "modeCode" && false == string.IsNullOrEmpty(s.Value.ToString()))).ToList());
                         }
 

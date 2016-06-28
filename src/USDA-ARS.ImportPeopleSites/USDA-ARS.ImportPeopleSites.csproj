@@ -44,8 +44,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\ModeCodeLookup.cs" />
     <Compile Include="Models\PeopleFolderLookup.cs" />
     <Compile Include="Objects\Logs.cs" />
+    <Compile Include="Objects\ModeCodes.cs" />
     <Compile Include="Objects\PeopleFolders.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

@@ -44,6 +44,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="AdAspNetProvider, Version=4.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\AdAspNetProvider.4.2.1\lib\net40\AdAspNetProvider.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="Archetype, Version=1.11.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Archetype.1.11.1\lib\net40\Archetype.dll</HintPath>
       <Private>True</Private>
@@ -205,6 +209,9 @@
       <HintPath>..\packages\UmbracoCms.Core.7.3.4\lib\System.Data.SqlServerCe.Entity.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.DirectoryServices.AccountManagement" />
+    <Reference Include="System.Net" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Net.Http.Extensions, Version=2.2.29.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Net.Http.2.2.29\lib\net45\System.Net.Http.Extensions.dll</HintPath>
@@ -220,6 +227,10 @@
     </Reference>
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Runtime.Caching" />
+    <Reference Include="System.Web.Cors, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.Cors.5.2.3\lib\net45\System.Web.Cors.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -272,6 +283,10 @@
       <HintPath>..\packages\UmbracoCms.Core.7.3.4\lib\TidyNet.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="UmbBackofficeMembershipProvider, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UmbBackofficeMembershipProvider.2.0.1\lib\net45\UmbBackofficeMembershipProvider.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="umbraco, Version=1.0.5820.25379, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\UmbracoCms.Core.7.3.4\lib\umbraco.dll</HintPath>
       <Private>True</Private>
@@ -286,6 +301,10 @@
     </Reference>
     <Reference Include="umbraco.editorControls, Version=1.0.5820.25381, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\UmbracoCms.Core.7.3.4\lib\umbraco.editorControls.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Umbraco.IdentityExtensions, Version=1.0.5779.34109, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\UmbracoCms.IdentityExtensions.1.0.0\lib\net45\Umbraco.IdentityExtensions.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="umbraco.MacroEngines, Version=1.0.5820.25381, Culture=neutral, processorArchitecture=MSIL">
@@ -353,6 +372,23 @@
     <Content Include="App_Plugins\Archetype\views\archetype.config.stylescript.dialog.html" />
     <Content Include="App_Plugins\Archetype\views\archetype.default.html" />
     <Content Include="App_Plugins\Archetype\views\archetype.html" />
+    <Content Include="App_Plugins\DecendantsAudit\controllers\decendantsaudit.config.controller.js" />
+    <Content Include="App_Plugins\DecendantsAudit\controllers\decendantsaudit.property.controller.js" />
+    <Content Include="App_Plugins\DecendantsAudit\controllers\decendantsaudit\config\controller.js" />
+    <Content Include="App_Plugins\DecendantsAudit\controllers\decendantsaudit\property\controller.js" />
+    <Content Include="App_Plugins\DecendantsAudit\decendantsaudit.css" />
+    <Content Include="App_Plugins\DecendantsAudit\decendantsaudit.resource.js" />
+    <Content Include="App_Plugins\DecendantsAudit\decendantsaudit\resource.js" />
+    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery.treetable.css" />
+    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery.treetable.js" />
+    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery.treetable.theme.default.css" />
+    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery\treetable.css" />
+    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery\treetable.js" />
+    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery\treetable\theme\default.css" />
+    <Content Include="App_Plugins\DecendantsAudit\views\decendantsaudit.config.html" />
+    <Content Include="App_Plugins\DecendantsAudit\views\decendantsaudit.property.html" />
+    <Content Include="App_Plugins\DecendantsAudit\views\decendantsaudit\config.html" />
+    <Content Include="App_Plugins\DecendantsAudit\views\decendantsaudit\property.html" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-controller.js" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-delete-dialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-dialog.html" />
@@ -2802,6 +2838,7 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="App_Plugins\DecendantsAudit\DecendantsAuditPropertyEditor.cs" />
     <Compile Include="App_Plugins\PropertyAccess\PropertyAccessPropertyEditor.cs" />
     <Compile Include="App_Plugins\UsdaDataImporter\upload.file.aspx.cs">
       <DependentUpon>upload.file.aspx</DependentUpon>
@@ -2817,6 +2854,9 @@
     <Compile Include="App_Plugins\UsdaWebtrendsRedirect\webtrends.redirect.aspx.designer.cs">
       <DependentUpon>webtrends.redirect.aspx</DependentUpon>
     </Compile>
+    <Compile Include="App_Start\UmbracoAuthTokenServerExtensions.cs" />
+    <Compile Include="App_Start\UmbracoCustomOwinStartup.cs" />
+    <Compile Include="App_Start\UmbracoStandardOwinStartup.cs" />
     <Compile Include="Controllers\EmailSignupSiteSurfaceController.cs" />
     <Compile Include="Controllers\SubscribeFormSurfaceController.cs" />
     <Compile Include="Controllers\DownloadRequestSurfaceController.cs" />
@@ -2985,6 +3025,7 @@
     <Content Include="App_Plugins\UsdaNewsProductPicker\package.manifest" />
     <Content Include="App_Plugins\FileSystemPicker\package.manifest" />
     <Content Include="App_Plugins\PropertyAccess\package.manifest" />
+    <Content Include="App_Plugins\DecendantsAudit\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
     <Content Include="Views\StandardWebpage.cshtml" />
@@ -3085,15 +3126,10 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
-    <Folder Include="App_Start\" />
     <Folder Include="Models\" />
     <Folder Include="Views\MacroPartials\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ARS.AuthenticationProvider\ARS.AuthenticationProvider.csproj">
-      <Project>{e93d3daa-37e7-406d-aff0-57d196f94cab}</Project>
-      <Name>ARS.AuthenticationProvider</Name>
-    </ProjectReference>
     <ProjectReference Include="..\USDA-ARS.Core\USDA-ARS.Core.csproj">
       <Project>{4679653f-bd09-4ba3-85b6-f3865569277a}</Project>
       <Name>USDA-ARS.Core</Name>

@@ -6,6 +6,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
@@ -182,6 +183,30 @@ namespace USDA_ARS.ImportInfoStaff
 
                 AddLog("");
             }
+
+
+            // Add custom pages
+            // Get images folder
+            int imageId = GetParentDirId(INFO_STAFF_PATH + "\\images\\photos");
+
+
+            // Add photo folder
+            int parentId = AddUmbracoFolder(imageId, "Photos");
+
+            if (parentId > 0)
+            {
+                ImportCustomPage(parentId, "Photos - Animals", "/News/Docs.htm?docid=24139");
+                ImportCustomPage(parentId, "Photos - Crops", "/News/Docs.htm?docid=24141");
+                ImportCustomPage(parentId, "Photos - Field Research", "/News/Docs.htm?docid=24144");
+                ImportCustomPage(parentId, "Photos - Food", "/News/Docs.htm?docid=24140");
+                ImportCustomPage(parentId, "Photos - Insects", "/News/Docs.htm?docid=24142");
+                ImportCustomPage(parentId, "Photos - Lab Research", "/News/Docs.htm?docid=24143");
+                ImportCustomPage(parentId, "Photos - People", "/News/Docs.htm?docid=24138");
+                ImportCustomPage(parentId, "Photos - Photo Illustrations", "/News/Docs.htm?docid=24129");
+                ImportCustomPage(parentId, "Photos - Plants", "/News/Docs.htm?docid=24127");
+            }
+
+            //AddLog 
 
 
             using (FileStream fs = File.Create("LOG_FILE.txt"))
@@ -746,6 +771,84 @@ namespace USDA_ARS.ImportInfoStaff
             }
 
             return modeCodeList;
+        }
+
+
+        static void ImportCustomPage(int parentId, string title, string url)
+        {
+            PageImport page = null;
+
+            page = GetProductionPage(title, url);
+
+            if (page != null)
+            {
+                AddUmbracoPage(parentId, page);
+            }
+        }
+
+
+        static PageImport GetProductionPage(string title, string url)
+        {
+            PageImport page = null;
+
+            string urlAddress = "http://www.ars.usda.gov" + url;
+
+            try
+            {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlAddress);
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    Stream receiveStream = response.GetResponseStream();
+                    StreamReader readStream = null;
+
+                    if (response.CharacterSet == null)
+                    {
+                        readStream = new StreamReader(receiveStream);
+                    }
+                    else
+                    {
+                        readStream = new StreamReader(receiveStream, Encoding.GetEncoding(response.CharacterSet));
+                    }
+
+                    string html = readStream.ReadToEnd();
+
+                    response.Close();
+                    readStream.Close();
+
+
+                    if (false == string.IsNullOrEmpty(html))
+                    {
+                        string between = null;
+
+                        Match m2 = Regex.Match(html, @"(<!\-\- document content start \-\->)(.)*(<!\-\- document content end \-\->)", RegexOptions.Singleline);
+                        if (m2.Success)
+                        {
+                            between = m2.Groups[0].Value;
+                        }
+
+                        if (false == string.IsNullOrEmpty(between))
+                        {
+
+                            between = between.Replace("<font class=\"pageHeading\"></font>", "");
+                            between = UpdateHtml(between, url);
+
+                            page = new PageImport();
+
+                            page.Title = title;
+                            page.BodyText = between;
+                            page.OldPath = url;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                AddLog("!!! Can't get website page. !!!" + url);
+            }
+
+            return page;
         }
 
 

@@ -2,30 +2,44 @@ using Microsoft.Owin;
 using Owin;
 using Umbraco.Core;
 using Umbraco.Core.Security;
-using Umbraco.Web;
 using Umbraco.Web.Security.Identity;
 using Umbraco.IdentityExtensions;
-using ARS.AuthenticationProvider;
+using USDA_ARS.Umbraco;
 
 //To use this startup class, change the appSetting value in the web.config called 
-// "owin:appStartup" to be "UmbracoStandardOwinStartup"
+// "owin:appStartup" to be "UmbracoCustomOwinStartup"
 
-[assembly: OwinStartup("UmbracoStandardOwinStartup", typeof(UmbracoStandardOwinStartup))]
+[assembly: OwinStartup("UmbracoCustomOwinStartup", typeof(UmbracoCustomOwinStartup))]
 
-namespace ARS.AuthenticationProvider
+namespace USDA_ARS.Umbraco
 {
     /// <summary>
-    /// The standard way to configure OWIN for Umbraco
+    /// A custom way to configure OWIN for Umbraco
     /// </summary>
     /// <remarks>
-    /// The startup type is specified in appSettings under owin:appStartup - change it to "StandardUmbracoStartup" to use this class
+    /// The startup type is specified in appSettings under owin:appStartup - change it to "UmbracoCustomOwinStartup" to use this class
+    /// 
+    /// This startup class would allow you to customize the Identity IUserStore and/or IUserManager for the Umbraco Backoffice
     /// </remarks>
-    public class UmbracoStandardOwinStartup : UmbracoDefaultOwinStartup
+    public class UmbracoCustomOwinStartup
     {
-        public override void Configuration(IAppBuilder app)
+        public void Configuration(IAppBuilder app)
         {
-            //ensure the default options are configured
-            base.Configuration(app);
+            //Configure the Identity user manager for use with Umbraco Back office
+
+            // *** EXPERT: There are several overloads of this method that allow you to specify a custom UserStore or even a custom UserManager!            
+            app.ConfigureUserManagerForUmbracoBackOffice(
+                ApplicationContext.Current,
+				//The Umbraco membership provider needs to be specified in order to maintain backwards compatibility with the 
+				// user password formats. The membership provider is not used for authentication, if you require custom logic
+				// to validate the username/password against an external data source you can create create a custom UserManager
+				// and override CheckPasswordAsync
+                global::Umbraco.Core.Security.MembershipProviderExtensions.GetUsersMembershipProvider().AsUmbracoMembershipProvider());
+            
+            //Ensure owin is configured for Umbraco back office authentication
+            app
+                .UseUmbracoBackOfficeCookieAuthentication(ApplicationContext.Current)
+                .UseUmbracoBackOfficeExternalCookieAuthentication(ApplicationContext.Current);
 
             /* 
              * Configure external logins for the back office:
@@ -68,7 +82,6 @@ namespace ARS.AuthenticationProvider
              *                  }
              *              });
              */
-
         }
     }
 }
