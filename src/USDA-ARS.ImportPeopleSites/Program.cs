@@ -1,18 +1,23 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using USDA_ARS.ImportPeopleSites.Models;
 using USDA_ARS.ImportPeopleSites.Objects;
-using USDA_ARS.LocationsWebApp.DL;
+using DL=USDA_ARS.LocationsWebApp.DL;
 using USDA_ARS.Umbraco.Extensions.Models.Import;
+//using ZetaHtmlCompressor;
 
 namespace USDA_ARS.ImportPeopleSites
 {
     class Program
     {
+        public static string LocationConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SqlConnectionString"].ConnectionString;
+
         static string LOG_FILE_TEXT = "";
 
         static string API_KEY = ConfigurationManager.AppSettings.Get("Umbraco:ApiKey");
@@ -20,8 +25,8 @@ namespace USDA_ARS.ImportPeopleSites
 
         static List<ModeCodeLookup> MODE_CODE_LIST = null;
         static List<PeopleFolderLookup> PEOPLE_FOLDER_LIST = null;
-
-        static void Main(string[] args)
+        #region original main backup
+        static void Main1(string[] args)
         {
             bool forceCacheUpdate = false;
 
@@ -93,8 +98,133 @@ namespace USDA_ARS.ImportPeopleSites
                 }
             }
         }
+        #endregion
+        #region modified main 
+        static void Main(string[] args)
+        {
+            bool forceCacheUpdate = false;
+
+            if (args != null && args.Length >= 1)
+            {
+                if (args[0] == "force-cache-update")
+                {
+                    forceCacheUpdate = true;
+                }
+            }
+
+            Logs.AddLog(ref LOG_FILE_TEXT, "Getting Mode Codes From Umbraco...");
+            ModeCodes.GenerateModeCodeList(ref MODE_CODE_LIST, ref LOG_FILE_TEXT, forceCacheUpdate);
+            Logs.AddLog(ref LOG_FILE_TEXT, "Done. Count: " + MODE_CODE_LIST.Count);
+
+            Logs.AddLog(ref LOG_FILE_TEXT, "");
+
+            Logs.AddLog(ref LOG_FILE_TEXT, "Getting People Folders From Umbraco...");
+            PeopleFolders.GenerateModeCodeFolderList(ref PEOPLE_FOLDER_LIST, ref LOG_FILE_TEXT, MODE_CODE_LIST, forceCacheUpdate);
+            Logs.AddLog(ref LOG_FILE_TEXT, "Done. Count: " + PEOPLE_FOLDER_LIST.Count);
+
+            Logs.AddLog(ref LOG_FILE_TEXT, "");
 
 
+            if (PEOPLE_FOLDER_LIST != null && PEOPLE_FOLDER_LIST.Any())
+            {
+
+
+
+                // LOOP THROUGH VALID MODE CODES
+                {
+                    string modeCode = ""; // Get the mode code in the xx-xx-xx-xx format
+
+                    PeopleFolderLookup peopleFolder = PEOPLE_FOLDER_LIST.Where(p => p.ModeCode == modeCode).FirstOrDefault();
+
+                    if (peopleFolder != null)
+                    {
+                        Logs.AddLog(ref LOG_FILE_TEXT, "Mode Code: " + modeCode);
+
+                        int peopleFolderUmbracoId = peopleFolder.PeopleFolderUmbracoId;
+
+                        System.Data.DataTable legacyPeopleBeforeInsertion = new System.Data.DataTable();
+                        legacyPeopleBeforeInsertion =  GetAllPersonsBasedOnModeCode(modeCode);
+                        System.Data.DataTable newPeopleAfterInsertion = new System.Data.DataTable();
+                        newPeopleAfterInsertion.Columns.Add("ModeCode");
+                        newPeopleAfterInsertion.Columns.Add("PersonId");
+                        newPeopleAfterInsertion.Columns.Add("PersonName");
+                        newPeopleAfterInsertion.Columns.Add("DocPageContent");
+                        System.Data.DataTable legacyDocsBeforeInsertion = new System.Data.DataTable();
+
+
+                        // ADD PEOPLE SITES HERE: (LOOP)
+                        for (int i = 0; i < legacyPeopleBeforeInsertion.Rows.Count; i++)
+                        {
+                            string completeModeCode = legacyPeopleBeforeInsertion.Rows[i].Field<string>(0);
+                            int personId = 0;
+                            string personName = "";
+                            string personSiteHtml = "";
+                            if (!string.IsNullOrEmpty(legacyPeopleBeforeInsertion.Rows[i].Field<string>(1)))
+                            {
+                                personId = int.Parse(legacyPeopleBeforeInsertion.Rows[i].Field<string>(1).Trim());
+                                personName = legacyPeopleBeforeInsertion.Rows[i].Field<string>(2);
+                            }
+                            //call sp to get doc ids and documents
+                            legacyDocsBeforeInsertion = GetAllDocumentIdsBasedOnPersonId(personId.ToString());
+                            if (legacyDocsBeforeInsertion != null)
+                            {
+                                for (int j = 0; j < legacyDocsBeforeInsertion.Rows.Count; j++)
+                                {
+                                    personSiteHtml = legacyDocsBeforeInsertion.Rows[j].Field<string>(0);
+                                    //personSiteHtml = replaceSP2withARS(personSiteHtml);
+                                    personSiteHtml = DL.CleanHtml.CleanUpHtml(personSiteHtml);
+                                }
+
+                            }
+
+                            // Make sure the HTML is not empty
+                            if (false == string.IsNullOrWhiteSpace(personSiteHtml))
+                            {
+                                ApiResponse apiResponse = AddUmbracoPersonPage(peopleFolderUmbracoId, personId, personName, personSiteHtml);
+
+                                if (apiResponse != null && apiResponse.Success)
+                                {
+                                    Logs.AddLog(ref LOG_FILE_TEXT, " - Added Person (" + personId + "): " + personName);
+                                }
+                                else
+                                {
+                                    Logs.AddLog(ref LOG_FILE_TEXT, " - !ERROR! Person not added (" + personId + "): " + personName + " | " + apiResponse.Message);
+                                }
+                            }
+                        }
+
+                    } // END LOOP
+
+
+
+                        //// ADD PEOPLE SITES HERE: (LOOP THROUGH VALID/ACTIVE PEOPLE IN THE MODE CODE)
+                        //{
+                        //    int personId = 0; // GET PERSON ID
+                        //    string personName = ""; //GET PERSON NAME
+                        //    string personSiteHtml = ""; // GET PERSON SITE HTML
+
+                        //    personSiteHtml = CleanHtml.CleanUpHtml(personSiteHtml);
+
+                        //    // Make sure the HTML is not empty
+                        //    if (false == string.IsNullOrWhiteSpace(personSiteHtml))
+                        //    {
+                        //        ApiResponse apiResponse = AddUmbracoPersonPage(peopleFolderUmbracoId, personId, personName, personSiteHtml);
+
+                        //        if (apiResponse != null && apiResponse.Success)
+                        //        {
+                        //            Logs.AddLog(ref LOG_FILE_TEXT, " - Added Person (" + personId + "): " + personName);
+                        //        }
+                        //        else
+                        //        {
+                        //            Logs.AddLog(ref LOG_FILE_TEXT, " - !ERROR! Person not added (" + personId + "): " + personName + " | " + apiResponse.Message);
+                        //        }
+                        //    }
+                        //}
+                    }
+                }
+            }
+        
+        #endregion
         static ApiResponse AddUmbracoPersonPage(int parentId, int personId, string name, string body)
         {
             ApiContent content = new ApiContent();
@@ -124,6 +254,113 @@ namespace USDA_ARS.ImportPeopleSites
             ApiResponse responseBack = ApiCalls.PostData(request, "Post");
 
             return responseBack;
+        }
+
+        public static DataTable GetAllPersonsBasedOnModeCode(string modeCode)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "[uspgetAllPersonsBasedOnModeCode]";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@ModeCode", modeCode);
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
+        public static DataTable GetAllDocumentIdsBasedOnPersonId(string personId)
+        {
+          DL.Locations locationsResponse = new DL.Locations();
+            string sql = "[uspgetAllDocumentIdsBasedOnPersonId]";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                sqlComm.Parameters.AddWithValue("@PersonId", personId);
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "Locations");
+
+                dt = ds.Tables["Locations"];
+                //foreach (DataRow dr in dt.Rows)
+                //{
+                //    locationsResponse.LocationModeCode = dr["MODECODE_1"].ToString();
+                //    locationsResponse.LocationName = dr["MODECODE_1_DESC"].ToString();
+
+
+
+                //}
+
+
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
+
+        public static string CleanUpHtml(string bodyText)
+        {
+            string output = "";
+
+            if (false == string.IsNullOrEmpty(bodyText))
+            {
+                HtmlCompressor htmlCompressor = new HtmlCompressor();
+                htmlCompressor.setRemoveMultiSpaces(true);
+                htmlCompressor.setRemoveIntertagSpaces(true);
+
+                output = htmlCompressor.compress(bodyText);
+            }
+
+            return output;
         }
     }
 }
