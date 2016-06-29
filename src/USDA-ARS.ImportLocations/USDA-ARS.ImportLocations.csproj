@@ -48,6 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Lab.cs" />
+    <Compile Include="Models\ResearchCenter.cs" />
+    <Compile Include="Models\City.cs" />
     <Compile Include="Models\Area.cs" />
     <Compile Include="Models\ModeCodeLookup.cs" />
     <Compile Include="Program.cs" />

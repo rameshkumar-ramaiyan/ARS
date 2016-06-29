@@ -68,6 +68,26 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\DLLs\Axial.Umbraco.PropertyAccess.dll</HintPath>
     </Reference>
+    <Reference Include="BulkManager.Core, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BulkManager.1.8\lib\BulkManager.Core.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="BulkManager.Extensions, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BulkManager.1.8\lib\BulkManager.Extensions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="BulkManager.Providers, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BulkManager.1.8\lib\BulkManager.Providers.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="BulkManager.Providers.V7, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BulkManager.1.8\lib\BulkManager.Providers.V7.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="BulkManager.UI, Version=1.8.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BulkManager.1.8\lib\BulkManager.UI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="businesslogic, Version=1.0.5820.25374, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\UmbracoCms.Core.7.3.4\lib\businesslogic.dll</HintPath>
       <Private>True</Private>
@@ -187,6 +207,10 @@
     </Reference>
     <Reference Include="Owin, Version=1.0.0.0, Culture=neutral, PublicKeyToken=f0ebd12fd5e55cc5, processorArchitecture=MSIL">
       <HintPath>..\packages\Owin.1.0\lib\net40\Owin.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="PackageGarden.Licensing, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\BulkManager.1.8\lib\PackageGarden.Licensing.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="RJP.MultiUrlPicker, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -372,6 +396,31 @@
     <Content Include="App_Plugins\Archetype\views\archetype.config.stylescript.dialog.html" />
     <Content Include="App_Plugins\Archetype\views\archetype.default.html" />
     <Content Include="App_Plugins\Archetype\views\archetype.html" />
+    <Content Include="App_Plugins\bulkmanager\css\bulkmanager-belle.css" />
+    <Content Include="App_Plugins\bulkmanager\css\bulkmanager-legacy.css" />
+    <Content Include="App_Plugins\bulkmanager\css\bulkmanager.css" />
+    <Content Include="App_Plugins\bulkmanager\images\blank.gif" />
+    <Content Include="App_Plugins\bulkmanager\images\bulkmanager-belle.png" />
+    <Content Include="App_Plugins\bulkmanager\images\bulkmanager.png" />
+    <Content Include="App_Plugins\bulkmanager\images\bulkmanagerdashboard-belle.png" />
+    <Content Include="App_Plugins\bulkmanager\images\bulkmanagerdashboard.png" />
+    <Content Include="App_Plugins\bulkmanager\images\icon-dictionary.png" />
+    <Content Include="App_Plugins\bulkmanager\images\icon-document.png" />
+    <Content Include="App_Plugins\bulkmanager\images\icon-image.png" />
+    <Content Include="App_Plugins\bulkmanager\images\icon-users.png" />
+    <Content Include="App_Plugins\bulkmanager\images\minus-button.png" />
+    <Content Include="App_Plugins\bulkmanager\images\minus_math.svg" />
+    <Content Include="App_Plugins\bulkmanager\images\navigation.png" />
+    <Content Include="App_Plugins\bulkmanager\images\plus-button.png" />
+    <Content Include="App_Plugins\bulkmanager\images\plus_math.svg" />
+    <Content Include="App_Plugins\bulkmanager\images\usergroup.png" />
+    <Content Include="App_Plugins\bulkmanager\js\bulkmanager-legacy.js" />
+    <Content Include="App_Plugins\bulkmanager\js\bulkmanager.js" />
+    <Content Include="App_Plugins\bulkmanager\pages\BulkActionDialog.aspx" />
+    <Content Include="App_Plugins\bulkmanager\pages\Bulkmanager.aspx" />
+    <Content Include="App_Plugins\bulkmanager\pages\SelectColumnsDialog.aspx" />
+    <Content Include="App_Plugins\bulkmanager\pages\SelectFieldsDialog.aspx" />
+    <Content Include="App_Plugins\bulkmanager\usercontrols\BulkManagerInstaller.ascx" />
     <Content Include="App_Plugins\DecendantsAudit\controllers\decendantsaudit.config.controller.js" />
     <Content Include="App_Plugins\DecendantsAudit\controllers\decendantsaudit.property.controller.js" />
     <Content Include="App_Plugins\DecendantsAudit\controllers\decendantsaudit\config\controller.js" />

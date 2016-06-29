@@ -53,14 +53,10 @@ namespace USDA_ARS.ImportPeopleSites
 
             if (PEOPLE_FOLDER_LIST != null && PEOPLE_FOLDER_LIST.Any())
             {
-
-
-
                 // LOOP THROUGH VALID MODE CODES
+                foreach (PeopleFolderLookup peopleFolder in PEOPLE_FOLDER_LIST)
                 {
-                    string modeCode = ""; // Get the mode code in the xx-xx-xx-xx format
-
-                    PeopleFolderLookup peopleFolder = PEOPLE_FOLDER_LIST.Where(p => p.ModeCode == modeCode).FirstOrDefault();
+                    string modeCode = peopleFolder.ModeCode;
 
                     if (peopleFolder != null)
                     {
@@ -77,6 +73,7 @@ namespace USDA_ARS.ImportPeopleSites
                         newPeopleAfterInsertion.Columns.Add("DocPageContent");
                         System.Data.DataTable legacyDocsBeforeInsertion = new System.Data.DataTable();
 
+                        bool peopleSiteAdded = false;
 
                         // ADD PEOPLE SITES HERE: (LOOP)
                         for (int i = 0; i < legacyPeopleBeforeInsertion.Rows.Count; i++)
@@ -100,17 +97,19 @@ namespace USDA_ARS.ImportPeopleSites
                                     //personSiteHtml = replaceSP2withARS(personSiteHtml);
                                     personSiteHtml = CleanHtml.CleanUpHtml(personSiteHtml);
                                 }
-
                             }
 
                             // Make sure the HTML is not empty
                             if (false == string.IsNullOrWhiteSpace(personSiteHtml))
                             {
+                                Logs.AddLog(ref LOG_FILE_TEXT, " - Adding Person: " + personName);
                                 ApiResponse apiResponse = AddUmbracoPersonPage(peopleFolderUmbracoId, personId, personName, personSiteHtml);
 
                                 if (apiResponse != null && apiResponse.Success)
                                 {
                                     Logs.AddLog(ref LOG_FILE_TEXT, " - Added Person (" + personId + "): " + personName);
+
+                                    peopleSiteAdded = true;
                                 }
                                 else
                                 {
@@ -119,6 +118,29 @@ namespace USDA_ARS.ImportPeopleSites
                             }
                         }
 
+                        if (true == peopleSiteAdded)
+                        {
+                            Logs.AddLog(ref LOG_FILE_TEXT, "Publishing People Sites for '" + peopleFolder.ModeCode + "'...");
+
+                            ApiRequest requestPublish = new ApiRequest();
+                            ApiContent contentPublish = new ApiContent();
+
+                            requestPublish.ApiKey = API_KEY;
+
+                            contentPublish.Id = peopleFolder.PeopleFolderUmbracoId;
+
+                            requestPublish.ContentList = new List<ApiContent>();
+                            requestPublish.ContentList.Add(contentPublish);
+
+                            ApiResponse responseBackPublish = ApiCalls.PostData(requestPublish, "PublishWithChildren");
+
+                            if (responseBackPublish != null)
+                            {
+                                Logs.AddLog(ref LOG_FILE_TEXT, " - Success: " + responseBackPublish.Success);
+                                Logs.AddLog(ref LOG_FILE_TEXT, " - Message: " + responseBackPublish.Message);
+                            }
+
+                        }
                     } // END LOOP
 
 
@@ -169,7 +191,7 @@ namespace USDA_ARS.ImportPeopleSites
 
             content.Properties = properties;
 
-            content.Save = 2;
+            content.Save = 1;
 
             ApiRequest request = new ApiRequest();
 

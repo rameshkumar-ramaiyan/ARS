@@ -91,7 +91,7 @@ namespace USDA_ARS.ImportPeopleSites.Objects
 
                     request.ContentList.Add(new ApiContent() { Id = modeCodeFound.UmbracoId });
 
-                    ApiResponse responseBack = ApiCalls.PostData(request, "Post");
+                    ApiResponse responseBack = ApiCalls.PostData(request, "Get");
 
                     if (responseBack != null && responseBack.Success)
                     {
