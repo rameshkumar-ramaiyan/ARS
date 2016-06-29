@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Text;
 using System.Text.RegularExpressions;
 using ZetaHtmlCompressor;
 
@@ -17,6 +18,7 @@ namespace USDA_ARS.LocationsWebApp.DL
                 htmlCompressor.setRemoveIntertagSpaces(true);
 
                 bodyText = ReplaceUnicodeText(bodyText);
+               
 
                 bodyText = Regex.Replace(bodyText, @"/pandp/people/people\.htm\?personid\=", "/people-locations/person?person-id=", RegexOptions.IgnoreCase);
 
@@ -51,6 +53,9 @@ namespace USDA_ARS.LocationsWebApp.DL
         {
             if (false == string.IsNullOrEmpty(text))
             {
+                 var bytes = Encoding.Default.GetBytes(text);
+                 text = Encoding.UTF8.GetString(bytes);
+              
                 text = Regex.Replace(text, "[\u2018\u2019\u201A]", "'");
                 // smart double quotes
                 text = Regex.Replace(text, "[\u201C\u201D\u201E]", "\"");
@@ -58,6 +63,7 @@ namespace USDA_ARS.LocationsWebApp.DL
                 text = Regex.Replace(text, "\u2026", "...");
                 // dashes
                 text = Regex.Replace(text, "[\u2013\u2014]", "-");
+               
             }
 
             return text;
