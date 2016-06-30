@@ -12,6 +12,7 @@ using USDA_ARS.ImportContactUs.Models;
 using USDA_ARS.ImportContactUs.Models.Aris;
 using USDA_ARS.LocationsWebApp.DL;
 using USDA_ARS.LocationsWebApp.Models;
+using USDA_ARS.Umbraco.Extensions.Models.Aris;
 using USDA_ARS.Umbraco.Extensions.Models.Import;
 
 namespace USDA_ARS.ImportContactUs
@@ -23,6 +24,7 @@ namespace USDA_ARS.ImportContactUs
 
         static List<ModeCodeLookup> MODE_CODE_LIST = null;
         static List<SiteUserRole> SITE_USER_ROLE_LIST = null;
+        static List<ModeCodeNew> MODE_CODE_NEW_LIST = null;
 
         static void Main(string[] args)
         {
@@ -34,6 +36,12 @@ namespace USDA_ARS.ImportContactUs
             AddLog("Getting Site User Roles From SP2...");
             SITE_USER_ROLE_LIST = GetSiteUserRolesAll();
             AddLog("Done. Count: " + SITE_USER_ROLE_LIST.Count);
+            AddLog("");
+
+
+            AddLog("Getting New Mode Codes...");
+            MODE_CODE_NEW_LIST = GetNewModeCodesAll();
+            AddLog("Done. Count: " + MODE_CODE_NEW_LIST.Count);
             AddLog("");
 
 
@@ -54,17 +62,17 @@ namespace USDA_ARS.ImportContactUs
                     {
                         ModeCodeLookup getModeCode = MODE_CODE_LIST.Where(p => p.ModeCode == modeCodeFix).FirstOrDefault();
 
-                        if (getModeCode == null)
-                        {
-                            string newModeCode = Umbraco.Extensions.Helpers.Aris.ModeCodesNew.GetNewModeCode(modeCodeFix);
+                        //if (getModeCode == null)
+                        //{
+                        //    string newModeCode = Umbraco.Extensions.Helpers.Aris.ModeCodesNew.GetNewModeCode(modeCodeFix);
 
-                            if (false == string.IsNullOrEmpty(newModeCode))
-                            {
-                                newModeCode = USDA_ARS.Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(newModeCode);
+                        //    if (false == string.IsNullOrEmpty(newModeCode))
+                        //    {
+                        //        newModeCode = USDA_ARS.Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(newModeCode);
 
-                                getModeCode = MODE_CODE_LIST.Where(p => p.ModeCode == newModeCode).FirstOrDefault();
-                            }
-                        }
+                        //        getModeCode = MODE_CODE_LIST.Where(p => p.ModeCode == newModeCode).FirstOrDefault();
+                        //    }
+                        //}
 
                         if (getModeCode != null)
                         {
@@ -210,6 +218,21 @@ namespace USDA_ARS.ImportContactUs
 
             return modeCodeList;
         }
+
+
+        static List<ModeCodeNew> GetNewModeCodesAll()
+        {
+            List<ModeCodeNew> modeCodeNewList = new List<ModeCodeNew>();
+
+            var db = new Database("arisPublicWebDbDSN");
+
+            string sql = @"SELECT * FROM NewModecodes";
+
+            modeCodeNewList = db.Query<ModeCodeNew>(sql).ToList();
+
+            return modeCodeNewList;
+        }
+
 
 
         static void AddLog(string line)

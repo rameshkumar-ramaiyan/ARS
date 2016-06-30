@@ -88,7 +88,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
             foreach (var node in e.SavedEntities)
             {
                 // SOFTWARE
-                if (node.ContentType.Alias == "Homepage" || node.ContentType.Alias == "Region" || node.ContentType.Alias == "ResearchUnit")
+                if (node.ContentType.Alias == "Homepage" || node.ContentType.Alias == "Area" || node.ContentType.Alias == "ResearchUnit")
                 {
                     ArchetypeModel software = node.GetValue<ArchetypeModel>("software");
 
@@ -138,13 +138,13 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                     IContent parentNode = node.Parent();
 
                     // UPDATE SORT ORDER
-                    if (parentNode.ContentType.Alias == "Region" || parentNode.ContentType.Alias == "ResearchUnit" || parentNode.ContentType.Alias == "City")
+                    if (parentNode.ContentType.Alias == "Area" || parentNode.ContentType.Alias == "ResearchUnit" || parentNode.ContentType.Alias == "City")
                     {
                         int sortOrder = 0;
                         List<IContent> updatedChildList = new List<IContent>();
 
                         // Get list of doc folders and pages and order them by name. Add to updatedChildList object list for sorting later
-                        List<IContent> docsAndFoldersList = parentNode.Children().Where(p => p.ContentType.Alias != "Region"
+                        List<IContent> docsAndFoldersList = parentNode.Children().Where(p => p.ContentType.Alias != "Area"
                                 && p.ContentType.Alias != "ResearchUnit"
                                 && p.ContentType.Alias != "City").OrderBy(s => s.Name).ToList();
 
@@ -187,7 +187,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 
 
                 // SUB FOLDERS FOR REGIONS AND RESEARCH UNITS
-                if ((node.ContentType.Alias == "Region" || node.ContentType.Alias == "ResearchUnit"))
+                if ((node.ContentType.Alias == "Area" || node.ContentType.Alias == "ResearchUnit"))
                 {
                     UmbracoHelper umbHelper = new UmbracoHelper(UmbracoContext.Current);
                     int siteFolderTemplateNodeId = Convert.ToInt32(ConfigurationManager.AppSettings.Get("Usda:SiteFoldersTemplateNodeId")); //

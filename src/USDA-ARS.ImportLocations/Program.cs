@@ -166,7 +166,7 @@ namespace USDA_ARS.ImportLocations
                     content.Id = 0; // New page
                     content.Name = areaName;
                     content.ParentId = MAIN_LOCATION_NODE_ID;
-                    content.DocType = "Region";
+                    content.DocType = "Area";
                     content.Template = "Region";
 
                     List<ApiProperty> properties = new List<ApiProperty>();
@@ -321,7 +321,7 @@ namespace USDA_ARS.ImportLocations
                         string newModeCodeProperty = legacyCitiesBeforeInsertion.Rows[j].Field<string>(1);
                         string oldModeCodeProperty = "";
 
-                        properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
+                        properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // mode code                                                                                            
                         properties.Add(new ApiProperty("oldUrl", "/PandP/locations/cityPeopleList.cfm?modeCode=" + newModeCodeProperty + "")); // current URL               
                         properties.Add(new ApiProperty("oldId", "")); // sitepublisher ID (So we can reference it later if needed).
                                                                       //properties.Add(new ApiProperty("state", legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Substring(0,legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Length -2))); // For example: NY (2 letter state code)
@@ -699,7 +699,7 @@ namespace USDA_ARS.ImportLocations
                             List<ApiProperty> properties = new List<ApiProperty>();
 
 
-                            properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
+                            properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // mode code                                                                                            
                             properties.Add(new ApiProperty("oldUrl", "/main/site_main.htm?modecode=" + newModeCodeProperty + "")); // current URL               
                             properties.Add(new ApiProperty("oldId", "")); // sitepublisher ID (So we can reference it later if needed).
                             properties.Add(new ApiProperty("quickLinks", quickLinks));                                              //properties.Add(new ApiProperty("state", legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Substring(0,legacyCitiesBeforeInsertion.Rows[i].Field<string>(2).Length -2))); // For example: NY (2 letter state code)
