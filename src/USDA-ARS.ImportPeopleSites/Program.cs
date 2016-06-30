@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -18,6 +19,9 @@ namespace USDA_ARS.ImportPeopleSites
         public static string LocationConnectionString = System.Configuration.ConfigurationManager.ConnectionStrings["SqlConnectionString"].ConnectionString;
 
         static string LOG_FILE_TEXT = "";
+
+        static DateTime TIME_STARTED = DateTime.MinValue;
+        static DateTime TIME_ENDED = DateTime.MinValue;
 
         static string API_KEY = ConfigurationManager.AppSettings.Get("Umbraco:ApiKey");
         static string API_URL = ConfigurationManager.AppSettings.Get("Umbraco:ApiUrl");
@@ -37,6 +41,12 @@ namespace USDA_ARS.ImportPeopleSites
                     forceCacheUpdate = true;
                 }
             }
+
+            Logs.AddLog(ref LOG_FILE_TEXT, "-= ADDING PEOPLE SITES =-");
+            Logs.AddLog(ref LOG_FILE_TEXT, "");
+            Logs.AddLog(ref LOG_FILE_TEXT, "");
+
+            TIME_STARTED = DateTime.Now;
 
             Logs.AddLog(ref LOG_FILE_TEXT, "Getting Mode Codes From Umbraco...");
             ModeCodes.GenerateModeCodeList(ref MODE_CODE_LIST, ref LOG_FILE_TEXT, forceCacheUpdate);
@@ -169,6 +179,26 @@ namespace USDA_ARS.ImportPeopleSites
                     //    }
                     //}
                 }
+            }
+
+
+            Logs.AddLog(ref LOG_FILE_TEXT, "");
+            Logs.AddLog(ref LOG_FILE_TEXT, "");
+            Logs.AddLog(ref LOG_FILE_TEXT, "");
+            Logs.AddLog(ref LOG_FILE_TEXT, "/// IMPORT COMPLETE ///");
+            Logs.AddLog(ref LOG_FILE_TEXT, "");
+
+            TIME_ENDED = DateTime.Now;
+
+            TimeSpan timeLength = TIME_ENDED.Subtract(TIME_STARTED);
+
+            Logs.AddLog(ref LOG_FILE_TEXT, "/// Time to complete: " + timeLength.ToString(@"hh") + " hours : " + timeLength.ToString(@"mm") + " minutes : " + timeLength.ToString(@"ss") + " seconds ///");
+
+            using (FileStream fs = File.Create("LOG_FILE.txt"))
+            {
+                // Add some text to file
+                Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);
+                fs.Write(fileText, 0, fileText.Length);
             }
         }
 

@@ -697,7 +697,11 @@ namespace USDA_ARS.ImportDocs
         {
             List<ModeCodeNew> modeCodeNewList = new List<ModeCodeNew>();
 
-            modeCodeNewList = Umbraco.Extensions.Helpers.Aris.ModeCodesNew.GetAllNewModeCode();
+            var db = new Database("arisPublicWebDbDSN");
+
+            string sql = @"SELECT * FROM NewModecodes";
+
+            modeCodeNewList = db.Query<ModeCodeNew>(sql).ToList();
 
             return modeCodeNewList;
         }
@@ -709,6 +713,10 @@ namespace USDA_ARS.ImportDocs
             Console.WriteLine(line);
             LOG_FILE_TEXT += line + "\r\n";
         }
+
+
+
+
 
         static DataTable GetAllDocumentIdsBasedOnDocTypeWithoutParam()
         {

@@ -29,6 +29,8 @@ namespace USDA_ARS.LocationsWebApp.DL
                 bodyText = Regex.Replace(bodyText, @"/sp2userfiles/people", "/ARSUserFiles", RegexOptions.IgnoreCase);
                 bodyText = Regex.Replace(bodyText, @"/sp2userfiles/person", "/ARSUserFiles", RegexOptions.IgnoreCase);
 
+                bodyText = Regex.Replace(bodyText, @"\""/images/", "/ARSUserFiles/images/", RegexOptions.IgnoreCase);
+
                 Regex ItemRegex = new Regex(@"/[\d]{8}/", RegexOptions.IgnoreCase);
 
                 foreach (Match ItemMatch in ItemRegex.Matches(bodyText))
