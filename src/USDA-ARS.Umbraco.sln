@@ -42,6 +42,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA_ARS.Umbraco.FileSystem
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportPeopleSites", "USDA-ARS.ImportPeopleSites\USDA-ARS.ImportPeopleSites.csproj", "{980AA06F-355C-417A-92D9-7EA391BB68C4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportLocations", "USDA-ARS.ImportLocations\USDA-ARS.ImportLocations.csproj", "{89627904-F42D-40E4-B0B7-0B6C1D256076}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -186,6 +188,14 @@ Global
 		{980AA06F-355C-417A-92D9-7EA391BB68C4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{980AA06F-355C-417A-92D9-7EA391BB68C4}.Staging|Any CPU.ActiveCfg = Release|Any CPU
 		{980AA06F-355C-417A-92D9-7EA391BB68C4}.Staging|Any CPU.Build.0 = Release|Any CPU
+		{89627904-F42D-40E4-B0B7-0B6C1D256076}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89627904-F42D-40E4-B0B7-0B6C1D256076}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89627904-F42D-40E4-B0B7-0B6C1D256076}.NuGet|Any CPU.ActiveCfg = Release|Any CPU
+		{89627904-F42D-40E4-B0B7-0B6C1D256076}.NuGet|Any CPU.Build.0 = Release|Any CPU
+		{89627904-F42D-40E4-B0B7-0B6C1D256076}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89627904-F42D-40E4-B0B7-0B6C1D256076}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89627904-F42D-40E4-B0B7-0B6C1D256076}.Staging|Any CPU.ActiveCfg = Release|Any CPU
+		{89627904-F42D-40E4-B0B7-0B6C1D256076}.Staging|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

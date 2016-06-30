@@ -979,11 +979,11 @@ namespace USDA_ARS.LocationsWebApp
                     }
                 }
             }
-            for (int rowId = 0; rowId < newAreasAfterInsertion.Rows.Count; rowId++)
-            {
+            ////for (int rowId = 0; rowId < newAreasAfterInsertion.Rows.Count; rowId++)
+            ////{
 
-                DL.PersonSite.AddPeopleSites(newAreasAfterInsertion.Rows[rowId].Field<string>(2));
-            }
+            ////    DL.PersonSite.AddPeopleSites(newAreasAfterInsertion.Rows[rowId].Field<string>(2));
+            ////}
 
             return newAreasAfterInsertion;
 
@@ -1368,11 +1368,11 @@ namespace USDA_ARS.LocationsWebApp
                 }
             }
 
-            for (int rowId = 0; rowId < newResearchUnitsAfterInsertion.Rows.Count; rowId++)
-            {
+            ////for (int rowId = 0; rowId < newResearchUnitsAfterInsertion.Rows.Count; rowId++)
+            ////{
 
-                DL.PersonSite.AddPeopleSites(newResearchUnitsAfterInsertion.Rows[rowId].Field<string>(2));
-            }
+            ////    DL.PersonSite.AddPeopleSites(newResearchUnitsAfterInsertion.Rows[rowId].Field<string>(2));
+            ////}
 
             return newResearchUnitsAfterInsertion;
         }
@@ -1633,11 +1633,11 @@ namespace USDA_ARS.LocationsWebApp
                 }
             }
 
-            for (int rowId = 0; rowId < newLabsAfterInsertion.Rows.Count; rowId++)
-            {
+            ////for (int rowId = 0; rowId < newLabsAfterInsertion.Rows.Count; rowId++)
+            ////{
 
-                DL.PersonSite.AddPeopleSites(newLabsAfterInsertion.Rows[rowId].Field<string>(2));
-            }
+            ////    DL.PersonSite.AddPeopleSites(newLabsAfterInsertion.Rows[rowId].Field<string>(2));
+            ////}
 
             return newLabsAfterInsertion;
         }

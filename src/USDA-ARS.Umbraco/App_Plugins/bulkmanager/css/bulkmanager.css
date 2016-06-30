@@ -1,0 +1,116 @@
+﻿.hidden {
+    display: none;
+}
+div.centerDiv {
+    text-align: center;
+}
+/*buttons*/
+.queryParameterOptions {
+    float: right;
+    margin-left: 5px;
+    width:16px;
+    height:16px;
+}
+
+.aspNetDisabled {
+    color: #999;
+}
+
+/*Overview*/
+
+.bulkActionControl {
+    
+    float: left;
+    margin-top: 5px;
+    margin-bottom: 5px;
+    margin-left: 5px;
+}
+
+.bulkActionDropdown {
+    margin-right: 5px;
+    min-width: 130px;
+}
+
+.bulkmanagerOverviewTable {
+    margin-top: 15px;
+    clear: both;
+    width: 100%;
+}
+
+.btn {
+    margin-top: 5px;
+}
+
+.bulkmanagerOverviewTable th {
+    min-width: 10px;
+    height: 30px;
+    padding: 2px 5px;
+    border: 1px solid #d4d4d8;
+}
+
+.bulkmanagerOverviewTable td {
+    border: 1px solid #d4d4d8;
+      display: table-cell;
+  vertical-align: top; 
+}
+
+.bulkmanagerOverviewTable th a {
+    text-decoration: none;
+    padding-right: 15px;
+}
+
+th.headerRow a {
+    color: #000000;
+}
+
+th.firstheaderRow a {
+    color: #000000;
+}
+
+.bulkmanagerOverviewTable td a {
+    text-decoration: underline;
+}
+
+.bulkmanagerOverviewTable th.headerRow {
+ min-width: 25%;
+ width: 25%;
+}
+.bulkmanagerOverviewTable td.bulkSelectItem {
+    text-align: center;
+}
+.bulkManagerSelector {
+    text-align: center;
+    width: 22px;
+}
+
+.bulkmanagerCriteriaButtons {
+    float: right;
+}
+
+.bulkmanagerCriteriaButton {
+    margin-left: 5px;
+}
+
+.treePicker td:first-child{
+    text-align: center;
+    min-width: 20px;
+}
+.treeSelected a {
+    
+    font-weight: 900;
+    text-decoration: underline;
+}
+
+.nrTextbox {
+    width:50px;
+}
+
+.btn-actions {
+    font-weight: 400 !important;
+    color: white !important;
+}
+
+.outputColumnsSelectorBelle {
+    margin: 15px 0 0 0 ;
+}
+

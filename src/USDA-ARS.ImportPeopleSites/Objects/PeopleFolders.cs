@@ -91,7 +91,7 @@ namespace USDA_ARS.ImportPeopleSites.Objects
 
                     request.ContentList.Add(new ApiContent() { Id = modeCodeFound.UmbracoId });
 
-                    ApiResponse responseBack = ApiCalls.PostData(request, "Post");
+                    ApiResponse responseBack = ApiCalls.PostData(request, "Get");
 
                     if (responseBack != null && responseBack.Success)
                     {
@@ -100,17 +100,11 @@ namespace USDA_ARS.ImportPeopleSites.Objects
                             ApiContent nodeFolder = responseBack.ContentList[0].ChildContentList.Where(p => p.DocType == "PeopleFolder").FirstOrDefault();
 
                             if (nodeFolder != null)
+                            {
 
-                                foreach (ApiContent node in responseBack.ContentList)
-                                {
-                                    if (node != null)
-                                    {
-                                        //string 
-
-                                        modeCodeFolderList.Add(new PeopleFolderLookup { ModeCode = modeCodeFound.ModeCode, PeopleFolderUmbracoId = node.Id });
-                                        Logs.AddLog(ref logFileText, " - Adding People Folder: " + modeCodeFound.ModeCode + " (" + node.Id + ")");
-                                    }
-                                }
+                                modeCodeFolderList.Add(new PeopleFolderLookup { ModeCode = modeCodeFound.ModeCode, PeopleFolderUmbracoId = nodeFolder.Id });
+                                Logs.AddLog(ref logFileText, " - Adding People Folder: " + modeCodeFound.ModeCode + " (" + nodeFolder.Id + ")");
+                            }
                         }
                     }
                 }

@@ -13,11 +13,11 @@
                         description: "Comma seperated list of content type aliases.",
                         key: "decendantContentTypes",
                         view: "textstring"
-                        ]
                     }
                 ]
-            }
-        }
+				}
+			}
+		}
     ],
     javascript: [
 		'~/App_Plugins/DecendantsAudit/decendantsaudit.resource.js',		

@@ -651,6 +651,44 @@ namespace USDA_ARS.LocationsWebApp.DL
             return dt;
         }
         #endregion
+
+        #region  Get New Mode Code Based On Old Mode Code
+        public static DataTable GetNewModeCodesBasedOnOldModeCodes(string oldModeCode)
+        {
+            Locations locationsResponse = new Locations();
+            string sql = "SELECT * FROM [NewModecodes] WHERE [OldModecode] = @ModeCode";
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(LocationConnectionString);
+
+            try
+            {
+                SqlDataAdapter da = new SqlDataAdapter();
+                SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+
+                da.SelectCommand = sqlComm;
+                da.SelectCommand.CommandType = CommandType.Text;
+                sqlComm.Parameters.AddWithValue("@ModeCode", oldModeCode);
+
+                DataSet ds = new DataSet();
+                da.Fill(ds, "ModeCodes");
+
+                dt = ds.Tables["ModeCodes"];
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+            finally
+            {
+                conn.Close();
+            }
+
+            //return locationsResponse;
+            return dt;
+        }
+        #endregion
+
         #region  Get All Job Location Ids Based On CityName
         public static DataTable GetAllJobLocationIdsBasedOnCityName(string cityName)
         {
