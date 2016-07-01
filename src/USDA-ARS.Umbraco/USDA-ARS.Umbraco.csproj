@@ -44,10 +44,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AdAspNetProvider, Version=4.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\AdAspNetProvider.4.2.1\lib\net40\AdAspNetProvider.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="Archetype, Version=1.11.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Archetype.1.11.1\lib\net40\Archetype.dll</HintPath>
       <Private>True</Private>
@@ -301,10 +297,6 @@
     <Reference Include="System.EnterpriseServices" />
     <Reference Include="TidyNet, Version=1.0.0.0, Culture=neutral">
       <HintPath>..\packages\UmbracoCms.Core.7.3.4\lib\TidyNet.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="UmbBackofficeMembershipProvider, Version=2.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\UmbBackofficeMembershipProvider.2.0.1\lib\net45\UmbBackofficeMembershipProvider.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="umbraco, Version=1.0.5820.25379, Culture=neutral, processorArchitecture=MSIL">
@@ -3174,6 +3166,10 @@
     <Folder Include="Views\MacroPartials\" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\UmbBackofficeMembershipProvider\UmbBackofficeMembershipProvider.csproj">
+      <Project>{12ba2053-e09d-4d5f-9c8a-ddbd3fc65d32}</Project>
+      <Name>UmbBackofficeMembershipProvider</Name>
+    </ProjectReference>
     <ProjectReference Include="..\USDA-ARS.Core\USDA-ARS.Core.csproj">
       <Project>{4679653f-bd09-4ba3-85b6-f3865569277a}</Project>
       <Name>USDA-ARS.Core</Name>
