@@ -39,13 +39,13 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
             IContent node = e.Entity;
 
             bool isNationalProgramPage = false;
-            if (node.Parent().ContentType.Alias == "NationalProgramFolderContainer")
+            if (node.Parent() != null && node.Parent().ContentType.Alias == "NationalProgramFolderContainer")
             {
                 isNationalProgramPage = true;
             }
 
-            if (true == isNationalProgramPage || node.ContentType.Alias == "DocFolder" || 
-                            node.ContentType.Alias == "SiteStandardWebpage" || 
+            if (true == isNationalProgramPage || node.ContentType.Alias == "DocFolder" ||
+                            node.ContentType.Alias == "SiteStandardWebpage" ||
                             node.ContentType.Alias == "NationalProgramFolderContainer")
             {
                 IContent nodeParent = node.Parent();

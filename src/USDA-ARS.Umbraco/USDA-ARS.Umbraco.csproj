@@ -60,8 +60,7 @@
       <HintPath>..\packages\AutoMapper.3.0.0\lib\net40\AutoMapper.Net4.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Axial.Umbraco.DecendantsAudit, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="Axial.Umbraco.DecendantsAudit">
       <HintPath>..\DLLs\Axial.Umbraco.DecendantsAudit.dll</HintPath>
     </Reference>
     <Reference Include="Axial.Umbraco.PropertyAccess, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -421,23 +420,15 @@
     <Content Include="App_Plugins\bulkmanager\pages\SelectColumnsDialog.aspx" />
     <Content Include="App_Plugins\bulkmanager\pages\SelectFieldsDialog.aspx" />
     <Content Include="App_Plugins\bulkmanager\usercontrols\BulkManagerInstaller.ascx" />
-    <Content Include="App_Plugins\DecendantsAudit\controllers\decendantsaudit.config.controller.js" />
-    <Content Include="App_Plugins\DecendantsAudit\controllers\decendantsaudit.property.controller.js" />
-    <Content Include="App_Plugins\DecendantsAudit\controllers\decendantsaudit\config\controller.js" />
-    <Content Include="App_Plugins\DecendantsAudit\controllers\decendantsaudit\property\controller.js" />
+    <Content Include="App_Plugins\DecendantsAudit\controllers\decendantsaudit-config-controller.js" />
+    <Content Include="App_Plugins\DecendantsAudit\controllers\decendantsaudit-property-controller.js" />
+    <Content Include="App_Plugins\DecendantsAudit\decendantsaudit-resource.js" />
     <Content Include="App_Plugins\DecendantsAudit\decendantsaudit.css" />
-    <Content Include="App_Plugins\DecendantsAudit\decendantsaudit.resource.js" />
-    <Content Include="App_Plugins\DecendantsAudit\decendantsaudit\resource.js" />
-    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery.treetable.css" />
-    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery.treetable.js" />
-    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery.treetable.theme.default.css" />
-    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery\treetable.css" />
-    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery\treetable.js" />
-    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery\treetable\theme\default.css" />
-    <Content Include="App_Plugins\DecendantsAudit\views\decendantsaudit.config.html" />
-    <Content Include="App_Plugins\DecendantsAudit\views\decendantsaudit.property.html" />
-    <Content Include="App_Plugins\DecendantsAudit\views\decendantsaudit\config.html" />
-    <Content Include="App_Plugins\DecendantsAudit\views\decendantsaudit\property.html" />
+    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery-treetable-theme-default.css" />
+    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery-treetable.css" />
+    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery-treetable.js" />
+    <Content Include="App_Plugins\DecendantsAudit\views\decendantsaudit-config.html" />
+    <Content Include="App_Plugins\DecendantsAudit\views\decendantsaudit-property.html" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-controller.js" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-delete-dialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-dialog.html" />
@@ -467,6 +458,15 @@
     <Content Include="App_Plugins\PropertyAccess\propertyaccess.resource.js" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.js" />
+    <Content Include="App_Plugins\SiteDecendantsAudit\controllers\decendantsaudit-config-controller.js" />
+    <Content Include="App_Plugins\SiteDecendantsAudit\controllers\decendantsaudit-property-controller.js" />
+    <Content Include="App_Plugins\SiteDecendantsAudit\decendantsaudit-resource.js" />
+    <Content Include="App_Plugins\SiteDecendantsAudit\decendantsaudit.css" />
+    <Content Include="App_Plugins\SiteDecendantsAudit\vendors\jquery-treetable-theme-default.css" />
+    <Content Include="App_Plugins\SiteDecendantsAudit\vendors\jquery-treetable.css" />
+    <Content Include="App_Plugins\SiteDecendantsAudit\vendors\jquery-treetable.js" />
+    <Content Include="App_Plugins\SiteDecendantsAudit\views\decendantsaudit-config.html" />
+    <Content Include="App_Plugins\SiteDecendantsAudit\views\decendantsaudit-property.html" />
     <Content Include="App_Plugins\UsdaDataImporter\css\usda.data.importer.css" />
     <Content Include="App_Plugins\UsdaDataImporter\js\usda.data.importer.js" />
     <Content Include="App_Plugins\UsdaDataImporter\upload.file.aspx" />
@@ -2887,8 +2887,8 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="App_Plugins\DecendantsAudit\DecendantsAuditPropertyEditor.cs" />
     <Compile Include="App_Plugins\PropertyAccess\PropertyAccessPropertyEditor.cs" />
+    <Compile Include="App_Plugins\SiteDecendantsAudit\DecendantsAuditPropertyEditor.cs" />
     <Compile Include="App_Plugins\UsdaDataImporter\upload.file.aspx.cs">
       <DependentUpon>upload.file.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -3074,7 +3074,6 @@
     <Content Include="App_Plugins\UsdaNewsProductPicker\package.manifest" />
     <Content Include="App_Plugins\FileSystemPicker\package.manifest" />
     <Content Include="App_Plugins\PropertyAccess\package.manifest" />
-    <Content Include="App_Plugins\DecendantsAudit\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
     <Content Include="Views\StandardWebpage.cshtml" />
