@@ -60,9 +60,6 @@
       <HintPath>..\packages\AutoMapper.3.0.0\lib\net40\AutoMapper.Net4.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Axial.Umbraco.DecendantsAudit">
-      <HintPath>..\DLLs\Axial.Umbraco.DecendantsAudit.dll</HintPath>
-    </Reference>
     <Reference Include="Axial.Umbraco.PropertyAccess, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\DLLs\Axial.Umbraco.PropertyAccess.dll</HintPath>
