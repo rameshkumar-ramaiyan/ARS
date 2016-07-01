@@ -3072,7 +3072,6 @@
     <Content Include="App_Plugins\UsdaNewsTopicPicker\package.manifest" />
     <Content Include="App_Plugins\ArchetypeLabelTemplatesNewsTopicPicker\package.manifest" />
     <Content Include="App_Plugins\UsdaNewsProductPicker\package.manifest" />
-    <Content Include="App_Plugins\FileSystemPicker\package.manifest" />
     <Content Include="App_Plugins\PropertyAccess\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
