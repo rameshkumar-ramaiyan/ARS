@@ -99,89 +99,92 @@ namespace USDA_ARS.ImportInfoStaff
 
             foreach (string dir in dirList)
             {
-                AddLog("DIR: " + dir);
-
-                InfoStaffPathLookup getPathLookup = PATH_LOOKUP_LIST.Where(p => p.Path == dir).FirstOrDefault();
-
-                if (getPathLookup == null)
+                if (!dir.Contains("\\is\\pr") && !dir.Contains("\\is\\np") && !dir.Contains("\\is\\br"))
                 {
-                    //Create Umbraco Doc Folder
-                    DirectoryInfo dirInfo = new DirectoryInfo(dir);
-                    string title = dirInfo.Name;
+                    AddLog("DIR: " + dir);
 
-                    // Creates a TextInfo based on the "en-US" culture.
-                    TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+                    InfoStaffPathLookup getPathLookup = PATH_LOOKUP_LIST.Where(p => p.Path == dir).FirstOrDefault();
 
-                    // Changes a string to titlecase.
-                    title = textInfo.ToTitleCase(title);
-
-                    int parentNodeIdParent = GetParentDirId(dir);
-
-                    parentNodeId = AddUmbracoFolder(parentNodeIdParent, title);
-
-                    if (parentNodeId <= 0)
+                    if (getPathLookup == null)
                     {
-                        throw new Exception("Invalid umbraco id returned.");
-                    }
-                    else
-                    {
-                        PATH_LOOKUP_LIST.Add(new InfoStaffPathLookup() { Path = dir, UmbracoId = parentNodeId });
-                    }
+                        //Create Umbraco Doc Folder
+                        DirectoryInfo dirInfo = new DirectoryInfo(dir);
+                        string title = dirInfo.Name;
 
+                        // Creates a TextInfo based on the "en-US" culture.
+                        TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
 
-                    // Look for index page
-                    List<string> indexList = Directory.GetFiles(dir, "*.*").Where(s => s.ToLower().EndsWith("\\index.html") || s.ToLower().EndsWith("\\index.htm")).ToList();
+                        // Changes a string to titlecase.
+                        title = textInfo.ToTitleCase(title);
 
-                    if (indexList != null && indexList.Count > 0)
-                    {
-                        // Create Index page in Umbraco
-                        PageImport pageImport = GetPageData(indexList[0]);
+                        int parentNodeIdParent = GetParentDirId(dir);
 
-                        if (pageImport != null)
+                        parentNodeId = AddUmbracoFolder(parentNodeIdParent, title);
+
+                        if (parentNodeId <= 0)
                         {
-                            int pageId = AddUmbracoPage(parentNodeId, pageImport);
+                            throw new Exception("Invalid umbraco id returned.");
+                        }
+                        else
+                        {
+                            PATH_LOOKUP_LIST.Add(new InfoStaffPathLookup() { Path = dir, UmbracoId = parentNodeId });
+                        }
 
-                            if (pageId <= 0)
+
+                        // Look for index page
+                        List<string> indexList = Directory.GetFiles(dir, "*.*").Where(s => s.ToLower().EndsWith("\\index.html") || s.ToLower().EndsWith("\\index.htm")).ToList();
+
+                        if (indexList != null && indexList.Count > 0)
+                        {
+                            // Create Index page in Umbraco
+                            PageImport pageImport = GetPageData(indexList[0]);
+
+                            if (pageImport != null)
                             {
-                                throw new Exception("Invalid umbraco id returned.");
+                                int pageId = AddUmbracoPage(parentNodeId, pageImport);
+
+                                if (pageId <= 0)
+                                {
+                                    throw new Exception("Invalid umbraco id returned.");
+                                }
+                                else
+                                {
+                                    UpdateUmbracoPageRedirect(parentNodeId, pageId);
+                                }
                             }
                             else
                             {
-                                UpdateUmbracoPageRedirect(parentNodeId, pageId);
+                                AddLog("** WARNING: Page not added: " + indexList[0]);
                             }
                         }
-                        else
-                        {
-                            AddLog("** WARNING: Page not added: " + indexList[0]);
-                        }
                     }
-                }
-                else
-                {
-                    parentNodeId = getPathLookup.UmbracoId;
-                }
-
-                tempDir = dir;
-
-                List<string> fileList = Directory.GetFiles(dir, "*.*").Where(s => s.ToLower().EndsWith(".htm") || s.ToLower().EndsWith(".html")).ToList();
-
-                foreach (string file in fileList)
-                {
-                    if (false == file.ToLower().EndsWith("\\index.html") && false == file.ToLower().EndsWith("\\index.htm"))
+                    else
                     {
-                        PageImport pageImport = GetPageData(file);
-                        if (pageImport != null)
+                        parentNodeId = getPathLookup.UmbracoId;
+                    }
+
+                    tempDir = dir;
+
+                    List<string> fileList = Directory.GetFiles(dir, "*.*").Where(s => s.ToLower().EndsWith(".htm") || s.ToLower().EndsWith(".html")).ToList();
+
+                    foreach (string file in fileList)
+                    {
+                        if (false == file.ToLower().EndsWith("\\index.html") && false == file.ToLower().EndsWith("\\index.htm"))
                         {
-                            int pageId = AddUmbracoPage(parentNodeId, pageImport);
-                        }
-                        else
-                        {
-                            AddLog("** WARNING: Page not added: " + file);
+                            PageImport pageImport = GetPageData(file);
+                            if (pageImport != null)
+                            {
+                                int pageId = AddUmbracoPage(parentNodeId, pageImport);
+                            }
+                            else
+                            {
+                                AddLog("** WARNING: Page not added: " + file);
+                            }
                         }
                     }
-                }
 
-                AddLog("");
+                    AddLog("");
+                }
             }
 
 
