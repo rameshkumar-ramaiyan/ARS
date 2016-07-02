@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 using System.Text;
 using System.Text.RegularExpressions;
 using ZetaHtmlCompressor;
@@ -29,19 +30,29 @@ namespace USDA_ARS.LocationsWebApp.DL
                 bodyText = Regex.Replace(bodyText, @"/sp2userfiles/people", "/ARSUserFiles", RegexOptions.IgnoreCase);
                 bodyText = Regex.Replace(bodyText, @"/sp2userfiles/person", "/ARSUserFiles", RegexOptions.IgnoreCase);
 
-                bodyText = Regex.Replace(bodyText, @"\""/images/", "/ARSUserFiles/images/", RegexOptions.IgnoreCase);
+                bodyText = Regex.Replace(bodyText, @"\""/images/", "\"/ARSUserFiles/images/", RegexOptions.IgnoreCase);
 
-                Regex ItemRegex = new Regex(@"/[\d]{8}/", RegexOptions.IgnoreCase);
-
-                foreach (Match ItemMatch in ItemRegex.Matches(bodyText))
+                try
                 {
-                    System.Data.DataTable legacyOldModeCodes = new System.Data.DataTable();
-                    legacyOldModeCodes = AddRetrieveLocationsDL.GetNewModeCodesBasedOnOldModeCodes(ItemMatch.Value.Replace("/",""));
-
-                    if (legacyOldModeCodes.Rows.Count > 0)
+                    Regex ItemRegex = new Regex(@"/[\d]{8}/", RegexOptions.IgnoreCase);
+                    foreach (Match ItemMatch in ItemRegex.Matches(bodyText))
                     {
-                        bodyText = Regex.Replace(bodyText, ItemMatch.Value, "/"+ legacyOldModeCodes.Rows[0].Field<string>(1) + "/", RegexOptions.IgnoreCase);
+                        System.Data.DataTable legacyOldModeCodes = new System.Data.DataTable();
+
+                        if (ItemMatch != null && ItemMatch != null)
+                        {
+                            legacyOldModeCodes = AddRetrieveLocationsDL.GetNewModeCodesBasedOnOldModeCodes(ItemMatch.Value.Replace("/", ""));
+
+                            if (legacyOldModeCodes.Rows.Count > 0)
+                            {
+                                bodyText = Regex.Replace(bodyText, ItemMatch.Value, "/" + legacyOldModeCodes.Rows[0].Field<string>(1) + "/", RegexOptions.IgnoreCase);
+                            }
+                        }
                     }
+                }
+                catch (Exception ex)
+                {
+
                 }
 
                 output = htmlCompressor.compress(bodyText);

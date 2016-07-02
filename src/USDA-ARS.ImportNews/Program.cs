@@ -35,7 +35,9 @@ namespace USDA_ARS.ImportNews
             NEWS_LIST = GetNewsAll();
 
             AddLog("Getting Mode Codes From Umbraco...");
-            MODE_CODE_LIST = GetModeCodesAll();
+            GenerateModeCodeList(false);
+            AddLog("Done. Count: " + MODE_CODE_LIST.Count);
+            AddLog("");
 
             AddLog("Getting New Mode Codes From Umbraco...");
             MODE_CODE_NEW_LIST = GetNewModeCodesAll();
@@ -120,6 +122,16 @@ namespace USDA_ARS.ImportNews
                                     newsTitle = newsTitleArray[0].Trim();
                                 }
                             }
+
+                            if (true == string.IsNullOrWhiteSpace(newsTitle))
+                            {
+                                MatchCollection matches = Regex.Matches(bodyText, "<h2.*?>(.*?)<\\/h2>", RegexOptions.IgnoreCase);
+                                if (matches.Count > 0)
+                                {
+                                    newsTitle = matches[0].Groups[1].Value;
+                                }
+                            }
+
 
                             if (doc.DocumentNode.SelectSingleNode("//meta[@name='RSSDescription']") != null)
                             {
@@ -233,7 +245,30 @@ namespace USDA_ARS.ImportNews
 
                             if (responseBack.ContentList != null)
                             {
+                                // Publish the news 
+                                if (true)
+                                {
+                                    AddLog("");
+                                    AddLog("Publishing News: year " + year + "...");
 
+                                    ApiRequest requestPublish = new ApiRequest();
+                                    ApiContent contentPublish = new ApiContent();
+
+                                    requestPublish.ApiKey = API_KEY;
+
+                                    contentPublish.Id = parentId;
+
+                                    requestPublish.ContentList = new List<ApiContent>();
+                                    requestPublish.ContentList.Add(contentPublish);
+
+                                    ApiResponse responseBackPublish = ApiCalls.PostData(requestPublish, "PublishWithChildren");
+
+                                    if (responseBackPublish != null)
+                                    {
+                                        AddLog(" - Success: " + responseBackPublish.Success);
+                                        AddLog(" - Message: " + responseBackPublish.Message);
+                                    }
+                                }
                             }
                         }
                     }
@@ -242,6 +277,8 @@ namespace USDA_ARS.ImportNews
                         AddLog("DateStamp-E: " + DateTime.Now);
                         AddLog("ERROR: " + ex.ToString());
                     }
+
+                    
                 }
             }
 
@@ -290,6 +327,65 @@ namespace USDA_ARS.ImportNews
         }
 
 
+
+        static void GenerateModeCodeList(bool forceCacheUpdate)
+        {
+            MODE_CODE_LIST = GetModeCodeLookupCache();
+
+            if (true == forceCacheUpdate || MODE_CODE_LIST == null || MODE_CODE_LIST.Count <= 0)
+            {
+                MODE_CODE_LIST = CreateModeCodeLookupCache();
+            }
+        }
+
+        static List<ModeCodeLookup> GetModeCodeLookupCache()
+        {
+            string filename = "mode-code-cache.txt";
+            List<ModeCodeLookup> modeCodeList = new List<ModeCodeLookup>();
+
+            if (true == File.Exists(filename))
+            {
+                using (StreamReader sr = File.OpenText(filename))
+                {
+                    string s = "";
+                    while ((s = sr.ReadLine()) != null)
+                    {
+                        string[] lineArray = s.Split('|');
+
+                        modeCodeList.Add(new ModeCodeLookup() { ModeCode = lineArray[0], UmbracoId = Convert.ToInt32(lineArray[1]), Url = lineArray[2] });
+                    }
+                }
+            }
+
+            return modeCodeList;
+        }
+
+        static List<ModeCodeLookup> CreateModeCodeLookupCache()
+        {
+            List<ModeCodeLookup> modeCodeList = new List<ModeCodeLookup>();
+
+            modeCodeList = GetModeCodesAll();
+
+            StringBuilder sb = new StringBuilder();
+
+            if (modeCodeList != null)
+            {
+                foreach (ModeCodeLookup modeCodeItem in modeCodeList)
+                {
+                    sb.AppendLine(modeCodeItem.ModeCode + "|" + modeCodeItem.UmbracoId + "|" + modeCodeItem.Url);
+                }
+
+                using (FileStream fs = File.Create("mode-code-cache.txt"))
+                {
+                    // Add some text to file
+                    Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
+                    fs.Write(fileText, 0, fileText.Length);
+                }
+            }
+
+            return modeCodeList;
+        }
+
         static List<ModeCodeLookup> GetModeCodesAll()
         {
             List<ModeCodeLookup> modeCodeList = new List<ModeCodeLookup>();
@@ -311,7 +407,16 @@ namespace USDA_ARS.ImportNews
 
                             if (modeCode != null)
                             {
-                                modeCodeList.Add(new ModeCodeLookup { ModeCode = modeCode.Value.ToString(), UmbracoId = node.Id, Url = node.Url });
+                                string oldUrl = "";
+
+                                ApiProperty oldUrlProp = node.Properties.Where(p => p.Key == "oldUrl").FirstOrDefault();
+
+                                if (oldUrlProp != null)
+                                {
+                                    oldUrl = oldUrlProp.Value.ToString();
+                                }
+
+                                modeCodeList.Add(new ModeCodeLookup { ModeCode = modeCode.Value.ToString(), UmbracoId = node.Id, Url = node.Url, OldUrl = oldUrl });
 
                                 AddLog(" - Adding ModeCode (" + modeCode.Value + "):" + node.Name);
                             }
@@ -322,6 +427,7 @@ namespace USDA_ARS.ImportNews
 
             return modeCodeList;
         }
+
 
 
         static List<ModeCodeNew> GetNewModeCodesAll()
