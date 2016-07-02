@@ -99,7 +99,7 @@ namespace USDA_ARS.ImportInfoStaff
 
             foreach (string dir in dirList)
             {
-                if (!dir.Contains("\\is\\pr") && !dir.Contains("\\is\\np") && !dir.Contains("\\is\\br"))
+                if (!dir.Contains("\\is\\pr") && !dir.Contains("\\is\\np\\fnrb") && !dir.Contains("\\is\\br"))
                 {
                     AddLog("DIR: " + dir);
 
