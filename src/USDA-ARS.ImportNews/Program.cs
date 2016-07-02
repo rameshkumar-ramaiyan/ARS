@@ -79,161 +79,178 @@ namespace USDA_ARS.ImportNews
 
                     foreach (string fileName in files)
                     {
-                        FileInfo fileInfo = new FileInfo(fileName);
-
-                        AddLog("Filename: " + fileName);
-
-                        List<string> pathArray = fileInfo.FullName.Split('\\').ToList();
-
-                        AddLog("News Item: " + fileName);
-
-                        string newsTitle = "";
-                        string bodyText = GetFileText(fileName);
-                        DateTime newsDate = DateTime.MinValue;
-                        string newsBlurb = "";
-
-                        List<string> keywordList = null;
-
-                        HtmlDocument doc = new HtmlDocument();
-                        doc.LoadHtml(bodyText);
-
-                        News newsItem = NEWS_LIST.Where(p => p.ISFileName.ToLower() == fileInfo.Name.ToLower()).FirstOrDefault();
-
-                        if (newsItem != null)
+                        if (false == fileName.Contains("index.htm") && false == fileName.EndsWith(".jpg"))
                         {
-                            newsDate = newsItem.DateField;
-                        }
-                        else if (doc.DocumentNode.SelectSingleNode("//meta[@name='RSSDate']") != null)
-                        {
-                            DateTime.TryParse(doc.DocumentNode.SelectSingleNode("//meta[@name='RSSDate']").Attributes["content"].Value, out newsDate);
-                        }
+                            FileInfo fileInfo = new FileInfo(fileName);
 
+                            AddLog("Filename: " + fileName);
 
-                        if (newsDate > DateTime.MinValue)
-                        {
-                            if (doc.DocumentNode.SelectSingleNode("/html/head/title") != null)
+                            List<string> pathArray = fileInfo.FullName.Split('\\').ToList();
+
+                            AddLog("News Item: " + fileName);
+
+                            string newsTitle = "";
+                            string bodyText = GetFileText(fileName);
+                            DateTime newsDate = DateTime.MinValue;
+                            string newsBlurb = "";
+
+                            List<string> keywordList = null;
+
+                            HtmlDocument doc = new HtmlDocument();
+                            doc.LoadHtml(bodyText);
+
+                            News newsItem = NEWS_LIST.Where(p => p.ISFileName.ToLower() == fileInfo.Name.ToLower()).FirstOrDefault();
+
+                            if (newsItem != null)
                             {
-                                newsTitle = doc.DocumentNode.SelectSingleNode("/html/head/title").InnerHtml;
+                                newsDate = newsItem.DateField;
+                            }
+                            else if (doc.DocumentNode.SelectSingleNode("//meta[@name='RSSDate']") != null)
+                            {
+                                DateTime.TryParse(doc.DocumentNode.SelectSingleNode("//meta[@name='RSSDate']").Attributes["content"].Value, out newsDate);
+                            }
 
-                                string[] newsTitleArray = newsTitle.Split('/');
 
-                                if (newsTitleArray != null && newsTitleArray.Length > 0)
+                            if (newsDate > DateTime.MinValue)
+                            {
+                                if (doc.DocumentNode.SelectSingleNode("/html/head/title") != null)
                                 {
-                                    newsTitle = newsTitleArray[0].Trim();
+                                    newsTitle = doc.DocumentNode.SelectSingleNode("/html/head/title").InnerHtml;
+
+                                    string[] newsTitleArray = newsTitle.Split('/');
+
+                                    if (newsTitleArray != null && newsTitleArray.Length > 0)
+                                    {
+                                        newsTitle = newsTitleArray[0].Trim();
+
+                                        newsTitle = newsTitle.Replace("<strong>","");
+                                        newsTitle = newsTitle.Replace("</strong>", "");
+
+                                        newsTitle = newsTitle.Replace("<STRONG>", "");
+                                        newsTitle = newsTitle.Replace("</STRONG>", "");
+                                    }
                                 }
-                            }
 
-                            if (true == string.IsNullOrWhiteSpace(newsTitle))
-                            {
-                                MatchCollection matches = Regex.Matches(bodyText, "<h2.*?>(.*?)<\\/h2>", RegexOptions.IgnoreCase);
-                                if (matches.Count > 0)
+                                if (true == string.IsNullOrWhiteSpace(newsTitle))
                                 {
-                                    newsTitle = matches[0].Groups[1].Value;
+                                    MatchCollection matches = Regex.Matches(bodyText, "<h2.*?>(.*?)<\\/h2>", RegexOptions.IgnoreCase);
+                                    if (matches.Count > 0)
+                                    {
+                                        newsTitle = matches[0].Groups[1].Value;
+                                    }
                                 }
-                            }
 
 
-                            if (doc.DocumentNode.SelectSingleNode("//meta[@name='RSSDescription']") != null)
-                            {
-                                newsBlurb = doc.DocumentNode.SelectSingleNode("//meta[@name='RSSDescription']").Attributes["content"].Value;
-                            }
-
-
-                            if (doc.DocumentNode.SelectSingleNode("/html/body") != null)
-                            {
-                                bodyText = doc.DocumentNode.SelectSingleNode("/html/body").InnerHtml;
-                            }
-                            else
-                            {
-                                RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
-                                Regex regx = new Regex("<body>(?<theBody>.*)</body>", options);
-
-                                Match match = regx.Match(bodyText);
-
-                                if (match.Success)
+                                if (doc.DocumentNode.SelectSingleNode("//meta[@name='RSSDescription']") != null)
                                 {
-                                    bodyText = match.Groups["theBody"].Value;
+                                    newsBlurb = doc.DocumentNode.SelectSingleNode("//meta[@name='RSSDescription']").Attributes["content"].Value;
                                 }
-                            }
 
-                            if (false == string.IsNullOrEmpty(bodyText))
-                            {
-                                bodyText = CleanHtml.CleanUpHtml(bodyText);
 
-                                bodyText = ReplaceCaseInsensitive(bodyText, "../thelatest.htm", "/{localLink:8001}");
-                                bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/pr/thelatest.htm", "/{localLink:8001}");
-
-                                bodyText = ReplaceCaseInsensitive(bodyText, "../subscribe.htm", "/{localLink:8002}");
-                                bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/pr/subscribe.htm", "/{localLink:8002}");
-
-                                bodyText = ReplaceCaseInsensitive(bodyText, "../../graphics/", "/ARSUserFiles/news/graphics/");
-                                bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/graphics/", "/ARSUserFiles/news/graphics/");
-
-                                bodyText = ReplaceCaseInsensitive(bodyText, "\"../../", "/");
-                                bodyText = ReplaceCaseInsensitive(bodyText, "\"../", "/is/");
-                                bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/", "/");
-                            }
-
-                            if (doc.DocumentNode.SelectSingleNode("//meta[@name='keywords']") != null)
-                            {
-                                keywordList = doc.DocumentNode.SelectSingleNode("//meta[@name='keywords']").Attributes["content"].Value.Split(',').ToList();
-                            }
-                            if (keywordList == null)
-                            {
-                                if (doc.DocumentNode.SelectSingleNode("//meta[@name='RSSKeywords']") != null)
+                                if (doc.DocumentNode.SelectSingleNode("/html/body") != null)
                                 {
-                                    keywordList = doc.DocumentNode.SelectSingleNode("//meta[@name='RSSKeywords']").Attributes["content"].Value.Split(',').ToList();
-                                }
-                            }
-
-                            bodyText = bodyText.Replace("http://www.ars.usda.gov", "");
-                            bodyText = bodyText.Replace("/pandp/people/people.htm?personid=", "/people-locations/person/?person-id=");
-
-                            MatchCollection m1 = Regex.Matches(bodyText, @"/main/site_main\.htm\?modecode=([\d\-]*)", RegexOptions.Singleline);
-
-                            foreach (Match m in m1)
-                            {
-                                string modeCode = m.Groups[1].Value;
-
-                                ApiResponse responsePage = new ApiResponse();
-
-                                // Get the umbraco page by the mode code (Region/Area or Research Unit)
-                                ModeCodeLookup modeCodeLookup = MODE_CODE_LIST.Where(p => p.ModeCode == modeCode).FirstOrDefault();
-
-                                if (modeCodeLookup != null)
-                                {
-                                    bodyText = bodyText.Replace(m.Groups[0].Value, "/{localLink:" + modeCodeLookup.UmbracoId + "}");
+                                    bodyText = doc.DocumentNode.SelectSingleNode("/html/body").InnerHtml;
                                 }
                                 else
                                 {
-                                    ModeCodeNew modeCodeNew = MODE_CODE_NEW_LIST.Where(p => p.ModecodeOld == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(modeCode)).FirstOrDefault();
+                                    RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
+                                    Regex regx = new Regex("<body>(?<theBody>.*)</body>", options);
 
-                                    if (modeCodeNew != null)
+                                    Match match = regx.Match(bodyText);
+
+                                    if (match.Success)
                                     {
-                                        modeCodeLookup = MODE_CODE_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCodeNew.ModecodeNew)).FirstOrDefault();
+                                        bodyText = match.Groups["theBody"].Value;
+                                    }
+                                }
 
-                                        if (modeCodeLookup != null)
+                                if (false == string.IsNullOrEmpty(bodyText))
+                                {
+                                    bodyText = CleanHtml.CleanUpHtml(bodyText);
+
+                                    bodyText = ReplaceCaseInsensitive(bodyText, "../thelatest.htm", "/{localLink:8001}");
+                                    bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/pr/thelatest.htm", "/{localLink:8001}");
+
+                                    bodyText = ReplaceCaseInsensitive(bodyText, "../subscribe.htm", "/{localLink:8002}");
+                                    bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/pr/subscribe.htm", "/{localLink:8002}");
+
+                                    bodyText = ReplaceCaseInsensitive(bodyText, "../../graphics/", "/ARSUserFiles/news/graphics/");
+                                    bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/graphics/", "/ARSUserFiles/news/graphics/");
+
+                                    bodyText = ReplaceCaseInsensitive(bodyText, "\"../../", "/");
+                                    bodyText = ReplaceCaseInsensitive(bodyText, "\"../", "/is/");
+                                    bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/", "/");
+                                }
+
+                                if (doc.DocumentNode.SelectSingleNode("//meta[@name='keywords']") != null)
+                                {
+                                    keywordList = doc.DocumentNode.SelectSingleNode("//meta[@name='keywords']").Attributes["content"].Value.Split(',').ToList();
+                                }
+                                if (keywordList == null)
+                                {
+                                    if (doc.DocumentNode.SelectSingleNode("//meta[@name='RSSKeywords']") != null)
+                                    {
+                                        keywordList = doc.DocumentNode.SelectSingleNode("//meta[@name='RSSKeywords']").Attributes["content"].Value.Split(',').ToList();
+                                    }
+                                }
+
+                                bodyText = bodyText.Replace("http://www.ars.usda.gov", "");
+                                bodyText = bodyText.Replace("/pandp/people/people.htm?personid=", "/people-locations/person/?person-id=");
+
+                                MatchCollection m1 = Regex.Matches(bodyText, @"/main/site_main\.htm\?modecode=([\d\-]*)", RegexOptions.Singleline);
+
+                                foreach (Match m in m1)
+                                {
+                                    string modeCode = m.Groups[1].Value;
+
+                                    ApiResponse responsePage = new ApiResponse();
+
+                                    // Get the umbraco page by the mode code (Region/Area or Research Unit)
+                                    ModeCodeLookup modeCodeLookup = MODE_CODE_LIST.Where(p => p.ModeCode == modeCode).FirstOrDefault();
+
+                                    if (modeCodeLookup != null)
+                                    {
+                                        bodyText = bodyText.Replace(m.Groups[0].Value, "/{localLink:" + modeCodeLookup.UmbracoId + "}");
+                                    }
+                                    else
+                                    {
+                                        ModeCodeNew modeCodeNew = MODE_CODE_NEW_LIST.Where(p => p.ModecodeOld == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(modeCode)).FirstOrDefault();
+
+                                        if (modeCodeNew != null)
                                         {
-                                            bodyText = bodyText.Replace(m.Groups[0].Value, "/{localLink:" + modeCodeLookup.UmbracoId + "}");
+                                            modeCodeLookup = MODE_CODE_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCodeNew.ModecodeNew)).FirstOrDefault();
+
+                                            if (modeCodeLookup != null)
+                                            {
+                                                bodyText = bodyText.Replace(m.Groups[0].Value, "/{localLink:" + modeCodeLookup.UmbracoId + "}");
+                                            }
                                         }
                                     }
                                 }
+
+                                AddLog("Adding News...");
+                                ApiContent apiContent = AddNewsArticle(parentId, newsTitle, newsDate, newsBlurb, fileInfo.Name, newsTopicList, keywordList, bodyText, year);
+
+                                apiContentList.Add(apiContent);
                             }
-
-                            AddLog("Adding News...");
-                            ApiContent apiContent = AddNewsArticle(parentId, newsTitle, newsDate, newsBlurb, fileInfo.Name, newsTopicList, keywordList, bodyText, year);
-
-                            apiContentList.Add(apiContent);
+                        }
+                        else
+                        {
+                            AddLog("");
+                            AddLog("/ Bypassing file: " + fileName);
                         }
                     }
+
+                    AddLog("");
+                    AddLog("Saving News Articles...");
+                    AddLog("");
 
                     try
                     {
                         if (apiContentList != null && apiContentList.Any())
                         {
                             ApiRequest request = new ApiRequest();
-
-                            AddLog("Saving News Articles...");
+                            
 
                             request.ApiKey = API_KEY;
 
