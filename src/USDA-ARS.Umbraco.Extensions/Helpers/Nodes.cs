@@ -59,7 +59,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
         {
             IPublishedContent ArsLocations = UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("ARSLocations"));
 
-            return ArsLocations.Children.Where(n => n.IsDocumentType("Region"));
+            return ArsLocations.Children.Where(n => n.IsDocumentType("Area"));
         }
 
         public static IEnumerable<IPublishedContent> AllLocationsList()

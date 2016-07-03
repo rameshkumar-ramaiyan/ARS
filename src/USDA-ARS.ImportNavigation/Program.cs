@@ -606,7 +606,7 @@ namespace USDA_ARS.ImportNavigation
                         {
                             if (node != null)
                             {
-                                if (node.DocType != "City" && node.DocType != "Region" && node.DocType != "ResearchUnit")
+                                if (node.DocType != "City" && node.DocType != "Area" && node.DocType != "ResearchUnit")
                                 {
                                     modeCodeFolderList.Add(new ModeCodeFolderLookup { ModeCode = modeCode.ModeCode, FolderName = node.Name, UmbracoId = node.Id });
                                     AddLog(" - Adding: " + node.Name + " (" + node.Id + ")");
