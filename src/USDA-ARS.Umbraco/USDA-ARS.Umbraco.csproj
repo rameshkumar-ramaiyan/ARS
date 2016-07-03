@@ -2892,6 +2892,7 @@
     <Compile Include="App_Plugins\UsdaWebtrendsRedirect\webtrends.redirect.aspx.designer.cs">
       <DependentUpon>webtrends.redirect.aspx</DependentUpon>
     </Compile>
+    <Compile Include="App_Start\ARSUmbracoADOwinStartup.cs" />
     <Compile Include="Controllers\EmailSignupSiteSurfaceController.cs" />
     <Compile Include="Controllers\SubscribeFormSurfaceController.cs" />
     <Compile Include="Controllers\DownloadRequestSurfaceController.cs" />
@@ -3164,9 +3165,9 @@
     <Folder Include="Views\MacroPartials\" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\UmbBackofficeMembershipProvider\UmbBackofficeMembershipProvider.csproj">
-      <Project>{12ba2053-e09d-4d5f-9c8a-ddbd3fc65d32}</Project>
-      <Name>UmbBackofficeMembershipProvider</Name>
+    <ProjectReference Include="..\ARS.ActiveDirectoryMembership\ARS.ActiveDirectoryMembership.csproj">
+      <Project>{f8933634-f510-4a77-8ff6-009bc17439a1}</Project>
+      <Name>ARS.ActiveDirectoryMembership</Name>
     </ProjectReference>
     <ProjectReference Include="..\USDA-ARS.Core\USDA-ARS.Core.csproj">
       <Project>{4679653f-bd09-4ba3-85b6-f3865569277a}</Project>
