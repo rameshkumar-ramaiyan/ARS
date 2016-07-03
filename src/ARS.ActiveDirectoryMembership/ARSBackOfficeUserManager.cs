@@ -21,20 +21,32 @@ namespace ARS.ActiveDirectoryMembership
 
         private bool LdapAuth(string username, string password)
         {
+            LogHelper.Info(typeof(ARSUserManager), "Attempting login via LDAP: " + username);
+
             bool resp = false;
             try
             {
                 string ldapRoot = ConfigurationManager.ConnectionStrings["ADConnectionString"].ConnectionString;
+
+                LogHelper.Info(typeof(ARSUserManager), "Using LDAP: " + ldapRoot);
+
                 var entry = new DirectoryEntry(ldapRoot, username, password);
                 try
                 {
+                    LogHelper.Info(typeof(ARSUserManager), "Searching username: " + username);
+
                     var search = new DirectorySearcher(entry) { Filter = "(SAMAccountName=" + username + ")" };
                     search.PropertiesToLoad.Add("cn");
                     SearchResult result = search.FindOne();
                     if (result != null)
                     {
+                        LogHelper.Info(typeof(ARSUserManager), "Username authenticated: " + username);
                         // Login was successful
                         resp = true;
+                    }
+                    else
+                    {
+                        LogHelper.Warn(typeof(ARSUserManager), "Username NOT authenticated: " + username);
                     }
                 }
                 catch (Exception ex)
