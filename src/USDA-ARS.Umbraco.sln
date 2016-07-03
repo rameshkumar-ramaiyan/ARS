@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.24720.0
+VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.Umbraco", "USDA-ARS.Umbraco\USDA-ARS.Umbraco.csproj", "{5D431EFB-FBF9-4166-95F6-791121B27739}"
 EndProject
@@ -44,11 +44,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportPeopleSites"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportLocations", "USDA-ARS.ImportLocations\USDA-ARS.ImportLocations.csproj", "{89627904-F42D-40E4-B0B7-0B6C1D256076}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UmbBackofficeMembershipProvider", "UmbBackofficeMembershipProvider\UmbBackofficeMembershipProvider.csproj", "{12BA2053-E09D-4D5F-9C8A-DDBD3FC65D32}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA_ARS.SiteDecendantsAudit", "USDA_ARS.DecendantsAudit\USDA_ARS.SiteDecendantsAudit.csproj", "{86CCCBF5-B11F-4288-A8C3-22AFC8368666}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportNP", "USDA-ARS.ImportNP\USDA-ARS.ImportNP.csproj", "{E68AED5F-A148-42B3-B544-B25DA1552250}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARS.ActiveDirectoryMembership", "ARS.ActiveDirectoryMembership\ARS.ActiveDirectoryMembership.csproj", "{F8933634-F510-4A77-8FF6-009BC17439A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -202,14 +202,6 @@ Global
 		{89627904-F42D-40E4-B0B7-0B6C1D256076}.Release|Any CPU.Build.0 = Release|Any CPU
 		{89627904-F42D-40E4-B0B7-0B6C1D256076}.Staging|Any CPU.ActiveCfg = Release|Any CPU
 		{89627904-F42D-40E4-B0B7-0B6C1D256076}.Staging|Any CPU.Build.0 = Release|Any CPU
-		{12BA2053-E09D-4D5F-9C8A-DDBD3FC65D32}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{12BA2053-E09D-4D5F-9C8A-DDBD3FC65D32}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{12BA2053-E09D-4D5F-9C8A-DDBD3FC65D32}.NuGet|Any CPU.ActiveCfg = NuGet|Any CPU
-		{12BA2053-E09D-4D5F-9C8A-DDBD3FC65D32}.NuGet|Any CPU.Build.0 = NuGet|Any CPU
-		{12BA2053-E09D-4D5F-9C8A-DDBD3FC65D32}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{12BA2053-E09D-4D5F-9C8A-DDBD3FC65D32}.Release|Any CPU.Build.0 = Release|Any CPU
-		{12BA2053-E09D-4D5F-9C8A-DDBD3FC65D32}.Staging|Any CPU.ActiveCfg = NuGet|Any CPU
-		{12BA2053-E09D-4D5F-9C8A-DDBD3FC65D32}.Staging|Any CPU.Build.0 = NuGet|Any CPU
 		{86CCCBF5-B11F-4288-A8C3-22AFC8368666}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{86CCCBF5-B11F-4288-A8C3-22AFC8368666}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86CCCBF5-B11F-4288-A8C3-22AFC8368666}.NuGet|Any CPU.ActiveCfg = Release|Any CPU
@@ -226,6 +218,14 @@ Global
 		{E68AED5F-A148-42B3-B544-B25DA1552250}.Release|Any CPU.Build.0 = Release|Any CPU
 		{E68AED5F-A148-42B3-B544-B25DA1552250}.Staging|Any CPU.ActiveCfg = Release|Any CPU
 		{E68AED5F-A148-42B3-B544-B25DA1552250}.Staging|Any CPU.Build.0 = Release|Any CPU
+		{F8933634-F510-4A77-8FF6-009BC17439A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8933634-F510-4A77-8FF6-009BC17439A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8933634-F510-4A77-8FF6-009BC17439A1}.NuGet|Any CPU.ActiveCfg = Release|Any CPU
+		{F8933634-F510-4A77-8FF6-009BC17439A1}.NuGet|Any CPU.Build.0 = Release|Any CPU
+		{F8933634-F510-4A77-8FF6-009BC17439A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8933634-F510-4A77-8FF6-009BC17439A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8933634-F510-4A77-8FF6-009BC17439A1}.Staging|Any CPU.ActiveCfg = Release|Any CPU
+		{F8933634-F510-4A77-8FF6-009BC17439A1}.Staging|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
