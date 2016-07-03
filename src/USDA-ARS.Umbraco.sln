@@ -224,8 +224,8 @@ Global
 		{F8933634-F510-4A77-8FF6-009BC17439A1}.NuGet|Any CPU.Build.0 = Release|Any CPU
 		{F8933634-F510-4A77-8FF6-009BC17439A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8933634-F510-4A77-8FF6-009BC17439A1}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F8933634-F510-4A77-8FF6-009BC17439A1}.Staging|Any CPU.ActiveCfg = Release|Any CPU
-		{F8933634-F510-4A77-8FF6-009BC17439A1}.Staging|Any CPU.Build.0 = Release|Any CPU
+		{F8933634-F510-4A77-8FF6-009BC17439A1}.Staging|Any CPU.ActiveCfg = Staging|Any CPU
+		{F8933634-F510-4A77-8FF6-009BC17439A1}.Staging|Any CPU.Build.0 = Staging|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
