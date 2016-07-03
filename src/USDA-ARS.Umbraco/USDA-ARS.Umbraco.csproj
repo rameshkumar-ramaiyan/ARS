@@ -2892,9 +2892,6 @@
     <Compile Include="App_Plugins\UsdaWebtrendsRedirect\webtrends.redirect.aspx.designer.cs">
       <DependentUpon>webtrends.redirect.aspx</DependentUpon>
     </Compile>
-    <Compile Include="App_Start\UmbracoAuthTokenServerExtensions.cs" />
-    <Compile Include="App_Start\UmbracoCustomOwinStartup.cs" />
-    <Compile Include="App_Start\UmbracoStandardOwinStartup.cs" />
     <Compile Include="Controllers\EmailSignupSiteSurfaceController.cs" />
     <Compile Include="Controllers\SubscribeFormSurfaceController.cs" />
     <Compile Include="Controllers\DownloadRequestSurfaceController.cs" />
@@ -3162,6 +3159,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="App_Start\" />
     <Folder Include="Models\" />
     <Folder Include="Views\MacroPartials\" />
   </ItemGroup>
