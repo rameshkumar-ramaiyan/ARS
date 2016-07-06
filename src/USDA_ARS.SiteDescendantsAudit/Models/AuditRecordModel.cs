@@ -1,4 +1,4 @@
-﻿namespace USDA_ARS.SiteDecendantsAudit.Models
+﻿namespace USDA_ARS.SiteDescendantsAudit.Models
 {
     public class AuditRecordModel
     {

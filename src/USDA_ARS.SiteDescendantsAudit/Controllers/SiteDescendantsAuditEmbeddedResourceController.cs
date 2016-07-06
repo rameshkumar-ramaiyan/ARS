@@ -5,17 +5,17 @@ using System.Reflection;
 using System.Web.Mvc;
 using Umbraco.Core.Logging;
 
-namespace USDA_ARS.SiteDecendantsAudit.Controllers
+namespace USDA_ARS.SiteDescendantsAudit.Controllers
 {
     // Get embedded resources files (.html, .js, .css, ...) 
-    public class SiteDecendantsAuditEmbeddedResourceController : Controller
+    public class SiteDescendantsAuditEmbeddedResourceController : Controller
     {
         public FileStreamResult GetResource(string resource)
         {
             try
             {
                 // Get this assembly
-                Assembly assembly = typeof(SiteDecendantsAuditEmbeddedResourceController).Assembly;
+                Assembly assembly = typeof(SiteDescendantsAuditEmbeddedResourceController).Assembly;
 
                 var manifestResourceNames = Assembly.GetExecutingAssembly().GetManifestResourceNames();
                 var resourceName = manifestResourceNames.ToList().FirstOrDefault(f => f.EndsWith(resource));
@@ -27,12 +27,12 @@ namespace USDA_ARS.SiteDecendantsAudit.Controllers
                 }
                 else
                 {
-                    LogHelper.Warn(typeof(SiteDecendantsAuditEmbeddedResourceController), string.Format("Couldn't get the resource: {0}", resource));
+                    LogHelper.Warn(typeof(SiteDescendantsAuditEmbeddedResourceController), string.Format("Couldn't get the resource: {0}", resource));
                 }
             }
             catch (Exception ex)
             {
-                LogHelper.Error(typeof(SiteDecendantsAuditEmbeddedResourceController), string.Format("Couldn't get the resource: {0}", resource), ex);
+                LogHelper.Error(typeof(SiteDescendantsAuditEmbeddedResourceController), string.Format("Couldn't get the resource: {0}", resource), ex);
             }
 
             return null;

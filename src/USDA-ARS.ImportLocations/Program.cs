@@ -861,7 +861,7 @@ namespace USDA_ARS.ImportLocations
                 string slideAltText = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(3);
                 string slideURL = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(2);
                 string slideImage = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(1);
-                string slideImageSP2 = "/ARSUserFiles/" + "" + modeCode.Replace("-", "") + "/photoCarousel/" + slideImage;
+                string slideImageSP2 = "/ARSUserFiles/" + "" + modeCode.Replace("-", "") + "/images/photoCarousel/" + slideImage;
                 string slideFilePath = null;
                 if (slideURL.Contains("/ARSUserFiles/"))
                 {

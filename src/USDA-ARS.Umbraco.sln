@@ -44,7 +44,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportPeopleSites"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportLocations", "USDA-ARS.ImportLocations\USDA-ARS.ImportLocations.csproj", "{89627904-F42D-40E4-B0B7-0B6C1D256076}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA_ARS.SiteDecendantsAudit", "USDA_ARS.DecendantsAudit\USDA_ARS.SiteDecendantsAudit.csproj", "{86CCCBF5-B11F-4288-A8C3-22AFC8368666}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA_ARS.SiteDescendantsAudit", "USDA_ARS.SiteDescendantsAudit\USDA_ARS.SiteDescendantsAudit.csproj", "{86CCCBF5-B11F-4288-A8C3-22AFC8368666}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportNP", "USDA-ARS.ImportNP\USDA-ARS.ImportNP.csproj", "{E68AED5F-A148-42B3-B544-B25DA1552250}"
 EndProject

@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Web.Configuration;
 
-namespace USDA_ARS.SiteDecendantsAudit.Utilities
+namespace USDA_ARS.SiteDescendantsAudit.Utilities
 {
     public static class PluginHelpers
     {

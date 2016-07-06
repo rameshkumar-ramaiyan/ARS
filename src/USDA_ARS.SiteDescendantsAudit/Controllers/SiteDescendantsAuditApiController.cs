@@ -3,18 +3,23 @@ using System.Collections.Generic;
 using Umbraco.Web.Editors;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.WebApi;
-using USDA_ARS.SiteDecendantsAudit.Models;
+using USDA_ARS.SiteDescendantsAudit.Models;
 
-namespace USDA_ARS.SiteDecendantsAudit.Controllers
+namespace USDA_ARS.SiteDescendantsAudit.Controllers
 {
-    [PluginController("SiteDecendantsAudit")]
+    [PluginController("SiteDescendantsAudit")]
     [IsBackOffice]
-    public class SiteDecendantsAuditApiController : UmbracoAuthorizedJsonController
+    public class SiteDescendantsAuditApiController : UmbracoAuthorizedJsonController
     {
 
         [System.Web.Http.HttpGet]
         public IEnumerable<AuditRecordModel> GetAudit(Guid id, string aliases)
         {
+            if (true == string.IsNullOrEmpty(aliases) || aliases == "null")
+            {
+                aliases = "DocsFolder,DocsFolderWithFiles,SitesCareers,SitesNews,PeopleFolder,PersonSite,SiteStandardWebpage";
+            }
+
             var parent = Services.ContentService.GetById(id);
             List<AuditRecordModel> records = null;
 
@@ -24,13 +29,13 @@ namespace USDA_ARS.SiteDecendantsAudit.Controllers
 
                 if (children != null)
                 {
-                    records = GetDecendantAuditRecords(parent.Id, aliases);
+                    records = GetDescendantAuditRecords(parent.Id, aliases);
                 }
             }
             return records;
         }
 
-        private List<AuditRecordModel> GetDecendantAuditRecords(int parentId, string aliases, List<AuditRecordModel> records = null)
+        private List<AuditRecordModel> GetDescendantAuditRecords(int parentId, string aliases, List<AuditRecordModel> records = null)
         {
             records = records ?? new List<AuditRecordModel>();
 
@@ -57,7 +62,11 @@ namespace USDA_ARS.SiteDecendantsAudit.Controllers
                     });
 
                 }
-                records = GetDecendantAuditRecords(child.Id, aliases, records);
+
+                if (child != null && aliases.Contains(child.ContentType.Alias))
+                {
+                    records = GetDescendantAuditRecords(child.Id, aliases, records);
+                }
             }
 
             return records;

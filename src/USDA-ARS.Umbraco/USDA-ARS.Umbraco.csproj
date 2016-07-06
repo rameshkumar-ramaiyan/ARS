@@ -2893,7 +2893,6 @@
       <DependentUpon>webtrends.redirect.aspx</DependentUpon>
     </Compile>
     <Compile Include="App_Start\ARSUmbracoBackofficeADOwinStartup.cs" />
-    <Compile Include="App_Start\ARSUmbracoADOwinStartup.cs" />
     <Compile Include="Controllers\EmailSignupSiteSurfaceController.cs" />
     <Compile Include="Controllers\SubscribeFormSurfaceController.cs" />
     <Compile Include="Controllers\DownloadRequestSurfaceController.cs" />
@@ -3176,6 +3175,10 @@
     <ProjectReference Include="..\USDA-ARS.Umbraco.Extensions\USDA-ARS.Umbraco.Extensions.csproj">
       <Project>{94328c72-101b-4a7b-aefb-b0c60cae0180}</Project>
       <Name>USDA-ARS.Umbraco.Extensions</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\USDA_ARS.SiteDescendantsAudit\USDA_ARS.SiteDescendantsAudit.csproj">
+      <Project>{86cccbf5-b11f-4288-a8c3-22afc8368666}</Project>
+      <Name>USDA_ARS.SiteDecendantsAudit</Name>
     </ProjectReference>
     <ProjectReference Include="..\USDA_ARS.Umbraco.FileSystemPicker\USDA_ARS.Umbraco.FileSystemPicker.csproj">
       <Project>{c0318ac1-1532-49a6-9828-13f99e722431}</Project>

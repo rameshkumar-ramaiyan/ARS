@@ -290,7 +290,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ARSBackOfficeUserManager.cs" />
-    <Compile Include="ARSUserManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,7 @@
 ﻿using Umbraco.Core;
-using USDA_ARS.SiteDecendantsAudit.Install;
+using USDA_ARS.SiteDescendantsAudit.Install;
 
-namespace USDA_ARS.SiteDecendantsAudit.Events
+namespace USDA_ARS.SiteDescendantsAudit.Events
 {
     public class StartUpHandlers : ApplicationEventHandler
     {

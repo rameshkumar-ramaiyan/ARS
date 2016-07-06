@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace USDA_ARS.SiteDecendantsAudit.Models
+namespace USDA_ARS.SiteDescendantsAudit.Models
 {
     public class LogRecordModel
     {

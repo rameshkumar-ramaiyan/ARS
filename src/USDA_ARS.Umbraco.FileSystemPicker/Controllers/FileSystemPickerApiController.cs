@@ -200,7 +200,7 @@ namespace USDA_ARS.Umbraco.FileSystemPicker.Controllers
                 dir.MoveTo(String.Format("{0}\\{1}", dir.Parent.FullName, name));
                 return Request.CreateResponse(HttpStatusCode.OK, dir);
             }
-            
+
         }
 
         public HttpResponseMessage PostDelete(string path)
@@ -214,7 +214,7 @@ namespace USDA_ARS.Umbraco.FileSystemPicker.Controllers
             else
             {
                 var dir = new DirectoryInfo(path);
-                if(dir.GetFiles().Count() == 0)
+                if (dir.GetFiles().Count() == 0)
                 {
                     dir.Delete();
                 }
@@ -231,7 +231,7 @@ namespace USDA_ARS.Umbraco.FileSystemPicker.Controllers
             var startFolder = System.Configuration.ConfigurationManager.AppSettings["USDA_ARS:FileSystemPicker:startFolder"]; ;
             var startFolderNamePropertyAliasArray = System.Configuration.ConfigurationManager.AppSettings["USDA_ARS:FileSystemPicker:startFolderNamePropertyAlias"];
             var startFolderNamePropertyAlias = "";
-            var removeCharactersPropertyAlias = System.Configuration.ConfigurationManager.AppSettings["USDA_ARS:FileSystemPicker:startFolder"];
+            var removeCharactersPropertyAlias = System.Configuration.ConfigurationManager.AppSettings["USDA_ARS:FileSystemPicker:removeCharactersPropertyAlias"];
 
             int id = 0;
             if (Int32.TryParse(currentNodeId, out id))
@@ -239,22 +239,45 @@ namespace USDA_ARS.Umbraco.FileSystemPicker.Controllers
                 var node = contentService.GetById(id);
                 if (node != null)
                 {
+                    string foundProperty = "";
                     List<string> propertyAliasArray = startFolderNamePropertyAliasArray.Split(',').ToList();
 
+                    // Check current node
                     if (propertyAliasArray != null && propertyAliasArray.Count > 0)
                     {
                         foreach (string propertyAlias in propertyAliasArray)
                         {
-                            if (true == string.IsNullOrEmpty(startFolderNamePropertyAlias))
+                            if (node.HasProperty(propertyAlias) && false == string.IsNullOrEmpty(node.GetValue<string>(propertyAlias)))
                             {
-                                if (node.HasProperty(propertyAlias) && false == string.IsNullOrEmpty(node.GetValue<string>(propertyAlias)))
+                                foundProperty = propertyAlias;
+                            }
+                        }
+
+                        // If property
+                        if (true == string.IsNullOrWhiteSpace(foundProperty))
+                        {
+                            while (true == string.IsNullOrWhiteSpace(foundProperty) && node.Level > 0 && node != null)
+                            {
+                                node = contentService.GetById(node.ParentId);
+
+                                if (node != null)
                                 {
-                                    startFolderNamePropertyAlias = propertyAlias;
+                                    foreach (string propertyAlias in propertyAliasArray)
+                                    {
+                                        if (true == string.IsNullOrWhiteSpace(foundProperty) && node.HasProperty(propertyAlias) && false == string.IsNullOrEmpty(node.GetValue<string>(propertyAlias)))
+                                        {
+                                            foundProperty = propertyAlias;
+                                        }
+                                    }
                                 }
                             }
                         }
                     }
 
+                    if (false == string.IsNullOrWhiteSpace(foundProperty))
+                    {
+                        startFolderNamePropertyAlias = foundProperty;
+                    }
                 }
             }
 
