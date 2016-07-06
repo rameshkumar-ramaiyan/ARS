@@ -51,8 +51,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                     output += GenerateContactLinks(siteNode);
                 }
             }
-
-            if (homeNode != null)
+            else if (homeNode != null)
             {
                 output += "<tr><td class=\"BodyTextBlack\">";
                 output += "If you would like to submit comments, questions or provide general feedback ";
