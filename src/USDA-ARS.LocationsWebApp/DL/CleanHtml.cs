@@ -76,7 +76,8 @@ namespace USDA_ARS.LocationsWebApp.DL
                 text = Regex.Replace(text, "\u2026", "...");
                 // dashes
                 text = Regex.Replace(text, "[\u2013\u2014]", "-");
-               
+                text = Regex.Replace(text, "Â·", ".");
+                text = Regex.Replace(text, "â€¢", ".");
             }
 
             return text;

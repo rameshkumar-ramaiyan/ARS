@@ -104,6 +104,7 @@ namespace USDA_ARS.LocationsWebApp.DL
                                         //legacyDocText = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(6).Trim(); // TODO: GET THE PAGE TEXT AND ADD IT HERE
                                         legacyDocText = StripHTML(legacyDocText);
                                         legacyDocText = StripHTMLAdditional(legacyDocText);
+                                        legacyDocText = CleanHtml.CleanUpHtml(legacyDocText);
                                     }
                                     string oldDocId = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(5).Trim();
 
