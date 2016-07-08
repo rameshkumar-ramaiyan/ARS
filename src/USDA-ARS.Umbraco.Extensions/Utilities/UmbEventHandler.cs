@@ -249,9 +249,9 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                             {
                                 Directory.CreateDirectory(fullPath + "\\software");
                             }
-                            if (false == Directory.Exists(fullPath + "\\photoCarousel"))
+                            if (false == Directory.Exists(fullPath + "\\images\\photoCarousel"))
                             {
-                                Directory.CreateDirectory(fullPath + "\\photoCarousel");
+                                Directory.CreateDirectory(fullPath + "\\images\\photoCarousel");
                             }
                         }
                     }

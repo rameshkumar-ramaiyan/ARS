@@ -195,6 +195,7 @@ namespace USDA_ARS.ImportNews
                                 }
 
                                 bodyText = bodyText.Replace("http://www.ars.usda.gov", "");
+                                bodyText = Regex.Replace(bodyText, "\"/is/", "\"/ARSUserFiles/oc/", RegexOptions.IgnoreCase);
                                 bodyText = bodyText.Replace("/pandp/people/people.htm?personid=", "/people-locations/person/?person-id=");
 
                                 MatchCollection m1 = Regex.Matches(bodyText, @"/main/site_main\.htm\?modecode=([\d\-]*)", RegexOptions.Singleline);
