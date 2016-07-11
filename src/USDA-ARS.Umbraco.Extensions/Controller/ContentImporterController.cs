@@ -456,7 +456,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                             IEnumerable<IContent> nodeList = _contentService.GetDescendants(rootNode.Id);
 
-                            modeCodeNodesList.AddRange(nodeList.Where(p => (p.ContentType.Alias == "Homepage" || p.ContentType.Alias == "Region" || p.ContentType.Alias == "City" || p.ContentType.Alias == "ResearchUnit" || p.ContentType.Alias == "NationalProgramGroup")
+                            modeCodeNodesList.AddRange(nodeList.Where(p => (p.ContentType.Alias == "Homepage" || p.ContentType.Alias == "Area" || p.ContentType.Alias == "City" || p.ContentType.Alias == "ResearchUnit" || p.ContentType.Alias == "NationalProgramGroup")
                                         && p.Properties.Any(s => s.Value != null && s.Alias == "modeCode" && false == string.IsNullOrEmpty(s.Value.ToString()))).ToList());
                         }
 
