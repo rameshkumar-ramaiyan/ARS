@@ -180,7 +180,7 @@ namespace USDA_ARS.ImportDocs
 
                         if (dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count > 0)
                         {
-                            AddLog(" - Found Doc: " + title);
+                            AddLog(" - Found Doc [ID: "+ docId + "]: " + title);
 
                             // CHECK IF THE DOC HAS MUTLIPLE PAGES
                             if (dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count > 1)
@@ -910,16 +910,7 @@ namespace USDA_ARS.ImportDocs
 
             if (false == string.IsNullOrEmpty(bodyText))
             {
-                HtmlCompressor htmlCompressor = new HtmlCompressor();
-                htmlCompressor.setRemoveMultiSpaces(true);
-                htmlCompressor.setRemoveIntertagSpaces(true);
-
-                bodyText = Regex.Replace(bodyText, @"https://www\.ars\.usda\.gov", "");
-                bodyText = Regex.Replace(bodyText, @"http://www\.ars\.usda\.gov", "");
-
-                bodyText = ReplaceSP2withARS(bodyText);
-
-                output = htmlCompressor.compress(bodyText);
+                bodyText = CleanHtml.CleanUpHtml(bodyText);
             }
 
             return output;
@@ -1109,20 +1100,6 @@ namespace USDA_ARS.ImportDocs
 
             return personList;
         }
-
-
-        static string ReplaceSP2withARS(string bodyText)
-        {
-            if (bodyText.ToLower().IndexOf("sp2userfiles/") >= 0)
-            {
-                bodyText = Regex.Replace(bodyText, "sp2UserFiles/person/", "ARSUserFiles/", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                bodyText = Regex.Replace(bodyText, "sp2UserFiles/place/", "ARSUserFiles/", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-                bodyText = Regex.Replace(bodyText, "\"/images/", "\"/ARSUserFiles/images/", RegexOptions.IgnoreCase | RegexOptions.Singleline);
-            }
-
-            return bodyText;
-        }
-
 
     }
 }
