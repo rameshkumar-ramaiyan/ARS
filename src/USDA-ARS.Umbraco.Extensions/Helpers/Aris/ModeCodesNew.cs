@@ -4,6 +4,7 @@ using System.Linq;
 using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
 using Umbraco.Core.Persistence;
 using Umbraco.Web;
@@ -39,56 +40,59 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
         {
             List<ModeCodeNew> output = null;
 
-            string cacheKey = "NodeListByOldModeCodes";
-            int cacheUpdateIntMinutes = 1440;
-
-            ObjectCache cache = MemoryCache.Default;
-
-            output = cache.Get(cacheKey) as List<ModeCodeNew>;
-
-            if (output == null)
+            try
             {
-                output = new List<ModeCodeNew>();
+                string cacheKey = "NodeListByOldModeCodes";
+                int cacheUpdateIntMinutes = 1440;
 
-                List<IPublishedContent> nodeList = new List<IPublishedContent>();
+                ObjectCache cache = MemoryCache.Default;
 
-                foreach (IPublishedContent root in UmbHelper.TypedContentAtRoot())
+                output = cache.Get(cacheKey) as List<ModeCodeNew>;
+
+                if (output == null)
                 {
-                    if (false == string.IsNullOrEmpty(root.GetPropertyValue<string>("oldModeCodes")))
-                    {
-                        List<string> oldCodeArray = root.GetPropertyValue<string>("oldModeCodes").Split(',').ToList();
+                    output = new List<ModeCodeNew>();
 
-                        if (oldCodeArray != null)
+                    List<IPublishedContent> nodeList = new List<IPublishedContent>();
+
+                    foreach (IPublishedContent root in UmbHelper.TypedContentAtRoot())
+                    {
+                        if (false == string.IsNullOrEmpty(root.GetPropertyValue<string>("oldModeCodes")))
                         {
-                            foreach (string oldCode in oldCodeArray)
+                            List<string> oldCodeArray = root.GetPropertyValue<string>("oldModeCodes").Split(',').ToList();
+
+                            if (oldCodeArray != null)
                             {
-                                output.Add(new ModeCodeNew() { ModecodeNew = root.GetPropertyValue<string>("modeCode").Replace("-", ""), ModecodeOld = oldCode.Replace("-", "") });
+                                foreach (string oldCode in oldCodeArray)
+                                {
+                                    output.Add(new ModeCodeNew() { ModecodeNew = root.GetPropertyValue<string>("modeCode").Replace("-", ""), ModecodeOld = oldCode.Replace("-", "") });
+                                }
                             }
                         }
-                    }
-                    else
-                    {
-                        List<IPublishedContent> nodeDescendantsList = root.Descendants().Where(n => false == string.IsNullOrEmpty(n.GetPropertyValue<string>("modeCode"))).ToList();
-
-                        if (nodeDescendantsList != null)
+                        else
                         {
-                            foreach (IPublishedContent node in nodeDescendantsList)
+                            List<IPublishedContent> nodeDescendantsList = root.Descendants().Where(n => false == string.IsNullOrEmpty(n.GetPropertyValue<string>("modeCode"))).ToList();
+
+                            if (nodeDescendantsList != null)
                             {
-                                if (false == string.IsNullOrWhiteSpace(node.GetPropertyValue<string>("oldModeCodes")))
+                                foreach (IPublishedContent node in nodeDescendantsList)
                                 {
-                                    List<string> oldCodeArray = node.GetPropertyValue<string>("oldModeCodes").Split(',').ToList();
-
-                                    if (oldCodeArray != null)
+                                    if (false == string.IsNullOrWhiteSpace(node.GetPropertyValue<string>("oldModeCodes")))
                                     {
-                                        foreach (string oldCode in oldCodeArray)
-                                        {
-                                            if (false == string.IsNullOrWhiteSpace(oldCode))
-                                            {
-                                                string newModeCode = node.GetPropertyValue<string>("modeCode");
+                                        List<string> oldCodeArray = node.GetPropertyValue<string>("oldModeCodes").Split(',').ToList();
 
-                                                if (false == string.IsNullOrWhiteSpace(newModeCode) && false == string.IsNullOrWhiteSpace(oldCode))
+                                        if (oldCodeArray != null)
+                                        {
+                                            foreach (string oldCode in oldCodeArray)
+                                            {
+                                                if (false == string.IsNullOrWhiteSpace(oldCode))
                                                 {
-                                                    output.Add(new ModeCodeNew() { ModecodeNew = newModeCode.Replace("-", ""), ModecodeOld = oldCode.Replace("-", "") });
+                                                    string newModeCode = node.GetPropertyValue<string>("modeCode");
+
+                                                    if (false == string.IsNullOrWhiteSpace(newModeCode) && false == string.IsNullOrWhiteSpace(oldCode))
+                                                    {
+                                                        output.Add(new ModeCodeNew() { ModecodeNew = newModeCode.Replace("-", ""), ModecodeOld = oldCode.Replace("-", "") });
+                                                    }
                                                 }
                                             }
                                         }
@@ -97,13 +101,17 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                             }
                         }
                     }
-                }
 
-                CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheUpdateIntMinutes) };
-                if (output != null)
-                {
-                    cache.Add(cacheKey, output, policy);
+                    CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheUpdateIntMinutes) };
+                    if (output != null)
+                    {
+                        cache.Add(cacheKey, output, policy);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                LogHelper.Error(typeof(ModeCodesNew), "GetAllNewModeCode Error", ex);
             }
 
             return output;
