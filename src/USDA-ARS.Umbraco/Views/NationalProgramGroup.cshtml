@@ -196,7 +196,7 @@
                                                             @foreach (var linkItem in relatedLinkList)
                                                             {
                                                                 <tr>
-                                                                    <td valign="top"><img src="/images/incme/bullet.gif" border="0" alt="item"></td>
+                                                                    <td valign="top"><img src="/ARSUserFiles/incme/images/bullet.gif" border="0" alt="item"></td>
                                                                     <td valign="top" align="left">
                                                                         <font face="arial,helvetica" size="-2">
                                                                             <a href="@(linkItem.Url)" target="@(linkItem.Target)">@linkItem.Name</a>
@@ -229,8 +229,8 @@
                                         foreach (IPublishedContent program in currentPage.Children)
                                         {
                                             <tr>
-                                                <td valign="top"><img src="/images/incme/bullet.gif" border="0" alt="item"></td>
-                                                <td valign="top" align="left" background="/incme/images/spacer.gif">
+                                                <td valign="top"><img src="/ARSUserFiles/incme/images/bullet.gif" border="0" alt="item"></td>
+                                                <td valign="top" align="left" background="/ARSUserFiles/incme/images/spacer.gif">
                                                     <a href="@(program.Url)" id="anch_54">@(program.Name)</a> (NP #@(program.GetPropertyValue<string>("npCode")))
                                                 </td>
                                             </tr>

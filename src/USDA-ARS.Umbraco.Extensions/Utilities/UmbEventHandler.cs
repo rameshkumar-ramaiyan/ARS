@@ -15,6 +15,7 @@ using Umbraco.Core.Services;
 using Umbraco.Web;
 using USDA_ARS.Umbraco.Extensions.Helpers;
 using USDA_ARS.Umbraco.Extensions.Helpers.Aris;
+using USDA_ARS.Umbraco.Extensions.Models;
 
 namespace USDA_ARS.Umbraco.Extensions.Utilities
 {
@@ -22,11 +23,16 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
     {
         private static readonly IContentService _contentService = ApplicationContext.Current.Services.ContentService;
 
+        private static bool updateModeCodes = false;
+        private static bool updateOldUrl = false;
+        private static bool updateSoftware = false;
 
         protected override void ApplicationStarted(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
         {
             ContentService.Created += PostProcessCreated;
-            ContentService.Saved += PostProcessSave;
+            ContentService.Saving += PostProcessSaving;
+            ContentService.Saved += PostProcessSaved;
+            ContentService.Published += PostProcessPublished;
             ContentService.Deleted += PostProcessDelete;
 
             UserService.SavedUser += UserServiceSavedUser;
@@ -83,55 +89,93 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
         }
 
 
-        private static void PostProcessSave(IContentService cs, SaveEventArgs<IContent> e)
+        private void PostProcessSaving(IContentService sender, SaveEventArgs<IContent> e)
         {
             foreach (var node in e.SavedEntities)
             {
-                Nodes.GetNodesListOfModeCodes(true);
-
-                // SOFTWARE
-                if (node.ContentType.Alias == "Homepage" || node.ContentType.Alias == "Area" || node.ContentType.Alias == "ResearchUnit")
+                // UPDATE MODE CODES
+                updateModeCodes = false;
+                if (e.SavedEntities.Count() == 1 && node.HasProperty("modeCode"))
                 {
-                    ArchetypeModel software = node.GetValue<ArchetypeModel>("software");
-
-                    string archetypeStr = node.GetValue<string>("software");
-
-                    if (software == null && false == string.IsNullOrEmpty(archetypeStr))
+                    if (node.IsPropertyDirty("modeCode"))
                     {
-                        software = JsonConvert.DeserializeObject<ArchetypeModel>(archetypeStr);
-                    }
-
-                    bool updateSoftware = false;
-
-                    if (software != null)
-                    {
-                        foreach (ArchetypeFieldsetModel fieldsetModel in software.Fieldsets)
-                        {
-                            string softwareId = fieldsetModel.GetValue<string>("softwareID");
-
-                            if (true == string.IsNullOrEmpty(softwareId))
-                            {
-                                updateSoftware = true;
-
-                                int softwareIdNext = Software.GetLastSoftwareId() + 1;
-
-                                var newSoftwareID = fieldsetModel.Properties.FirstOrDefault(x => x.Alias == "softwareID");
-
-                                if (newSoftwareID != null)
-                                {
-                                    newSoftwareID.Value = softwareIdNext;
-                                }
-                            }
-                        }
-
-                        if (true == updateSoftware)
-                        {
-                            node.SetValue("software", JsonConvert.SerializeObject(software));
-                            _contentService.SaveAndPublishWithStatus(node);
-                        }
+                        updateModeCodes = true;
                     }
                 }
 
+
+                // UPDATE OLD URLS
+                updateOldUrl = false;
+                if (e.SavedEntities.Count() == 1 && node.HasProperty("oldUrl"))
+                {
+                    if (node.IsPropertyDirty("oldUrl"))
+                    {
+                        updateOldUrl = true;
+                    }
+                }
+
+
+                updateSoftware = false;
+                if (e.SavedEntities.Count() == 1 && node.HasProperty("software"))
+                {
+                    if (node.IsPropertyDirty("software"))
+                    {
+                        updateSoftware = true;
+                    }
+                }
+            }
+        }
+
+
+        private static void PostProcessSaved(IContentService cs, SaveEventArgs<IContent> e)
+        {
+            foreach (var node in e.SavedEntities)
+            {
+                // UPDATE SOFTWARE
+                if (true == updateSoftware)
+                {
+                    if (node.ContentType.Alias == "Homepage" || node.ContentType.Alias == "Area" || node.ContentType.Alias == "ResearchUnit")
+                    {
+                        ArchetypeModel software = node.GetValue<ArchetypeModel>("software");
+
+                        string archetypeStr = node.GetValue<string>("software");
+
+                        if (software == null && false == string.IsNullOrEmpty(archetypeStr))
+                        {
+                            software = JsonConvert.DeserializeObject<ArchetypeModel>(archetypeStr);
+                        }
+
+                        bool updateSoftware = false;
+
+                        if (software != null)
+                        {
+                            foreach (ArchetypeFieldsetModel fieldsetModel in software.Fieldsets)
+                            {
+                                string softwareId = fieldsetModel.GetValue<string>("softwareID");
+
+                                if (true == string.IsNullOrEmpty(softwareId))
+                                {
+                                    updateSoftware = true;
+
+                                    int softwareIdNext = Software.GetLastSoftwareId() + 1;
+
+                                    var newSoftwareID = fieldsetModel.Properties.FirstOrDefault(x => x.Alias == "softwareID");
+
+                                    if (newSoftwareID != null)
+                                    {
+                                        newSoftwareID.Value = softwareIdNext;
+                                    }
+                                }
+                            }
+
+                            if (true == updateSoftware)
+                            {
+                                node.SetValue("software", JsonConvert.SerializeObject(software));
+                                _contentService.SaveAndPublishWithStatus(node);
+                            }
+                        }
+                    }
+                }
 
                 /////////////
                 // When a Doc Folder or Site Standard Webpage is Created...
@@ -189,7 +233,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 
 
                 // SUB FOLDERS FOR REGIONS AND RESEARCH UNITS
-                if ((node.ContentType.Alias == "Area" || node.ContentType.Alias == "ResearchUnit"))
+                if (node.IsNewEntity() == true && (node.ContentType.Alias == "Area" || node.ContentType.Alias == "ResearchUnit"))
                 {
                     UmbracoHelper umbHelper = new UmbracoHelper(UmbracoContext.Current);
                     int siteFolderTemplateNodeId = Convert.ToInt32(ConfigurationManager.AppSettings.Get("Usda:SiteFoldersTemplateNodeId")); //
@@ -202,9 +246,11 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 
                         if (siteFolderSubNodeList != null && siteFolderSubNodeList.Any())
                         {
+                            List<IContent> nodeDescendantsList = node.Descendants().ToList();
+
                             foreach (IPublishedContent subNode in siteFolderSubNodeList)
                             {
-                                IContent testSubNode = node.Descendants().FirstOrDefault(n => n.Name == subNode.Name);
+                                IContent testSubNode = nodeDescendantsList.FirstOrDefault(n => n.Name == subNode.Name);
 
                                 if (testSubNode == null)
                                 {
@@ -259,7 +305,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                     }
 
                 }
-                else if (node.ContentType.Alias == "NationalProgram" && !cs.HasChildren(node.Id))
+                if (node.ContentType.Alias == "NationalProgram" && !cs.HasChildren(node.Id))
                 {
                     var childNode = _contentService.CreateContent("Docs", node, "NationalProgramFolderContainer");
 
@@ -267,6 +313,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                 }
                 else if (node.ContentType.Alias == "NewsArticle")
                 {
+
                     int nodeId = node.Id;
 
                     string bodyText = node.GetValue<string>("bodyText");
@@ -279,6 +326,23 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                     {
                         NewsInterLinks.GenerateInterLinks(node, linkItemList);
                     }
+                }
+            }
+        }
+
+
+        private void PostProcessPublished(global::Umbraco.Core.Publishing.IPublishingStrategy sender, PublishEventArgs<IContent> e)
+        {
+            foreach (var node in e.PublishedEntities)
+            {
+                if (true == updateModeCodes)
+                {
+                    Nodes.GetNodesListOfModeCodes(false);
+                }
+
+                if (true == updateOldUrl)
+                {
+                    Nodes.NodesWithRedirectsList(false);
                 }
             }
         }

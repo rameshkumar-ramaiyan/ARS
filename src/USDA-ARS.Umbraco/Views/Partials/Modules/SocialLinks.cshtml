@@ -18,11 +18,15 @@
         }
         else
         {
-            Link navLink = socialLink.GetValue<MultiUrls>("socialLink").FirstOrDefault();
-
-            <a href="@navLink.Url">
-                <img src="@socialLink.GetValue("socialIcon")" title="@socialLink.GetValue("socialAltText")" alt="@socialLink.GetValue("socialAltText")" />
-            </a>
+            if (socialLink ! = null)
+            {
+                Link navLink = socialLink.GetValue<MultiUrls>("socialLink").FirstOrDefault();
+            
+                if (navLink != null)
+                <a href="@navLink.Url">
+                    <img src="@socialLink.GetValue("socialIcon")" title="@socialLink.GetValue("socialAltText")" alt="@socialLink.GetValue("socialAltText")" />
+                </a>
+            }
         }
     }
 }

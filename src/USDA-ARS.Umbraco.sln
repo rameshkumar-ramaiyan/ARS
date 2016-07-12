@@ -50,6 +50,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA-ARS.ImportNP", "USDA-A
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ARS.ActiveDirectoryMembership", "ARS.ActiveDirectoryMembership\ARS.ActiveDirectoryMembership.csproj", "{F8933634-F510-4A77-8FF6-009BC17439A1}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "USDA_ARS.FolderUpdateContextMenu", "USDA_ARS.FolderUpdateContextMenu\USDA_ARS.FolderUpdateContextMenu.csproj", "{A7828CCF-ACAD-412B-8C3B-AF053E14BDC2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -226,6 +228,14 @@ Global
 		{F8933634-F510-4A77-8FF6-009BC17439A1}.Release|Any CPU.Build.0 = Release|Any CPU
 		{F8933634-F510-4A77-8FF6-009BC17439A1}.Staging|Any CPU.ActiveCfg = Staging|Any CPU
 		{F8933634-F510-4A77-8FF6-009BC17439A1}.Staging|Any CPU.Build.0 = Staging|Any CPU
+		{A7828CCF-ACAD-412B-8C3B-AF053E14BDC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A7828CCF-ACAD-412B-8C3B-AF053E14BDC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A7828CCF-ACAD-412B-8C3B-AF053E14BDC2}.NuGet|Any CPU.ActiveCfg = Release|Any CPU
+		{A7828CCF-ACAD-412B-8C3B-AF053E14BDC2}.NuGet|Any CPU.Build.0 = Release|Any CPU
+		{A7828CCF-ACAD-412B-8C3B-AF053E14BDC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A7828CCF-ACAD-412B-8C3B-AF053E14BDC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A7828CCF-ACAD-412B-8C3B-AF053E14BDC2}.Staging|Any CPU.ActiveCfg = Release|Any CPU
+		{A7828CCF-ACAD-412B-8C3B-AF053E14BDC2}.Staging|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

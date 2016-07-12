@@ -47,7 +47,10 @@
                             {
                                 Link navLink = topic.GetValue<MultiUrls>("link").FirstOrDefault();
 
-                                navLinkUrl = navLink.Url;
+                                if (navLink != null)
+                                {
+                                    navLinkUrl = navLink.Url;
+                                }
                             }
                             <li>
                                 <a href="@navLinkUrl">@Html.Raw(topic.GetValue("label"))</a>

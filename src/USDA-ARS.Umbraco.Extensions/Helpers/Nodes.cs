@@ -219,14 +219,17 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
         }
 
 
-        public static List<RedirectItem> NodesWithRedirectsList()
+        public static List<RedirectItem> NodesWithRedirectsList(bool useCache = true)
         {
             List<RedirectItem> redirectList = null;
 
             string cacheKey = "RedirectList";
             ObjectCache cache = MemoryCache.Default;
 
-            redirectList = cache.Get(cacheKey) as List<RedirectItem>;
+            if (true == useCache)
+            {
+                redirectList = cache.Get(cacheKey) as List<RedirectItem>;
+            }
 
             if (redirectList == null)
             {
@@ -244,7 +247,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                             {
                                 foreach (string oldUrl in oldUrlArray)
                                 {
-                                    redirectList.Add(new RedirectItem { OldUrl = oldUrl.ToLower(), UmbracoId = root.Id });
+                                    redirectList.Add(new RedirectItem { OldUrl = oldUrl.Trim().ToLower(), UmbracoId = root.Id });
                                 }
                             }
                         }
@@ -257,7 +260,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                             {
                                 foreach (string oldUrl in oldUrlArray)
                                 {
-                                    redirectList.Add(new RedirectItem { OldUrl = oldUrl.ToLower(), UmbracoId = subNode.Id });
+                                    redirectList.Add(new RedirectItem { OldUrl = oldUrl.Trim().ToLower(), UmbracoId = subNode.Id });
                                 }
                             }
                         }
@@ -315,7 +318,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
                 if (false == string.IsNullOrEmpty(contentNodeId))
                 {
-                    node = UmbHelper.Content(Convert.ToInt32(contentNodeId));
+                    node = UmbHelper.TypedContent(Convert.ToInt32(contentNodeId));
                 }
             }
 
@@ -324,7 +327,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
         }
 
 
-        public static List<IPublishedContent> GetNodesListOfModeCodes(bool forceCacheUpdate = false)
+        public static List<IPublishedContent> GetNodesListOfModeCodes(bool useCache = true)
         {
             List<IPublishedContent> nodeList = null;
             string cacheKey = "NodeListByModeCodes";
@@ -332,9 +335,12 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
             ObjectCache cache = MemoryCache.Default;
 
-            nodeList = cache.Get(cacheKey) as List<IPublishedContent>;
+            if (true == useCache)
+            {
+                nodeList = cache.Get(cacheKey) as List<IPublishedContent>;
+            }
 
-            if (true == forceCacheUpdate || nodeList == null)
+            if (nodeList == null)
             {
                 nodeList = new List<IPublishedContent>();
 
