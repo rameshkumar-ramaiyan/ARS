@@ -87,6 +87,8 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
         {
             foreach (var node in e.SavedEntities)
             {
+                Nodes.GetNodesListOfModeCodes(true);
+
                 // SOFTWARE
                 if (node.ContentType.Alias == "Homepage" || node.ContentType.Alias == "Area" || node.ContentType.Alias == "ResearchUnit")
                 {

@@ -84,7 +84,7 @@ namespace USDA_ARS.Umbraco.Controllers
                     model.ModeCode = "00-00-00-00";
                 }
 
-                IPublishedContent sitePage = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(model.ModeCode);
+                IPublishedContent sitePage = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(model.ModeCode, false);
 
                 ArchetypeFieldsetModel softwareItem = Software.GetSoftwareById(model.SoftwareId);
 

@@ -11,7 +11,7 @@
     {
         modeCode = Request.QueryString.Get("modeCode");
 
-        currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode);
+        currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode, false);
     }
 
     List<PeopleInfo> peopleFullList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByNationalProgram(modeCode);

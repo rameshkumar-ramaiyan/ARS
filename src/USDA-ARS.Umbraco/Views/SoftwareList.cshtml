@@ -20,7 +20,7 @@
 
     if (false == string.IsNullOrEmpty(modeCode))
     {
-        IPublishedContent sitePage = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode);
+        IPublishedContent sitePage = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode, false);
 
         if (sitePage != null)
         {

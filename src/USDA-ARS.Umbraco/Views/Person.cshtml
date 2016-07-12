@@ -99,7 +99,7 @@ remote.location.href = u;
                                         modeCode = USDA_ARS.Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(peopleInfo.ModeCodeConc);
                                     }
 
-                                    IPublishedContent node = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode);
+                                    IPublishedContent node = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode, false);
 
                                     if (node != null)
                                     {

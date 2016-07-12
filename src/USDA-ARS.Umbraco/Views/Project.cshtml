@@ -39,7 +39,7 @@
     {
         string locationModeCode = projectInfo.ModeCode1 + projectInfo.ModeCode2 + projectInfo.ModeCode3 + projectInfo.ModeCode4;
 
-        projectLocation = Nodes.GetNodeByModeCode(locationModeCode);
+        projectLocation = Nodes.GetNodeByModeCode(locationModeCode, false);
     }
 
     if (false == string.IsNullOrEmpty(fy))

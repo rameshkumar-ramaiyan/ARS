@@ -109,7 +109,7 @@
     {
         if (false == string.IsNullOrWhiteSpace(modeCode))
         {
-            IPublishedContent siteNode = Nodes.GetNodeByModeCode(modeCode);
+            IPublishedContent siteNode = Nodes.GetNodeByModeCode(modeCode, false);
 
             if (siteNode != null)
             {

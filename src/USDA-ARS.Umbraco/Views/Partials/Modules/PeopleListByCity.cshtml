@@ -18,9 +18,9 @@
 
         modeCodeCity = modeCodeArray[0] + "-" + modeCodeArray[1] + "-00-00";
 
-        currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCodeCity);
+        currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCodeCity, false);
     }
-    
+
 
     List<PeopleByCity> peopleFullList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByCity(modeCodeCity);
 
@@ -118,7 +118,7 @@
         {
             foreach (PeopleByCity siteLabel in siteLabelList)
             {
-                IPublishedContent siteNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(siteLabel.ModeCode);
+                IPublishedContent siteNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(siteLabel.ModeCode, false);
 
                 if (siteNode != null)
                 {

@@ -61,7 +61,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                             }
                             else if (linkItem.LinkType == "place")
                             {
-                                IPublishedContent nodePlace = Nodes.GetNodeByModeCode(linkItem.LinkId.ToString());
+                                IPublishedContent nodePlace = Nodes.GetNodeByModeCode(linkItem.LinkId.ToString(), false);
 
                                 if (nodePlace != null)
                                 {

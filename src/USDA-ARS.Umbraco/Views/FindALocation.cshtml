@@ -192,7 +192,7 @@
                 {
                     string url = "javascript:alert('Location site not found.')";
 
-                    IPublishedContent locationNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(location.ModeCode);
+                    IPublishedContent locationNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(location.ModeCode, false);
 
                     if (locationNode != null)
                     {
@@ -249,7 +249,7 @@
                 {
                     string url = "javascript:alert('Location site not found.')";
 
-                    IPublishedContent locationNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(location.ModeCode);
+                    IPublishedContent locationNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(location.ModeCode, false);
 
                     if (locationNode != null)
                     {

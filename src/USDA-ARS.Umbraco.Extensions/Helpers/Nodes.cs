@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Caching;
 using System.Text;
+using Umbraco.Core;
 using Umbraco.Core.Models;
 using Umbraco.Web;
 using USDA_ARS.Umbraco.Extensions.Models;
 using USDA_ARS.Umbraco.Extensions.Helpers;
+using Umbraco.Core.Persistence;
 
 namespace USDA_ARS.Umbraco.Extensions.Helpers
 {
@@ -290,20 +292,39 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
         }
 
 
-        public static IPublishedContent GetNodeByModeCode(string modeCode)
+        public static IPublishedContent GetNodeByModeCode(string modeCode, bool useCache = true)
         {
             IPublishedContent node = null;
             modeCode = Helpers.ModeCodes.ModeCodeAddDashes(modeCode);
 
-            List<IPublishedContent> nodeList = GetNodesListOfModeCodes();
+            if (true == useCache)
+            {
+                List<IPublishedContent> nodeList = GetNodesListOfModeCodes();
 
-            node = nodeList.Where(p => p.GetPropertyValue<string>("modeCode") == modeCode).FirstOrDefault();
+                node = nodeList.Where(p => p.GetPropertyValue<string>("modeCode") == modeCode).FirstOrDefault();
+            }
+            else
+            {
+                var db = new Database("umbracoDbDSN");
+
+                string sql = @"SELECT contentNodeId FROM cmsPropertyData WHERE propertytypeid IN (SELECT id FROM cmsPropertyType WHERE Alias = 'modeCode')
+                            AND NOT dataNvarchar IS NULL AND dataNvarchar = @modeCode AND versionId IN
+                            (SELECT versionId FROM cmsDocument WHERE published = 1)";
+
+                string contentNodeId = db.Query<string>(sql, new { modeCode = modeCode }).FirstOrDefault();
+
+                if (false == string.IsNullOrEmpty(contentNodeId))
+                {
+                    node = UmbHelper.Content(Convert.ToInt32(contentNodeId));
+                }
+            }
+
 
             return node;
         }
 
 
-        public static List<IPublishedContent> GetNodesListOfModeCodes()
+        public static List<IPublishedContent> GetNodesListOfModeCodes(bool forceCacheUpdate = false)
         {
             List<IPublishedContent> nodeList = null;
             string cacheKey = "NodeListByModeCodes";
@@ -313,7 +334,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
             nodeList = cache.Get(cacheKey) as List<IPublishedContent>;
 
-            if (nodeList == null)
+            if (true == forceCacheUpdate || nodeList == null)
             {
                 nodeList = new List<IPublishedContent>();
 

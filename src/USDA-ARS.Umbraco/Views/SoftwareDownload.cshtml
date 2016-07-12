@@ -28,7 +28,7 @@
         downloadFile = true;
     }
 
-    IPublishedContent sitePage = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode);
+    IPublishedContent sitePage = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode, false);
 
     ArchetypeFieldsetModel softwareItem = Software.GetSoftwareById(softwareId);
     ArchetypeModel softwareDownloadFiles = null;

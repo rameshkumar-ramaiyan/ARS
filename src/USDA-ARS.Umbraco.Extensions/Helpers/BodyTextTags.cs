@@ -38,7 +38,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
             if (false == string.IsNullOrEmpty(modeCode))
             {
-                IPublishedContent siteNode = Nodes.GetNodeByModeCode(modeCode);
+                IPublishedContent siteNode = Nodes.GetNodeByModeCode(modeCode, false);
 
                 if (siteNode != null)
                 {

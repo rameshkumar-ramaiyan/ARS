@@ -61,7 +61,7 @@
             {
                 foreach (ProjectInfo locationInfo in projectLocationList)
                 {
-                    IPublishedContent locationNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(locationInfo.ModeCode);
+                    IPublishedContent locationNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(locationInfo.ModeCode, false);
 
                     if (locationNode != null)
                     {
