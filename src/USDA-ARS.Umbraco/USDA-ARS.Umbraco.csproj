@@ -3168,10 +3168,6 @@
       <Project>{f8933634-f510-4a77-8ff6-009bc17439a1}</Project>
       <Name>ARS.ActiveDirectoryMembership</Name>
     </ProjectReference>
-    <ProjectReference Include="..\USDA-ARS.Core\USDA-ARS.Core.csproj">
-      <Project>{4679653f-bd09-4ba3-85b6-f3865569277a}</Project>
-      <Name>USDA-ARS.Core</Name>
-    </ProjectReference>
     <ProjectReference Include="..\USDA-ARS.Umbraco.Extensions\USDA-ARS.Umbraco.Extensions.csproj">
       <Project>{94328c72-101b-4a7b-aefb-b0c60cae0180}</Project>
       <Name>USDA-ARS.Umbraco.Extensions</Name>

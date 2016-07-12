@@ -116,6 +116,13 @@ namespace USDA_ARS.ImportLocations
         }
 
 
+        static void ImportArsHomeInfo()
+        {
+            int umbracoHomeId = 1075;
+
+
+        }
+
 
         static List<Area> AddAllAreas()
         {
