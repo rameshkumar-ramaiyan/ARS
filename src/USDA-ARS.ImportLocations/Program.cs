@@ -119,6 +119,78 @@ namespace USDA_ARS.ImportLocations
         static void ImportArsHomeInfo()
         {
             int umbracoHomeId = 1075;
+            ApiRequest request = new ApiRequest();
+            ApiContent content = new ApiContent();
+
+            request.ApiKey = API_KEY;
+
+            AddLog("Updating ARS Home...");
+
+            content.Id = umbracoHomeId; 
+            content.Name = "ARS Home";
+            content.ParentId = MAIN_LOCATION_NODE_ID;
+            content.DocType = "Homepage";
+            content.Template = "Homepage";
+
+            List<ApiProperty> properties = new List<ApiProperty>();
+
+
+            properties.Add(new ApiProperty("modeCode", "00-00-00-00")); // Region mode code                                                                                            
+            properties.Add(new ApiProperty("oldUrl", "/main/main.htm")); // current URL               
+            properties.Add(new ApiProperty("oldId", "")); // sitepublisher ID (So we can reference it later if needed).
+
+            // ADD CAROUSEL
+            ApiProperty carouselApiProperty = CreateCarouselSlides("00-00-00-00");
+            if (carouselApiProperty != null)
+            {
+                properties.Add(carouselApiProperty);
+            }
+
+            // ADD SOFTWARE
+            ApiProperty softwareApiProperty = CreateSoftwareList("00-00-00-00");
+            if (softwareApiProperty != null)
+            {
+                properties.Add(softwareApiProperty);
+            }
+
+
+            content.Properties = properties;
+            content.Save = 2; // 0=Unpublish (update only), 1=Saved, 2=Save And Publish
+
+            request.ContentList = new List<ApiContent>();
+            request.ContentList.Add(content);
+
+            AddLog("Saving area in Umbraco: '" + content.Name + "'...");
+
+            ApiResponse responseBack = ApiCalls.PostData(request, "Post");
+
+            if (responseBack != null)
+            {
+                if (responseBack.ContentList != null)
+                {
+                    foreach (ApiContent responseContent in responseBack.ContentList)
+                    {
+                        AddLog(" - Save success: " + responseContent.Success);
+
+                        if (true == responseContent.Success)
+                        {
+                            AddLog(" - Content Umbraco Id: " + responseContent.Id);
+                            AddLog(" - Node Name: " + responseContent.Name);
+                        }
+                        else
+                        {
+                            AddLog(" - !ERROR! Fail Message: " + responseContent.Message);
+                        }
+
+                        AddLog("");
+                    }
+                }
+            }
+
+            AddLog("");
+
+
+
 
 
         }
