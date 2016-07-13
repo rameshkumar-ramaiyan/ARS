@@ -360,15 +360,6 @@
     <Content Include="App_Plugins\Archetype\views\archetype.config.stylescript.dialog.html" />
     <Content Include="App_Plugins\Archetype\views\archetype.default.html" />
     <Content Include="App_Plugins\Archetype\views\archetype.html" />
-    <Content Include="App_Plugins\DecendantsAudit\controllers\decendantsaudit-config-controller.js" />
-    <Content Include="App_Plugins\DecendantsAudit\controllers\decendantsaudit-property-controller.js" />
-    <Content Include="App_Plugins\DecendantsAudit\decendantsaudit-resource.js" />
-    <Content Include="App_Plugins\DecendantsAudit\decendantsaudit.css" />
-    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery-treetable-theme-default.css" />
-    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery-treetable.css" />
-    <Content Include="App_Plugins\DecendantsAudit\vendors\jquery-treetable.js" />
-    <Content Include="App_Plugins\DecendantsAudit\views\decendantsaudit-config.html" />
-    <Content Include="App_Plugins\DecendantsAudit\views\decendantsaudit-property.html" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-controller.js" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-delete-dialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\filesystem-picker-dialog.html" />
@@ -2828,7 +2819,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Plugins\PropertyAccess\PropertyAccessPropertyEditor.cs" />
-    <Compile Include="App_Plugins\SiteDescendantsAudit\SiteDescendantsAuditPropertyEditor.cs" />
     <Compile Include="App_Plugins\UsdaDataImporter\upload.file.aspx.cs">
       <DependentUpon>upload.file.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
