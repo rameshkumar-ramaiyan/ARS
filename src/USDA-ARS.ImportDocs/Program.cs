@@ -910,7 +910,7 @@ namespace USDA_ARS.ImportDocs
 
             if (false == string.IsNullOrEmpty(bodyText))
             {
-                bodyText = CleanHtml.CleanUpHtml(bodyText);
+                output = CleanHtml.CleanUpHtml(bodyText);
             }
 
             return output;

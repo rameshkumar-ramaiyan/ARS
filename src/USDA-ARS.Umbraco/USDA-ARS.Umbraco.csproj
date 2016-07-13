@@ -3061,6 +3061,7 @@
     <Content Include="App_Plugins\UsdaNewsProductPicker\package.manifest" />
     <Content Include="App_Plugins\PropertyAccess\package.manifest" />
     <Content Include="App_Plugins\SiteDescendantsAudit\package.manifest" />
+    <Content Include="Config\PropertyAccess.config" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
     <Content Include="Views\StandardWebpage.cshtml" />
