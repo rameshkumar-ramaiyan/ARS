@@ -46,153 +46,161 @@ namespace USDA_ARS.ImportPeopleSites
             Logs.AddLog(ref LOG_FILE_TEXT, "");
             Logs.AddLog(ref LOG_FILE_TEXT, "");
 
-            TIME_STARTED = DateTime.Now;
-
-            Logs.AddLog(ref LOG_FILE_TEXT, "Getting Mode Codes From Umbraco...");
-            ModeCodes.GenerateModeCodeList(ref MODE_CODE_LIST, ref LOG_FILE_TEXT, forceCacheUpdate);
-            Logs.AddLog(ref LOG_FILE_TEXT, "Done. Count: " + MODE_CODE_LIST.Count);
-
-            Logs.AddLog(ref LOG_FILE_TEXT, "");
-
-            Logs.AddLog(ref LOG_FILE_TEXT, "Getting People Folders From Umbraco...");
-            PeopleFolders.GenerateModeCodeFolderList(ref PEOPLE_FOLDER_LIST, ref LOG_FILE_TEXT, MODE_CODE_LIST, forceCacheUpdate);
-            Logs.AddLog(ref LOG_FILE_TEXT, "Done. Count: " + PEOPLE_FOLDER_LIST.Count);
-
-            Logs.AddLog(ref LOG_FILE_TEXT, "");
-
-
-            if (PEOPLE_FOLDER_LIST != null && PEOPLE_FOLDER_LIST.Any())
+            try
             {
-                // LOOP THROUGH VALID MODE CODES
-                foreach (PeopleFolderLookup peopleFolder in PEOPLE_FOLDER_LIST)
+
+                TIME_STARTED = DateTime.Now;
+
+                Logs.AddLog(ref LOG_FILE_TEXT, "Getting Mode Codes From Umbraco...");
+                ModeCodes.GenerateModeCodeList(ref MODE_CODE_LIST, ref LOG_FILE_TEXT, forceCacheUpdate);
+                Logs.AddLog(ref LOG_FILE_TEXT, "Done. Count: " + MODE_CODE_LIST.Count);
+
+                Logs.AddLog(ref LOG_FILE_TEXT, "");
+
+                Logs.AddLog(ref LOG_FILE_TEXT, "Getting People Folders From Umbraco...");
+                PeopleFolders.GenerateModeCodeFolderList(ref PEOPLE_FOLDER_LIST, ref LOG_FILE_TEXT, MODE_CODE_LIST, forceCacheUpdate);
+                Logs.AddLog(ref LOG_FILE_TEXT, "Done. Count: " + PEOPLE_FOLDER_LIST.Count);
+
+                Logs.AddLog(ref LOG_FILE_TEXT, "");
+
+
+                if (PEOPLE_FOLDER_LIST != null && PEOPLE_FOLDER_LIST.Any())
                 {
-                    string modeCode = peopleFolder.ModeCode;
-
-                    if (peopleFolder != null)
+                    // LOOP THROUGH VALID MODE CODES
+                    foreach (PeopleFolderLookup peopleFolder in PEOPLE_FOLDER_LIST)
                     {
-                        Logs.AddLog(ref LOG_FILE_TEXT, "Mode Code: " + modeCode);
+                        string modeCode = peopleFolder.ModeCode;
 
-                        int peopleFolderUmbracoId = peopleFolder.PeopleFolderUmbracoId;
-
-                        System.Data.DataTable legacyPeopleBeforeInsertion = new System.Data.DataTable();
-                        legacyPeopleBeforeInsertion = GetAllPersonsBasedOnModeCode(modeCode);
-                        System.Data.DataTable newPeopleAfterInsertion = new System.Data.DataTable();
-                        newPeopleAfterInsertion.Columns.Add("ModeCode");
-                        newPeopleAfterInsertion.Columns.Add("PersonId");
-                        newPeopleAfterInsertion.Columns.Add("PersonName");
-                        newPeopleAfterInsertion.Columns.Add("DocPageContent");
-                        System.Data.DataTable legacyDocsBeforeInsertion = new System.Data.DataTable();
-
-                        bool peopleSiteAdded = false;
-
-                        // ADD PEOPLE SITES HERE: (LOOP)
-                        for (int i = 0; i < legacyPeopleBeforeInsertion.Rows.Count; i++)
+                        if (peopleFolder != null)
                         {
-                            string completeModeCode = legacyPeopleBeforeInsertion.Rows[i].Field<string>(0);
-                            int personId = 0;
-                            string personName = "";
-                            string personSiteHtml = "";
-                            if (!string.IsNullOrEmpty(legacyPeopleBeforeInsertion.Rows[i].Field<string>(1)))
+                            Logs.AddLog(ref LOG_FILE_TEXT, "Mode Code: " + modeCode);
+
+                            int peopleFolderUmbracoId = peopleFolder.PeopleFolderUmbracoId;
+
+                            System.Data.DataTable legacyPeopleBeforeInsertion = new System.Data.DataTable();
+                            legacyPeopleBeforeInsertion = GetAllPersonsBasedOnModeCode(modeCode);
+                            System.Data.DataTable newPeopleAfterInsertion = new System.Data.DataTable();
+                            newPeopleAfterInsertion.Columns.Add("ModeCode");
+                            newPeopleAfterInsertion.Columns.Add("PersonId");
+                            newPeopleAfterInsertion.Columns.Add("PersonName");
+                            newPeopleAfterInsertion.Columns.Add("DocPageContent");
+                            System.Data.DataTable legacyDocsBeforeInsertion = new System.Data.DataTable();
+
+                            bool peopleSiteAdded = false;
+
+                            // ADD PEOPLE SITES HERE: (LOOP)
+                            for (int i = 0; i < legacyPeopleBeforeInsertion.Rows.Count; i++)
                             {
-                                personId = int.Parse(legacyPeopleBeforeInsertion.Rows[i].Field<string>(1).Trim());
-                                personName = legacyPeopleBeforeInsertion.Rows[i].Field<string>(2);
-                            }
-                            //call sp to get doc ids and documents
-                            legacyDocsBeforeInsertion = GetAllDocumentIdsBasedOnPersonId(personId.ToString());
-                            if (legacyDocsBeforeInsertion != null)
-                            {
-                                for (int j = 0; j < legacyDocsBeforeInsertion.Rows.Count; j++)
+                                string completeModeCode = legacyPeopleBeforeInsertion.Rows[i].Field<string>(0);
+                                int personId = 0;
+                                string personName = "";
+                                string personSiteHtml = "";
+                                if (!string.IsNullOrEmpty(legacyPeopleBeforeInsertion.Rows[i].Field<string>(1)))
                                 {
-                                    personSiteHtml = legacyDocsBeforeInsertion.Rows[j].Field<string>(0);
-                                    //personSiteHtml = replaceSP2withARS(personSiteHtml);
-                                    personSiteHtml = CleanHtml.CleanUpHtml(personSiteHtml);
+                                    personId = int.Parse(legacyPeopleBeforeInsertion.Rows[i].Field<string>(1).Trim());
+                                    personName = legacyPeopleBeforeInsertion.Rows[i].Field<string>(2);
+                                }
+                                //call sp to get doc ids and documents
+                                legacyDocsBeforeInsertion = GetAllDocumentIdsBasedOnPersonId(personId.ToString());
+                                if (legacyDocsBeforeInsertion != null)
+                                {
+                                    for (int j = 0; j < legacyDocsBeforeInsertion.Rows.Count; j++)
+                                    {
+                                        personSiteHtml = legacyDocsBeforeInsertion.Rows[j].Field<string>(0);
+                                        //personSiteHtml = replaceSP2withARS(personSiteHtml);
+                                        personSiteHtml = CleanHtml.CleanUpHtml(personSiteHtml);
+                                    }
+                                }
+
+                                // Make sure the HTML is not empty
+                                if (false == string.IsNullOrWhiteSpace(personSiteHtml))
+                                {
+                                    Logs.AddLog(ref LOG_FILE_TEXT, " - Adding Person: " + personName);
+                                    ApiResponse apiResponse = AddUmbracoPersonPage(peopleFolderUmbracoId, personId, personName, personSiteHtml);
+
+                                    if (apiResponse != null && apiResponse.Success)
+                                    {
+                                        Logs.AddLog(ref LOG_FILE_TEXT, " - Added Person (" + personId + "): " + personName);
+
+                                        peopleSiteAdded = true;
+                                    }
+                                    else
+                                    {
+                                        Logs.AddLog(ref LOG_FILE_TEXT, " - !ERROR! Person not added (" + personId + "): " + personName + " | " + apiResponse.Message);
+                                    }
                                 }
                             }
 
-                            // Make sure the HTML is not empty
-                            if (false == string.IsNullOrWhiteSpace(personSiteHtml))
+                            if (true == peopleSiteAdded)
                             {
-                                Logs.AddLog(ref LOG_FILE_TEXT, " - Adding Person: " + personName);
-                                ApiResponse apiResponse = AddUmbracoPersonPage(peopleFolderUmbracoId, personId, personName, personSiteHtml);
+                                Logs.AddLog(ref LOG_FILE_TEXT, "Publishing People Sites for '" + peopleFolder.ModeCode + "'...");
 
-                                if (apiResponse != null && apiResponse.Success)
+                                ApiRequest requestPublish = new ApiRequest();
+                                ApiContent contentPublish = new ApiContent();
+
+                                requestPublish.ApiKey = API_KEY;
+
+                                contentPublish.Id = peopleFolder.PeopleFolderUmbracoId;
+
+                                requestPublish.ContentList = new List<ApiContent>();
+                                requestPublish.ContentList.Add(contentPublish);
+
+                                ApiResponse responseBackPublish = ApiCalls.PostData(requestPublish, "PublishWithChildren");
+
+                                if (responseBackPublish != null)
                                 {
-                                    Logs.AddLog(ref LOG_FILE_TEXT, " - Added Person (" + personId + "): " + personName);
-
-                                    peopleSiteAdded = true;
+                                    Logs.AddLog(ref LOG_FILE_TEXT, " - Success: " + responseBackPublish.Success);
+                                    Logs.AddLog(ref LOG_FILE_TEXT, " - Message: " + responseBackPublish.Message);
                                 }
-                                else
-                                {
-                                    Logs.AddLog(ref LOG_FILE_TEXT, " - !ERROR! Person not added (" + personId + "): " + personName + " | " + apiResponse.Message);
-                                }
+
                             }
-                        }
-
-                        if (true == peopleSiteAdded)
-                        {
-                            Logs.AddLog(ref LOG_FILE_TEXT, "Publishing People Sites for '" + peopleFolder.ModeCode + "'...");
-
-                            ApiRequest requestPublish = new ApiRequest();
-                            ApiContent contentPublish = new ApiContent();
-
-                            requestPublish.ApiKey = API_KEY;
-
-                            contentPublish.Id = peopleFolder.PeopleFolderUmbracoId;
-
-                            requestPublish.ContentList = new List<ApiContent>();
-                            requestPublish.ContentList.Add(contentPublish);
-
-                            ApiResponse responseBackPublish = ApiCalls.PostData(requestPublish, "PublishWithChildren");
-
-                            if (responseBackPublish != null)
-                            {
-                                Logs.AddLog(ref LOG_FILE_TEXT, " - Success: " + responseBackPublish.Success);
-                                Logs.AddLog(ref LOG_FILE_TEXT, " - Message: " + responseBackPublish.Message);
-                            }
-
-                        }
-                    } // END LOOP
+                        } // END LOOP
 
 
 
-                    //// ADD PEOPLE SITES HERE: (LOOP THROUGH VALID/ACTIVE PEOPLE IN THE MODE CODE)
-                    //{
-                    //    int personId = 0; // GET PERSON ID
-                    //    string personName = ""; //GET PERSON NAME
-                    //    string personSiteHtml = ""; // GET PERSON SITE HTML
+                        //// ADD PEOPLE SITES HERE: (LOOP THROUGH VALID/ACTIVE PEOPLE IN THE MODE CODE)
+                        //{
+                        //    int personId = 0; // GET PERSON ID
+                        //    string personName = ""; //GET PERSON NAME
+                        //    string personSiteHtml = ""; // GET PERSON SITE HTML
 
-                    //    personSiteHtml = CleanHtml.CleanUpHtml(personSiteHtml);
+                        //    personSiteHtml = CleanHtml.CleanUpHtml(personSiteHtml);
 
-                    //    // Make sure the HTML is not empty
-                    //    if (false == string.IsNullOrWhiteSpace(personSiteHtml))
-                    //    {
-                    //        ApiResponse apiResponse = AddUmbracoPersonPage(peopleFolderUmbracoId, personId, personName, personSiteHtml);
+                        //    // Make sure the HTML is not empty
+                        //    if (false == string.IsNullOrWhiteSpace(personSiteHtml))
+                        //    {
+                        //        ApiResponse apiResponse = AddUmbracoPersonPage(peopleFolderUmbracoId, personId, personName, personSiteHtml);
 
-                    //        if (apiResponse != null && apiResponse.Success)
-                    //        {
-                    //            Logs.AddLog(ref LOG_FILE_TEXT, " - Added Person (" + personId + "): " + personName);
-                    //        }
-                    //        else
-                    //        {
-                    //            Logs.AddLog(ref LOG_FILE_TEXT, " - !ERROR! Person not added (" + personId + "): " + personName + " | " + apiResponse.Message);
-                    //        }
-                    //    }
-                    //}
+                        //        if (apiResponse != null && apiResponse.Success)
+                        //        {
+                        //            Logs.AddLog(ref LOG_FILE_TEXT, " - Added Person (" + personId + "): " + personName);
+                        //        }
+                        //        else
+                        //        {
+                        //            Logs.AddLog(ref LOG_FILE_TEXT, " - !ERROR! Person not added (" + personId + "): " + personName + " | " + apiResponse.Message);
+                        //        }
+                        //    }
+                        //}
+                    }
                 }
+
+
+                Logs.AddLog(ref LOG_FILE_TEXT, "");
+                Logs.AddLog(ref LOG_FILE_TEXT, "");
+                Logs.AddLog(ref LOG_FILE_TEXT, "");
+                Logs.AddLog(ref LOG_FILE_TEXT, "/// IMPORT COMPLETE ///");
+                Logs.AddLog(ref LOG_FILE_TEXT, "");
+
+                TIME_ENDED = DateTime.Now;
+
+                TimeSpan timeLength = TIME_ENDED.Subtract(TIME_STARTED);
+
+                Logs.AddLog(ref LOG_FILE_TEXT, "/// Time to complete: " + timeLength.ToString(@"hh") + " hours : " + timeLength.ToString(@"mm") + " minutes : " + timeLength.ToString(@"ss") + " seconds ///");
             }
-
-
-            Logs.AddLog(ref LOG_FILE_TEXT, "");
-            Logs.AddLog(ref LOG_FILE_TEXT, "");
-            Logs.AddLog(ref LOG_FILE_TEXT, "");
-            Logs.AddLog(ref LOG_FILE_TEXT, "/// IMPORT COMPLETE ///");
-            Logs.AddLog(ref LOG_FILE_TEXT, "");
-
-            TIME_ENDED = DateTime.Now;
-
-            TimeSpan timeLength = TIME_ENDED.Subtract(TIME_STARTED);
-
-            Logs.AddLog(ref LOG_FILE_TEXT, "/// Time to complete: " + timeLength.ToString(@"hh") + " hours : " + timeLength.ToString(@"mm") + " minutes : " + timeLength.ToString(@"ss") + " seconds ///");
+            catch (Exception ex)
+            {
+                Logs.AddLog(ref LOG_FILE_TEXT, "!!!!!!! ERROR !!!!!!!" + ex.ToString());
+            }
 
             using (FileStream fs = File.Create("LOG_FILE.txt"))
             {

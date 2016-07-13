@@ -574,6 +574,29 @@ namespace USDA_ARS.LocationsWebApp.DL
         }
 
 
+        public static ApiContent GenerateNationalProgramGroup(string name, string docType, string bodyText, string npCode, string oldDocId)
+        {
+            ApiContent content = new ApiContent();
+
+            content.Id = 0;
+            content.Name = name;
+            content.ParentId = 31699;
+            content.DocType = docType;
+            content.Template = "NationalProgramGroup";
+
+            List<ApiProperty> properties = new List<ApiProperty>();
+
+            properties.Add(new ApiProperty("bodyText", bodyText)); // Body Text
+            properties.Add(new ApiProperty("oldUrl", "/research/programs/programs.htm?np_code=" + npCode + "&docid=" + oldDocId)); // current URL               
+
+            content.Properties = properties;
+
+            content.Save = 2;
+
+            return content;
+        }
+
+
         public static List<NationalProgramGroup> GetNationalProgramGroups()
         {
             List<NationalProgramGroup> nationalProgramGroupList = new List<NationalProgramGroup>();
