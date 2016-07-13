@@ -447,15 +447,15 @@
     <Content Include="App_Plugins\PropertyAccess\propertyaccess.resource.js" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.html" />
     <Content Include="App_Plugins\RJP.MultiUrlPicker\MultiUrlPicker.js" />
-    <Content Include="App_Plugins\SiteDecendantsAudit\controllers\decendantsaudit-config-controller.js" />
-    <Content Include="App_Plugins\SiteDecendantsAudit\controllers\decendantsaudit-property-controller.js" />
-    <Content Include="App_Plugins\SiteDecendantsAudit\decendantsaudit-resource.js" />
-    <Content Include="App_Plugins\SiteDecendantsAudit\decendantsaudit.css" />
-    <Content Include="App_Plugins\SiteDecendantsAudit\vendors\jquery-treetable-theme-default.css" />
-    <Content Include="App_Plugins\SiteDecendantsAudit\vendors\jquery-treetable.css" />
-    <Content Include="App_Plugins\SiteDecendantsAudit\vendors\jquery-treetable.js" />
-    <Content Include="App_Plugins\SiteDecendantsAudit\views\decendantsaudit-config.html" />
-    <Content Include="App_Plugins\SiteDecendantsAudit\views\decendantsaudit-property.html" />
+    <Content Include="App_Plugins\SiteDescendantsAudit\controllers\sitedescendantsaudit-config-controller.js" />
+    <Content Include="App_Plugins\SiteDescendantsAudit\controllers\sitedescendantsaudit-property-controller.js" />
+    <Content Include="App_Plugins\SiteDescendantsAudit\sitedescendantsaudit-resource.js" />
+    <Content Include="App_Plugins\SiteDescendantsAudit\sitedescendantsaudit.css" />
+    <Content Include="App_Plugins\SiteDescendantsAudit\vendors\jquery-treetable-theme-default.css" />
+    <Content Include="App_Plugins\SiteDescendantsAudit\vendors\jquery-treetable.css" />
+    <Content Include="App_Plugins\SiteDescendantsAudit\vendors\jquery-treetable.js" />
+    <Content Include="App_Plugins\SiteDescendantsAudit\views\sitedescendantsaudit-config.html" />
+    <Content Include="App_Plugins\SiteDescendantsAudit\views\sitedescendantsaudit-property.html" />
     <Content Include="App_Plugins\UsdaDataImporter\css\usda.data.importer.css" />
     <Content Include="App_Plugins\UsdaDataImporter\js\usda.data.importer.js" />
     <Content Include="App_Plugins\UsdaDataImporter\upload.file.aspx" />
@@ -2877,7 +2877,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="App_Plugins\PropertyAccess\PropertyAccessPropertyEditor.cs" />
-    <Compile Include="App_Plugins\SiteDecendantsAudit\DecendantsAuditPropertyEditor.cs" />
+    <Compile Include="App_Plugins\SiteDescendantsAudit\SiteDescendantsAuditPropertyEditor.cs" />
     <Compile Include="App_Plugins\UsdaDataImporter\upload.file.aspx.cs">
       <DependentUpon>upload.file.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -3060,6 +3060,7 @@
     <Content Include="App_Plugins\ArchetypeLabelTemplatesNewsTopicPicker\package.manifest" />
     <Content Include="App_Plugins\UsdaNewsProductPicker\package.manifest" />
     <Content Include="App_Plugins\PropertyAccess\package.manifest" />
+    <Content Include="App_Plugins\SiteDescendantsAudit\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
     <Content Include="Views\StandardWebpage.cshtml" />

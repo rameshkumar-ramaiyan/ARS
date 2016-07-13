@@ -63,6 +63,10 @@ namespace USDA_ARS.ImportLocations
         static void Import()
         {
             TIME_STARTED = DateTime.Now;
+
+            AddLog("-= UPDATING ARS HOME =-");
+            ImportArsHomeInfo();
+
             AddLog("-= ADDING MAIN AREAS =-");
             AddLog("");
             List<Area> areaList = null;
@@ -126,14 +130,14 @@ namespace USDA_ARS.ImportLocations
 
             AddLog("Updating ARS Home...");
 
-            content.Id = umbracoHomeId; 
+            content.Id = umbracoHomeId;
             content.Name = "ARS Home";
-            content.ParentId = MAIN_LOCATION_NODE_ID;
-            content.DocType = "Homepage";
-            content.Template = "Homepage";
 
             List<ApiProperty> properties = new List<ApiProperty>();
 
+            // USED FOR ALL ARCHETYPE DATA TYPES
+            var jsonSettings = new JsonSerializerSettings();
+            jsonSettings.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
 
             properties.Add(new ApiProperty("modeCode", "00-00-00-00")); // Region mode code                                                                                            
             properties.Add(new ApiProperty("oldUrl", "/main/main.htm")); // current URL               
@@ -152,6 +156,20 @@ namespace USDA_ARS.ImportLocations
             {
                 properties.Add(softwareApiProperty);
             }
+
+            List<Link> resourcesList = new List<Link>();
+
+            resourcesList.Add(new Link("Scientific Software / Models", "/research/software/", "icon-link"));
+            resourcesList.Add(new Link("Scientific Manuscripts", "/research/publications/find-a-publication/", "icon-link"));
+            resourcesList.Add(new Link("Research Success Stories", "/business/docs.htm?docid=769", "icon-link"));
+            resourcesList.Add(new Link("Publications", "/services/docs.htm?docid=1279", "icon-link"));
+            resourcesList.Add(new Link("Animal Welfare Ombudsman (Dr. Donald Knowles)", "mailto:animalwellbeing@ars.usda.gov?Subject=From ARS website", "icon-link"));
+            resourcesList.Add(new Link("Animal Welfare Ombudsman Alternate (Dr. Susan Harper)", "mailto:susan.harper@ars.usda.gov?Subject=From ARS website", "icon-link"));
+            resourcesList.Add(new Link("Factsheets", "/News/docs.htm?docid=128", "icon-link"));
+            resourcesList.Add(new Link("Databases and Datasets", "/research/datasets/", "icon-link"));
+            resourcesList.Add(new Link("Image Gallery", "/news-events/image-gallery/", "icon-link"));
+
+            properties.Add(new ApiProperty("resources", JsonConvert.SerializeObject(resourcesList, Newtonsoft.Json.Formatting.None, jsonSettings)));
 
 
             content.Properties = properties;
@@ -249,7 +267,7 @@ namespace USDA_ARS.ImportLocations
                     content.Template = "Region";
 
                     List<ApiProperty> properties = new List<ApiProperty>();
-                    
+
 
                     properties.Add(new ApiProperty("modeCode", newModeCodeProperty)); // Region mode code                                                                                            
                     properties.Add(new ApiProperty("oldUrl", "/main/site_main.htm?modecode=" + newModeCodeProperty + "")); // current URL               
@@ -257,7 +275,6 @@ namespace USDA_ARS.ImportLocations
                     properties.Add(new ApiProperty("quickLinks", quickLinks));
                     properties.Add(new ApiProperty("webtrendsProfileID", webtrendsProfileID));
 
-                    
 
                     AddLog(" - Old Mode Codes: " + oldModeCodeProperty);
 
@@ -277,6 +294,12 @@ namespace USDA_ARS.ImportLocations
                         properties.Add(softwareApiProperty);
                     }
 
+                    // ADD POPULAR TOPICS
+                    ApiProperty topicsApiProperty = CreatePopularTopicsList(newModeCodeProperty);
+                    if (topicsApiProperty != null)
+                    {
+                        properties.Add(topicsApiProperty);
+                    }
 
                     content.Properties = properties;
                     content.Save = 1; // 0=Unpublish (update only), 1=Saved, 2=Save And Publish
@@ -942,9 +965,10 @@ namespace USDA_ARS.ImportLocations
                 string slideImage = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(1);
                 string slideImageSP2 = "/ARSUserFiles/" + "" + modeCode.Replace("-", "") + "/images/photoCarousel/" + slideImage;
                 string slideFilePath = null;
-                if (slideURL.Contains("/ARSUserFiles/"))
+
+                if (slideURL.ToLower().EndsWith(".pdf") || slideURL.ToLower().EndsWith(".doc") || slideURL.ToLower().EndsWith(".xls"))
                 {
-                    slideFilePath = slideImageSP2; // If a slide links to a file instead of a page, set it here.
+                    slideFilePath = slideURL;
                 }
 
                 slideName = CleanHtml.ReplaceUnicodeText(slideName);
@@ -961,29 +985,22 @@ namespace USDA_ARS.ImportLocations
                 // if slide file path is not empty, set it
                 if (false == string.IsNullOrEmpty(slideFilePath))
                 {
+                    slideFilePath = CleanHtml.CleanUpHtml(slideFilePath);
+
                     fieldsetCar.Properties.Add(new Property("slideFile", slideFilePath)); // set the slide file path
                     fieldsetCar.Properties.Add(new Property("slideUrl", "")); // set the slide url to empty
                 }
                 else // Set the URL instead.
                 {
-                    if (slideURL.Contains("ars.usda.gov"))
+                    if (false == string.IsNullOrEmpty(slideURL))
                     {
-                        slideURL = Regex.Replace(slideURL, @"http(s)*://www\.ars\.usda\.gov", "");
-                        slideURL = Regex.Replace(slideURL, @"http(s)*://ars\.usda\.gov", "");
-
+                        slideURL = CleanHtml.CleanUpHtml(slideURL);
                         Link linkSlide = new Link(slideURL, slideURL, ""); // set the url path
-                        fieldsetCar.Properties.Add(new Property("link", "[" + JsonConvert.SerializeObject(linkSlide, Newtonsoft.Json.Formatting.None, jsonSettings) + "]"));
+                        fieldsetCar.Properties.Add(new Property("slideUrl", "[" + JsonConvert.SerializeObject(linkSlide, Newtonsoft.Json.Formatting.None, jsonSettings) + "]"));
                     }
                     else
                     {
-                        if (false == string.IsNullOrEmpty(slideURL))
-                        {
-                            fieldsetCar.Properties.Add(new Property("slideUrl", slideURL));
-                        }
-                        else
-                        {
-                            fieldsetCar.Properties.Add(new Property("slideUrl", ""));
-                        }
+                        fieldsetCar.Properties.Add(new Property("slideUrl", ""));
                     }
 
                     fieldsetCar.Properties.Add(new Property("slideFile", "")); // set the slide alt text
@@ -1038,8 +1055,6 @@ namespace USDA_ARS.ImportLocations
             // LOOP START
             for (int legacySoftwaresRowId = 0; legacySoftwaresRowId < legacySoftwaresBeforeInsertion.Rows.Count; legacySoftwaresRowId++)
             {
-                Fieldset fieldsetSoftware = new Fieldset();
-
                 string softwareID = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<int>(1).ToString();
                 string title = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(2);
                 string recipients = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(3);
@@ -1048,49 +1063,56 @@ namespace USDA_ARS.ImportLocations
 
                 title = CleanHtml.ReplaceUnicodeText(title);
 
-                fieldsetSoftware.Alias = "software";
-                fieldsetSoftware.Disabled = false;
-                fieldsetSoftware.Id = new Guid();
-                fieldsetSoftware.Properties = new List<Property>();
-                fieldsetSoftware.Properties.Add(new Property("softwareID", softwareID)); // set the file package name
-                fieldsetSoftware.Properties.Add(new Property("title", title.Replace("–", "-"))); // set the title
-                fieldsetSoftware.Properties.Add(new Property("recipients", recipients.Replace(" ", ""))); // set the recipients email addresses
-                fieldsetSoftware.Properties.Add(new Property("shortBlurb", shortBlurb)); // set the short blurb
-                fieldsetSoftware.Properties.Add(new Property("information", info)); // set the large text information
-                                                                                    // Files
-                List<string> filePathSP2List = new List<string>();
-                filePathSP2List = ReadFromTextfile(Convert.ToInt32(softwareID));
-
-                //get files from software id folder
+                if (false == string.IsNullOrWhiteSpace(title) && title.ToLower() != "test")
                 {
-                    ApiArchetype softwareFilesList = new ApiArchetype();
+                    Fieldset fieldsetSoftware = new Fieldset();
 
-                    softwareFilesList.Fieldsets = new List<Fieldset>();
+                    fieldsetSoftware.Alias = "software";
+                    fieldsetSoftware.Disabled = false;
+                    fieldsetSoftware.Id = new Guid();
+                    fieldsetSoftware.Properties = new List<Property>();
+                    fieldsetSoftware.Properties.Add(new Property("softwareID", softwareID)); // set the file package name
+                    fieldsetSoftware.Properties.Add(new Property("title", title.Replace("–", "-"))); // set the title
+                    fieldsetSoftware.Properties.Add(new Property("recipients", recipients.Replace(" ", ""))); // set the recipients email addresses
+                    fieldsetSoftware.Properties.Add(new Property("shortBlurb", shortBlurb)); // set the short blurb
+                    fieldsetSoftware.Properties.Add(new Property("information", info)); // set the large text information
+                                                                                        // Files
+                    List<string> filePathSP2List = new List<string>();
+                    filePathSP2List = ReadFromTextfile(Convert.ToInt32(softwareID));
 
-                    // LOOP Through the list of files
+                    //get files from software id folder
+                    if (filePathSP2List != null && filePathSP2List.Count > 0)
                     {
-                        for (int filePathSP2ListRowId = 0; filePathSP2ListRowId < filePathSP2List.Count; filePathSP2ListRowId++)
+                        ApiArchetype softwareFilesList = new ApiArchetype();
+
+                        softwareFilesList.Fieldsets = new List<Fieldset>();
+
+                        // LOOP Through the list of files
                         {
-                            Fieldset fieldsetFiles = new Fieldset();
+                            for (int filePathSP2ListRowId = 0; filePathSP2ListRowId < filePathSP2List.Count; filePathSP2ListRowId++)
+                            {
+                                Fieldset fieldsetFiles = new Fieldset();
 
-                            fieldsetFiles.Alias = "softwareDownloads";
-                            fieldsetFiles.Disabled = false;
-                            fieldsetFiles.Id = Guid.NewGuid();
-                            fieldsetFiles.Properties = new List<Property>();
-                            string filePathSP2 = "/ARSUserFiles/" + "" + modeCode.Replace("-", "") + "/software/" + filePathSP2List[filePathSP2ListRowId].Replace("\\", "/");
-                            fieldsetFiles.Properties.Add(new Property("file", filePathSP2)); // set the file path
-                            softwareFilesList.Fieldsets.Add(fieldsetFiles);
+                                fieldsetFiles.Alias = "softwareDownloads";
+                                fieldsetFiles.Disabled = false;
+                                fieldsetFiles.Id = Guid.NewGuid();
+                                fieldsetFiles.Properties = new List<Property>();
+                                string filePathSP2 = "/ARSUserFiles/" + "" + modeCode.Replace("-", "") + "/software/" + filePathSP2List[filePathSP2ListRowId].Replace("\\", "/");
+                                fieldsetFiles.Properties.Add(new Property("file", filePathSP2)); // set the file path
+                                softwareFilesList.Fieldsets.Add(fieldsetFiles);
+                            }
+
+
+                            string fileListJson = JsonConvert.SerializeObject(softwareFilesList, Newtonsoft.Json.Formatting.None, jsonSettingsForSoftware);
+                            fieldsetSoftware.Properties.Add(new Property("fileDownloads", fileListJson)); // set the large text information
                         }
+                        // LOOP END for files
 
 
-                        string fileListJson = JsonConvert.SerializeObject(softwareFilesList, Newtonsoft.Json.Formatting.None, jsonSettingsForSoftware);
-                        fieldsetSoftware.Properties.Add(new Property("fileDownloads", fileListJson)); // set the large text information
+                        softwareItem.Fieldsets.Add(fieldsetSoftware);
+                        // LOOP END
                     }
-                    // LOOP END for files
                 }
-
-                softwareItem.Fieldsets.Add(fieldsetSoftware);
-                // LOOP END
             }
 
             if (softwareItem != null && softwareItem.Fieldsets != null && softwareItem.Fieldsets.Count > 0)
@@ -1111,6 +1133,75 @@ namespace USDA_ARS.ImportLocations
             AddLog(" - Software added: " + legacySoftwaresBeforeInsertion.Rows.Count);
 
             return softwareProperty;
+        }
+
+
+        static ApiProperty CreatePopularTopicsList(string modeCode)
+        {
+            ApiProperty topicProperty = null;
+            string topicString = null;
+
+            List<PopularLink> linkList = LocationsWebApp.DL.PopularTopics.GetPopularTopicsByModeCode(modeCode);
+
+            ////popular topics
+            AddLog(" - Getting topics for (" + modeCode + ")...");
+
+            if (linkList != null && linkList.Any())
+            {
+                // USED FOR ALL ARCHETYPE DATA TYPES
+                var jsonSettings = new JsonSerializerSettings();
+                jsonSettings.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
+
+
+                // ADD POPULAR TOPICS
+                ApiArchetype popularTopics = new ApiArchetype();
+
+                popularTopics.Fieldsets = new List<Fieldset>();
+
+                // Here is where you would loop through each Popular Topics Link
+                // LOOP START
+                foreach (PopularLink popLink in linkList)
+                {
+                    Fieldset fieldset = new Fieldset();
+
+                    fieldset.Alias = "popularTopics";
+                    fieldset.Disabled = false;
+                    fieldset.Id = Guid.NewGuid();
+                    fieldset.Properties = new List<Property>();
+                    fieldset.Properties.Add(new Property("label", popLink.Label)); // set the label name
+
+                    string url = popLink.URL;
+
+                    if (false == string.IsNullOrWhiteSpace(url))
+                    {
+                        url = CleanHtml.CleanUpHtml(url);
+                    }
+
+                    Link link = new Link(url, url, ""); // set the url path
+                    fieldset.Properties.Add(new Property("link", "[" + JsonConvert.SerializeObject(link, Newtonsoft.Json.Formatting.None, jsonSettings) + "]"));
+
+                    popularTopics.Fieldsets.Add(fieldset);
+                }
+                // LOOP END
+
+                if (popularTopics != null && popularTopics.Fieldsets != null && popularTopics.Fieldsets.Any())
+                {
+                    topicString = JsonConvert.SerializeObject(popularTopics, Newtonsoft.Json.Formatting.None, jsonSettings);
+                }
+            }
+
+            if (false == string.IsNullOrEmpty(topicString))
+            {
+                topicProperty = new ApiProperty("popularTopics", topicString);
+            }
+            else
+            {
+                topicProperty = new ApiProperty("popularTopics", "");
+            }
+
+            AddLog(" - Popular Topics added: " + linkList.Count);
+
+            return topicProperty;
         }
 
 

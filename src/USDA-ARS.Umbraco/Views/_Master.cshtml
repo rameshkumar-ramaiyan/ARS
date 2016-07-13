@@ -380,7 +380,7 @@
 
 
         <!-- footer table -->
-        @if (currentPage.DocumentTypeAlias != "Homepage" && currentPage.DocumentTypeAlias != "Region" && currentPage.DocumentTypeAlias != "ResearchUnit")
+        @if (currentPage.DocumentTypeAlias != "Homepage" && currentPage.DocumentTypeAlias != "Area" && currentPage.DocumentTypeAlias != "ResearchUnit")
             {
             <div id="lastModifiedContent">
                 @Html.Raw("Last Modified:") @(currentPage.UpdateDate.ToShortDateString())

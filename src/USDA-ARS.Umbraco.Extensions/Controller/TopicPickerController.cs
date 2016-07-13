@@ -74,7 +74,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                             {
                                 IPublishedContent checkNode3 = node.AncestorsOrSelf(2).FirstOrDefault();
 
-                                if (checkNode3.ContentType.Alias == "Region")
+                                if (checkNode3.ContentType.Alias == "Area")
                                 {
                                     node = checkNode3;
                                 }
@@ -93,16 +93,16 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                         List<IPublishedContent> subNodeList = new List<IPublishedContent>();
                         IPublishedContent tempNode = node;
 
-                        int level = node.Level;
+                        int level = tempNode.Level;
 
-                        if (level > 1)
+                        if (level > 2)
                         {
-                            while (level > 1)
+                            while (level > 2)
                             {
                                 tempNode = tempNode.Parent;
                                 level = tempNode.Level;
 
-                                subNodeList.Add(node);
+                                subNodeList.Add(tempNode);
                             }
                         }
 

@@ -18,19 +18,23 @@ namespace USDA_ARS.LocationsWebApp.DL
                 htmlCompressor.setRemoveMultiSpaces(true);
                 htmlCompressor.setRemoveIntertagSpaces(true);
 
+                bodyText = bodyText.Replace("—", "-");
+
                 bodyText = ReplaceUnicodeText(bodyText);
-               
 
                 bodyText = Regex.Replace(bodyText, @"/pandp/people/people\.htm\?personid\=", "/people-locations/person?person-id=", RegexOptions.IgnoreCase);
 
                 bodyText = Regex.Replace(bodyText, @"http(s)*://www\.ars\.usda\.gov", "", RegexOptions.IgnoreCase);
                 bodyText = Regex.Replace(bodyText, @"http(s)*://ars\.usda\.gov", "", RegexOptions.IgnoreCase);
 
+                bodyText = Regex.Replace(bodyText, @"http://", "https://");
+
                 bodyText = Regex.Replace(bodyText, @"/sp2userfiles/place", "/ARSUserFiles", RegexOptions.IgnoreCase);
                 bodyText = Regex.Replace(bodyText, @"/sp2userfiles/people", "/ARSUserFiles", RegexOptions.IgnoreCase);
                 bodyText = Regex.Replace(bodyText, @"/sp2userfiles/person", "/ARSUserFiles", RegexOptions.IgnoreCase);
 
                 bodyText = Regex.Replace(bodyText, @"\""/images/", "\"/ARSUserFiles/images/", RegexOptions.IgnoreCase);
+                bodyText = Regex.Replace(bodyText, @"\""/incme/", "\"/ARSUserFiles/incme/", RegexOptions.IgnoreCase);
 
                 try
                 {
