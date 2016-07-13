@@ -7,8 +7,8 @@
     <ProjectGuid>{86CCCBF5-B11F-4288-A8C3-22AFC8368666}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>USDA_ARS.DescendantsAudit</RootNamespace>
-    <AssemblyName>USDA_ARS.DescendantsAudit</AssemblyName>
+    <RootNamespace>USDA_ARS.SiteDescendantsAudit</RootNamespace>
+    <AssemblyName>USDA_ARS.SiteDescendantsAudit</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
