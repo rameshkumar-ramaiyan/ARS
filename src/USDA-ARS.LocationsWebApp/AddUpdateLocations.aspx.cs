@@ -1689,7 +1689,7 @@ namespace USDA_ARS.LocationsWebApp
 
         protected void btnAddMultipleNationalPrograms_Click(object sender, EventArgs e)
         {
-            NationalPrograms.ImportNationPrograms();
+            //NationalPrograms.ImportNationPrograms();
         }
 
         protected void btnRandomIds_Click(object sender, EventArgs e)

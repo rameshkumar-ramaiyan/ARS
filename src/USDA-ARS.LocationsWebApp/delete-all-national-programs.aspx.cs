@@ -25,7 +25,7 @@ namespace USDA_ARS.LocationsWebApp
 
         protected void btn_Delete_Click(object sender, EventArgs e)
         {
-            output.Text = DL.NationalPrograms.DeleteAllNationalProgramItems();
+            //output.Text = DL.NationalPrograms.DeleteAllNationalProgramItems();
         }
     }
 }
