@@ -91,70 +91,80 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
                 modeCodeWhere += "%";
 
-
                 string sqlStr = @"
+                SELECT modecodeconc, PerFName, EMP_ID, P_Emp_Id, PerMName, PerLName,
+                         PerCommonName, PersonID, modecode_1, modecode_2, modecode_3, modecode_4, CATEGORY, officialtitle, SERIES_CODE, WorkingTitle, EMail, Imageurl, DeskPhone, DeskAreaCode, DeskExt, DeskBldgAbbr,
+                         OfcFax, OfcFaxAreaCode, DeskRoomNum, DeskAddr1, DeskAddr2, DeskCity, DeskState, HomepageURL, DeskZip4, STATUS_CODE, REE_emp_id, DATE_CREATED, USER_CREATED, DATE_LAST_MOD,
+                         USER_LAST_MOD
+                            FROM dbo.V_PEOPLE_INFO_2
+                            WHERE modecodeconc LIKE '"+ modeCodeWhere + "'" ;
 
-	                            SELECT	v.mySiteCode,
-			            v.modecodeconc,
-			            v.personid, 
-			            v.perlname, 
-			            v.perfname, 
-			            v.percommonname, 
-			            v.workingtitle,
-			            v.EMail, 
-			            v.deskareacode,
-			            v.DeskPhone,
-			            v.deskext,			
-			            r.city,
-			            r.state_code,
 
-			            case
-				            when right(v.modecodeconc, 4) = '0100' 										then r.modecode_2_desc
 
-				            -- turn off sites
-				            when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 6) = '000000'	then r.modecode_1_desc
-				            when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 4) = '0000'	then r.modecode_2_desc
-				            when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 2) = '00'		then r.modecode_3_desc
 
-				            when right(v.mySiteCode, 6) = '000000'										then r.modecode_1_desc
-				            when right(v.mySiteCode, 4) = '0000'										then r.modecode_2_desc
-				            when right(v.mySiteCode, 2) = '00'											then r.modecode_3_desc
-				
-				            else 									 	 									 r.modecode_4_desc
-			            end 
-				            as siteLabel,
-					
-			            ( 	
-				            substring(mySiteCode, 1, 2) + '-' + 
-				            substring(mySiteCode, 3, 2) + '-' + 
-				            substring(mySiteCode, 5, 2) + '-' +
-				            substring(mySiteCode, 7, 2)
-			            )	as URLModecode
-			
-			
-	            FROM 	V_PEOPLE_INFO_2_DIRECTORY	v,
-			            REF_MODECODE				r
-	            WHERE 	1=1
-	
-	
-	
-		            and 	(v.modecodeconc like '@MODE_CODE')
-	
-	 
-	            AND 	(
-				            v.status_code = 'A' 		OR 
-				            v.status_code IS NULL
-			            )
-	            and		substring(v.modecodeconc, 1, 2) = r.modecode_1
-	            and		substring(v.modecodeconc, 3, 2) = r.modecode_2
-	            and		substring(v.modecodeconc, 5, 2) = r.modecode_3
-	            and		substring(v.modecodeconc, 7, 2) = r.modecode_4
-			
-	            ORDER BY 	v.modecodeconc,
-				            v.perlname, 
-				            v.perfname
+     //   string sqlStr = @"
 
-                ";
+     //                SELECT	v.mySiteCode,
+     //  v.modecodeconc,
+     //  v.personid, 
+     //  v.perlname, 
+     //  v.perfname, 
+     //  v.percommonname, 
+     //  v.workingtitle,
+     //  v.EMail, 
+     //  v.deskareacode,
+     //  v.DeskPhone,
+     //  v.deskext,			
+     //  r.city,
+     //  r.state_code,
+
+                //  case
+                //   when right(v.modecodeconc, 4) = '0100' 										then r.modecode_2_desc
+
+                //   -- turn off sites
+                //   when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 6) = '000000'	then r.modecode_1_desc
+                //   when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 4) = '0000'	then r.modecode_2_desc
+                //   when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 2) = '00'		then r.modecode_3_desc
+
+                //   when right(v.mySiteCode, 6) = '000000'										then r.modecode_1_desc
+                //   when right(v.mySiteCode, 4) = '0000'										then r.modecode_2_desc
+                //   when right(v.mySiteCode, 2) = '00'											then r.modecode_3_desc
+
+                //   else 									 	 									 r.modecode_4_desc
+                //  end 
+                //   as siteLabel,
+
+                //  ( 	
+                //   substring(mySiteCode, 1, 2) + '-' + 
+                //   substring(mySiteCode, 3, 2) + '-' + 
+                //   substring(mySiteCode, 5, 2) + '-' +
+                //   substring(mySiteCode, 7, 2)
+                //  )	as URLModecode
+
+
+                //FROM 	V_PEOPLE_INFO_2_DIRECTORY	v,
+                //  REF_MODECODE				r
+                //WHERE 	1=1
+
+
+
+                // and 	(v.modecodeconc like '@MODE_CODE')
+
+
+                //AND 	(
+                //   v.status_code = 'A' 		OR 
+                //   v.status_code IS NULL
+                //  )
+                //and		substring(v.modecodeconc, 1, 2) = r.modecode_1
+                //and		substring(v.modecodeconc, 3, 2) = r.modecode_2
+                //and		substring(v.modecodeconc, 5, 2) = r.modecode_3
+                //and		substring(v.modecodeconc, 7, 2) = r.modecode_4
+
+                //ORDER BY 	v.modecodeconc,
+                //   v.perlname, 
+                //   v.perfname
+
+                //   ";
 
                 sqlStr = sqlStr.Replace("@MODE_CODE", modeCodeWhere);
 

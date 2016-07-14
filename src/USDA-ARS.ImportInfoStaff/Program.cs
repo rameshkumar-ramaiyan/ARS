@@ -93,97 +93,170 @@ namespace USDA_ARS.ImportInfoStaff
                 }
             }
 
+            AddLog("Publishing pages '" + tempDir + "'...");
+
+            ApiRequest requestPublish = new ApiRequest();
+            ApiContent contentPublish = new ApiContent();
+
+            requestPublish.ApiKey = API_KEY;
+
+            contentPublish.Id = UMBRACO_START_NODE;
+
+            requestPublish.ContentList = new List<ApiContent>();
+            requestPublish.ContentList.Add(contentPublish);
+
+            ApiResponse responseBackPublish = ApiCalls.PostData(requestPublish, "PublishWithChildren");
+
+            if (responseBackPublish != null)
+            {
+                AddLog(" - Success: " + responseBackPublish.Success);
+                AddLog(" - Message: " + responseBackPublish.Message);
+            }
+
+
+
+
             List<string> dirList = Directory.GetDirectories(INFO_STAFF_PATH, "*", SearchOption.AllDirectories).OrderBy(p => p).ToList();
 
             int parentNodeId = UMBRACO_START_NODE;
 
             foreach (string dir in dirList)
             {
-                if (!dir.Contains("\\is\\pr") && !dir.Contains("\\is\\np\\fnrb") && !dir.Contains("\\is\\br") && !dir.ToLower().Contains("_notes"))
+                DirectoryInfo dirInfo = new DirectoryInfo(dir);
+
+                if ((dirInfo.Attributes & FileAttributes.Hidden) != FileAttributes.Hidden)
                 {
-                    AddLog("DIR: " + dir);
-
-                    InfoStaffPathLookup getPathLookup = PATH_LOOKUP_LIST.Where(p => p.Path == dir).FirstOrDefault();
-
-                    if (getPathLookup == null)
+                    if (!dir.Contains("\\is\\pr") && !dir.Contains("\\is\\np\\fnrb") && !dir.Contains("\\is\\br") && !dir.ToLower().Contains("_notes"))
                     {
-                        //Create Umbraco Doc Folder
-                        DirectoryInfo dirInfo = new DirectoryInfo(dir);
-                        string title = dirInfo.Name;
+                        AddLog("DIR: " + dir);
 
-                        // Creates a TextInfo based on the "en-US" culture.
-                        TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
+                        InfoStaffPathLookup getPathLookup = PATH_LOOKUP_LIST.Where(p => p.Path == dir).FirstOrDefault();
 
-                        // Changes a string to titlecase.
-                        title = textInfo.ToTitleCase(title);
-
-                        int parentNodeIdParent = GetParentDirId(dir);
-
-                        parentNodeId = AddUmbracoFolder(parentNodeIdParent, title);
-
-                        if (parentNodeId <= 0)
+                        if (getPathLookup == null)
                         {
-                            throw new Exception("Invalid umbraco id returned.");
-                        }
-                        else
-                        {
-                            PATH_LOOKUP_LIST.Add(new InfoStaffPathLookup() { Path = dir, UmbracoId = parentNodeId });
-                        }
+                            //Create Umbraco Doc Folder
+                            string title = dirInfo.Name;
 
+                            // Creates a TextInfo based on the "en-US" culture.
+                            TextInfo textInfo = new CultureInfo("en-US", false).TextInfo;
 
-                        // Look for index page
-                        List<string> indexList = Directory.GetFiles(dir, "*.*").Where(s => s.ToLower().EndsWith("\\index.html") || s.ToLower().EndsWith("\\index.htm")).ToList();
+                            // Changes a string to titlecase.
+                            title = textInfo.ToTitleCase(title);
 
-                        if (indexList != null && indexList.Count > 0)
-                        {
-                            // Create Index page in Umbraco
-                            PageImport pageImport = GetPageData(indexList[0]);
+                            int parentNodeIdParent = GetParentDirId(dir);
 
-                            if (pageImport != null)
+                            parentNodeId = AddUmbracoFolder(parentNodeIdParent, title);
+
+                            if (parentNodeId <= 0)
                             {
-                                int pageId = AddUmbracoPage(parentNodeId, pageImport);
+                                throw new Exception("Invalid umbraco id returned.");
+                            }
+                            else
+                            {
+                                PATH_LOOKUP_LIST.Add(new InfoStaffPathLookup() { Path = dir, UmbracoId = parentNodeId });
+                            }
 
-                                if (pageId <= 0)
+
+                            // Look for index page
+                            List<string> indexList = Directory.GetFiles(dir, "*.*").Where(s => s.ToLower().EndsWith("\\index.html") || s.ToLower().EndsWith("\\index.htm")).ToList();
+
+                            if (indexList != null && indexList.Count > 0)
+                            {
+                                // Create Index page in Umbraco
+                                PageImport pageImport = GetPageData(indexList[0]);
+
+                                if (pageImport != null)
                                 {
-                                    throw new Exception("Invalid umbraco id returned.");
+                                    int pageId = AddUmbracoPage(parentNodeId, pageImport);
+
+                                    if (pageId <= 0)
+                                    {
+                                        throw new Exception("Invalid umbraco id returned.");
+                                    }
+                                    else
+                                    {
+                                        UpdateUmbracoPageRedirect(parentNodeId, pageId);
+                                    }
+
+                                    AddLog("Publishing pages '" + tempDir + "'...");
+
+                                    ApiRequest requestPublish3 = new ApiRequest();
+                                    ApiContent contentPublish3 = new ApiContent();
+
+                                    requestPublish3.ApiKey = API_KEY;
+
+                                    contentPublish3.Id = parentNodeId;
+
+                                    requestPublish3.ContentList = new List<ApiContent>();
+                                    requestPublish3.ContentList.Add(contentPublish3);
+
+                                    ApiResponse responseBackPublish3 = ApiCalls.PostData(requestPublish3, "PublishWithChildren");
+
+                                    if (responseBackPublish3 != null)
+                                    {
+                                        AddLog(" - Success: " + responseBackPublish3.Success);
+                                        AddLog(" - Message: " + responseBackPublish3.Message);
+                                    }
+
+                                    AddLog("");
                                 }
                                 else
                                 {
-                                    UpdateUmbracoPageRedirect(parentNodeId, pageId);
+                                    AddLog("** WARNING: Page not added: " + indexList[0]);
                                 }
                             }
-                            else
-                            {
-                                AddLog("** WARNING: Page not added: " + indexList[0]);
-                            }
                         }
-                    }
-                    else
-                    {
-                        parentNodeId = getPathLookup.UmbracoId;
-                    }
-
-                    tempDir = dir;
-
-                    List<string> fileList = Directory.GetFiles(dir, "*.*").Where(s => s.ToLower().EndsWith(".htm") || s.ToLower().EndsWith(".html")).ToList();
-
-                    foreach (string file in fileList)
-                    {
-                        if (false == file.ToLower().EndsWith("\\index.html") && false == file.ToLower().EndsWith("\\index.htm"))
+                        else
                         {
-                            PageImport pageImport = GetPageData(file);
-                            if (pageImport != null)
+                            parentNodeId = getPathLookup.UmbracoId;
+                        }
+
+                        tempDir = dir;
+
+                        List<string> fileList = Directory.GetFiles(dir, "*.*").Where(s => s.ToLower().EndsWith(".htm") || s.ToLower().EndsWith(".html")).ToList();
+
+                        foreach (string file in fileList)
+                        {
+                            if (false == file.ToLower().EndsWith("\\index.html") && false == file.ToLower().EndsWith("\\index.htm"))
                             {
-                                int pageId = AddUmbracoPage(parentNodeId, pageImport);
-                            }
-                            else
-                            {
-                                AddLog("** WARNING: Page not added: " + file);
+                                PageImport pageImport = GetPageData(file);
+                                if (pageImport != null)
+                                {
+                                    int pageId = AddUmbracoPage(parentNodeId, pageImport);
+                                }
+                                else
+                                {
+                                    AddLog("** WARNING: Page not added: " + file);
+                                }
                             }
                         }
-                    }
 
-                    AddLog("");
+                        AddLog("Publishing pages '" + tempDir + "'...");
+
+                        ApiRequest requestPublish2 = new ApiRequest();
+                        ApiContent contentPublish2 = new ApiContent();
+
+                        requestPublish.ApiKey = API_KEY;
+
+                        contentPublish.Id = parentNodeId;
+
+                        requestPublish2.ContentList = new List<ApiContent>();
+                        requestPublish2.ContentList.Add(contentPublish);
+
+                        ApiResponse responseBackPublish2 = ApiCalls.PostData(requestPublish2, "PublishWithChildren");
+
+                        if (responseBackPublish2 != null)
+                        {
+                            AddLog(" - Success: " + responseBackPublish2.Success);
+                            AddLog(" - Message: " + responseBackPublish2.Message);
+                        }
+
+                        AddLog("");
+                    }
+                }
+                else
+                {
+                    AddLog(" - Bypassing hidden folder");
                 }
             }
 
@@ -393,7 +466,7 @@ namespace USDA_ARS.ImportInfoStaff
 
             content.Properties = properties;
 
-            content.Save = 2;
+            content.Save = 1;
 
             ApiRequest request = new ApiRequest();
 
