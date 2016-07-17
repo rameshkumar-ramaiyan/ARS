@@ -19,6 +19,8 @@ namespace USDA_ARS.LocationsWebApp.DL
                 htmlCompressor.setRemoveIntertagSpaces(true);
 
                 bodyText = bodyText.Replace("—", "-");
+                bodyText = bodyText.Replace("�", "&bull;");
+                bodyText = bodyText.Replace("·", "&bull;");
 
                 bodyText = ReplaceUnicodeText(bodyText);
 
@@ -71,9 +73,9 @@ namespace USDA_ARS.LocationsWebApp.DL
         {
             if (false == string.IsNullOrEmpty(text))
             {
-                 var bytes = Encoding.Default.GetBytes(text);
-                 text = Encoding.UTF8.GetString(bytes);
-              
+                var bytes = Encoding.Default.GetBytes(text);
+                text = Encoding.UTF8.GetString(bytes);
+
                 text = Regex.Replace(text, "[\u2018\u2019\u201A]", "'");
                 // smart double quotes
                 text = Regex.Replace(text, "[\u201C\u201D\u201E]", "\"");
@@ -81,8 +83,8 @@ namespace USDA_ARS.LocationsWebApp.DL
                 text = Regex.Replace(text, "\u2026", "...");
                 // dashes
                 text = Regex.Replace(text, "[\u2013\u2014]", "-");
-                text = Regex.Replace(text, "Â·", ".");
-                text = Regex.Replace(text, "â€¢", ".");
+                text = Regex.Replace(text, "Â·", "&bull;");
+                text = Regex.Replace(text, "â€¢", "&bull;");
             }
 
             return text;

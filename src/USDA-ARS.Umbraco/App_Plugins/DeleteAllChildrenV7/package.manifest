@@ -1,0 +1,10 @@
+﻿{
+    "css": [
+        "~/app_plugins/DeleteAllChildrenV7/deleteAllChildren.css"
+    ],
+    javascript: [
+        "~/app_plugins/DeleteAllChildrenV7/yeeveconfirm.directive.js",
+        "~/app_plugins/DeleteAllChildrenV7/deleteAllChildren.resource.js",
+        "~/app_plugins/DeleteAllChildrenV7/deleteAllChildren.controller.js"
+    ]
+}

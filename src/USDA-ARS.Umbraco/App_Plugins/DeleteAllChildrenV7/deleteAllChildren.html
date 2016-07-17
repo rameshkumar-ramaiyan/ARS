@@ -1,0 +1,19 @@
+﻿<div class="umb-dialog umb-pane" ng-controller="Our.Umbraco.DeleteAllChildrenController">
+    <div class="umb-dialog-body" auto-scale="90">
+
+        <p class="umb-abstract">
+            <localize key="deleteAllChildren_confirmDeleteAllChildren">Are you sure you want to delete all the children off item</localize> <strong>{{currentNode.name}}</strong> ?
+        </p>
+
+        <div class="confirm-container">
+            <input type="checkbox" id="confirmCheckbox" ng-model="confirmed">
+            <label for="confirmCheckbox">
+                <localize key="deleteAllChildren_confirmDeleteAllChildrenLabel">Yes, delete all the children</localize>
+            </label>
+        </div>
+
+        <yeeve-confirm on-confirm="performDelete" on-cancel="cancel" disabled="!confirmed">
+        </yeeve-confirm>
+
+    </div>
+</div>

@@ -421,5 +421,26 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
             return node;
         }
+
+
+        public static IPublishedContent GetNodeByOldDocId(string docId)
+        {
+            IPublishedContent node = null;
+
+            var db = new Database("umbracoDbDSN");
+
+            string sql = @"SELECT * FROM cmsPropertyData WHERE propertytypeid IN (SELECT id FROM cmsPropertyType WHERE Alias = 'oldId')
+                            AND NOT dataNvarchar IS NULL AND dataNvarchar = @docId AND versionId IN
+                            (SELECT versionId FROM cmsDocument WHERE published = 1)";
+
+            UmbracoPropertyData propertyData = db.Query<UmbracoPropertyData>(sql, new { docId = docId }).FirstOrDefault();
+
+            if (propertyData != null)
+            {
+                UmbHelper.TypedContent(Convert.ToInt32(propertyData.DataNvarchar));
+            }
+
+            return node;
+        }
     }
 }

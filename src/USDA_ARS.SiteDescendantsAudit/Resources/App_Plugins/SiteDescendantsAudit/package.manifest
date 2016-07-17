@@ -1,33 +1,30 @@
 ﻿{
-	propertyEditors: [
-        {
-            alias: "SiteDescendantsAudit",
-            name: "Site Descendants Audit",
-            editor: {
-                view: "~//App_Plugins/SiteDescendantsAudit/views/descendantsaudit-property.html"
-            },
-            prevalues: {
-                fields: [                    
-					{
-                        label: "Site Descendant Content Types",
-                        description: "Comma seperated list of content type aliases.",
-                        key: "siteDescendantContentTypes",
-                        view: "textstring"
-                        ]
-                    }
-                ]
-            }
-        }
-    ],
-    javascript: [
-		'~/App_Plugins/SiteDescendantsAudit/sitedescendantsaudit-resource.js',		
-		'~/App_Plugins/SiteDescendantsAudit/controllers/sitedescendantsaudit-config-controller.js',
-		'~/App_Plugins/SiteDescendantsAudit/controllers/sitedescendantsaudit-property-controller.js'
-		'~/App_Plugins/SiteDescendantsAudit/vendors/jquery-treetable.js'
-    ],
-
-    css: [
-		"~/App_Plugins/SiteDescendantsAudit/sitedescendantsaudit.css"
-    ]
-
+  propertyEditors: [
+    {
+      alias: "SiteDescendantsAudit",
+      name: "Site Descendants Audit",
+      editor: {
+        view: "~/App_Plugins/SiteDescendantsAudit/views/descendantsaudit-property.html"
+      },
+      prevalues: {
+        fields: [
+          {
+            label: "Site Descendant Content Types",
+            description: "Comma seperated list of content type aliases.",
+            key: "siteDescendantContentTypes",
+            view: "textstring"
+          }
+        ]
+      }
+    }
+  ],
+  javascript: [
+    '~/App_Plugins/SiteDescendantsAudit/sitedescendantsaudit-resource.js',
+    '~/App_Plugins/SiteDescendantsAudit/controllers/sitedescendantsaudit-config-controller.js',
+    '~/App_Plugins/SiteDescendantsAudit/controllers/sitedescendantsaudit-property-controller.js',
+    '~/App_Plugins/SiteDescendantsAudit/vendors/jquery-treetable.js'
+  ],
+  css: [
+    "~/App_Plugins/SiteDescendantsAudit/sitedescendantsaudit.css"
+  ]
 }
