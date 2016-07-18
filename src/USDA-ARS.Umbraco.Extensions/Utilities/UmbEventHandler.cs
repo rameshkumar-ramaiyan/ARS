@@ -338,6 +338,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                 if (true == updateModeCodes)
                 {
                     Nodes.GetNodesListOfModeCodes(false);
+                    ModeCodeActives.UpdateModeCodeActiveTable();
                 }
 
                 if (true == updateOldUrl)

@@ -404,7 +404,7 @@ namespace USDA_ARS.ImportInfoStaff
             else
             {
                 RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Singleline;
-                Regex regx = new Regex("<body>(?<theBody>.*)</body>", options);
+                Regex regx = new Regex("<body[^>]*>(?<theBody>.*)</body>", options);
 
                 Match match = regx.Match(bodyText);
 

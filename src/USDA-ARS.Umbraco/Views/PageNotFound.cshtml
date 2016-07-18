@@ -2,6 +2,7 @@
 @using Archetype.Models
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
+@using System.Text.RegularExpressions
 @using USDA_ARS.Umbraco.Extensions.Models
 @using USDA_ARS.Umbraco.Extensions.Helpers
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
@@ -98,6 +99,25 @@
                     if (foundRedirectNode != null)
                     {
                         Response.RedirectPermanent(foundRedirectNode.Url);
+                    }
+                }
+            }
+        }
+
+        if (badUrl.ToLower().IndexOf("docid=") >= 0)
+        {
+            int docId = 0;
+
+            Match m2 = Regex.Match(badUrl, @"docid=([\d]*)", RegexOptions.Singleline);
+            if (m2.Success)
+            {
+                if (int.TryParse(m2.Groups[1].Value, out docId))
+                {
+                    IPublishedContent docNode = Nodes.GetNodeByOldDocId(docId.ToString());
+
+                    if (docNode != null)
+                    {
+                        Response.RedirectPermanent(docNode.Url);
                     }
                 }
             }
