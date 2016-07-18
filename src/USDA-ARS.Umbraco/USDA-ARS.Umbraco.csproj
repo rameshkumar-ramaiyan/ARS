@@ -496,19 +496,6 @@
     <Content Include="umbraco\Config\Lang\en.xml" />
     <Content Include="umbraco\Config\Lang\en_us.xml" />
     <Content Include="umbraco\Config\Lang\es.xml" />
-    <Content Include="umbraco\Config\Lang\fr.xml" />
-    <Content Include="umbraco\Config\Lang\he.xml" />
-    <Content Include="umbraco\Config\Lang\it.xml" />
-    <Content Include="umbraco\Config\Lang\ja.xml" />
-    <Content Include="umbraco\Config\Lang\ko.xml" />
-    <Content Include="umbraco\Config\Lang\nb.xml" />
-    <Content Include="umbraco\Config\Lang\nl.xml" />
-    <Content Include="umbraco\Config\Lang\no.xml" />
-    <Content Include="umbraco\Config\Lang\pl.xml" />
-    <Content Include="umbraco\Config\Lang\pt.xml" />
-    <Content Include="umbraco\Config\Lang\ru.xml" />
-    <Content Include="umbraco\Config\Lang\sv.xml" />
-    <Content Include="umbraco\Config\Lang\zh.xml" />
     <Content Include="umbraco\Controls\ContentTypeControlNew.ascx" />
     <Content Include="umbraco\Controls\GenericProperties\GenericProperty.ascx" />
     <Content Include="umbraco\Controls\Images\ImageViewer.ascx" />
@@ -1337,7 +1324,6 @@
     <Content Include="umbraco\lib\moment\moment-with-locales.js" />
     <Content Include="umbraco\lib\rgrove-lazyload\lazyload.js" />
     <Content Include="umbraco\lib\slider\js\bootstrap-slider.js" />
-    <Content Include="umbraco\lib\slider\slider.css" />
     <Content Include="umbraco\lib\spectrum\spectrum.css" />
     <Content Include="umbraco\lib\spectrum\spectrum.js" />
     <Content Include="umbraco\lib\tinymce\plugins\advlist\plugin.js" />
