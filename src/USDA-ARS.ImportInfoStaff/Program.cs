@@ -241,7 +241,7 @@ namespace USDA_ARS.ImportInfoStaff
                   contentPublish2.Id = parentNodeId;
 
                   requestPublish2.ContentList = new List<ApiContent>();
-                  requestPublish2.ContentList.Add(contentPublish);
+                  requestPublish2.ContentList.Add(contentPublish2);
 
                   ApiResponse responseBackPublish2 = ApiCalls.PostData(requestPublish2, "PublishWithChildren");
 
