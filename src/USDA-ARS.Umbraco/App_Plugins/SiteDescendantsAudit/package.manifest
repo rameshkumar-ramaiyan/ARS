@@ -4,7 +4,7 @@
       alias: "SiteDescendantsAudit",
       name: "Site Descendants Audit",
       editor: {
-        view: "~/App_Plugins/SiteDescendantsAudit/views/descendantsaudit-property.html"
+        view: "~/App_Plugins/SiteDescendantsAudit/views/sitedescendantsaudit-property.html"
       },
       prevalues: {
         fields: [

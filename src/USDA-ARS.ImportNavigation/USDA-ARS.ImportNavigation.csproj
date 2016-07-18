@@ -279,10 +279,12 @@
   <ItemGroup>
     <Compile Include="Models\Document.cs" />
     <Compile Include="Models\ImportedNav.cs" />
+    <Compile Include="Models\SubsiteLookup.cs" />
     <Compile Include="Models\ModeCodeLookup.cs" />
     <Compile Include="Models\NavByPage.cs" />
     <Compile Include="Models\Navigation.cs" />
     <Compile Include="Models\NavSystem.cs" />
+    <Compile Include="Models\ProgramLookup.cs" />
     <Compile Include="Models\SubSite.cs" />
     <Compile Include="Models\ModeCodeFolderLookup.cs" />
     <Compile Include="Models\UmbracoDocLookup.cs" />

@@ -555,72 +555,137 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
         }
 
 
-        [System.Web.Http.HttpPost]
-        public Models.Import.ApiResponse GetAllPeopleFolderNodes([FromBody] dynamic json)
-        {
-            Models.Import.ApiResponse response = new Models.Import.ApiResponse();
+      [System.Web.Http.HttpPost]
+      public Models.Import.ApiResponse GetAllPeopleFolderNodes([FromBody] dynamic json)
+      {
+         Models.Import.ApiResponse response = new Models.Import.ApiResponse();
 
-            Models.Import.ApiRequest request = JsonConvert.DeserializeObject<Models.Import.ApiRequest>(json.ToString());
+         Models.Import.ApiRequest request = JsonConvert.DeserializeObject<Models.Import.ApiRequest>(json.ToString());
 
-            try
+         try
+         {
+            if (request != null)
             {
-                if (request != null)
-                {
-                    //Check object
-                    if (true == string.IsNullOrWhiteSpace(request.ApiKey))
-                    {
-                        response.Message = "API Key is missing.";
-                    }
-                    else if (request.ApiKey != _apiKey)
-                    {
-                        response.Message = "API Key is invalid.";
-                    }
-                    else
-                    {
-                        response.Success = true;
-                        response.ContentList = new List<Models.Import.ApiContent>();
+               //Check object
+               if (true == string.IsNullOrWhiteSpace(request.ApiKey))
+               {
+                  response.Message = "API Key is missing.";
+               }
+               else if (request.ApiKey != _apiKey)
+               {
+                  response.Message = "API Key is invalid.";
+               }
+               else
+               {
+                  response.Success = true;
+                  response.ContentList = new List<Models.Import.ApiContent>();
 
-                        List<IContent> peopleFolderList = new List<IContent>();
+                  List<IContent> peopleFolderList = new List<IContent>();
 
-                        IEnumerable<IContent> rootNodeList = _contentService.GetRootContent();
+                  IEnumerable<IContent> rootNodeList = _contentService.GetRootContent();
 
-                        foreach (IContent rootNode in rootNodeList)
-                        {
-                            IEnumerable<IContent> nodeList = _contentService.GetDescendants(rootNode.Id);
+                  foreach (IContent rootNode in rootNodeList)
+                  {
+                     IEnumerable<IContent> nodeList = _contentService.GetDescendants(rootNode.Id);
 
-                            peopleFolderList.AddRange(nodeList.Where(p => p.ContentType.Alias == "PeopleFolder").ToList());
-                        }
+                     peopleFolderList.AddRange(nodeList.Where(p => p.ContentType.Alias == "PeopleFolder").ToList());
+                  }
 
-                        response.ContentList = new List<Models.Import.ApiContent>();
+                  response.ContentList = new List<Models.Import.ApiContent>();
 
-                        foreach (IContent node in peopleFolderList)
-                        {
-                            response.ContentList.Add(ConvertContentObj(node));
-                        }
+                  foreach (IContent node in peopleFolderList)
+                  {
+                     response.ContentList.Add(ConvertContentObj(node));
+                  }
 
-                        response.Message = "Success";
-                        response.Success = true;
-                    }
-                }
-                else
-                {
-                    response.Message = "The JSON object was not properly formatted.";
-                    response.Success = false;
-                }
-
+                  response.Message = "Success";
+                  response.Success = true;
+               }
             }
-            catch (Exception ex)
+            else
             {
-                //LogHelper.Error<DataImporterController>("Content Import Post Error", ex);
-
-                response.Message = ex.ToString();
+               response.Message = "The JSON object was not properly formatted.";
+               response.Success = false;
             }
 
-            return response;
-        }
+         }
+         catch (Exception ex)
+         {
+            //LogHelper.Error<DataImporterController>("Content Import Post Error", ex);
+
+            response.Message = ex.ToString();
+         }
+
+         return response;
+      }
 
 
-        [System.Web.Http.HttpPost]
+      [System.Web.Http.HttpPost]
+      public Models.Import.ApiResponse GetAllNationalProgramNodes([FromBody] dynamic json)
+      {
+         Models.Import.ApiResponse response = new Models.Import.ApiResponse();
+
+         Models.Import.ApiRequest request = JsonConvert.DeserializeObject<Models.Import.ApiRequest>(json.ToString());
+
+         try
+         {
+            if (request != null)
+            {
+               //Check object
+               if (true == string.IsNullOrWhiteSpace(request.ApiKey))
+               {
+                  response.Message = "API Key is missing.";
+               }
+               else if (request.ApiKey != _apiKey)
+               {
+                  response.Message = "API Key is invalid.";
+               }
+               else
+               {
+                  response.Success = true;
+                  response.ContentList = new List<Models.Import.ApiContent>();
+
+                  List<IContent> nationalProgramsList = new List<IContent>();
+
+                  IEnumerable<IContent> rootNodeList = _contentService.GetRootContent();
+
+                  foreach (IContent rootNode in rootNodeList)
+                  {
+                     IEnumerable<IContent> nodeList = _contentService.GetDescendants(rootNode.Id);
+
+                     nationalProgramsList.AddRange(nodeList.Where(p => p.ContentType.Alias == "NationalProgram").ToList());
+                  }
+
+                  response.ContentList = new List<Models.Import.ApiContent>();
+
+                  foreach (IContent node in nationalProgramsList)
+                  {
+                     response.ContentList.Add(ConvertContentObj(node));
+                  }
+
+                  response.Message = "Success";
+                  response.Success = true;
+               }
+            }
+            else
+            {
+               response.Message = "The JSON object was not properly formatted.";
+               response.Success = false;
+            }
+
+         }
+         catch (Exception ex)
+         {
+            //LogHelper.Error<DataImporterController>("Content Import Post Error", ex);
+
+            response.Message = ex.ToString();
+         }
+
+         return response;
+      }
+
+
+      [System.Web.Http.HttpPost]
         public Models.Import.ApiResponse Delete([FromBody] dynamic json)
         {
             Models.Import.ApiResponse response = new Models.Import.ApiResponse();

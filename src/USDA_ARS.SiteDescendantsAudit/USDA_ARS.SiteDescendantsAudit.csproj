@@ -287,7 +287,6 @@
     <Compile Include="Models\AuditRecordModel.cs" />
     <Compile Include="Models\LogRecordModel.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Resources\App_Plugins\SiteDescendantsAudit\SiteDescendantsAuditPropertyEditor.cs" />
     <Compile Include="Routes\RouteConfig.cs" />
     <Compile Include="Utilities\PluginHelpers.cs" />
   </ItemGroup>

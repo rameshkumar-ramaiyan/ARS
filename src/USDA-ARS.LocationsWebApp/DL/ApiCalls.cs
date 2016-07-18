@@ -115,7 +115,7 @@ namespace USDA_ARS.LocationsWebApp.DL
          if (true == errorDetected)
          {
             errorDetected = false;
-            AddLog("// WAITING 2 MINUTES THEN TRYING AGAIN");
+            AddLog("// WAITING 2 MINUTES THEN TRYING FINAL ATTEMPT");
             AddLog("///////////////////////////////");
             Wait(120);
 

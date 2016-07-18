@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace USDA_ARS.ImportNavigation.Models
 {
-   public class ModeCodeLookup
+   public class SubsiteLookup
    {
-      public string ModeCode { get; set; }
+      public string Subsite { get; set; }
       public int UmbracoId { get; set; }
       public string Url { get; set; }
       public string OldUrl { get; set; }

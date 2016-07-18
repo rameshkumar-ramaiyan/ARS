@@ -54,7 +54,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
 
 
-            List<ModeCodeNew> modeCodeList = Helpers.Aris.ModeCodesNew.GetOldModeCode(modeCode);
+            List<ModeCodeNew> modeCodeList = Helpers.Aris.ModeCodesNews.GetOldModeCode(modeCode);
 
             if (modeCodeList != null)
             {
@@ -261,7 +261,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
 
 
-            List<ModeCodeNew> modeCodeList = Helpers.Aris.ModeCodesNew.GetOldModeCode(modeCode);
+            List<ModeCodeNew> modeCodeList = Helpers.Aris.ModeCodesNews.GetOldModeCode(modeCode);
 
             foreach (ModeCodeNew modeCodeItem in modeCodeList)
             {

@@ -448,6 +448,7 @@
     <Content Include="css\ie8-and-down.css" />
     <Content Include="css\layout.css" />
     <Content Include="css\rte.css" />
+    <Content Include="css\umbraco-css.css" />
     <Content Include="default.aspx" />
     <Content Include="Global.asax" />
     <Content Include="JQuery\jquery.corner.js" />

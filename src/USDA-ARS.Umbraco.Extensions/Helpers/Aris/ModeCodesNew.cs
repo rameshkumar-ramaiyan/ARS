@@ -12,7 +12,7 @@ using USDA_ARS.Umbraco.Extensions.Models.Aris;
 
 namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 {
-    public class ModeCodesNew
+    public class ModeCodesNews
     {
         public static UmbracoHelper UmbHelper = new UmbracoHelper(UmbracoContext.Current);
 
@@ -111,7 +111,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
             }
             catch (Exception ex)
             {
-                LogHelper.Error(typeof(ModeCodesNew), "GetAllNewModeCode Error", ex);
+                LogHelper.Error(typeof(ModeCodesNews), "GetAllNewModeCode Error", ex);
             }
 
             return output;
