@@ -903,76 +903,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
          return response;
       }
-
-
-      [System.Web.Http.HttpPost]
-      public Models.Import.ApiResponse UpdateXml([FromBody] dynamic json)
-      {
-         Models.Import.ApiResponse response = new Models.Import.ApiResponse();
-
-         Models.Import.ApiRequest request = JsonConvert.DeserializeObject<Models.Import.ApiRequest>(json.ToString());
-
-         try
-         {
-            if (request != null)
-            {
-               //Check object
-               if (true == string.IsNullOrWhiteSpace(request.ApiKey))
-               {
-                  response.Message = "API Key is missing.";
-               }
-               else if (request.ApiKey != _apiKey)
-               {
-                  response.Message = "API Key is invalid.";
-               }
-               else if (request.ContentList == null || request.ContentList.Count == 0)
-               {
-                  response.Message = "Content object empty. Needed for GET.";
-               }
-               else
-               {
-                  response.Success = true;
-                  response.ContentList = new List<Models.Import.ApiContent>();
-
-                  foreach (Models.Import.ApiContent contentObj in request.ContentList)
-                  {
-                     IContent content = null;
-                     Models.Import.ApiContent responseContent = new Models.Import.ApiContent();
-
-                     if (contentObj.Id <= 0)
-                     {
-                        responseContent.Message = "Must provide an Umbraco ID.";
-                        responseContent.Success = false;
-                     }
-                     else // Find by Id
-                     {
-                        _contentService.RebuildXmlStructures(new int[] { contentObj.Id });
-
-                        responseContent.Success = true;
-                        responseContent.Message = "XML Rebuilt";
-                     }
-
-                     response.ContentList.Add(responseContent);
-                  }
-               }
-            }
-            else
-            {
-               response.Message = "The JSON object was not properly formatted.";
-               response.Success = false;
-            }
-
-         }
-         catch (Exception ex)
-         {
-            //LogHelper.Error<DataImporterController>("Content Import Post Error", ex);
-
-            response.Message = ex.ToString();
-         }
-
-         return response;
-      }
-
+      
 
       /// <summary>
       /// Convert Umbraco content object
