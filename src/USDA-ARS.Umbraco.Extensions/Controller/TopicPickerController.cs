@@ -49,7 +49,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                     if (node.ContentType.Alias == "PersonSite")
                     {
-                        node = node.Parent.Parent;
+                        // node
                     }
 
                     if (node.ContentType.Alias != "ARSLocations" && node.ContentType.Alias != "PersonSite")

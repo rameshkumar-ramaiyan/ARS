@@ -15,13 +15,15 @@ namespace USDA_ARS.ImportNavigation.Objects
          var db = new Database("sitePublisherDbDSN");
 
          string sql = @"SELECT DISTINCT(OriginSite_ID), OriginSite_Type FROM NavSystems WHERE
-                          --AND OriginSite_Type = 'Place'
+                          --OriginSite_Type = 'Place' AND 
                           spsysendtime IS NULL
                           --AND SPSysBeginTime > '1/1/1990'
                           --AND showLabel IN(0, 1)
-                          AND OriginSite_ID <> '00000000'
+                          --AND OriginSite_ID = '00000000'
                           AND OriginSite_ID	<> ''
-                          ORDER BY OriginSite_ID";
+						                    AND OriginSite_Type	<> ''
+						                    AND OriginSite_Type	<> 'ad_hoc'
+                          ORDER BY OriginSite_Type, OriginSite_ID";
 
          List<NavSystem> itemList = db.Query<NavSystem>(sql).ToList();
 

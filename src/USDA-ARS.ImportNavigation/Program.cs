@@ -10,6 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Umbraco.Core.Persistence;
+using Umbraco.Core.Services;
 using USDA_ARS.ImportNavigation.Models;
 using USDA_ARS.ImportNavigation.Objects;
 using USDA_ARS.LocationsWebApp.DL;
@@ -41,11 +42,23 @@ namespace USDA_ARS.ImportNavigation
 
       static List<SubSite> VALID_SITES = null;
       static List<Document> VALID_DOCS = null;
+      static List<int> UMBRACO_NODES_NEED_PUBLISHED = new List<int>();
 
       static List<ImportedNav> IMPORTED_NAV = new List<ImportedNav>();
 
       static void Main(string[] args)
       {
+         bool useImportNavCache = false;
+
+         if (args != null && args.Length == 1)
+         {
+            if (args[0] == "use-import-nav-cache")
+            {
+               useImportNavCache = true;
+            }
+         }
+
+
          AddLog("-= IMPORTING NAVIGATION =-");
          AddLog("");
          AddLog("");
@@ -110,171 +123,207 @@ namespace USDA_ARS.ImportNavigation
             AddLog("");
             AddLog("");
 
-            List<NavSystem> navSysModeCodeList = NavSystems.GetNavModeCodeList();
-
-            // Import the Navs
-            if (navSysModeCodeList != null)
+            if (false == useImportNavCache)
             {
-               navSysModeCodeList = navSysModeCodeList.OrderBy(p => p.OriginSiteType).ThenBy(x => x.OriginSiteId).ToList();
-
-               foreach (NavSystem navSysModeCodeItem in navSysModeCodeList)
+               // DELETE CACHE FILE
+               if (File.Exists("imported-nav.txt"))
                {
-                  if (navSysModeCodeItem.OriginSiteType.ToLower() != "ad_hoc")
+                  File.Delete("imported-nav.txt");
+               }
+
+               List<NavSystem> navSysModeCodeList = NavSystems.GetNavModeCodeList();
+
+               // Import the Navs
+               if (navSysModeCodeList != null)
+               {
+                  navSysModeCodeList = navSysModeCodeList.Where(p => p.OriginSiteType != "ad_hoc").ToList();
+                  navSysModeCodeList = navSysModeCodeList.OrderBy(p => p.OriginSiteType).ThenBy(x => x.OriginSiteId).ToList();
+
+                  int navSysCount = navSysModeCodeList.Count;
+                  int navSysInc = 1;
+
+                  foreach (NavSystem navSysModeCodeItem in navSysModeCodeList)
                   {
                      AddLog("");
-                     AddLog("Site Type: "+ navSysModeCodeItem.OriginSiteType + " // Origin Site ID: " + navSysModeCodeItem.OriginSiteId);
-                  }
-                  ////////////////////////////////////////////////////////////////
-                  //== PROGRAM
-                  if (navSysModeCodeItem.OriginSiteType.ToLower() == "program")
-                  {
-                     List<NavSystem> filteredNavSysCode = NavSystems.GetNavSysListByPlace(navSysModeCodeItem.OriginSiteId, navSysModeCodeItem.OriginSiteType);
+                     AddLog("Record " + navSysInc + " of " + navSysCount);
+                     AddLog("Site Type: " + navSysModeCodeItem.OriginSiteType + " // Origin Site ID: " + navSysModeCodeItem.OriginSiteId);
 
-                     ProgramLookup programCode = PROGRAM_LIST.Where(p => p.ProgramCode == navSysModeCodeItem.OriginSiteId).FirstOrDefault();
-
-                     if (programCode != null)
+                     ////////////////////////////////////////////////////////////////
+                     //== PROGRAM
+                     if (navSysModeCodeItem.OriginSiteType.ToLower() == "program")
                      {
-                        AddLog(" - NP Code Found: " + programCode.ProgramCode + " umbId: " + programCode.UmbracoId);
+                        List<NavSystem> filteredNavSysCode = NavSystems.GetNavSysListByPlace(navSysModeCodeItem.OriginSiteId, navSysModeCodeItem.OriginSiteType);
 
-                        string json = CreateLeftNav(filteredNavSysCode);
+                        ProgramLookup programCode = PROGRAM_LIST.Where(p => p.ProgramCode == navSysModeCodeItem.OriginSiteId).FirstOrDefault();
 
-                        if (false == string.IsNullOrEmpty(json))
+                        if (programCode != null)
                         {
-                           UpdateUmbracoPageNav(programCode.UmbracoId, json);
-                        }
-                     }
-                     else
-                     {
-                        AddLog("!! NP Code NOT Found (Most Likely Old NP Code): " + navSysModeCodeItem.OriginSiteId);
-                     }
-                  }
+                           AddLog(" - NP Code Found: " + programCode.ProgramCode + " umbId: " + programCode.UmbracoId);
 
+                           string json = CreateLeftNav(programCode.UmbracoId, filteredNavSysCode);
 
-                  ////////////////////////////////////////////////////////////////
-                  //== SUBSITE
-                  if (navSysModeCodeItem.OriginSiteType.ToLower() == "subsite")
-                  {
-                     List<NavSystem> filteredNavSysCode = NavSystems.GetNavSysListByPlace(navSysModeCodeItem.OriginSiteId, navSysModeCodeItem.OriginSiteType);
-
-                     SubsiteLookup subsiteLookup = UMBRACO_SUBSITES_LOOKUP.Where(p => p.Subsite == navSysModeCodeItem.OriginSiteId).FirstOrDefault();
-
-                     if (subsiteLookup != null)
-                     {
-                        AddLog(" - Subsite Found: " + subsiteLookup.Subsite + " umbId: " + subsiteLookup.UmbracoId);
-
-                        string json = CreateLeftNav(filteredNavSysCode);
-
-                        if (false == string.IsNullOrEmpty(json))
-                        {
-                           UpdateUmbracoPageNav(subsiteLookup.UmbracoId, json);
-                        }
-                     }
-                     else
-                     {
-                        AddLog("!! NP Code NOT Found (Most Likely Old NP Code): " + navSysModeCodeItem.OriginSiteId);
-                     }
-                  }
-
-
-                  ////////////////////////////////////////////////////////////////
-                  //== PLACE
-                  else if (navSysModeCodeItem.OriginSiteType.ToLower() == "place")
-                  {
-                     string siteId = navSysModeCodeItem.OriginSiteId;
-
-                     List<NavSystem> filteredNavSysModeCode = NavSystems.GetNavSysListByPlace(siteId, navSysModeCodeItem.OriginSiteType);
-
-                     List<NavSystem> filteredNavSysAdHoc = NavSystems.GetNavSysListByAdHoc(siteId);
-
-                     if (filteredNavSysAdHoc == null)
-                     {
-                        List<ModeCodeNew> modeCodeNewList = MODE_CODE_NEW_LIST.Where(p => p.ModecodeNew == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(siteId)).ToList();
-
-                        if (modeCodeNewList != null && modeCodeNewList.Any())
-                        {
-                           foreach (ModeCodeNew oldModeCode in modeCodeNewList)
+                           if (false == string.IsNullOrEmpty(json))
                            {
-                              filteredNavSysAdHoc = NavSystems.GetNavSysListByAdHoc(Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(oldModeCode.ModecodeOld));
-
-                              if (filteredNavSysAdHoc != null & filteredNavSysAdHoc.Any())
-                              {
-                                 filteredNavSysModeCode.AddRange(filteredNavSysAdHoc);
-                              }
+                              UpdateUmbracoPageNav(programCode.UmbracoId, json);
                            }
                         }
-                     }
-                     else if (filteredNavSysAdHoc != null && filteredNavSysAdHoc.Any())
-                     {
-                        filteredNavSysModeCode.AddRange(filteredNavSysAdHoc);
-                     }
-
-                     ModeCodeLookup modeCode = MODE_CODE_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(siteId)).FirstOrDefault();
-
-                     if (modeCode != null)
-                     {
-                        AddLog(" - Mode Code Found: " + modeCode.ModeCode + " umbId: " + modeCode.UmbracoId);
-
-                        string json = CreateLeftNav(filteredNavSysModeCode);
-
-                        if (false == string.IsNullOrEmpty(json))
+                        else
                         {
-                           UpdateUmbracoPageNav(modeCode.UmbracoId, json);
+                           AddLog("!! NP Code NOT Found (Most Likely Old NP Code): " + navSysModeCodeItem.OriginSiteId);
                         }
                      }
-                     else
+
+
+                     ////////////////////////////////////////////////////////////////
+                     //== SUBSITE
+                     if (navSysModeCodeItem.OriginSiteType.ToLower() == "subsite")
                      {
-                        AddLog("!! Mode Code NOT Found (Most Likely Old Mode Code): " + navSysModeCodeItem.OriginSiteId);
-                     }
-                  }
+                        List<NavSystem> filteredNavSysCode = NavSystems.GetNavSysListByPlace(navSysModeCodeItem.OriginSiteId, navSysModeCodeItem.OriginSiteType);
 
-                  ////////////////////////////////////////////////////////////////
-                  //== PERSON
-                  else if (navSysModeCodeItem.OriginSiteType.ToLower() == "person")
-                  {
-                     string personId = navSysModeCodeItem.OriginSiteId;
-                     int umbracoPersonNodeId = 0;
+                        SubsiteLookup subsiteLookup = UMBRACO_SUBSITES_LOOKUP.Where(p => p.Subsite == navSysModeCodeItem.OriginSiteId).FirstOrDefault();
 
-                     UmbracoDocLookup personUmbracoNode = UMBRACO_PERSON_LOOKUP.Where(p => p.DocId == navSysModeCodeItem.OriginSiteId).FirstOrDefault();
-
-                     if (personUmbracoNode != null)
-                     {
-                        AddLog(" - Person Site Found: " + personUmbracoNode.DocId + " umbId: " + personUmbracoNode.UmbracoId);
-
-                        umbracoPersonNodeId = personUmbracoNode.UmbracoId;
-
-                        UmbracoDocLookup personParentModeNode = GetModeCodeByUmbracoPersonId(personId);
-
-                        if (personParentModeNode != null)
+                        if (subsiteLookup != null)
                         {
-                           List<NavSystem> filteredNavSysModeCode = NavSystems.GetNavSysListByPlace(Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(personParentModeNode.DocId));
+                           AddLog(" - Subsite Found: " + subsiteLookup.Subsite + " umbId: " + subsiteLookup.UmbracoId);
 
-                           if (filteredNavSysModeCode != null)
+                           string json = CreateLeftNav(subsiteLookup.UmbracoId, filteredNavSysCode);
+
+                           if (false == string.IsNullOrEmpty(json))
                            {
-                              if (filteredNavSysModeCode != null)
-                              {
-                                 string json = CreateLeftNav(filteredNavSysModeCode);
+                              UpdateUmbracoPageNav(subsiteLookup.UmbracoId, json);
+                           }
+                        }
+                        else
+                        {
+                           AddLog("!! NP Code NOT Found (Most Likely Old NP Code): " + navSysModeCodeItem.OriginSiteId);
+                        }
+                     }
 
-                                 if (false == string.IsNullOrEmpty(json))
+
+                     ////////////////////////////////////////////////////////////////
+                     //== PLACE
+                     else if (navSysModeCodeItem.OriginSiteType.ToLower() == "place")
+                     {
+                        string siteId = navSysModeCodeItem.OriginSiteId;
+
+                        List<NavSystem> filteredNavSysModeCode = NavSystems.GetNavSysListByPlace(siteId, navSysModeCodeItem.OriginSiteType);
+
+                        List<NavSystem> filteredNavSysAdHoc = NavSystems.GetNavSysListByAdHoc(siteId);
+
+                        if (filteredNavSysAdHoc == null)
+                        {
+                           List<ModeCodeNew> modeCodeNewList = MODE_CODE_NEW_LIST.Where(p => p.ModecodeNew == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(siteId)).ToList();
+
+                           if (modeCodeNewList != null && modeCodeNewList.Any())
+                           {
+                              foreach (ModeCodeNew oldModeCode in modeCodeNewList)
+                              {
+                                 filteredNavSysAdHoc = NavSystems.GetNavSysListByAdHoc(Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(oldModeCode.ModecodeOld));
+
+                                 if (filteredNavSysAdHoc != null & filteredNavSysAdHoc.Any())
                                  {
-                                    UpdateUmbracoPageNav(personUmbracoNode.UmbracoId, json);
+                                    filteredNavSysModeCode.AddRange(filteredNavSysAdHoc);
                                  }
                               }
                            }
                         }
+                        else if (filteredNavSysAdHoc != null && filteredNavSysAdHoc.Any())
+                        {
+                           filteredNavSysModeCode.AddRange(filteredNavSysAdHoc);
+                        }
+
+                        ModeCodeLookup modeCode = MODE_CODE_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(siteId)).FirstOrDefault();
+
+                        if (modeCode != null)
+                        {
+                           AddLog(" - Mode Code Found: " + modeCode.ModeCode + " umbId: " + modeCode.UmbracoId);
+
+                           // UPDATE FOR NEWS
+
+                           if (modeCode.ModeCode == "00-00-00-00")
+                           {
+                              List<NavSystem> filteredNavSysNews = filteredNavSysModeCode.Where(p => p.BBSect == "News").ToList();
+                              List<NavSystem> filteredNavSysNonNews = filteredNavSysModeCode.Where(p => p.BBSect != "News").ToList();
+
+                              string json = CreateLeftNav(29627, filteredNavSysNews);
+
+                              if (false == string.IsNullOrEmpty(json))
+                              {
+                                 UpdateUmbracoPageNav(29627, json);
+                              }
+
+                              json = CreateLeftNav(modeCode.UmbracoId, filteredNavSysNonNews);
+
+                              if (false == string.IsNullOrEmpty(json))
+                              {
+                                 UpdateUmbracoPageNav(modeCode.UmbracoId, json);
+                              }
+                           }
+                           else
+                           {
+                              string json = CreateLeftNav(modeCode.UmbracoId, filteredNavSysModeCode);
+
+                              if (false == string.IsNullOrEmpty(json))
+                              {
+                                 UpdateUmbracoPageNav(modeCode.UmbracoId, json);
+                              }
+                           }
+
+                        }
+                        else
+                        {
+                           AddLog("!! Mode Code NOT Found (Most Likely Old Mode Code): " + navSysModeCodeItem.OriginSiteId);
+                        }
                      }
-                     else
+
+                     ////////////////////////////////////////////////////////////////
+                     //== PERSON
+                     else if (navSysModeCodeItem.OriginSiteType.ToLower() == "person")
                      {
-                        AddLog("!! Person Site NOT Found: " + navSysModeCodeItem.OriginSiteId);
+                        string personId = navSysModeCodeItem.OriginSiteId;
+                        int umbracoPersonNodeId = 0;
+
+                        UmbracoDocLookup personUmbracoNode = UMBRACO_PERSON_LOOKUP.Where(p => p.DocId == navSysModeCodeItem.OriginSiteId).FirstOrDefault();
+
+                        if (personUmbracoNode != null)
+                        {
+                           AddLog(" - Person Site Found: " + personUmbracoNode.DocId + " umbId: " + personUmbracoNode.UmbracoId);
+
+                           umbracoPersonNodeId = personUmbracoNode.UmbracoId;
+
+                           UmbracoDocLookup personParentModeNode = GetModeCodeByUmbracoPersonId(personId);
+
+                           if (personParentModeNode != null)
+                           {
+                              List<NavSystem> filteredNavSysModeCode = NavSystems.GetNavSysListByPlace(Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(personParentModeNode.DocId));
+
+                              if (filteredNavSysModeCode != null)
+                              {
+                                 if (filteredNavSysModeCode != null)
+                                 {
+                                    string json = CreateLeftNav(umbracoPersonNodeId, filteredNavSysModeCode);
+
+                                    if (false == string.IsNullOrEmpty(json))
+                                    {
+                                       UpdateUmbracoPageNav(umbracoPersonNodeId, json);
+                                    }
+                                 }
+                              }
+                           }
+                        }
+                        else
+                        {
+                           AddLog("!! Person Site NOT Found: " + navSysModeCodeItem.OriginSiteId);
+                        }
                      }
+
+                     navSysInc++;
                   }
 
 
-
-
-
+                  PublishPages();
                }
             }
-
 
             // Save Nav Import
 
@@ -287,172 +336,14 @@ namespace USDA_ARS.ImportNavigation
 
             AddLog("= Link Nav to Umbraco Nodes =");
 
-            // Link the Navs
+            if (true == useImportNavCache)
+            {
+               AddLog("Using Imported Nav Cache...");
+               IMPORTED_NAV = GetImportedNavCache();
+            }
 
-            //// MODE CODES
-            //if (VALID_DOCS != null && MODE_CODE_LIST != null)
-            //{
-            //    foreach (ModeCodeLookup modeCode in MODE_CODE_LIST)
-            //    {
-            //        List<Document> filterDocList = VALID_DOCS.Where(p => p.OriginSiteId == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(modeCode.ModeCode)).ToList();
-
-            //        if (filterDocList != null)
-            //        {
-            //            foreach (Document doc in filterDocList)
-            //            {
-            //                UmbracoDocLookup umbracoDoc = UMBRACO_DOC_LOOKUP.Where(p => p.DocId == doc.DocId.ToString()).FirstOrDefault();
-
-            //                if (umbracoDoc != null)
-            //                {
-            //                    AddLog("Getting Umbraco Old Url... (" + umbracoDoc.UmbracoId + ")");
-
-            //                    UmbracoDocLookup getUmbracoOldUrl = UMBRACO_OLD_URL_LOOKUP.Where(p => p.UmbracoId == umbracoDoc.UmbracoId).FirstOrDefault();
-
-            //                    if (getUmbracoOldUrl != null)
-            //                    {
-            //                        NavByPage navByPage = GetNavsByProduction(getUmbracoOldUrl.OldUrl);
-
-            //                        if (navByPage != null)
-            //                        {
-            //                            List<ImportedNav> importedNavList = new List<ImportedNav>();
-
-            //                            ImportedNav foundNav = null;
-
-            //                            if (navByPage.NavLeft > 0)
-            //                            {
-            //                                AddLog(" - Nav Left Found: " + navByPage.NavLeft);
-
-            //                                foundNav = IMPORTED_NAV.Where(p => p.NavSysId == navByPage.NavLeft).FirstOrDefault();
-
-            //                                if (foundNav != null)
-            //                                {
-            //                                    importedNavList.Add(foundNav);
-            //                                }
-            //                            }
-            //                            if (navByPage.NavRight > 0)
-            //                            {
-            //                                AddLog(" - Nav Right Found: " + navByPage.NavRight);
-
-            //                                foundNav = IMPORTED_NAV.Where(p => p.NavSysId == navByPage.NavRight).FirstOrDefault();
-
-            //                                if (foundNav != null)
-            //                                {
-            //                                    importedNavList.Add(foundNav);
-            //                                }
-            //                            }
-
-
-            //                            if (importedNavList != null && importedNavList.Any())
-            //                            {
-            //                                string jsonNav = LinkLeftNavItemsList(importedNavList);
-
-            //                                if (false == string.IsNullOrEmpty(jsonNav))
-            //                                {
-            //                                    UpdateUmbracoPageLinkNav(umbracoDoc.UmbracoId, jsonNav);
-            //                                }
-            //                            }
-
-            //                        }
-            //                    }
-
-
-            //                    ApiResponse getUmbracoNode = GetCalls.GetNodeByUmbracoId(umbracoDoc.UmbracoId);
-
-            //                    if (getUmbracoNode != null && getUmbracoNode.ContentList != null && getUmbracoNode.ContentList.Any())
-            //                    {
-
-            //                    }
-
-
-            //                    List<NavSystem> filteredNavSystemList = new List<NavSystem>();
-
-            //                    List<NavSystem> navSystemList = NavSystems.GetNavSysListByPlace(Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(modeCode.ModeCode)).ToList();
-
-
-            //                    if (true == string.IsNullOrWhiteSpace(doc.DocType))
-            //                    {
-            //                        doc.DocType = "Main";
-            //                    }
-
-            //                    // Checked for Related nav first
-            //                    filteredNavSystemList.AddRange(navSystemList.Where(p => p.NavPageLoc.ToLower() == "related"));
-
-            //                    if (filteredNavSystemList != null && filteredNavSystemList.Count <= 0)
-            //                    {
-            //                        // check for left nav
-            //                        List<NavSystem> navSystemItemList = navSystemList.Where(p => p.NavPageLoc.ToLower() == "left" &&
-            //                                p.BBSect.ToLower() == doc.DocType.ToLower() && p.NavSysLabel.ToLower() == "index").ToList();
-            //                        if (navSystemItemList != null)
-            //                        {
-            //                            filteredNavSystemList.AddRange(navSystemItemList);
-            //                        }
-
-
-            //                        // check for right nav
-            //                        List<NavSystem> navSystemItemList2 = navSystemList.Where(p => p.NavSysId == doc.RLNav).ToList();
-            //                        if (navSystemItemList2 != null)
-            //                        {
-            //                            filteredNavSystemList.AddRange(navSystemItemList2);
-            //                        }
-            //                    }
-
-
-            //                    if (filteredNavSystemList != null && filteredNavSystemList.Any())
-            //                    {
-            //                        List<ImportedNav> importedNavList = new List<ImportedNav>();
-
-            //                        foreach (NavSystem navSys in filteredNavSystemList)
-            //                        {
-            //                            ImportedNav foundNav = IMPORTED_NAV.Where(p => p.NavSysId == navSys.NavSysId).FirstOrDefault();
-
-            //                            if (foundNav != null)
-            //                            {
-            //                                importedNavList.Add(foundNav);
-            //                            }
-            //                        }
-
-
-            //                        if (importedNavList != null && importedNavList.Any())
-            //                        {
-            //                            string jsonNav = LinkLeftNavItemsList(importedNavList);
-
-            //                            if (false == string.IsNullOrEmpty(jsonNav))
-            //                            {
-            //                                UpdateUmbracoPageLinkNav(umbracoDoc.UmbracoId, jsonNav);
-            //                            }
-            //                        }
-            //                    }
-            //                }
-
-
-
-
-            //                //
-
-
-
-
-
-
-
-
-
-            //            }
-            //        }
-            //    }
-
-
-            //    foreach (Document doc in VALID_DOCS)
-            //    {
-            //        AddLog("Doc: " + doc.Title + "[" + Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(doc.OriginSiteId + "]"));
-
-
-
-
-
-            //        // Link Page Navs Next
-            //    }
-            //}
+            UMBRACO_NODES_NEED_PUBLISHED = null;
+            UMBRACO_NODES_NEED_PUBLISHED = new List<int>();
 
             if (UMBRACO_OLD_URL_LOOKUP != null)
             {
@@ -508,6 +399,7 @@ namespace USDA_ARS.ImportNavigation
                               if (apiResponse != null && apiResponse.ContentList != null && apiResponse.ContentList.Count == 1)
                               {
                                  AddLog(" - Saved: (" + apiResponse.ContentList[0].Id + ") " + apiResponse.ContentList[0].Name);
+                                 UMBRACO_NODES_NEED_PUBLISHED.Add(apiResponse.ContentList[0].Id);
                               }
                            }
                         }
@@ -516,6 +408,8 @@ namespace USDA_ARS.ImportNavigation
                   }
                }
             }
+
+            PublishPages();
 
 
          }
@@ -982,6 +876,47 @@ namespace USDA_ARS.ImportNavigation
       }
 
 
+      static void PublishPages()
+      {
+         //Publish pages
+         if (UMBRACO_NODES_NEED_PUBLISHED != null && UMBRACO_NODES_NEED_PUBLISHED.Any())
+         {
+            foreach (int umbracoNodeId in UMBRACO_NODES_NEED_PUBLISHED)
+            {
+               AddLog("Publishing Umbraco Node: " + umbracoNodeId + "...");
+
+               ApiContent content = new ApiContent();
+
+               content.Id = umbracoNodeId;
+               content.Save = 3;
+               ApiRequest request = new ApiRequest();
+
+               request.ContentList = new List<ApiContent>();
+               request.ContentList.Add(content);
+               request.ApiKey = API_KEY;
+
+               ApiResponse responseBack = ApiCalls.PostData(request, "Post");
+
+               if (responseBack.Success == true && responseBack.ContentList != null && responseBack.ContentList.Any())
+               {
+                  if (responseBack.ContentList[0].Success == true)
+                  {
+                     AddLog(" - Published.");
+                  }
+                  else
+                  {
+                     AddLog(" - ! Not Published.");
+                  }
+               }
+               else
+               {
+                  AddLog(" - ! Not Published!");
+               }
+            }
+         }
+      }
+
+
       static UmbracoDocLookup GetModeCodeByUmbracoPersonId(string personId)
       {
          var db = new Database("umbracoDbDSN");
@@ -1003,7 +938,7 @@ namespace USDA_ARS.ImportNavigation
       }
 
 
-      static string CreateLeftNav(List<NavSystem> navSysList)
+      static string CreateLeftNav(int umbracoId, List<NavSystem> navSysList)
       {
          string output = "";
 
@@ -1107,7 +1042,7 @@ namespace USDA_ARS.ImportNavigation
 
                      navArchetypeItem.Fieldsets.Add(fieldsetNav);
 
-                     IMPORTED_NAV.Add(new ImportedNav { NavSysId = navSysItem.NavSysId, UmbracoGuid = fieldsetNav.Id, NavTitle = navTitle, Section = navSysItem.BBSect, Label = navSysItem.NavSysLabel });
+                     UpdateImportedNav(new ImportedNav { NavSysId = navSysItem.NavSysId, UmbracoNodeId = umbracoId, UmbracoGuid = fieldsetNav.Id, NavTitle = navTitle, Section = navSysItem.BBSect, Label = navSysItem.NavSysLabel });
 
                      // LOOP END
 
@@ -1122,6 +1057,48 @@ namespace USDA_ARS.ImportNavigation
          }
 
          return output;
+      }
+
+
+      static void UpdateImportedNav(ImportedNav importedNav)
+      {
+         IMPORTED_NAV.Add(importedNav);
+
+         using (StreamWriter sw = File.AppendText("imported-nav.txt"))
+         {
+            sw.Write(importedNav.NavSysId + "~");
+            sw.Write(importedNav.UmbracoNodeId + "~");
+            sw.Write(importedNav.UmbracoGuid + "~");
+            sw.Write(importedNav.NavTitle + "~");
+            sw.Write(importedNav.Section + "~");
+            sw.Write(importedNav.Label);
+            sw.WriteLine();
+         }
+      }
+
+
+      static List<ImportedNav> GetImportedNavCache()
+      {
+         List<ImportedNav> importedNavList = new List<ImportedNav>();
+
+         string filename = "imported-nav.txt";
+
+         if (true == File.Exists(filename))
+         {
+            using (StreamReader sr = File.OpenText(filename))
+            {
+               string s = "";
+               while ((s = sr.ReadLine()) != null)
+               {
+                  string[] lineArray = s.Split('~');
+
+                  importedNavList.Add(new ImportedNav() { NavSysId = Convert.ToInt32(lineArray[0]), UmbracoNodeId = Convert.ToInt32(lineArray[1]), UmbracoGuid = Guid.Parse(lineArray[2]), NavTitle = lineArray[3], Section = lineArray[4], Label = lineArray[5] });
+               }
+            }
+         }
+
+
+         return importedNavList;
       }
 
 
@@ -1245,6 +1222,46 @@ namespace USDA_ARS.ImportNavigation
       }
 
 
+      static bool UpdateUmbracoPageNavtoDB(int umbracoId, string leftNav)
+      {
+         bool success = false;
+
+         var db = new Database("umbracoDbDSN");
+
+         string sql = @"SELECT * FROM cmsPropertyData WHERE propertytypeid IN (SELECT id FROM cmsPropertyType WHERE Alias = 'leftNavCreate')
+                            AND contentNodeId = @umbracoId AND versionId IN
+                            (SELECT versionId FROM cmsDocument WHERE published = 1)";
+
+         UmbracoPropertyData propertyData = db.Query<UmbracoPropertyData>(sql, new { umbracoId = umbracoId }).FirstOrDefault();
+
+         if (propertyData != null)
+         {
+            propertyData.dataNtext = leftNav;
+
+            db.Update(propertyData);
+
+            ApiContent content = new ApiContent();
+
+            content.Id = umbracoId;
+
+            ApiRequest request = new ApiRequest();
+
+            request.ContentList = new List<ApiContent>();
+            request.ContentList.Add(content);
+            request.ApiKey = API_KEY;
+
+            ApiResponse responseBack = ApiCalls.PostData(request, "UpdateXml");
+
+            if (responseBack.Success == true && responseBack.ContentList != null && responseBack.ContentList[0].Success == true)
+            {
+               success = true;
+            }
+         }
+
+         return success;
+      }
+
+
       static ApiResponse UpdateUmbracoPageNav(int id, string leftNav)
       {
          ApiContent content = new ApiContent();
@@ -1257,7 +1274,7 @@ namespace USDA_ARS.ImportNavigation
 
          content.Properties = properties;
 
-         content.Save = 2;
+         content.Save = 1;
 
          ApiRequest request = new ApiRequest();
 
@@ -1266,6 +1283,8 @@ namespace USDA_ARS.ImportNavigation
          request.ApiKey = API_KEY;
 
          ApiResponse responseBack = ApiCalls.PostData(request, "Post");
+
+         UMBRACO_NODES_NEED_PUBLISHED.Add(id);
 
          return responseBack;
       }
@@ -1281,35 +1300,38 @@ namespace USDA_ARS.ImportNavigation
 
          properties.Add(new ApiProperty("leftNavPicker", leftNavJson)); // 
 
-         if (true == oldUrl.ToLower().StartsWith("/pandp/"))
+         if (false == oldUrl.ToLower().StartsWith("/is/"))
          {
-            properties.Add(new ApiProperty("navigationCategory", "dbc6a2c8-1e09-4f23-9a91-5823a9729626")); // 
-         }
-         else if (true == oldUrl.ToLower().StartsWith("/research/"))
-         {
-            properties.Add(new ApiProperty("navigationCategory", "f5231859-9053-4e75-835e-2fd07e3575e6")); // 
-         }
-         else if (true == oldUrl.ToLower().StartsWith("/careers/"))
-         {
-            properties.Add(new ApiProperty("navigationCategory", "d5f6c79c-a25c-4838-b154-20398f0685e2")); // 
-         }
-         else if (true == oldUrl.ToLower().StartsWith("/aboutus/"))
-         {
-            properties.Add(new ApiProperty("navigationCategory", "ba07e133-9703-42a6-87aa-8196ed8dc55d")); // 
-         }
-         else if (true == oldUrl.ToLower().StartsWith("/news/"))
-         {
-            properties.Add(new ApiProperty("navigationCategory", "ac79b700-ad67-4179-a4f6-db9705ecce31")); // 
-         }
-         else if (true == oldUrl.ToLower().StartsWith("/services/"))
-         {
-            properties.Add(new ApiProperty("navigationCategory", "6dded150-790b-4ddb-b0dd-15674a066840")); // 
+            if (true == oldUrl.ToLower().StartsWith("/pandp/"))
+            {
+               properties.Add(new ApiProperty("navigationCategory", "dbc6a2c8-1e09-4f23-9a91-5823a9729626")); // 
+            }
+            else if (true == oldUrl.ToLower().StartsWith("/research/"))
+            {
+               properties.Add(new ApiProperty("navigationCategory", "f5231859-9053-4e75-835e-2fd07e3575e6")); // 
+            }
+            else if (true == oldUrl.ToLower().StartsWith("/careers/"))
+            {
+               properties.Add(new ApiProperty("navigationCategory", "d5f6c79c-a25c-4838-b154-20398f0685e2")); // 
+            }
+            else if (true == oldUrl.ToLower().StartsWith("/aboutus/"))
+            {
+               properties.Add(new ApiProperty("navigationCategory", "ba07e133-9703-42a6-87aa-8196ed8dc55d")); // 
+            }
+            else if (true == oldUrl.ToLower().StartsWith("/news/"))
+            {
+               properties.Add(new ApiProperty("navigationCategory", "ac79b700-ad67-4179-a4f6-db9705ecce31")); // 
+            }
+            else if (true == oldUrl.ToLower().StartsWith("/services/"))
+            {
+               properties.Add(new ApiProperty("navigationCategory", "6dded150-790b-4ddb-b0dd-15674a066840")); // 
+            }
          }
 
 
          content.Properties = properties;
 
-         content.Save = 2;
+         content.Save = 1;
 
          ApiRequest request = new ApiRequest();
 
