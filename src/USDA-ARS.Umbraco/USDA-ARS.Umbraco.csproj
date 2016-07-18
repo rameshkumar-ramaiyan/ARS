@@ -501,6 +501,7 @@
     <Content Include="umbraco\Config\Lang\it.xml" />
     <Content Include="umbraco\Config\Lang\ja.xml" />
     <Content Include="umbraco\Config\Lang\ko.xml" />
+    <Content Include="umbraco\Config\Lang\nb.xml" />
     <Content Include="umbraco\Config\Lang\nl.xml" />
     <Content Include="umbraco\Config\Lang\no.xml" />
     <Content Include="umbraco\Config\Lang\pl.xml" />
