@@ -24,7 +24,7 @@ namespace USDA_ARS.ImportNews
     class Program
     {
         static string API_KEY = ConfigurationManager.AppSettings.Get("Umbraco:ApiKey");
-        static string API_URL = ConfigurationManager.AppSettings.Get("Umbraco:ApiUrl");
+        static string API_URL_NEWS = ConfigurationManager.AppSettings.Get("Umbraco:ApiUrlForNews");
         static List<News> NEWS_LIST = null;
         static List<ModeCodeLookup> MODE_CODE_LIST = null;
         static List<ModeCodeNew> MODE_CODE_NEW_LIST = null;
@@ -638,9 +638,9 @@ namespace USDA_ARS.ImportNews
         {
             List<NewsTopicItem> newsTopicList = new List<NewsTopicItem>();
 
-            string apiUrl = API_URL;
+            string apiUrl = API_URL_NEWS;
 
-            var http = (HttpWebRequest)WebRequest.Create(new Uri("http://technik-usda.axial.us/umbraco/usda/NewsTopicPicker/Get"));
+            var http = (HttpWebRequest)WebRequest.Create(new Uri(apiUrl));
             http.Accept = "application/json";
             http.ContentType = "application/json";
             http.Method = "GET";
