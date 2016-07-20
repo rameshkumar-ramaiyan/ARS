@@ -26,7 +26,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
       private static bool updateModeCodes = false;
       private static bool updateOldUrl = false;
       private static bool updateSoftware = false;
-      private static bool newPersonSite = false;
+      private static bool updateNewsInterLinks = false;
 
       protected override void ApplicationStarted(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
       {
@@ -46,16 +46,6 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
          IContent node = e.Entity;
 
          bool isNationalProgramPage = false;
-
-         if (node.ContentType.Alias == "PersonSite")
-         {
-            newPersonSite = true;
-         }
-         else
-         {
-            newPersonSite = false;
-         }
-
          if (node.Parent() != null && node.Parent().ContentType.Alias == "NationalProgramFolderContainer")
          {
             isNationalProgramPage = true;
@@ -125,13 +115,23 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                }
             }
 
-
+            // UPDATE SOFTWARE
             updateSoftware = false;
             if (e.SavedEntities.Count() == 1 && node.HasProperty("software"))
             {
                if (node.IsPropertyDirty("software"))
                {
                   updateSoftware = true;
+               }
+            }
+
+            // UPDATE NEWS INTERLINKS
+            updateNewsInterLinks = false;
+            if (e.SavedEntities.Count() == 1 && node.ContentType.Alias == "NewsArticle" && node.HasProperty("bodyText"))
+            {
+               if (node.IsPropertyDirty("bodyText"))
+               {
+                  updateNewsInterLinks = true;
                }
             }
          }
@@ -142,15 +142,6 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
       {
          foreach (var node in e.SavedEntities)
          {
-            // New Person Site
-            if (true == newPersonSite)
-            {
-               IContent newNavigationNode = _contentService.CreateContent("Navigations", node, "SiteNavFolder");
-               _contentService.SaveAndPublishWithStatus(newNavigationNode);
-
-               newPersonSite = false;
-            }
-
             // UPDATE SOFTWARE
             if (true == updateSoftware)
             {
@@ -325,27 +316,28 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                }
 
             }
-
-
             if (node.ContentType.Alias == "NationalProgram" && !cs.HasChildren(node.Id))
             {
                var childNode = _contentService.CreateContent("Docs", node, "NationalProgramFolderContainer");
 
                _contentService.SaveAndPublishWithStatus(childNode);
             }
-            else if (node.ContentType.Alias == "NewsArticle")
+            else if (true == updateNewsInterLinks && node.ContentType.Alias == "NewsArticle")
             {
-               int nodeId = node.Id;
-
-               string bodyText = node.GetValue<string>("bodyText");
-
-               NewsInterLinks.RemoveLinksByNodeId(nodeId);
-
-               List<LinkItem> linkItemList = NewsInterLinks.FindInterLinks(bodyText);
-
-               if (linkItemList != null)
+               if (ConfigurationManager.AppSettings["USDA_ARS:ProcessInterLinksOnSave"] != null && ConfigurationManager.AppSettings.Get("USDA_ARS:ProcessInterLinksOnSave").ToLower() == "true")
                {
-                  NewsInterLinks.GenerateInterLinks(node, linkItemList);
+                  int nodeId = node.Id;
+
+                  string bodyText = node.GetValue<string>("bodyText");
+
+                  NewsInterLinks.RemoveLinksByNodeId(nodeId);
+
+                  List<LinkItem> linkItemList = NewsInterLinks.FindInterLinks(bodyText);
+
+                  if (linkItemList != null)
+                  {
+                     NewsInterLinks.GenerateInterLinks(node, linkItemList);
+                  }
                }
             }
          }

@@ -161,14 +161,17 @@ namespace USDA_ARS.ImportDocs
          if (false == addHocOnly)
          {
 
+            // TODO: DOUBLE CHECK THESE...
             AddLog("Updating non-imported docs...");
             UpdateNonImportedPage("Research Home", "/Research/research.htm", 1104, "");
             UpdateNonImportedPage("National Programs", "/research/programs.htm", 1105, "");
             UpdateNonImportedPage("News & Events", "/News/News.htm", 29627, "");
             UpdateNonImportedPage("Careers at ARS Info", "/Careers/Careers.htm", 8031, "");
             UpdateNonImportedPage("Press Room", "/News/docs.htm?docid=1383", 8030, "");
-            UpdateNonImportedPage("Briefing Room", "/News/docs.htm?docid=1383", 8030, "");
+            UpdateNonImportedPage("Briefing Room", "/News/docs.htm?docid=1281", 8003, "");
             UpdateNonImportedPage("Social Media Tools and Resources", "/News/Docs.htm?docid=23888", 131742, "");
+            UpdateNonImportedPage("Image Gallery", "/News/Docs.htm?docid=23559", 1145, "");
+            
          }
 
          if (false == updateNonImportOnly)
