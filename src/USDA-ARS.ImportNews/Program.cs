@@ -167,8 +167,6 @@ namespace USDA_ARS.ImportNews
 
                         if (false == string.IsNullOrEmpty(bodyText))
                         {
-                           bodyText = CleanHtml.CleanUpHtml(bodyText);
-
                            bodyText = ReplaceCaseInsensitive(bodyText, "../thelatest.htm", "/{localLink:8001}");
                            bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/pr/thelatest.htm", "/{localLink:8001}");
 
@@ -181,6 +179,8 @@ namespace USDA_ARS.ImportNews
                            bodyText = ReplaceCaseInsensitive(bodyText, "\"../../", "/");
                            bodyText = ReplaceCaseInsensitive(bodyText, "\"../", "/is/");
                            bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/", "/");
+
+                           bodyText = CleanHtml.CleanUpHtml(bodyText);
                         }
 
                         if (doc.DocumentNode.SelectSingleNode("//meta[@name='keywords']") != null)
