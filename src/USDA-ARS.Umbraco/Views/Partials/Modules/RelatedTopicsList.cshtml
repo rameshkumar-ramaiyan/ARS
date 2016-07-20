@@ -6,7 +6,6 @@
 @using Newtonsoft.Json
 @model IPublishedContent
 @{
-    ArchetypeModel parentRelatedTopics = null;
     string modeCode = "";
 
     modeCode = Model.GetPropertyValue<string>("modeCode");
@@ -22,15 +21,12 @@
         modeCode = rootPage.GetPropertyValue<string>("modeCode");
     }
 
-
     ArchetypeModel currentRelatedTopics = Model.GetPropertyValue<ArchetypeModel>("leftNavPicker");
 
-    List<ArchetypeModel> siteRelatedTopicsTop = null;
-    List<ArchetypeModel> siteRelatedTopicsBottom = null;
+    List<IPublishedContent> siteRelatedTopicsTop = null;
+    List<IPublishedContent> siteRelatedTopicsBottom = null;
 
     USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetSiteGlobalNav(Model, ref siteRelatedTopicsTop, ref siteRelatedTopicsBottom);
-
-    parentRelatedTopics = rootPage.GetPropertyValue<ArchetypeModel>("leftNavPicker");
 
     bool foundExternalLink = false;
 }
@@ -69,7 +65,7 @@
 
                     if (topicItemListValue != null && false == string.IsNullOrEmpty(topicItemListValue.Value))
                     {
-                        ArchetypeModel topicItem = USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetTopicsByGuid(Guid.Parse(topicItemListValue.Value), rootPage.Descendants());
+                        ArchetypeModel topicItem = USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetTopicsById(Convert.ToInt32(topicItemListValue.Value), rootPage.Descendants().Where(p => p.DocumentTypeAlias == "SiteNavFolder"));
 
                         if (topicItem != null)
                         {

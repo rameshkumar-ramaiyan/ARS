@@ -84,9 +84,9 @@ namespace USDA_ARS.Umbraco.Controllers
                     model.ModeCode = "00-00-00-00";
                 }
 
-                IPublishedContent sitePage = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(model.ModeCode, false);
+                IPublishedContent sitePage = Nodes.GetNodeByModeCode(model.ModeCode, false);
 
-                ArchetypeFieldsetModel softwareItem = Software.GetSoftwareById(model.SoftwareId);
+                IPublishedContent softwareItem = Software.GetSoftwareById(model.SoftwareId);
 
                 string recipientsArray = "";
 
@@ -114,7 +114,7 @@ namespace USDA_ARS.Umbraco.Controllers
 
                     if (softwareItem.HasValue("recipients"))
                     {
-                        recipientsArray = softwareItem.GetValue<string>("recipients");
+                        recipientsArray = softwareItem.GetPropertyValue<string>("recipients");
 
                         // Send email
                         Software.SendEmail(recipientsArray, softwareItem, downloadToSave);

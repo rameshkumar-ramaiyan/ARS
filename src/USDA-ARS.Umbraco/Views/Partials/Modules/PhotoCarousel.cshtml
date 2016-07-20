@@ -3,115 +3,124 @@
 @using RJP.MultiUrlPicker.Models
 @model IPublishedContent
 @{
-    ArchetypeModel carouselSlides = Model.GetPropertyValue<ArchetypeModel>("carouselSlides");
-    IPublishedContent siteSettings = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.SiteSettings();
+   List<IPublishedContent> carouselSlides = null;
+   IPublishedContent siteSettings = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.SiteSettings();
 
-    string defaultCarouselImage = "";
+   IPublishedContent carouselFolder = Model.Children.Where(p => p.DocumentTypeAlias == "SiteCarouselFolder").FirstOrDefault();
 
-    if (siteSettings != null)
-    {
-        defaultCarouselImage = siteSettings.GetPropertyValue<string>("defaultCarouselImage");
-    }
+   if (carouselFolder != null)
+   {
+      carouselSlides = carouselFolder.Children().ToList();
+   }
 
-    if (true == string.IsNullOrEmpty(defaultCarouselImage))
-    {
-        defaultCarouselImage = "/images/default.jpg";
-    }
+   string defaultCarouselImage = "";
+   string defaultCarouselText = "Welcome to our website";
+
+   if (siteSettings != null)
+   {
+      defaultCarouselImage = siteSettings.GetPropertyValue<string>("defaultCarouselImage");
+   }
+
+   if (true == string.IsNullOrEmpty(defaultCarouselImage))
+   {
+      defaultCarouselImage = "/images/default.jpg";
+   }
 
 }
 <!-- photo carousel -->
 @if (carouselSlides != null && carouselSlides.Any())
 {
-    <script type="text/javascript">
-        $(document).ready(function () {
-            $('#slideshow').cycle(
-                {
-                    fx: 'fade',
-                    speed: 500, 			// speed of the transition (any valid fx speed value)
-                    timeout: 6000,			// milliseconds between slide transitions
-                    prev: '#prevPhoto',
-                    pause: '#pausePhoto',
-                    next: '#nextPhoto',
-                    after: onAfter,
-                    before: onBefore
-                }
-            );
+   <script type="text/javascript">
+      $(document).ready(function () {
+         $('#slideshow').cycle(
+             {
+                fx: 'fade',
+                speed: 500, 			// speed of the transition (any valid fx speed value)
+                timeout: 6000,			// milliseconds between slide transitions
+                prev: '#prevPhoto',
+                pause: '#pausePhoto',
+                next: '#nextPhoto',
+                after: onAfter,
+                before: onBefore
+             }
+         );
 
-            $('#pausePhoto').click(function () {
-                $('#slideshow').cycle('pause');
-            });
-        });
+         $('#pausePhoto').click(function () {
+            $('#slideshow').cycle('pause');
+         });
+      });
 
-        function onBefore(curr, next, opts) {
-            var counter = (opts.currSlide + 1) + ' / ' + opts.slideCount;
-            $('#carouselCounter').html(counter);
+      function onBefore(curr, next, opts) {
+         var counter = (opts.currSlide + 1) + ' / ' + opts.slideCount;
+         $('#carouselCounter').html(counter);
 
-            // get the photo carousel caption from the image ALT tag
+         // get the photo carousel caption from the image ALT tag
 
-            $('#carouselCaption').html($('#' + this.children[0].id).data('text'));
-        }
+         $('#carouselCaption').html($('#' + this.children[0].id).data('text'));
+      }
 
-        function onAfter(curr, next, opts) {
-            var counter = (opts.currSlide + 1) + ' / ' + opts.slideCount;
-            $('#carouselCounter').html(counter);
-        }
-    </script>
+      function onAfter(curr, next, opts) {
+         var counter = (opts.currSlide + 1) + ' / ' + opts.slideCount;
+         $('#carouselCounter').html(counter);
+      }
+   </script>
 }
 <a name="photos" class="section508">Photo Carousel Links</a>
 
 <!--Loading display while images load-->
 
 <div id="carousel">
-    <!--Slides-->
+   <!--Slides-->
 
-    <div id="slideshow" style="width:520px;height:320px;float:left;">
-                        @if (carouselSlides != null && carouselSlides.Any())
-        {
-            int slideNum = 0;
+   <div id="slideshow" style="width:520px;height:320px;float:left;">
+      @if (carouselSlides != null && carouselSlides.Any())
+      {
+         int slideNum = 0;
+         defaultCarouselText = carouselSlides[0].GetPropertyValue<string>("slideText");
 
-            foreach (var slide in carouselSlides)
+         foreach (IPublishedContent slide in carouselSlides)
+         {
+            string navLinkUrl = "#";
+            string targetLink = "";
+            if (slide.HasValue("slideUrl"))
             {
-                string navLinkUrl = "#";
-                string targetLink = "";
-                if (slide.HasValue("slideUrl"))
-                {
-                    Link navLink = slide.GetValue<MultiUrls>("slideUrl").FirstOrDefault();
+               Link navLink = slide.GetPropertyValue<MultiUrls>("slideUrl").FirstOrDefault();
 
-                    navLinkUrl = navLink.Url;
-                }
-                else if (slide.HasValue("slideFile"))
-                {
-                    navLinkUrl = slide.GetValue<string>("slideFile");
-                    targetLink = " target=\"_blank\"";
-                }
-
-                <a href="@navLinkUrl" title="@slide.GetValue("slideAltText")"@Html.Raw(targetLink)>
-                    <img id="slide@(slideNum)" src="@slide.GetValue("slideImage")" class="carouselPhoto" alt="@slide.GetValue("slideAltText")" data-text="@slide.GetValue("slideText")" style="max-width: 520px; max-height: 320px;" />
-                </a>
-
-                slideNum++;
+               navLinkUrl = navLink.Url;
             }
-        }
-        else
-        {
-            <img src="@defaultCarouselImage" class="carouselPhoto" alt="" />
-        }
+            else if (slide.HasValue("slideFile"))
+            {
+               navLinkUrl = slide.GetPropertyValue<string>("slideFile");
+               targetLink = " target=\"_blank\"";
+            }
 
-    </div>
+            <a href="@navLinkUrl" title="@slide.GetPropertyValue("slideAltText")" @Html.Raw(targetLink)>
+               <img id="slide@(slideNum)" src="@slide.GetPropertyValue("slideImage")" class="carouselPhoto" alt="@slide.GetPropertyValue("slideAltText")" data-text="@slide.GetPropertyValue("slideText")" style="max-width: 520px; max-height: 320px;" />
+            </a>
+
+            slideNum++;
+         }
+      }
+      else
+      {
+         <img src="@defaultCarouselImage" class="carouselPhoto" alt="" />
+      }
+
+   </div>
 
 
-    <div id="carouselCaption" style="width:115px;height:240px;float:right;">
-        Welcome to our website
-    </div>
+   <div id="carouselCaption" style="width:115px;height:240px;float:right;">
+      @Html.Raw(defaultCarouselText)
+   </div>
 
-    @if (carouselSlides != null && carouselSlides.Any())
-    {
-        <div id="carouselNavigation" style="width:85px;float:right;">
-            <a href="#" id="prevPhoto"><img src="/images/redesign/prev.png" alt="back"></a>
-            <a href="#" id="pausePhoto"><img src="/images/redesign/pause.png" alt="pause"></a>
-            <a href="#" id="nextPhoto"><img src="/images/redesign/next.png" alt="forward"></a>
+   @if (carouselSlides != null && carouselSlides.Any())
+   {
+      <div id="carouselNavigation" style="width:85px;float:right;">
+         <a href="#" id="prevPhoto"><img src="/images/redesign/prev.png" alt="back"></a>
+         <a href="#" id="pausePhoto"><img src="/images/redesign/pause.png" alt="pause"></a>
+         <a href="#" id="nextPhoto"><img src="/images/redesign/next.png" alt="forward"></a>
 
-            <div id="carouselCounter"></div>
-        </div>
-    }
+         <div id="carouselCounter"></div>
+      </div>
+   }
 </div>

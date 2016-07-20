@@ -10,9 +10,8 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 {
     public class Topics
     {
-        public static ArchetypeModel GetTopicsByGuid(Guid id, IEnumerable<IPublishedContent> nodeList)
+        public static ArchetypeModel GetTopicsById(int id, IEnumerable<IPublishedContent> nodeList)
         {
-
             if (nodeList != null && nodeList.Any())
             {
                 foreach (IPublishedContent node in nodeList)
@@ -21,19 +20,19 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                     {
                         ArchetypeModel topicLinks = node.GetPropertyValue<ArchetypeModel>("leftNavCreate");
 
-                        if (topicLinks != null)
-                        {
-                            foreach (var topic in topicLinks)
-                            {
-                                if (topic.Id == id)
-                                {
-                                    if (true == topic.HasValue("customLeftNav"))
-                                    {
-                                        return topic.GetValue<ArchetypeModel>("customLeftNav");
-                                    }
-                                }
-                            }
-                        }
+                        //if (topicLinks != null)
+                        //{
+                        //    foreach (var topic in topicLinks)
+                        //    {
+                        //        if (topic.Id == id)
+                        //        {
+                        //            if (true == topic.HasValue("customLeftNav"))
+                        //            {
+                        //                return topic.GetValue<ArchetypeModel>("customLeftNav");
+                        //            }
+                        //        }
+                        //    }
+                        //}
                     }
 
                 }
@@ -43,7 +42,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
         }
 
 
-        public static void GetSiteGlobalNav(IPublishedContent currentNode, ref List<ArchetypeModel> navTopList, ref List<ArchetypeModel> navBottomList)
+        public static void GetSiteGlobalNav(IPublishedContent currentNode, ref List<IPublishedContent> navTopList, ref List<IPublishedContent> navBottomList)
         {
             IPublishedContent settingsNode = Helpers.Nodes.SiteSettings();
 
