@@ -76,6 +76,7 @@ namespace USDA_ARS.ImportNews
                }
 
                List<ApiContent> apiContentList = new List<ApiContent>();
+               List<int> umbracoIdToPublishList = new List<int>();
 
                foreach (string fileName in files)
                {
@@ -87,7 +88,7 @@ namespace USDA_ARS.ImportNews
 
                      List<string> pathArray = fileInfo.FullName.Split('\\').ToList();
 
-                     AddLog("News Item: " + fileName);
+                     AddLog(" - Getting news information...");
 
                      string newsTitle = "";
                      string bodyText = GetFileText(fileName);
@@ -229,10 +230,18 @@ namespace USDA_ARS.ImportNews
                            }
                         }
 
-                        AddLog("Adding News...");
-                        ApiContent apiContent = AddNewsArticle(parentId, newsTitle, newsDate, newsBlurb, fileInfo.Name, newsTopicList, keywordList, bodyText, year);
+                        AddLog(" - Adding News...");
+                        ApiResponse response = AddNewsArticle(parentId, newsTitle, newsDate, newsBlurb, fileInfo.Name, newsTopicList, keywordList, bodyText, year);
 
-                        apiContentList.Add(apiContent);
+                        if (response != null && response.ContentList != null && response.ContentList.Any() && true == response.Success)
+                        {
+                           umbracoIdToPublishList.Add(response.ContentList[0].Id);
+                           AddLog(" - Saved and Published. Umbraco ID: " + response.ContentList[0].Id);
+                        }
+                        else
+                        {
+                           AddLog(" - DID NOT SAVE.");
+                        }
                      }
                   }
                   else
@@ -240,66 +249,10 @@ namespace USDA_ARS.ImportNews
                      AddLog("");
                      AddLog("/ Bypassing file: " + fileName);
                   }
+                  AddLog("");
                }
-
-               AddLog("");
-               AddLog("Saving News Articles...");
-               AddLog("");
-
-               try
-               {
-                  if (apiContentList != null && apiContentList.Any())
-                  {
-                     ApiRequest request = new ApiRequest();
-
-
-                     request.ApiKey = API_KEY;
-
-                     request.ContentList = apiContentList;
-
-                     AddLog("DateStamp-A: " + DateTime.Now);
-
-                     ApiResponse responseBack = ApiCalls.PostData(request, "Post");
-
-                     if (responseBack.ContentList != null)
-                     {
-                        // Publish the news 
-                        if (true)
-                        {
-                           AddLog("");
-                           AddLog("Publishing News: year " + year + "...");
-
-                           ApiRequest requestPublish = new ApiRequest();
-                           ApiContent contentPublish = new ApiContent();
-
-                           requestPublish.ApiKey = API_KEY;
-
-                           contentPublish.Id = parentId;
-
-                           requestPublish.ContentList = new List<ApiContent>();
-                           requestPublish.ContentList.Add(contentPublish);
-
-                           ApiResponse responseBackPublish = ApiCalls.PostData(requestPublish, "PublishWithChildren");
-
-                           if (responseBackPublish != null)
-                           {
-                              AddLog(" - Success: " + responseBackPublish.Success);
-                              AddLog(" - Message: " + responseBackPublish.Message);
-                           }
-                        }
-                     }
-                  }
-               }
-               catch (Exception ex)
-               {
-                  AddLog("DateStamp-E: " + DateTime.Now);
-                  AddLog("ERROR: " + ex.ToString());
-               }
-
-
             }
          }
-
       }
 
 
@@ -497,8 +450,12 @@ namespace USDA_ARS.ImportNews
       }
 
 
-      static ApiContent AddNewsArticle(int parentId, string title, DateTime newsDate, string blurb, string filename, List<NewsTopicItem> newsTopicList, List<string> keywordList, string htmlText, string year)
+      static ApiResponse AddNewsArticle(int parentId, string title, DateTime newsDate, string blurb, string filename, List<NewsTopicItem> newsTopicList, List<string> keywordList, string htmlText, string year)
       {
+         ApiRequest request = new ApiRequest();
+
+         request.ApiKey = API_KEY;
+
          ApiContent content = new ApiContent();
 
          AddLog(" - News Item: " + title);
@@ -559,13 +516,17 @@ namespace USDA_ARS.ImportNews
          }
 
 
-
-
          content.Properties = properties;
 
-         content.Save = 1; // 1=Saved, 2=Save And Publish
+         content.Save = 2; // 1=Saved, 2=Save And Publish
 
-         return content;
+         request.ContentList = new List<ApiContent>();
+
+         request.ContentList.Add(content);
+
+         ApiResponse responseBack = ApiCalls.PostData(request, "Post");
+
+         return responseBack;
       }
 
       static string GetFileText(string path)
