@@ -6,33 +6,29 @@
 @using Newtonsoft.Json
 @model IPublishedContent
 @{
-    ArchetypeModel parentRelatedTopics = null;
-    string modeCode = "";
+   string modeCode = "";
 
-    modeCode = Model.GetPropertyValue<string>("modeCode");
+   modeCode = Model.GetPropertyValue<string>("modeCode");
 
-    IPublishedContent rootPage = Model.AncestorOrSelf(1);
+   IPublishedContent rootPage = Model.AncestorOrSelf(1);
 
-    if (false == string.IsNullOrEmpty(Request.QueryString["modeCode"]))
-    {
-        modeCode = Request.QueryString.Get("modeCode");
-    }
-    if (true == string.IsNullOrEmpty(modeCode))
-    {
-        modeCode = rootPage.GetPropertyValue<string>("modeCode");
-    }
+   if (false == string.IsNullOrEmpty(Request.QueryString["modeCode"]))
+   {
+      modeCode = Request.QueryString.Get("modeCode");
+   }
+   if (true == string.IsNullOrEmpty(modeCode))
+   {
+      modeCode = rootPage.GetPropertyValue<string>("modeCode");
+   }
 
+   ArchetypeModel currentRelatedTopics = Model.GetPropertyValue<ArchetypeModel>("leftNavPicker");
 
-    ArchetypeModel currentRelatedTopics = Model.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+   List<IPublishedContent> siteRelatedTopicsTop = null;
+   List<IPublishedContent> siteRelatedTopicsBottom = null;
 
-    List<ArchetypeModel> siteRelatedTopicsTop = null;
-    List<ArchetypeModel> siteRelatedTopicsBottom = null;
+   USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetSiteGlobalNav(Model, ref siteRelatedTopicsTop, ref siteRelatedTopicsBottom);
 
-    USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetSiteGlobalNav(Model, ref siteRelatedTopicsTop, ref siteRelatedTopicsBottom);
-
-    parentRelatedTopics = rootPage.GetPropertyValue<ArchetypeModel>("leftNavPicker");
-
-    bool foundExternalLink = false;
+   bool foundExternalLink = false;
 }
 
 <!--[if lt IE 9]>
@@ -43,70 +39,74 @@
     <style>#relatedTopics {margin-top:-10px !important; z-index:300 !important;}</style>
 <![endif]-->
 <div id="relatedTopics">
-    <h1 class="related_topics">Related Topics</h1>
-    <ul>
-        @if (siteRelatedTopicsTop != null && siteRelatedTopicsTop.Any())
-        {
-            foreach (var siteNavTopList in siteRelatedTopicsTop)
+   <h1 class="related_topics">Related Topics</h1>
+   <ul>
+      @if (siteRelatedTopicsTop != null && siteRelatedTopicsTop.Any())
+      {
+         foreach (var siteNavTop in siteRelatedTopicsTop)
+         {
+            ArchetypeModel navigationItems = siteNavTop.GetPropertyValue<ArchetypeModel>("navigationItems");
+
+            foreach (var navItem in navigationItems)
             {
-                foreach (var siteNavTop in siteNavTopList)
-                {
-                    if (siteNavTop != null)
-                    {
-                        @Html.Raw(OutputTopic(siteNavTop, modeCode, ref foundExternalLink))
-                    }
-                }
+               if (navItem != null)
+               {
+                  @Html.Raw(OutputTopic(navItem, modeCode, ref foundExternalLink))
+               }
             }
-        }
+         }
+      }
 
-        @if (currentRelatedTopics != null && currentRelatedTopics.Any())
-        {
-            foreach (var topicList in currentRelatedTopics)
+      @if (currentRelatedTopics != null && currentRelatedTopics.Any())
+      {
+         foreach (var topicList in currentRelatedTopics)
+         {
+            foreach (var topicItemList in topicList.Properties)
             {
-                foreach (var topicItemList in topicList.Properties)
-                {
-                    TopicPickerValue topicItemListValue = JsonConvert.DeserializeObject<TopicPickerValue>(topicItemList.Value.ToString());
+               TopicPickerValue topicItemListValue = JsonConvert.DeserializeObject<TopicPickerValue>(topicItemList.Value.ToString());
 
-                    if (topicItemListValue != null && false == string.IsNullOrEmpty(topicItemListValue.Value))
-                    {
-                        ArchetypeModel topicItem = USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetTopicsByGuid(Guid.Parse(topicItemListValue.Value), rootPage.Descendants());
+               if (topicItemListValue != null && false == string.IsNullOrEmpty(topicItemListValue.Value))
+               {
+                  ArchetypeModel topicItem = USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetTopicsById(Convert.ToInt32(topicItemListValue.Value));
 
-                        if (topicItem != null)
-                        {
-                            foreach (var item in topicItem)
-                            {
-                                @Html.Raw(OutputTopic(item, modeCode, ref foundExternalLink))
-                            }
-                        }
-                    }
-                }
+                  if (topicItem != null)
+                  {
+                     foreach (var item in topicItem)
+                     {
+                        @Html.Raw(OutputTopic(item, modeCode, ref foundExternalLink))
+                     }
+                  }
+               }
             }
-        }
+         }
+      }
 
-        @if (Model.DocumentTypeAlias == "NationalProgram" || Model.Parent.DocumentTypeAlias == "NationalProgramFolderContainer")
-        {
-            @Html.Partial("~/Views/Partials/Modules/ResearchProgramNavigation.cshtml", Model)
-        }
+      @if (Model.DocumentTypeAlias == "NationalProgram" || Model.Parent.DocumentTypeAlias == "NationalProgramFolderContainer")
+      {
+         @Html.Partial("~/Views/Partials/Modules/ResearchProgramNavigation.cshtml", Model)
+      }
 
-        @if (siteRelatedTopicsBottom != null && siteRelatedTopicsBottom.Any())
-        {
-            foreach (var siteNavBottomList in siteRelatedTopicsBottom)
+      @if (siteRelatedTopicsBottom != null && siteRelatedTopicsBottom.Any())
+      {
+         foreach (var siteNavBottom in siteRelatedTopicsBottom)
+         {
+            ArchetypeModel navigationItems = siteNavBottom.GetPropertyValue<ArchetypeModel>("navigationItems");
+
+            foreach (var navItem in navigationItems)
             {
-                foreach (var siteNavBottom in siteNavBottomList)
-                {
-                    if (siteNavBottom != null)
-                    {
-                        @Html.Raw(OutputTopic(siteNavBottom, modeCode, ref foundExternalLink))
-                    }
-                }
+               if (navItem != null)
+               {
+                  @Html.Raw(OutputTopic(navItem, modeCode, ref foundExternalLink))
+               }
             }
-        }
-    </ul>
-    @if (true == foundExternalLink)
-    {
-        <br />
-        <span style="padding: 0 0 0 20px;">* Goes to a non-federal site</span>
-    }
+         }
+      }
+   </ul>
+   @if (true == foundExternalLink)
+   {
+      <br />
+      <span style="padding: 0 0 0 20px;">* Goes to a non-federal site</span>
+   }
 </div>
 <!--[if lt IE 9]>
     <div class="IErounded-sidebot"
@@ -119,61 +119,69 @@
 
 @functions
 {
-    string OutputTopic(ArchetypeFieldsetModel item, string modeCode, ref bool foundExternalLink)
-    {
-        string html = null;
+   string OutputTopic(ArchetypeFieldsetModel item, string modeCode, ref bool foundExternalLink)
+   {
+      string html = null;
 
-        if (item.Alias == "topicsItem")
-        {
-            string urlLink = "#";
-            string targetLink = "";
-            bool appendModeCode = false;
+      if (item.Alias == "topicsItem")
+      {
+         string urlLink = "#";
+         string targetLink = "";
+         bool appendModeCode = false;
 
-            if (item.HasValue("location"))
+         if (item.HasValue("location"))
+         {
+            Link navLink = item.GetValue<MultiUrls>("location").FirstOrDefault();
+
+            if (navLink != null && navLink.Url != null)
             {
-                Link navLink = item.GetValue<MultiUrls>("location").FirstOrDefault();
-
-                if (navLink != null && navLink.Url != null)
-                {
-                    urlLink = navLink.Url;
-                }
+               urlLink = navLink.Url;
             }
-            else if (item.HasValue("linkToFile"))
+         }
+         else if (item.HasValue("linkToFile"))
+         {
+            urlLink = item.GetValue<string>("linkToFile");
+            targetLink = " target=\"_blank\"";
+         }
+
+
+         appendModeCode = item.GetValue<bool>("appendModeCode");
+
+         if (true == appendModeCode && false == string.IsNullOrEmpty(modeCode))
+         {
+            if (true == urlLink.Contains("?"))
             {
-                urlLink = item.GetValue<string>("linkToFile");
-                targetLink = " target=\"_blank\"";
+               urlLink += "&";
             }
-
-
-            appendModeCode = item.GetValue<bool>("appendModeCode");
-
-            if (true == appendModeCode && false == string.IsNullOrEmpty(modeCode))
+            else
             {
-                urlLink += "?modeCode=" + modeCode;
+               urlLink += "?";
             }
+            urlLink += "modeCode=" + modeCode;
+         }
 
-            string externalIcon = "";
+         string externalIcon = "";
 
-            if (urlLink.StartsWith("http"))
+         if (urlLink.StartsWith("http"))
+         {
+            if (urlLink.ToLower().IndexOf("usda.gov") < 0)
             {
-                if (urlLink.ToLower().IndexOf("usda.gov") < 0)
-                {
-                    externalIcon = " *";
+               externalIcon = " *";
 
-                    foundExternalLink = true;
-                }
+               foundExternalLink = true;
             }
+         }
 
-            html = "<li><a href=\"" + urlLink + "\""+ targetLink +">" + item.GetValue<string>("title") + externalIcon + "</a></li>";
-        }
-        else if (item.Alias == "topicsHeader")
-        {
-            html = "<h2 class=\"related_topics\">" + item.GetValue<string>("sectionTitle") + "</h2>";
-        }
+         html = "<li><a href=\"" + urlLink + "\"" + targetLink + ">" + item.GetValue<string>("title") + externalIcon + "</a></li>";
+      }
+      else if (item.Alias == "topicsHeader")
+      {
+         html = "<h2 class=\"related_topics\">" + item.GetValue<string>("sectionTitle") + "</h2>";
+      }
 
-        html += "\r\n";
+      html += "\r\n";
 
-        return html;
-    }
+      return html;
+   }
 
 }

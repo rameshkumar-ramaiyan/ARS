@@ -30,23 +30,21 @@
 
     IPublishedContent sitePage = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode, false);
 
-    ArchetypeFieldsetModel softwareItem = Software.GetSoftwareById(softwareId);
+    IPublishedContent softwareItem = Software.GetSoftwareById(softwareId);
     ArchetypeModel softwareDownloadFiles = null;
 
     if (softwareItem != null)
     {
-        if (softwareItem.HasValue("title"))
-        {
-            fileTitle = softwareItem.GetValue<string>("title");
-        }
+        fileTitle = softwareItem.Name;
+
         if (softwareItem.HasValue("information"))
         {
-            fileInfo = softwareItem.GetValue<string>("information");
+            fileInfo = softwareItem.GetPropertyValue<string>("information");
         }
 
         if (softwareItem.HasValue("fileDownloads"))
         {
-            softwareDownloadFiles = softwareItem.GetValue<ArchetypeModel>("fileDownloads");
+            softwareDownloadFiles = softwareItem.GetPropertyValue<ArchetypeModel>("fileDownloads");
         }
     }
 
@@ -61,61 +59,61 @@
 
 <div id="fullPage">
 
-    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
 
-    <div id="pageContent">
-        @Html.Partial("~/Views/Partials/Modules/HeaderTitle.cshtml", currentPage)
-
-
-        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+   <div id="pageContent">
+      @Html.Partial("~/Views/Partials/Modules/HeaderTitle.cshtml", currentPage)
 
 
-        <font face="arial,helvetica" color="Navy">@(fileTitle)</font>
-        <div class="spSoftware">&nbsp;</div>
+      @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
 
-        @if (false == downloadFile)
+
+      <font face="arial,helvetica" color="Navy">@(fileTitle)</font>
+      <div class="spSoftware">&nbsp;</div>
+
+      @if (false == downloadFile)
         {
 
         <!--SW:swid:1-->
 
-            <hr size="1" noshade="">
+         <hr size="1" noshade="">
 
         <!-- For location sites, changed /email/site_email.htm to /contactus/site_feedback.htm -->
         <!-- JCP Aug. 31, 2007 -->
 
-            <font face="arial,helvetica" size="-1">
-                Welcome to the software download area! Please
+         <font face="arial,helvetica" size="-1">
+            Welcome to the software download area! Please
 
-                <a href="/contactus/site_feedback.htm?modecode=00-00-00-00" id="anch_56">contact us</a>
+            <a href="/contactus/site_feedback.htm?modecode=00-00-00-00" id="anch_56">contact us</a>
 
-                if you have problems or questions.
-            </font><p></p>
-            <p>
-                <a href="#downloadForm" id="anch_57">Download Available</a>
-            </p>
-            <hr size="1" noshade="">
+            if you have problems or questions.
+         </font><p></p>
+         <p>
+            <a href="#downloadForm" id="anch_57">Download Available</a>
+         </p>
+         <hr size="1" noshade="">
 
-            @Html.Raw(fileInfo)
+         @Html.Raw(fileInfo)
 
-            <a name="downloadForm"></a>
+         <a name="downloadForm"></a>
 
-            <hr size="1" noshade="">
+         <hr size="1" noshade="">
 
-            <h2>Download Form</h2>
-            <font face="arial,helvetica" size="-1">Please complete the form below to track the use of the service we are providing and to help improve our product.</font>
+         <h2>Download Form</h2>
+         <font face="arial,helvetica" size="-1">Please complete the form below to track the use of the service we are providing and to help improve our product.</font>
 
-            @Html.Action("Index", "DownloadRequestSurface")
+         @Html.Action("Index", "DownloadRequestSurface")
 
         }
         else
         {
-            <hr size="1" noshade="">
+         <hr size="1" noshade="">
 
-            <p>The following are the files available for the @(fileTitle) software:</p>
+         <p>The following are the files available for the @(fileTitle) software:</p>
 
-            <table>
-                <tbody>
-                    @if (softwareDownloadFiles != null && softwareDownloadFiles.Any())
+         <table>
+            <tbody>
+               @if (softwareDownloadFiles != null && softwareDownloadFiles.Any())
                     {
                         foreach (var fileItem in softwareDownloadFiles)
                         {
@@ -125,41 +123,41 @@
 
                                 if (fileDetails != null && true == fileDetails.Exists)
                                 {
-                                    <tr>
-                                        <td valign="top"><img src="/ARSUserFiles/incme/images/bullet.gif" border="0" alt="item"></td>
-                                        <td valign="top" align="left" background="/ARSUserFiles/incme/images/spacer.gif">
-                                            <font face="verdana,arial" size="-1">
-                                                <a href="@(fileDetails.FullName)" id="anch_54">@(fileDetails.Name)</a>
-                                                (@(USDA_ARS.Umbraco.Extensions.Utilities.Strings.BytesToString(fileDetails.Length)))
-                                            </font>
-                                        </td>
-                                    </tr>
+                  <tr>
+                     <td valign="top"><img src="/ARSUserFiles/incme/images/bullet.gif" border="0" alt="item"></td>
+                     <td valign="top" align="left" background="/ARSUserFiles/incme/images/spacer.gif">
+                        <font face="verdana,arial" size="-1">
+                           <a href="@(fileDetails.FullName)" id="anch_54">@(fileDetails.Name)</a>
+                           (@(USDA_ARS.Umbraco.Extensions.Utilities.Strings.BytesToString(fileDetails.Length)))
+                        </font>
+                     </td>
+                  </tr>
                                 }
                                 else
                                 {
-                                    <tr>
-                                        <td valign="top"><img src="/ARSUserFiles/incme/images/bullet.gif" border="0" alt="item"></td>
-                                        <td valign="top" align="left" background="/ARSUserFiles/incme/images/spacer.gif">
-                                            <font face="verdana,arial" size="-1">
-                                                <span>@(fileItem.GetValue("file"))</span><br />
-                                                <em>file was not available on the server</em>
-                                            </font>
-                                        </td>
-                                    </tr>
+                  <tr>
+                     <td valign="top"><img src="/ARSUserFiles/incme/images/bullet.gif" border="0" alt="item"></td>
+                     <td valign="top" align="left" background="/ARSUserFiles/incme/images/spacer.gif">
+                        <font face="verdana,arial" size="-1">
+                           <span>@(fileItem.GetValue("file"))</span><br />
+                           <em>file was not available on the server</em>
+                        </font>
+                     </td>
+                  </tr>
                                 }
                             }
                         }
                     }
-                </tbody>
-            </table>
+            </tbody>
+         </table>
         }
 
 
-        <!-- document content end -->
+      <!-- document content end -->
 
-        <br />
+      <br />
 
-        <p></p>
+      <p></p>
 
-    </div>
+   </div>
 </div>
