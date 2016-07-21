@@ -40,7 +40,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
          UserService.SavedUser += UserServiceSavedUser;
       }
 
-      
+
 
       private static void PostProcessCreated(IContentService cs, NewEventArgs<IContent> e)
       {
@@ -116,16 +116,6 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                }
             }
 
-            // UPDATE SOFTWARE
-            updateSoftware = false;
-            if (e.SavedEntities.Count() == 1 && node.HasProperty("software"))
-            {
-               if (node.IsPropertyDirty("software"))
-               {
-                  updateSoftware = true;
-               }
-            }
-
             // UPDATE NEWS INTERLINKS
             updateNewsInterLinks = false;
             if (e.SavedEntities.Count() == 1 && node.ContentType.Alias == "NewsArticle" && node.HasProperty("bodyText"))
@@ -144,48 +134,23 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
          foreach (var node in e.SavedEntities)
          {
             // UPDATE SOFTWARE
-            if (true == updateSoftware)
+            if (node.ContentType.Alias == "SoftwareItem")
             {
-               if (node.ContentType.Alias == "Homepage" || node.ContentType.Alias == "Area" || node.ContentType.Alias == "ResearchUnit")
+               string softwareId = node.GetValue<string>("softwareID");
+
+               if (true == string.IsNullOrWhiteSpace(softwareId))
                {
-                  ArchetypeModel software = node.GetValue<ArchetypeModel>("software");
+                  List<IPublishedContent> softwareList = Software.GetSoftwareNodes();
 
-                  string archetypeStr = node.GetValue<string>("software");
-
-                  if (software == null && false == string.IsNullOrEmpty(archetypeStr))
+                  if (softwareList != null && softwareList.Any())
                   {
-                     software = JsonConvert.DeserializeObject<ArchetypeModel>(archetypeStr);
+                     int softwareIdNext = Software.GetLastSoftwareId() + 1;
+
+                     node.Properties["softwareId"].Value = softwareIdNext;
+
+                     _contentService.SaveAndPublishWithStatus(node);
                   }
 
-                  bool updateSoftware = false;
-
-                  if (software != null)
-                  {
-                     foreach (ArchetypeFieldsetModel fieldsetModel in software.Fieldsets)
-                     {
-                        string softwareId = fieldsetModel.GetValue<string>("softwareID");
-
-                        if (true == string.IsNullOrEmpty(softwareId))
-                        {
-                           updateSoftware = true;
-
-                           int softwareIdNext = Software.GetLastSoftwareId() + 1;
-
-                           var newSoftwareID = fieldsetModel.Properties.FirstOrDefault(x => x.Alias == "softwareID");
-
-                           if (newSoftwareID != null)
-                           {
-                              newSoftwareID.Value = softwareIdNext;
-                           }
-                        }
-                     }
-
-                     if (true == updateSoftware)
-                     {
-                        node.SetValue("software", JsonConvert.SerializeObject(software));
-                        _contentService.SaveAndPublishWithStatus(node);
-                     }
-                  }
                }
             }
 
@@ -245,7 +210,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 
 
             // SUB FOLDERS FOR REGIONS AND RESEARCH UNITS
-            if (node.IsNewEntity() == true && (node.ContentType.Alias == "Area" || node.ContentType.Alias == "ResearchUnit"))
+            if (true == node.IsNewEntity() && (node.ContentType.Alias == "Area" || node.ContentType.Alias == "ResearchUnit"))
             {
                UmbracoHelper umbHelper = new UmbracoHelper(UmbracoContext.Current);
                int siteFolderTemplateNodeId = Convert.ToInt32(ConfigurationManager.AppSettings.Get("Usda:SiteFoldersTemplateNodeId")); //
@@ -341,6 +306,16 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                   }
                }
             }
+            else if (node.ContentType.Alias == "PersonSite")
+            {
+               IContent navFolderNode = node.Children().Where(p => p.ContentType.Alias == "SiteNavFolder").FirstOrDefault();
+
+               if (navFolderNode == null)
+               {
+                  IContent navFolderNodeCreate = _contentService.CreateContent("Navigations", node, "SiteNavFolder");
+                  _contentService.SaveAndPublishWithStatus(navFolderNodeCreate);
+               }
+            }
          }
       }
 
@@ -377,7 +352,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 
       private void ContentServiceUnPublished(global::Umbraco.Core.Publishing.IPublishingStrategy sender, PublishEventArgs<IContent> e)
       {
-         foreach(var node in e.PublishedEntities)
+         foreach (var node in e.PublishedEntities)
          {
             if (node.ContentType.Alias == "NewsArticle")
             {
