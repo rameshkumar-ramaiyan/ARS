@@ -174,7 +174,7 @@ namespace USDA_ARS.ImportNews
                            bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/pr/subscribe.htm", "/{localLink:8002}");
 
                            bodyText = ReplaceCaseInsensitive(bodyText, "../../graphics/", "/ARSUserFiles/news/graphics/");
-                           bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/graphics/", "/ARSUserFiles/news/graphics/");
+                           bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/graphics/", "/ARSUserFiles/oc/graphics/");
 
                            bodyText = ReplaceCaseInsensitive(bodyText, "\"../../", "/");
                            bodyText = ReplaceCaseInsensitive(bodyText, "\"../", "/is/");

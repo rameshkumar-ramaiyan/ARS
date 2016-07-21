@@ -425,7 +425,7 @@ namespace USDA_ARS.ImportDocs
          {
             int umbracoParentId = getDocFolder.UmbracoDocFolderId;
 
-            ApiResponse response = AddUmbracoPage(umbracoParentId, importPage.Title, importPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, 1);
+            ApiResponse response = AddUmbracoPage(umbracoParentId, importPage.Title, importPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, importPage.HtmlHeader, importPage.Keywords, 1);
 
             if (response != null && response.ContentList != null && response.ContentList.Any())
             {
@@ -437,7 +437,7 @@ namespace USDA_ARS.ImportDocs
                {
                   foreach (ImportPage subPage in importPage.SubPages)
                   {
-                     ApiResponse subpageResponse = AddUmbracoPage(umbracoId, "Page " + subPage.PageNumber, subPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, subPage.PageNumber);
+                     ApiResponse subpageResponse = AddUmbracoPage(umbracoId, "Page " + subPage.PageNumber, subPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, importPage.HtmlHeader, importPage.Keywords, subPage.PageNumber);
 
                      if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
                      {
@@ -472,7 +472,7 @@ namespace USDA_ARS.ImportDocs
          {
             int umbracoParentId = getPersonSite.UmbracoPersonId;
 
-            ApiResponse response = AddUmbracoPage(umbracoParentId, importPage.Title, importPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, 1);
+            ApiResponse response = AddUmbracoPage(umbracoParentId, importPage.Title, importPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, importPage.HtmlHeader, importPage.Keywords, 1);
 
             if (response != null && response.ContentList != null && response.ContentList.Any())
             {
@@ -484,7 +484,7 @@ namespace USDA_ARS.ImportDocs
                {
                   foreach (ImportPage subPage in importPage.SubPages)
                   {
-                     ApiResponse subpageResponse = AddUmbracoPage(umbracoId, "Page " + subPage.PageNumber, subPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, subPage.PageNumber);
+                     ApiResponse subpageResponse = AddUmbracoPage(umbracoId, "Page " + subPage.PageNumber, subPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, importPage.HtmlHeader, importPage.Keywords, subPage.PageNumber);
 
                      if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
                      {
@@ -563,7 +563,7 @@ namespace USDA_ARS.ImportDocs
 
             if (umbracoParentId > 0)
             {
-               ApiResponse response = AddUmbracoPage(umbracoParentId, importPage.Title, importPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, 1);
+               ApiResponse response = AddUmbracoPage(umbracoParentId, importPage.Title, importPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, importPage.HtmlHeader, importPage.Keywords, 1);
 
                if (response != null && response.ContentList != null && response.ContentList.Any())
                {
@@ -575,7 +575,7 @@ namespace USDA_ARS.ImportDocs
                   {
                      foreach (ImportPage subPage in importPage.SubPages)
                      {
-                        ApiResponse subpageResponse = AddUmbracoPage(umbracoId, "Page " + subPage.PageNumber, subPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, subPage.PageNumber);
+                        ApiResponse subpageResponse = AddUmbracoPage(umbracoId, "Page " + subPage.PageNumber, subPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, importPage.HtmlHeader, importPage.Keywords, subPage.PageNumber);
 
                         if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
                         {
@@ -650,7 +650,7 @@ namespace USDA_ARS.ImportDocs
 
          if (parentId > 0)
          {
-            ApiResponse response = AddUmbracoPage(parentId, importPage.Title, importPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, 1, 2, subsite);
+            ApiResponse response = AddUmbracoPage(parentId, importPage.Title, importPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, importPage.HtmlHeader, importPage.Keywords, 1, 2, subsite);
 
             if (response != null && response.ContentList != null && response.ContentList.Any())
             {
@@ -662,7 +662,7 @@ namespace USDA_ARS.ImportDocs
                {
                   foreach (ImportPage subPage in importPage.SubPages)
                   {
-                     ApiResponse subpageResponse = AddUmbracoPage(umbracoId, "Page " + subPage.PageNumber, subPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, subPage.PageNumber, 1, subsite);
+                     ApiResponse subpageResponse = AddUmbracoPage(umbracoId, "Page " + subPage.PageNumber, subPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, importPage.HtmlHeader, importPage.Keywords, subPage.PageNumber, 1, subsite);
 
                      if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
                      {
@@ -802,7 +802,7 @@ namespace USDA_ARS.ImportDocs
       }
 
 
-      static ApiResponse AddUmbracoPage(int parentId, string name, string body, bool hidePageTitle, int oldId, string oldDocType, int pageNum, int saveType = 2, string subSite = "")
+      static ApiResponse AddUmbracoPage(int parentId, string name, string body, bool hidePageTitle, int oldId, string oldDocType, string htmlHeader, string keywords, int pageNum, int saveType = 2, string subSite = "")
       {
          ApiContent content = new ApiContent();
 
@@ -839,6 +839,26 @@ namespace USDA_ARS.ImportDocs
          properties.Add(new ApiProperty("oldId", oldId.ToString())); // Person's ID              
          properties.Add(new ApiProperty("oldUrl", oldUrl)); // current URL           
          properties.Add(new ApiProperty("hidePageTitle", hidePageTitle)); // hide page title
+
+         if (true == string.IsNullOrWhiteSpace(htmlHeader))
+         {
+            htmlHeader = "";
+         }
+         else
+         {
+            AddLog(" - Adding HTML header script...");
+         }
+         if (true == string.IsNullOrWhiteSpace(keywords))
+         {
+            keywords = "";
+         }
+         else
+         {
+            AddLog(" - Adding keywords...");
+         }
+
+         properties.Add(new ApiProperty("pageHeaderScripts", htmlHeader)); // hide page title
+         properties.Add(new ApiProperty("keywords", keywords)); // hide page title
 
          content.Properties = properties;
 
