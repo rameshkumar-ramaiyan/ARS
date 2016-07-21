@@ -99,6 +99,9 @@ namespace USDA_ARS.LocationsWebApp.DL
             text = Regex.Replace(text, "[\u2013\u2014]", "-");
             text = Regex.Replace(text, "Â·", "&bull;");
             text = Regex.Replace(text, "â€¢", "&bull;");
+            text = text.Replace("—", "-");
+            text = text.Replace("�", "&bull;");
+            text = text.Replace("·", "&bull;");
          }
 
          return text;
