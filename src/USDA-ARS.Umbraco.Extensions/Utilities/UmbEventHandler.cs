@@ -282,11 +282,25 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                }
 
             }
-            if (node.ContentType.Alias == "NationalProgram" && !cs.HasChildren(node.Id))
+            if (node.ContentType.Alias == "NationalProgram")
             {
-               var childNode = _contentService.CreateContent("Docs", node, "NationalProgramFolderContainer");
+               IContent navFolderNode = node.Children().Where(p => p.ContentType.Alias == "SiteNavFolder").FirstOrDefault();
 
-               _contentService.SaveAndPublishWithStatus(childNode);
+               if (navFolderNode == null)
+               {
+                  IContent navFolderNodeCreate = _contentService.CreateContent("Navigations", node, "SiteNavFolder");
+                  _contentService.SaveAndPublishWithStatus(navFolderNodeCreate);
+               }
+
+
+               IContent docsFolderNode = node.Children().Where(p => p.ContentType.Alias == "NationalProgramFolderContainer").FirstOrDefault();
+
+               if (docsFolderNode == null)
+               {
+                  var childNode = _contentService.CreateContent("Docs", node, "NationalProgramFolderContainer");
+
+                  _contentService.SaveAndPublishWithStatus(childNode);
+               }
             }
             else if (true == updateNewsInterLinks && node.ContentType.Alias == "NewsArticle")
             {
@@ -306,7 +320,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                   }
                }
             }
-            else if (node.ContentType.Alias == "PersonSite")
+            else if (node.ContentType.Alias == "PersonSite" || node.ContentType.Alias == "NationalProgramGroup")
             {
                IContent navFolderNode = node.Children().Where(p => p.ContentType.Alias == "SiteNavFolder").FirstOrDefault();
 

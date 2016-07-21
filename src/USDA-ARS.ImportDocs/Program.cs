@@ -171,7 +171,7 @@ namespace USDA_ARS.ImportDocs
             UpdateNonImportedPage("Briefing Room", "/News/docs.htm?docid=1281", 8003, "");
             UpdateNonImportedPage("Social Media Tools and Resources", "/News/Docs.htm?docid=23888", 131742, "");
             UpdateNonImportedPage("Image Gallery", "/News/Docs.htm?docid=23559", 1145, "");
-            
+
          }
 
          if (false == updateNonImportOnly)
@@ -203,7 +203,8 @@ namespace USDA_ARS.ImportDocs
                AddLog("");
 
                AddLog("Importing CEAP pages...");
-               AddSubsitePages("CEAP", 130740, 15358);
+               AddSpecialAdHocPages("02020000StewardsCEAPsites", 130740, 18645);
+               //AddSubsitePages("CEAP", 130740, 15358);
                AddLog("");
             }
             List<string> list = new List<string>();
@@ -263,6 +264,11 @@ namespace USDA_ARS.ImportDocs
 
                      if (newPage != null)
                      {
+
+                        newPage.HtmlHeader = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>("HTMLHeader");
+                        newPage.Keywords = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>("keywords");
+                        newPage.ParentSiteCode = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>("parent_Site_Code");
+
                         // PICK ONLY 1 OF THE 3 METHODS BELOW
                         if (list[k] == "Place")
                         {
@@ -508,7 +514,91 @@ namespace USDA_ARS.ImportDocs
       {
          AddLog("Add doc to mode code with ad hoc folder: " + adHocFolderName + "...");
 
-         int umbracoParentId = 0;
+         modeCode = importPage.ParentSiteCode;
+
+         DocFolderLookup getDocFolder = DOC_FOLDER_ID_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCode)).FirstOrDefault();
+
+         if (getDocFolder != null)
+         {
+            int umbracoParentId = 0;
+
+            AdHocFolderLookup testAdHocFolder = AD_HOC_FOLDER_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCode) && p.AdHocFolderName.ToLower() == adHocFolderName.ToLower()).FirstOrDefault();
+
+            if (testAdHocFolder == null)
+            {
+               ModeCodeNew modeCodeNew = MODE_CODE_NEW_LIST.Where(p => p.ModecodeOld == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(modeCode)).FirstOrDefault();
+
+               if (modeCodeNew != null)
+               {
+                  AddLog("Found Mode Code from old code: " + modeCode + " -> " + modeCodeNew.ModecodeNew);
+                  modeCode = modeCodeNew.ModecodeNew;
+
+                  testAdHocFolder = AD_HOC_FOLDER_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCodeNew.ModecodeNew) && p.AdHocFolderName.ToLower() == adHocFolderName.ToLower()).FirstOrDefault();
+               }
+
+               modeCode = Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCode);
+
+               if (testAdHocFolder != null)
+               {
+                  umbracoParentId = testAdHocFolder.UmbracoId;
+               }
+               else
+               {
+                  testAdHocFolder = AddAdHocFolder(modeCode, adHocFolderName);
+
+                  if (testAdHocFolder != null)
+                  {
+                     umbracoParentId = testAdHocFolder.UmbracoId;
+
+                     AD_HOC_FOLDER_LIST.Add(new AdHocFolderLookup() { ModeCode = modeCode, AdHocFolderName = adHocFolderName, UmbracoId = umbracoParentId });
+
+                     AddLog(" - Ad Hoc Folder added:[Mode Code: " + modeCode + "] (Umbraco Parent Id: " + umbracoParentId + ") " + adHocFolderName);
+                  }
+               }
+            }
+
+
+            if (umbracoParentId > 0)
+            {
+               ApiResponse response = AddUmbracoPage(umbracoParentId, importPage.Title, importPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, 1);
+
+               if (response != null && response.ContentList != null && response.ContentList.Any())
+               {
+                  int umbracoId = response.ContentList[0].Id;
+
+                  AddLog(" - Page added:[Mode Code: " + modeCode + "/" + adHocFolderName + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title);
+
+                  if (importPage.SubPages != null && importPage.SubPages.Any())
+                  {
+                     foreach (ImportPage subPage in importPage.SubPages)
+                     {
+                        ApiResponse subpageResponse = AddUmbracoPage(umbracoId, "Page " + subPage.PageNumber, subPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, subPage.PageNumber);
+
+                        if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
+                        {
+                           AddLog(" --- SubPage added:(" + subpageResponse.ContentList[0].Id + ") " + subPage.Title);
+                        }
+                        else
+                        {
+                           AddLog("!!ERROR SUBPAGE NOT ADDED!");
+                        }
+                     }
+                  }
+               }
+               else
+               {
+                  AddLog("!!ERROR SUBPAGE NOT ADDED!");
+               }
+            }
+            else
+            {
+               AddLog("!!ERROR AD HOC FOLDER NOT ADDED!");
+            }
+         }
+
+
+
+
 
          if (modeCode.Length >= 8)
          {

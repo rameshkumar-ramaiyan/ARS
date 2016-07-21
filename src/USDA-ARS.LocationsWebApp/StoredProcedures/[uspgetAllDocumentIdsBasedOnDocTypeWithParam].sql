@@ -1,13 +1,20 @@
-USE [aris_public_webNew]
+USE [aris_public_web]
 GO
-/****** Object:  StoredProcedure [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]    Script Date: 7/20/2016 3:29:11 PM ******/
+
+/****** Object:  StoredProcedure [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]    Script Date: 7/21/2016 3:28:54 AM ******/
+DROP PROCEDURE [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]
+GO
+
+/****** Object:  StoredProcedure [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]    Script Date: 7/21/2016 3:28:54 AM ******/
 SET ANSI_NULLS ON
 GO
+
 SET QUOTED_IDENTIFIER ON
 GO
 
 
-ALTER PROCEDURE [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]
+
+CREATE PROCEDURE [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]
 
 @SiteType nvarchar(max)
 AS
@@ -202,3 +209,7 @@ END
 --where DocVer_ID =(4877)  and CurrentVersion = 1
 
 --select * from sitepublisherii.dbo.Documents where originsite_type='ad_hoc'
+
+GO
+
+

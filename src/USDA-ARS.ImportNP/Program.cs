@@ -183,7 +183,7 @@ namespace USDA_ARS.ImportNP
                                         legacyDocText = StripHTMLAdditional(legacyDocText);
                                         legacyDocText = CleanHtml.CleanUpHtml(legacyDocText);
                                     }
-                                    string oldDocId = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<string>(5).Trim();
+                                    string oldDocId = legacyNPProgramDocs.Rows[legacyNPProgramsDocRowId].Field<int>(0).ToString();
 
                                     string umbracoDocType = "";
 
