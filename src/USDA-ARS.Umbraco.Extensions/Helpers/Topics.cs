@@ -10,36 +10,22 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 {
    public class Topics
    {
-      public static ArchetypeModel GetTopicsByGuid(Guid id, IEnumerable<IPublishedContent> nodeList)
+      public static ArchetypeModel GetTopicsById(int id)
       {
+         ArchetypeModel topicLinks = null;
 
-         if (nodeList != null && nodeList.Any())
+         var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
+         IPublishedContent navSet = umbracoHelper.TypedContent(id);
+
+         if (navSet != null)
          {
-            foreach (IPublishedContent node in nodeList)
+            if (true == navSet.HasValue("navigationItems"))
             {
-               if (true == node.HasProperty("leftNavCreate") && true == node.HasValue("leftNavCreate"))
-               {
-                  ArchetypeModel topicLinks = node.GetPropertyValue<ArchetypeModel>("leftNavCreate");
-
-                  if (topicLinks != null)
-                  {
-                     foreach (var topic in topicLinks)
-                     {
-                        if (topic.Id == id)
-                        {
-                           if (true == topic.HasValue("customLeftNav"))
-                           {
-                              return topic.GetValue<ArchetypeModel>("customLeftNav");
-                           }
-                        }
-                     }
-                  }
-               }
-
+               topicLinks = navSet.GetPropertyValue<ArchetypeModel>("navigationItems");
             }
          }
 
-         return null;
+         return topicLinks;
       }
 
 
@@ -52,7 +38,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
             hideGlobalNav = true;
          }
 
-         if (true == hideGlobalNav)
+         if (false == hideGlobalNav)
          {
             IPublishedContent settingsNode = Helpers.Nodes.SiteSettings();
 
@@ -109,22 +95,6 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                            if (foundLink != null)
                            {
                               navFound = true;
-                           }
-
-                           if (false == navFound && true == navItem.GetPropertyValue<bool>("displayOnChildPages"))
-                           {
-                              foreach (IPublishedContent testAncestor in currentNode.Ancestors())
-                              {
-                                 if (false == navFound)
-                                 {
-                                    Link foundLinkParent = links.Where(p => p.Url.ToLower() == testAncestor.Url.ToLower()).FirstOrDefault();
-
-                                    if (foundLinkParent != null)
-                                    {
-                                       navFound = true;
-                                    }
-                                 }
-                              }
                            }
                         }
                      }

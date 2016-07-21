@@ -35,56 +35,57 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
          ContentService.Saved += PostProcessSaved;
          ContentService.Published += PostProcessPublished;
          ContentService.Deleted += PostProcessDelete;
+         ContentService.UnPublished += ContentServiceUnPublished;
 
          UserService.SavedUser += UserServiceSavedUser;
       }
 
-
+      
 
       private static void PostProcessCreated(IContentService cs, NewEventArgs<IContent> e)
       {
          IContent node = e.Entity;
 
-         bool isNationalProgramPage = false;
-         if (node.Parent() != null && node.Parent().ContentType.Alias == "NationalProgramFolderContainer")
-         {
-            isNationalProgramPage = true;
-         }
+         //bool isNationalProgramPage = false;
+         //if (node.Parent() != null && node.Parent().ContentType.Alias == "NationalProgramFolderContainer")
+         //{
+         //   isNationalProgramPage = true;
+         //}
 
-         if (true == isNationalProgramPage || node.ContentType.Alias == "DocFolder" ||
-                         node.ContentType.Alias == "SiteStandardWebpage" ||
-                         node.ContentType.Alias == "NationalProgramFolderContainer")
-         {
-            IContent nodeParent = node.Parent();
+         //if (true == isNationalProgramPage || node.ContentType.Alias == "DocFolder" ||
+         //                node.ContentType.Alias == "SiteStandardWebpage" ||
+         //                node.ContentType.Alias == "NationalProgramFolderContainer")
+         //{
+         //   IContent nodeParent = node.Parent();
 
-            if (nodeParent != null)
-            {
-               // Get navigation category from the parent node
-               Property propertyParent = nodeParent.Properties.Where(p => p.Alias == "navigationCategory").FirstOrDefault();
+         //   if (nodeParent != null)
+         //   {
+         //      // Get navigation category from the parent node
+         //      Property propertyParent = nodeParent.Properties.Where(p => p.Alias == "navigationCategory").FirstOrDefault();
 
-               if (propertyParent != null)
-               {
-                  Property propertyNode = node.Properties.Where(p => p.Alias == "navigationCategory").FirstOrDefault();
+         //      if (propertyParent != null)
+         //      {
+         //         Property propertyNode = node.Properties.Where(p => p.Alias == "navigationCategory").FirstOrDefault();
 
-                  if (propertyNode != null)
-                  {
-                     node.SetValue("navigationCategory", propertyParent.Value);
-                  }
-               }
+         //         if (propertyNode != null)
+         //         {
+         //            node.SetValue("navigationCategory", propertyParent.Value);
+         //         }
+         //      }
 
-               Property propertyParentBottom = nodeParent.Properties.Where(p => p.Alias == "navigationCategoryBottom").FirstOrDefault();
+         //      Property propertyParentBottom = nodeParent.Properties.Where(p => p.Alias == "navigationCategoryBottom").FirstOrDefault();
 
-               if (propertyParentBottom != null)
-               {
-                  Property propertyNodeBottom = node.Properties.Where(p => p.Alias == "navigationCategoryBottom").FirstOrDefault();
+         //      if (propertyParentBottom != null)
+         //      {
+         //         Property propertyNodeBottom = node.Properties.Where(p => p.Alias == "navigationCategoryBottom").FirstOrDefault();
 
-                  if (propertyNodeBottom != null)
-                  {
-                     node.SetValue("navigationCategoryBottom", propertyParentBottom.Value);
-                  }
-               }
-            }
-         }
+         //         if (propertyNodeBottom != null)
+         //         {
+         //            node.SetValue("navigationCategoryBottom", propertyParentBottom.Value);
+         //         }
+         //      }
+         //   }
+         //}
 
 
       }
@@ -365,6 +366,18 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
       private static void PostProcessDelete(IContentService cs, DeleteEventArgs<IContent> e)
       {
          foreach (var node in e.DeletedEntities)
+         {
+            if (node.ContentType.Alias == "NewsArticle")
+            {
+               NewsInterLinks.RemoveLinksByNodeId(node.Id);
+            }
+         }
+      }
+
+
+      private void ContentServiceUnPublished(global::Umbraco.Core.Publishing.IPublishingStrategy sender, PublishEventArgs<IContent> e)
+      {
+         foreach(var node in e.PublishedEntities)
          {
             if (node.ContentType.Alias == "NewsArticle")
             {
