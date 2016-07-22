@@ -85,35 +85,13 @@ namespace USDA_ARS.ImportInfoStaff
 
             if (pageImport != null)
             {
-               int pageId = AddUmbracoPage(UMBRACO_START_NODE, pageImport);
+               int pageId = AddUmbracoPage(UMBRACO_START_NODE, pageImport, 2);
             }
             else
             {
                AddLog("** WARNING: Page not added: " + firstFile);
             }
          }
-
-         AddLog("Publishing pages '" + tempDir + "'...");
-
-         ApiRequest requestPublish = new ApiRequest();
-         ApiContent contentPublish = new ApiContent();
-
-         requestPublish.ApiKey = API_KEY;
-
-         contentPublish.Id = UMBRACO_START_NODE;
-
-         requestPublish.ContentList = new List<ApiContent>();
-         requestPublish.ContentList.Add(contentPublish);
-
-         ApiResponse responseBackPublish = ApiCalls.PostData(requestPublish, "PublishWithChildren");
-
-         if (responseBackPublish != null)
-         {
-            AddLog(" - Success: " + responseBackPublish.Success);
-            AddLog(" - Message: " + responseBackPublish.Message);
-         }
-
-
 
 
          List<string> dirList = Directory.GetDirectories(INFO_STAFF_PATH, "*", SearchOption.AllDirectories).OrderBy(p => p).ToList();
@@ -440,7 +418,7 @@ namespace USDA_ARS.ImportInfoStaff
       }
 
 
-      static int AddUmbracoPage(int parentId, PageImport pageImport)
+      static int AddUmbracoPage(int parentId, PageImport pageImport, int saveType = 1)
       {
          int umbracoId = 0;
 
@@ -466,7 +444,7 @@ namespace USDA_ARS.ImportInfoStaff
 
          content.Properties = properties;
 
-         content.Save = 1;
+         content.Save = saveType;
 
          ApiRequest request = new ApiRequest();
 
