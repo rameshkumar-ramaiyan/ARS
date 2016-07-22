@@ -48,6 +48,7 @@ namespace USDA_ARS.ImportDocs
          bool forceCacheUpdate = false;
          bool updateNonImportOnly = false;
          bool addHocOnly = false;
+         bool personOnly = false;
 
          if (args != null && args.Length == 1)
          {
@@ -62,6 +63,10 @@ namespace USDA_ARS.ImportDocs
             else if (args[1] == "adhoc-only")
             {
                addHocOnly = true;
+            }
+            else if (args[1] == "person-only")
+            {
+               personOnly = true;
             }
          }
 
@@ -87,7 +92,7 @@ namespace USDA_ARS.ImportDocs
 
 
          AddLog("Importing Docs");
-         ImportDocsTemp(updateNonImportOnly, addHocOnly);
+         ImportDocsTemp(updateNonImportOnly, addHocOnly, personOnly);
 
 
 
@@ -133,7 +138,7 @@ namespace USDA_ARS.ImportDocs
 
       }
 
-      static void ImportDocsTemp(bool updateNonImportOnly = false, bool addHocOnly = false)
+      static void ImportDocsTemp(bool updateNonImportOnly = false, bool addHocOnly = false, bool personOnly = false)
       {
 
 
@@ -158,7 +163,7 @@ namespace USDA_ARS.ImportDocs
          AddLog("");
          AddLog("");
 
-         if (false == addHocOnly)
+         if (false == addHocOnly && false == personOnly)
          {
 
             // TODO: DOUBLE CHECK THESE...
@@ -176,7 +181,7 @@ namespace USDA_ARS.ImportDocs
 
          if (false == updateNonImportOnly)
          {
-            if (false == addHocOnly)
+            if (false == addHocOnly && false == personOnly)
             {
                AddLog("Importing Careers pages...");
                AddSubsitePages("Careers", 8058, 0); //Umbraco Careers Node ID: 8058
@@ -209,15 +214,19 @@ namespace USDA_ARS.ImportDocs
             }
             List<string> list = new List<string>();
 
-            if (false == addHocOnly)
+            if (false == addHocOnly && false == personOnly)
             {
                list.Add("ad_hoc");
                list.Add("Place");
                list.Add("person");
             }
-            else
+            else if (true == addHocOnly)
             {
                list.Add("ad_hoc");
+            }
+            else if (true == personOnly)
+            {
+               list.Add("person");
             }
 
             for (int k = 0; k < list.Count; k++) // Loop through List with for
@@ -266,7 +275,10 @@ namespace USDA_ARS.ImportDocs
                      {
                         newPage.HtmlHeader = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>("HTMLHeader");
                         newPage.Keywords = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>("keywords");
-                        newPage.ParentSiteCode = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>("parent_Site_Code");
+                        if (list[k] != "person")
+                        {
+                           newPage.ParentSiteCode = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>("parent_Site_Code");
+                        }
 
                         // PICK ONLY 1 OF THE 3 METHODS BELOW
                         if (list[k] == "Place")
@@ -618,7 +630,7 @@ namespace USDA_ARS.ImportDocs
 
          List<ApiProperty> properties = new List<ApiProperty>();
 
-         string body = CleanHtml.CleanUpHtml(importPage.BodyText);
+         string body = CleanHtml.CleanUpHtml(importPage.BodyText, "", MODE_CODE_NEW_LIST);
 
          properties.Add(new ApiProperty("bodyText", body)); // HTML of person site
          properties.Add(new ApiProperty("oldId", importPage.OldDocId.ToString())); // Person's ID              
@@ -767,11 +779,9 @@ namespace USDA_ARS.ImportDocs
                      decStringtable = GetAllRandomDocPagesDecrypted(encString);
                      decString = decStringtable.Rows[0].Field<string>(0);
                   }
-
-                  decString = CleanHtml.CleanUpHtml(decString);
                }
-
                else decString = "";
+
                newDocpagesAfterDecryption.Rows.Add(docpageNum, encString, currentSubVersion, decString);
 
                if (true == string.IsNullOrWhiteSpace(doctype))
@@ -833,7 +843,7 @@ namespace USDA_ARS.ImportDocs
 
          List<ApiProperty> properties = new List<ApiProperty>();
 
-         body = CleanHtml.CleanUpHtml(body);
+         body = CleanHtml.CleanUpHtml(body, "", MODE_CODE_NEW_LIST);
 
          properties.Add(new ApiProperty("bodyText", body)); // HTML of person site
          properties.Add(new ApiProperty("oldId", oldId.ToString())); // Person's ID              
@@ -1153,7 +1163,7 @@ namespace USDA_ARS.ImportDocs
 
                      output = output.Replace("<font class=\"pageHeading\"></font>", "");
 
-                     output = CleanHtml.CleanUpHtml(output);
+                     output = CleanHtml.CleanUpHtml(output, "", MODE_CODE_NEW_LIST);
                   }
                }
             }

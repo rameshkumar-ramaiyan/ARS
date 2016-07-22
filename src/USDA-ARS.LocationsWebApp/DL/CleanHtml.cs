@@ -1,14 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Text;
+using System.Linq;
 using System.Text.RegularExpressions;
+using USDA_ARS.Umbraco.Extensions.Models.Aris;
 using ZetaHtmlCompressor;
 
 namespace USDA_ARS.LocationsWebApp.DL
 {
    public class CleanHtml
    {
-      public static string CleanUpHtml(string bodyText, string modeCode = "")
+      public static string CleanUpHtml(string bodyText, string modeCode = "", List<ModeCodeNew> modeCodeNewList = null)
       {
          string output = "";
 
@@ -51,7 +54,32 @@ namespace USDA_ARS.LocationsWebApp.DL
             bodyText = Regex.Replace(bodyText, @"/news/events\.htm", "/{localLink:8024}", RegexOptions.IgnoreCase);
             bodyText = Regex.Replace(bodyText, @"/news/events\.htm", "/{localLink:8024}", RegexOptions.IgnoreCase);
 
+            try
+            {
+               if (modeCodeNewList != null && modeCodeNewList.Any())
+               {
+                  MatchCollection matches = Regex.Matches(bodyText, @"/SP2UserFiles/ad_hoc/([\d]{8})([^/]*)", RegexOptions.IgnoreCase | RegexOptions.Singleline);
+                  if (matches.Count > 0)
+                  {
+                     foreach (Match match in matches)
+                     {
+                        if (match.Groups.Count == 3)
+                        {
+                           string modeCodeFound = match.Groups[1].Value;
+                           string adHocFolder = match.Groups[2].Value;
 
+                           string modeCodeNew = GetNewModeCode(modeCodeFound, modeCodeNewList);
+
+                           bodyText = bodyText.Replace(match.Groups[0].Value, "/ARSUserFiles/" + modeCodeNew + "/" + adHocFolder);
+                        }
+                     }
+                  }
+               }
+            }
+            catch (Exception ex)
+            {
+
+            }
 
             try
             {
@@ -105,6 +133,33 @@ namespace USDA_ARS.LocationsWebApp.DL
          }
 
          return text;
+      }
+
+
+      public static string GetNewModeCode(string oldModeCode, List<ModeCodeNew> modeCodeNewList)
+      {
+         string newModeCode = "";
+
+         if (modeCodeNewList != null && modeCodeNewList.Count > 0)
+         {
+            ModeCodeNew modeCodeItemNew = modeCodeNewList.Where(p => p.ModecodeNew == oldModeCode).FirstOrDefault();
+
+            if (modeCodeItemNew != null)
+            {
+               newModeCode = modeCodeItemNew.ModecodeNew;
+            }
+            else
+            {
+               ModeCodeNew modeCodeItemOld = modeCodeNewList.Where(p => p.ModecodeOld == oldModeCode).FirstOrDefault();
+
+               if (modeCodeItemOld != null)
+               {
+                  newModeCode = modeCodeItemNew.ModecodeNew;
+               }
+            }
+         }
+
+         return newModeCode;
       }
    }
 }

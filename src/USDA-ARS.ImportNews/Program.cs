@@ -3,6 +3,8 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -10,8 +12,10 @@ using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Umbraco.Core.Models;
 using Umbraco.Core.Persistence;
 using USDA_ARS.ImportNews.Models;
+using USDA_ARS.ImportNews.Objects;
 using USDA_ARS.LocationsWebApp.DL;
 using USDA_ARS.LocationsWebApp.Models;
 using USDA_ARS.Umbraco.Extensions.Models;
@@ -26,23 +30,56 @@ namespace USDA_ARS.ImportNews
       static string API_KEY = ConfigurationManager.AppSettings.Get("Umbraco:ApiKey");
       static string API_URL_NEWS = ConfigurationManager.AppSettings.Get("Umbraco:ApiUrlForNews");
       static List<News> NEWS_LIST = null;
+      static string UmbracoDbConnectionString = ConfigurationManager.ConnectionStrings["umbracoDbDSN"].ConnectionString;
       static List<ModeCodeLookup> MODE_CODE_LIST = null;
       static List<ModeCodeNew> MODE_CODE_NEW_LIST = null;
 
       static void Main(string[] args)
       {
-         AddLog("Getting News From DB...");
-         NEWS_LIST = GetNewsAll();
+         if (args != null && args.Length == 1)
+         {
+            if (args[0] == "import-news")
+            {
+               AddLog("Getting News From DB...");
+               NEWS_LIST = GetNewsAll();
 
-         AddLog("Getting Mode Codes From Umbraco...");
-         GenerateModeCodeList(false);
-         AddLog("Done. Count: " + MODE_CODE_LIST.Count);
-         AddLog("");
+               AddLog("Getting Mode Codes From Umbraco...");
+               GenerateModeCodeList(false);
+               AddLog("Done. Count: " + MODE_CODE_LIST.Count);
+               AddLog("");
 
-         AddLog("Getting New Mode Codes From Umbraco...");
-         MODE_CODE_NEW_LIST = GetNewModeCodesAll();
+               AddLog("Getting New Mode Codes From Umbraco...");
+               MODE_CODE_NEW_LIST = GetNewModeCodesAll();
 
-         ImportNews();
+               ImportNews();
+            }
+            else if (args[0] == "create-interlinks")
+            {
+               LinkInterlinksNews();
+            }
+            else
+            {
+               AddLog("");
+               AddLog("");
+               AddLog("Please enter a command line argument:");
+               AddLog("import-news");
+               AddLog("or");
+               AddLog("create-interlinks");
+               AddLog("");
+            }
+         }
+         else
+         {
+            AddLog("");
+            AddLog("");
+            AddLog("Please enter a command line argument:");
+            AddLog("import-news");
+            AddLog("or");
+            AddLog("create-interlinks");
+            AddLog("");
+         }
+
+
       }
 
 
@@ -180,7 +217,7 @@ namespace USDA_ARS.ImportNews
                            bodyText = ReplaceCaseInsensitive(bodyText, "\"../", "/is/");
                            bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/", "/");
 
-                           bodyText = CleanHtml.CleanUpHtml(bodyText);
+                           bodyText = CleanHtml.CleanUpHtml(bodyText, "", MODE_CODE_NEW_LIST);
                         }
 
                         if (doc.DocumentNode.SelectSingleNode("//meta[@name='keywords']") != null)
@@ -256,6 +293,48 @@ namespace USDA_ARS.ImportNews
       }
 
 
+      static void LinkInterlinksNews()
+      {
+         AddLog("Getting Mode Codes From Umbraco...");
+         GenerateModeCodeList(false);
+         AddLog("Done. Count: " + MODE_CODE_LIST.Count);
+         AddLog("");
+
+         List<Models.UmbracoPropertyData> umbracoNewsList = GetAllNewsArticles();
+
+         if (umbracoNewsList != null && umbracoNewsList.Any())
+         {
+            AddLog("");
+            AddLog("News Articles found: " + umbracoNewsList.Count);
+
+            AddLog("");
+            AddLog("Deleting all interlink records...");
+            DeleteAllInterlinkRecords();
+            AddLog("Done");
+            AddLog("");
+
+
+            foreach (Models.UmbracoPropertyData node in umbracoNewsList)
+            {
+               AddLog("Processing article: " + node.Title);
+               string bodyText = node.DataNtext;
+
+               List<Models.LinkItem> linkItemList = NewsInterLinks.FindInterLinks(bodyText);
+
+               if (linkItemList != null)
+               {
+                  AddLog("Found Interlinks: " + linkItemList.Count);
+                  NewsInterLinks.GenerateInterLinks(node.UmbracoId, node.UmbracoGuid, linkItemList, MODE_CODE_LIST);
+               }
+            }
+         }
+         else
+         {
+            AddLog("!! No news articles found!");
+         }
+      }
+
+
       static List<string> GetNewsHtmlList(string sDir)
       {
          List<String> files = new List<String>();
@@ -314,9 +393,9 @@ namespace USDA_ARS.ImportNews
          string filename = "mode-code-cache.txt";
          List<ModeCodeLookup> modeCodeList = new List<ModeCodeLookup>();
 
-         if (true == File.Exists(filename))
+         if (true == System.IO.File.Exists(filename))
          {
-            using (StreamReader sr = File.OpenText(filename))
+            using (StreamReader sr = System.IO.File.OpenText(filename))
             {
                string s = "";
                while ((s = sr.ReadLine()) != null)
@@ -346,7 +425,7 @@ namespace USDA_ARS.ImportNews
                sb.AppendLine(modeCodeItem.ModeCode + "|" + modeCodeItem.UmbracoId + "|" + modeCodeItem.Url);
             }
 
-            using (FileStream fs = File.Create("mode-code-cache.txt"))
+            using (FileStream fs = System.IO.File.Create("mode-code-cache.txt"))
             {
                // Add some text to file
                Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
@@ -500,8 +579,8 @@ namespace USDA_ARS.ImportNews
                   fieldsetTopic.Alias = "newsTopicSelect";
                   fieldsetTopic.Disabled = false;
                   fieldsetTopic.Id = Guid.NewGuid();
-                  fieldsetTopic.Properties = new List<Property>();
-                  fieldsetTopic.Properties.Add(new Property("newsTopic", topicGuid));
+                  fieldsetTopic.Properties = new List<LocationsWebApp.Models.Property>();
+                  fieldsetTopic.Properties.Add(new LocationsWebApp.Models.Property("newsTopic", topicGuid));
 
                   newsTopicArchetypeItem.Fieldsets.Add(fieldsetTopic);
                   // LOOP END
@@ -531,7 +610,7 @@ namespace USDA_ARS.ImportNews
 
       static string GetFileText(string path)
       {
-         return File.ReadAllText(path);
+         return System.IO.File.ReadAllText(path);
       }
 
 
@@ -619,6 +698,31 @@ namespace USDA_ARS.ImportNews
          newsTopicList = JsonConvert.DeserializeObject<List<NewsTopicItem>>(httpApiResponseStr);
 
          return newsTopicList;
+      }
+
+
+      static List<Models.UmbracoPropertyData> GetAllNewsArticles()
+      {
+         var db = new Database("umbracoDbDSN");
+
+         string sql = @"SELECT cmsPropertyData.*, umbracoNode.uniqueID, umbracoNode.text FROM cmsPropertyData 
+                           LEFT JOIN umbracoNode ON umbracoNode.id = cmsPropertyData.contentNodeId
+                           WHERE contentNodeId IN 
+                           (SELECT nodeId FROM cmsContent WHERE contentType = (SELECT NodeId FROM [ARSUmbraco].[dbo].[cmsContentType] 
+                              WHERE alias = 'NewsArticle')) AND versionId IN
+                           (SELECT versionId FROM cmsDocument WHERE published = 1) AND propertytypeid IN (SELECT id FROM cmsPropertyType WHERE Alias = 'bodytext')";
+
+         List<Models.UmbracoPropertyData> docList = db.Query<Models.UmbracoPropertyData>(sql).ToList();
+
+         return docList;
+      }
+
+
+      static void DeleteAllInterlinkRecords()
+      {
+         var db = new Database("arisPublicWebDbDSN");
+
+         db.Execute("DELETE FROM NewsInterLinks");
       }
 
 

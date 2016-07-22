@@ -4,106 +4,17 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Umbraco.Core;
 using Umbraco.Core.Models;
 using Umbraco.Core.Persistence;
-using Umbraco.Web;
+using USDA_ARS.ImportNews.Models;
+using USDA_ARS.Umbraco.Extensions.Helpers;
 using USDA_ARS.Umbraco.Extensions.Models.Aris;
 
-namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
+namespace USDA_ARS.ImportNews.Objects
 {
    public class NewsInterLinks
    {
-      public static UmbracoHelper UmbHelper = new UmbracoHelper(UmbracoContext.Current);
-
-
-      public static List<NewsInterLink> GetLinksByNewsArticle(int nodeId)
-      {
-         List<NewsInterLink> linkList = null;
-
-         var db = new Database("arisPublicWebDbDSN");
-
-         string sql = "SELECT * FROM NewsInterLinks WHERE UmbracoNodeId = @nodeId ORDER BY LinkType";
-
-         linkList = db.Query<NewsInterLink>(sql, new { nodeId = nodeId }).ToList();
-
-         return linkList;
-      }
-
-
-      public static List<IPublishedContent> GetNewsByModeCode(string modeCode)
-      {
-         List<IPublishedContent> newsList = null;
-         List<NewsInterLink> linkList = null;
-
-         modeCode = Helpers.ModeCodes.ModeCodeNoDashes(modeCode);
-
-         var db = new Database("arisPublicWebDbDSN");
-
-         string sql = "SELECT * FROM NewsInterLinks WHERE LinkType = 'place' AND LinkId = @modeCode";
-
-         linkList = db.Query<NewsInterLink>(sql, new { modeCode = modeCode }).ToList();
-
-         if (linkList != null && linkList.Any())
-         {
-            newsList = new List<IPublishedContent>();
-
-            foreach (NewsInterLink linkItem in linkList)
-            {
-               IPublishedContent newsItem = UmbHelper.TypedContent(linkItem.UmbracoNodeId);
-
-               if (newsItem != null)
-               {
-                  newsList.Add(newsItem);
-               }
-            }
-         }
-
-         return newsList;
-      }
-
-
-      public static List<IPublishedContent> GetNewsByPersonId(long personId)
-      {
-         List<IPublishedContent> newsList = null;
-         List<NewsInterLink> linkList = null;
-
-         var db = new Database("arisPublicWebDbDSN");
-
-         string sql = "SELECT * FROM NewsInterLinks WHERE LinkType = 'person' AND LinkId = @personId";
-
-         linkList = db.Query<NewsInterLink>(sql, new { personId = personId }).ToList();
-
-         if (linkList != null && linkList.Any())
-         {
-            newsList = new List<IPublishedContent>();
-
-            foreach (NewsInterLink linkItem in linkList)
-            {
-               IPublishedContent newsItem = UmbHelper.TypedContent(linkItem.UmbracoNodeId);
-
-               if (newsItem != null)
-               {
-                  newsList.Add(newsItem);
-               }
-            }
-         }
-
-         return newsList;
-      }
-
-
-      public static List<NewsInterLink> GenerateInterLinks(IContent content, List<LinkItem> linkList)
-      {
-         return GenerateInterLinksProcess(content, 0, Guid.Empty, linkList);
-      }
-
-      public static List<NewsInterLink> GenerateInterLinks(int umbracoNodeId, Guid umbracoNodeGuid, List<LinkItem> linkList)
-      {
-         return GenerateInterLinksProcess(null, umbracoNodeId, umbracoNodeGuid, linkList);
-      }
-
-      public static List<NewsInterLink> GenerateInterLinksProcess(IContent content, int umbracoNodeId, Guid umbracoNodeGuid, List<LinkItem> linkList)
+      public static List<NewsInterLink> GenerateInterLinks(int umbracoNodeId, Guid umbracoNodeGuid, List<LinkItem> linkList, List<ModeCodeLookup> modeCodeList)
       {
          List<NewsInterLink> interLinkList = new List<NewsInterLink>();
 
@@ -114,12 +25,6 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                NewsInterLink interLinkItem = new NewsInterLink();
 
                interLinkItem.Id = Guid.Empty;
-
-               if (content != null)
-               {
-                  umbracoNodeId = content.Id;
-                  umbracoNodeGuid = content.Key;
-               }
 
                interLinkItem.UmbracoNodeId = umbracoNodeId;
                interLinkItem.UmbracoNodeGuid = umbracoNodeGuid;
@@ -155,11 +60,11 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
                      if (nodeId > 0)
                      {
-                        IPublishedContent node = UmbHelper.TypedContent(nodeId);
+                        ModeCodeLookup node = modeCodeList.Where(p => p.UmbracoId == nodeId).FirstOrDefault();
 
                         if (node != null)
                         {
-                           string modeCode = node.GetPropertyValue<string>("modeCode");
+                           string modeCode = node.ModeCode;
 
                            if (false == string.IsNullOrEmpty(modeCode))
                            {
@@ -175,11 +80,11 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                   {
                      string url = linkItem.Href.Replace("http://www.ars.usda.gov", "");
 
-                     IPublishedContent node = Helpers.Nodes.GetNodeByUrl(url);
+                     ModeCodeLookup node = modeCodeList.Where(p => p.Url.ToLower() == url.ToLower()).FirstOrDefault();
 
                      if (node != null)
                      {
-                        string modeCode = node.GetPropertyValue<string>("modeCode");
+                        string modeCode = node.ModeCode;
 
                         if (false == string.IsNullOrEmpty(modeCode))
                         {
@@ -261,37 +166,6 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
          }
 
          return linkItem;
-      }
-
-
-      public static void RemoveLinksByNodeId(int nodeId)
-      {
-         var db = new Database("arisPublicWebDbDSN");
-
-         string sql = "SELECT * FROM NewsInterLinks WHERE UmbracoNodeId = @nodeId";
-
-         List<NewsInterLink> newsList = db.Query<NewsInterLink>(sql, new { nodeId = nodeId }).ToList();
-
-         if (newsList != null && newsList.Any())
-         {
-            foreach (NewsInterLink link in newsList)
-            {
-               db.Delete(link);
-            }
-         }
-      }
-
-   }
-
-
-   public struct LinkItem
-   {
-      public string Href;
-      public string Text;
-
-      public override string ToString()
-      {
-         return Href + "\n\t" + Text;
       }
    }
 }
