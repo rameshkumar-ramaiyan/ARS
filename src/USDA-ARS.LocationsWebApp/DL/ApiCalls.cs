@@ -24,14 +24,14 @@ namespace USDA_ARS.LocationsWebApp.DL
       /// </summary>
       /// <param name="content"></param>
       /// <returns></returns>
-      public static ApiResponse PostData(ApiRequest request, string endPoint = "Post")
+      public static ApiResponse PostData(ApiRequest request, string endPoint = "Post", int timeout = 10800000)
       {
          ApiResponse response = null;
          bool errorDetected = false;
 
          try
          {
-            response = PostDataProcess(request, endPoint);
+            response = PostDataProcess(request, endPoint, timeout);
          }
          catch (Exception ex)
          {
@@ -61,7 +61,7 @@ namespace USDA_ARS.LocationsWebApp.DL
 
             try
             {
-               response = PostDataProcess(request, endPoint);
+               response = PostDataProcess(request, endPoint, timeout);
             }
             catch (Exception ex)
             {
@@ -91,7 +91,7 @@ namespace USDA_ARS.LocationsWebApp.DL
 
             try
             {
-               response = PostDataProcess(request, endPoint);
+               response = PostDataProcess(request, endPoint, timeout);
             }
             catch (Exception ex)
             {
@@ -121,7 +121,7 @@ namespace USDA_ARS.LocationsWebApp.DL
 
             try
             {
-               response = PostDataProcess(request, endPoint);
+               response = PostDataProcess(request, endPoint, timeout);
             }
             catch (Exception ex)
             {
@@ -152,7 +152,7 @@ namespace USDA_ARS.LocationsWebApp.DL
       }
 
 
-      public static ApiResponse PostDataProcess(ApiRequest request, string endPoint = "Post")
+      public static ApiResponse PostDataProcess(ApiRequest request, string endPoint = "Post", int timeout = 10800000)
       {
          ApiResponse response = null;
          string apiUrl = API_URL;
@@ -161,7 +161,7 @@ namespace USDA_ARS.LocationsWebApp.DL
          http.Accept = "application/json";
          http.ContentType = "application/json";
          http.Method = "POST";
-         http.Timeout = 10800000;
+         http.Timeout = timeout;
          string parsedContent = JsonConvert.SerializeObject(request);
          ASCIIEncoding encoding = new ASCIIEncoding();
          Byte[] bytes = encoding.GetBytes(parsedContent);

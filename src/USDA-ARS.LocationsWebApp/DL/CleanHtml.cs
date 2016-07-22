@@ -39,6 +39,14 @@ namespace USDA_ARS.LocationsWebApp.DL
             bodyText = Regex.Replace(bodyText, @"/sp2userfiles/person", "/ARSUserFiles", RegexOptions.IgnoreCase);
             bodyText = Regex.Replace(bodyText, @"/sp2userfiles/Program/", "/ARSUserFiles/np", RegexOptions.IgnoreCase);
 
+            bodyText = Regex.Replace(bodyText, @"/sp2userfiles/Subsite/sciQualRev", "/ARSUserFiles/OSQR", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"/sp2userfiles/Subsite/HQsubsite", "/ARSUserFiles/NACOP", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"/sp2userfiles/Subsite/Careers", "/ARSUserFiles/Careers", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"/sp2userfiles/Subsite/irp", "/ARSUserFiles/OIRP", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"/sp2userfiles/Subsite/odeo", "/ARSUserFiles/ODEO", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"/sp2userfiles/Subsite/01090000", "/ARSUserFiles/OTT", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"/sp2userfiles/Subsite/CEAP", "/ARSUserFiles/CEAP", RegexOptions.IgnoreCase);
+
             bodyText = Regex.Replace(bodyText, @"\""/images/", "\"/ARSUserFiles/images/", RegexOptions.IgnoreCase);
             bodyText = Regex.Replace(bodyText, @"\""/incme/", "\"/ARSUserFiles/incme/", RegexOptions.IgnoreCase);
             bodyText = Regex.Replace(bodyText, @"src\=\""/is/", "src=\"/ARSUserFiles/oc/", RegexOptions.IgnoreCase);

@@ -47,8 +47,11 @@ namespace USDA_ARS.ImportDocs
 
          bool forceCacheUpdate = false;
          bool updateNonImportOnly = false;
+         bool subsitesOnly = false;
          bool addHocOnly = false;
          bool personOnly = false;
+         bool placeOnly = false;
+
 
          if (args != null && args.Length == 1)
          {
@@ -60,6 +63,10 @@ namespace USDA_ARS.ImportDocs
             {
                updateNonImportOnly = true;
             }
+            else if (args[1] == "subsites-only")
+            {
+               subsitesOnly = true;
+            }
             else if (args[1] == "adhoc-only")
             {
                addHocOnly = true;
@@ -67,6 +74,10 @@ namespace USDA_ARS.ImportDocs
             else if (args[1] == "person-only")
             {
                personOnly = true;
+            }
+            else if (args[1] == "place-only")
+            {
+               placeOnly = true;
             }
          }
 
@@ -92,7 +103,7 @@ namespace USDA_ARS.ImportDocs
 
 
          AddLog("Importing Docs");
-         ImportDocsTemp(updateNonImportOnly, addHocOnly, personOnly);
+         ImportDocsTemp(updateNonImportOnly, addHocOnly, personOnly, placeOnly, subsitesOnly);
 
 
 
@@ -138,34 +149,16 @@ namespace USDA_ARS.ImportDocs
 
       }
 
-      static void ImportDocsTemp(bool updateNonImportOnly = false, bool addHocOnly = false, bool personOnly = false)
+      static void ImportDocsTemp(bool updateNonImportOnly = false, bool addHocOnly = false, bool personOnly = false, bool placeOnly = false, bool subsitesOnly = false)
       {
-
-
-
-         // Get List of documents
-
-         //1. get all site codes and doctypes
-
-         //DataTable dtAllDocumentIdsBasedOnDocTypeWithoutParam = new DataTable();          
-         //dtAllDocumentIdsBasedOnDocTypeWithoutParam = GetAllDocumentIdsBasedOnDocTypeWithoutParam();
-         // DataTable dtAllDocumentIdsBasedOnDocTypeWithParamPlace = new DataTable();
-         //DataTable dtAllDocumentIdsBasedOnDocTypeWithParamAdhoc = new DataTable();
-         //DataTable dtAllDocumentIdsBasedOnDocTypeWithParamPerson = new DataTable();
-
-         //dtAllDocumentIdsBasedOnDocTypeWithParamAdhoc = GetAllDocumentIdsBasedOnDocTypeWithParam("ad_hoc");
-         //dtAllDocumentIdsBasedOnDocTypeWithParamPerson = GetAllDocumentIdsBasedOnDocTypeWithParam("person");
-         ////2. send to doctype sp---not require now
-
          // IMPORT SUB SITES
 
          AddLog("-= IMPORT DOCS =-");
          AddLog("");
          AddLog("");
 
-         if (false == addHocOnly && false == personOnly)
+         if (true == updateNonImportOnly)
          {
-
             // TODO: DOUBLE CHECK THESE...
             AddLog("Updating non-imported docs...");
             UpdateNonImportedPage("Research Home", "/Research/research.htm", 1104, "");
@@ -176,57 +169,53 @@ namespace USDA_ARS.ImportDocs
             UpdateNonImportedPage("Briefing Room", "/News/docs.htm?docid=1281", 8003, "");
             UpdateNonImportedPage("Social Media Tools and Resources", "/News/Docs.htm?docid=23888", 131742, "");
             UpdateNonImportedPage("Image Gallery", "/News/Docs.htm?docid=23559", 1145, "");
-
          }
-
-         if (false == updateNonImportOnly)
+         else if (true == subsitesOnly)
          {
-            if (false == addHocOnly && false == personOnly)
-            {
-               AddLog("Importing Careers pages...");
-               AddSubsitePages("Careers", 8058, 0); //Umbraco Careers Node ID: 8058
-               AddLog("");
+            AddLog("Importing Careers pages...");
+            AddSubsitePages("Careers", 8058, 0); //Umbraco Careers Node ID: 8058
+            AddLog("");
 
-               AddLog("Importing National Advisory Council for Office Professionals pages...");
-               AddSubsitePages("HQsubsite", 130737, 21071);
-               AddLog("");
+            AddLog("Importing National Advisory Council for Office Professionals pages...");
+            AddSubsitePages("HQsubsite", 130737, 21071);
+            AddLog("");
 
-               AddLog("Importing ARS Office of International Research Programs pages...");
-               AddSubsitePages("irp", 130729, 1428);
-               AddLog("");
+            AddLog("Importing ARS Office of International Research Programs pages...");
+            AddSubsitePages("irp", 130729, 1428);
+            AddLog("");
 
-               AddLog("Importing Office of Legislative Affiars...");
-               AddSubsitePages("ARSLegisAffrs", 130738, 1332);
-               AddLog("");
+            AddLog("Importing Office of Legislative Affiars...");
+            AddSubsitePages("ARSLegisAffrs", 130738, 1332);
+            AddLog("");
 
-               AddLog("Importing Office of Outreach, Diversity, and Equal Opportunity (ODEO) pages...");
-               AddSubsitePages("odeo", 130739, 23071);
-               AddLog("");
+            AddLog("Importing Office of Outreach, Diversity, and Equal Opportunity (ODEO) pages...");
+            AddSubsitePages("odeo", 130739, 23071);
+            AddLog("");
 
-               AddLog("Importing Office of Scientific Quality Review (OSQR) pages...");
-               AddSubsitePages("sciQualRev", 2133, 1286);
-               AddLog("");
+            AddLog("Importing Office of Scientific Quality Review (OSQR) pages...");
+            AddSubsitePages("sciQualRev", 2133, 1286);
+            AddLog("");
 
-               AddLog("Importing CEAP pages...");
-               AddSpecialAdHocPages("02020000StewardsCEAPsites", 130740, 18645);
-               //AddSubsitePages("CEAP", 130740, 15358);
-               AddLog("");
-            }
+            AddLog("Importing CEAP pages...");
+            AddSpecialAdHocPages("02020000StewardsCEAPsites", 130740, 18645);
+            //AddSubsitePages("CEAP", 130740, 15358);
+            AddLog("");
+         }
+         else if (true == addHocOnly || true == personOnly || true == placeOnly)
+         {
             List<string> list = new List<string>();
 
-            if (false == addHocOnly && false == personOnly)
-            {
-               list.Add("ad_hoc");
-               list.Add("Place");
-               list.Add("person");
-            }
-            else if (true == addHocOnly)
+            if (true == addHocOnly)
             {
                list.Add("ad_hoc");
             }
             else if (true == personOnly)
             {
                list.Add("person");
+            }
+            else if (true == placeOnly)
+            {
+               list.Add("Place");
             }
 
             for (int k = 0; k < list.Count; k++) // Loop through List with for
@@ -254,20 +243,56 @@ namespace USDA_ARS.ImportDocs
                   try
                   {
                      AddLog(list[k] + " record: " + (i + 1) + " of " + listCount);
-                     string title = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(0).ToString();
-                     string currentversion = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<int>(1).ToString();
-                     string doctype = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(2).ToString();
-                     string published = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(3).ToString();
-                     string originSite_Type = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(4).ToString();
-                     string originSite_ID = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(5).ToString();
-                     //string oldURL = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>(6).ToString();
-                     bool displayTitle = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<bool>(7);
-                     int docId = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<int>(8);
+                     string title = "";
+                     string currentversion = "";
+                     string doctype = "";
+                     string published = "";
+                     string originSite_Type = "";
+                     string originSite_ID = "";
+                     bool displayTitle = false;
+                     int docId = 0;
+
+                     AddLog(" - Getting page info...");
+                     if (dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i]["title"] != null)
+                     {
+                        title = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i]["title"].ToString();
+                     }
+                     if (dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i]["CurrentVersion_ID"] != null)
+                     {
+                        currentversion = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i]["CurrentVersion_ID"].ToString();
+                     }
+                     if (dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i]["doctype"] != null)
+                     {
+                        doctype = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i]["doctype"].ToString();
+                     }
+                     if (dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i]["published"] != null)
+                     {
+                        published = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i]["published"].ToString();
+                     }
+                     if (dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i]["OriginSite_Type"] != null)
+                     {
+                        originSite_Type = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i]["OriginSite_Type"].ToString();
+                     }
+                     if (dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i]["OriginSite_ID"] != null)
+                     {
+                        originSite_ID = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i]["OriginSite_ID"].ToString();
+                     }
+                     if (dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i]["DisplayTitle"] != null)
+                     {
+                        displayTitle = Convert.ToBoolean(dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i]["DisplayTitle"]);
+                     }
+                     if (dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i]["DocId"] != null)
+                     {
+                        docId = Convert.ToInt32(dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i]["DocId"]);
+                     }
+
                      string adHocFolderName = string.Empty;
                      if (list[k].ToString().Trim() == "ad_hoc")
                      {
                         adHocFolderName = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>("siteLabel").ToString();
                      }
+
+                     AddLog(" - Generating import page...");
 
                      ImportPage newPage = GenerateImportPage(docId, currentversion, title, doctype, published, originSite_Type, originSite_ID, displayTitle, adHocFolderName);
 
@@ -647,7 +672,7 @@ namespace USDA_ARS.ImportDocs
          request.ContentList.Add(content);
          request.ApiKey = API_KEY;
 
-         ApiResponse responseBack = ApiCalls.PostData(request, "Post");
+         ApiResponse responseBack = ApiCalls.PostData(request, "Post", 120000);
 
          if (responseBack != null && responseBack.Success)
          {
@@ -880,7 +905,7 @@ namespace USDA_ARS.ImportDocs
          request.ContentList.Add(content);
          request.ApiKey = API_KEY;
 
-         ApiResponse responseBack = ApiCalls.PostData(request, "Post");
+         ApiResponse responseBack = ApiCalls.PostData(request, "Post", 120000);
 
          return responseBack;
       }
@@ -908,7 +933,7 @@ namespace USDA_ARS.ImportDocs
          request.ContentList.Add(content);
          request.ApiKey = API_KEY;
 
-         ApiResponse responseBack = ApiCalls.PostData(request, "Post");
+         ApiResponse responseBack = ApiCalls.PostData(request, "Post", 120000);
 
          return responseBack;
       }
@@ -928,7 +953,7 @@ namespace USDA_ARS.ImportDocs
          requestPublish.ContentList = new List<ApiContent>();
          requestPublish.ContentList.Add(contentPublish);
 
-         ApiResponse responseBack = ApiCalls.PostData(requestPublish, "PublishWithChildren");
+         ApiResponse responseBack = ApiCalls.PostData(requestPublish, "PublishWithChildren", 620000);
 
          if (responseBack != null)
          {
@@ -1103,7 +1128,7 @@ namespace USDA_ARS.ImportDocs
 
             AddLog(" - Saving Page: " + pageTitle);
 
-            ApiResponse responseBack = ApiCalls.PostData(request, "Post");
+            ApiResponse responseBack = ApiCalls.PostData(request, "Post", 120000);
 
             if (responseBack != null && responseBack.Success)
             {
