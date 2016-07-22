@@ -286,13 +286,18 @@ namespace USDA_ARS.ImportDocs
                         docId = Convert.ToInt32(dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i]["DocId"]);
                      }
 
+                     if (true == string.IsNullOrWhiteSpace(title))
+                     {
+                        title = "[Missing Page]";
+                     }
+
                      string adHocFolderName = string.Empty;
                      if (list[k].ToString().Trim() == "ad_hoc")
                      {
                         adHocFolderName = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>("siteLabel").ToString();
                      }
 
-                     AddLog(" - Generating import page...");
+                     AddLog(" - Generating import page: " + title);
 
                      ImportPage newPage = GenerateImportPage(docId, currentversion, title, doctype, published, originSite_Type, originSite_ID, displayTitle, adHocFolderName);
 
