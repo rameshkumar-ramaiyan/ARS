@@ -474,6 +474,8 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                   foreach (IContent node in modeCodeNodesList)
                   {
+
+
                      response.ContentList.Add(ConvertContentObj(node));
                   }
 
@@ -563,6 +565,73 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
          return response;
       }
+
+
+      [System.Web.Http.HttpPost]
+      public Models.Import.ApiResponse GetAllNavigationNodes([FromBody] dynamic json)
+      {
+         Models.Import.ApiResponse response = new Models.Import.ApiResponse();
+
+         Models.Import.ApiRequest request = JsonConvert.DeserializeObject<Models.Import.ApiRequest>(json.ToString());
+
+         try
+         {
+            if (request != null)
+            {
+               //Check object
+               if (true == string.IsNullOrWhiteSpace(request.ApiKey))
+               {
+                  response.Message = "API Key is missing.";
+               }
+               else if (request.ApiKey != _apiKey)
+               {
+                  response.Message = "API Key is invalid.";
+               }
+               else
+               {
+                  response.Success = true;
+                  response.ContentList = new List<Models.Import.ApiContent>();
+
+                  List<IContent> navList = new List<IContent>();
+
+                  IEnumerable<IContent> rootNodeList = _contentService.GetRootContent();
+
+                  foreach (IContent rootNode in rootNodeList)
+                  {
+                     IEnumerable<IContent> nodeList = _contentService.GetDescendants(rootNode.Id);
+
+                     navList.AddRange(nodeList.Where(p => (p.ContentType.Alias == "LeftNavigationSet")).ToList());
+                  }
+
+                  response.ContentList = new List<Models.Import.ApiContent>();
+
+                  foreach (IContent node in navList)
+                  {
+                     response.ContentList.Add(ConvertContentObj(node));
+                  }
+
+                  response.Message = "Success";
+                  response.Success = true;
+               }
+            }
+            else
+            {
+               response.Message = "The JSON object was not properly formatted.";
+               response.Success = false;
+            }
+
+         }
+         catch (Exception ex)
+         {
+            //LogHelper.Error<DataImporterController>("Content Import Post Error", ex);
+
+            response.Message = ex.ToString();
+         }
+
+         return response;
+      }
+
+
 
 
       [System.Web.Http.HttpPost]
@@ -903,7 +972,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
          return response;
       }
-      
+
 
       /// <summary>
       /// Convert Umbraco content object
@@ -937,6 +1006,27 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
             Models.Import.ApiProperty propObj = new Models.Import.ApiProperty(property.Alias, propValue);
 
             contentObj.Properties.Add(propObj);
+         }
+
+         if (content.Children().Any())
+         {
+            contentObj.ChildContentList = new List<Models.Import.ApiContent>();
+
+            IContent navNode = content.Children().Where(p => p.ContentType.Alias == "SiteNavFolder").FirstOrDefault();
+
+            if (navNode != null)
+            {
+               Models.Import.ApiContent contentNavObj = new Models.Import.ApiContent();
+
+               contentNavObj.Id = navNode.Id;
+               contentNavObj.Name = navNode.Name;
+               contentNavObj.Url = "";
+               contentNavObj.ParentId = navNode.ParentId;
+               contentNavObj.DocType = navNode.ContentType.Alias;
+               contentNavObj.Template = "";
+
+               contentObj.ChildContentList.Add(contentNavObj);
+            }
          }
 
          return contentObj;

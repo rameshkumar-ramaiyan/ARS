@@ -10,6 +10,7 @@ namespace USDA_ARS.ImportNavigation.Models
    {
       public string ModeCode { get; set; }
       public int UmbracoId { get; set; }
+      public int NavUmbracoId { get; set; }
       public string Url { get; set; }
       public string OldUrl { get; set; }
    }

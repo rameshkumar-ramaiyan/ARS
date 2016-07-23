@@ -6,12 +6,10 @@ using System.Threading.Tasks;
 
 namespace USDA_ARS.ImportNavigation.Models
 {
-   public class ProgramLookup
+   public class PersonLookup
    {
-      public string ProgramCode { get; set; }
+      public int PersonId { get; set; }
       public int UmbracoId { get; set; }
       public int NavUmbracoId { get; set; }
-      public string Url { get; set; }
-      public string OldUrl { get; set; }
    }
 }

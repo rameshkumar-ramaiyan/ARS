@@ -279,6 +279,7 @@
   <ItemGroup>
     <Compile Include="Models\Document.cs" />
     <Compile Include="Models\ImportedNav.cs" />
+    <Compile Include="Models\PersonLookup.cs" />
     <Compile Include="Models\SubsiteLookup.cs" />
     <Compile Include="Models\ModeCodeLookup.cs" />
     <Compile Include="Models\NavByPage.cs" />
@@ -288,6 +289,7 @@
     <Compile Include="Models\SubSite.cs" />
     <Compile Include="Models\ModeCodeFolderLookup.cs" />
     <Compile Include="Models\UmbracoDocLookup.cs" />
+    <Compile Include="Models\UmbracoNode.cs" />
     <Compile Include="Models\UmbracoPropertyData.cs" />
     <Compile Include="Objects\SubSites.cs" />
     <Compile Include="Objects\Documents.cs" />

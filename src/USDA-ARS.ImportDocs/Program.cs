@@ -55,7 +55,7 @@ namespace USDA_ARS.ImportDocs
 
          if (args != null && args.Length == 1)
          {
-            forceCacheUpdate = true;
+            forceCacheUpdate = Convert.ToBoolean(args[0]);
          }
          else if (args != null && args.Length == 2)
          {
