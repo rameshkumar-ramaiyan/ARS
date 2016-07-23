@@ -21,7 +21,17 @@
       modeCode = rootPage.GetPropertyValue<string>("modeCode");
    }
 
-   ArchetypeModel currentRelatedTopics = Model.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+   ArchetypeModel currentRelatedTopics = null;
+
+   if (Model.Parent != null && Model.Parent.DocumentTypeAlias == "NationalProgramFolderContainer")
+   {
+      currentRelatedTopics = Model.Parent.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+   }
+   else
+   {
+      currentRelatedTopics = Model.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+   }
+
 
    List<IPublishedContent> siteRelatedTopicsTop = null;
    List<IPublishedContent> siteRelatedTopicsBottom = null;
@@ -51,7 +61,7 @@
             {
                if (navItem != null)
                {
-                  @Html.Raw(OutputTopic(navItem, modeCode, ref foundExternalLink))
+         @Html.Raw(OutputTopic(navItem, modeCode, ref foundExternalLink))
                }
             }
          }
@@ -73,7 +83,7 @@
                   {
                      foreach (var item in topicItem)
                      {
-                        @Html.Raw(OutputTopic(item, modeCode, ref foundExternalLink))
+         @Html.Raw(OutputTopic(item, modeCode, ref foundExternalLink))
                      }
                   }
                }
@@ -96,7 +106,7 @@
             {
                if (navItem != null)
                {
-                  @Html.Raw(OutputTopic(navItem, modeCode, ref foundExternalLink))
+         @Html.Raw(OutputTopic(navItem, modeCode, ref foundExternalLink))
                }
             }
          }

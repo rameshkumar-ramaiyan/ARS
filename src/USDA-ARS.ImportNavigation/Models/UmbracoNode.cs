@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace USDA_ARS.ImportNavigation.Models
 {
-   public class NavByPage
+   public class UmbracoNode
    {
-      public int NavLeft { get; set; }
-      public int NavRight { get; set; }
-      public string NavMain { get; set; }
+      public int id { get; set; }
+      public string text { get; set; }
    }
 }
