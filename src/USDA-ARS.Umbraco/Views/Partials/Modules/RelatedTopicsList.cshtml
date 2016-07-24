@@ -25,7 +25,7 @@
 
    if (Model.Parent != null && Model.Parent.DocumentTypeAlias == "NationalProgramFolderContainer")
    {
-      currentRelatedTopics = Model.Parent.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+      currentRelatedTopics = Model.Parent.Parent.GetPropertyValue<ArchetypeModel>("leftNavPicker");
    }
    else
    {
@@ -61,7 +61,7 @@
             {
                if (navItem != null)
                {
-         @Html.Raw(OutputTopic(navItem, modeCode, ref foundExternalLink))
+                  @Html.Raw(OutputTopic(navItem, modeCode, ref foundExternalLink))
                }
             }
          }
@@ -174,7 +174,7 @@
 
          if (urlLink.StartsWith("http"))
          {
-            if (urlLink.ToLower().IndexOf("usda.gov") < 0)
+            if (urlLink.ToLower().IndexOf(".gov") < 0)
             {
                externalIcon = " *";
 

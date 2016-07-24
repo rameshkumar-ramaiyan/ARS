@@ -43,7 +43,7 @@ namespace USDA_ARS.ImportDocs
 
       static void Main(string[] args)
       {
-         AddLog("-= IMPORT DOCS =-");
+         AddLog("-= IMPORT DOCS =-", LogFormat.Header);
 
          bool forceCacheUpdate = false;
          bool updateNonImportOnly = false;
@@ -51,6 +51,7 @@ namespace USDA_ARS.ImportDocs
          bool addHocOnly = false;
          bool personOnly = false;
          bool placeOnly = false;
+         bool fixARSUserFiles = false;
 
 
          if (args != null && args.Length == 1)
@@ -79,77 +80,49 @@ namespace USDA_ARS.ImportDocs
             {
                placeOnly = true;
             }
+            else if (args[1] == "fix-arsuserfiles")
+            {
+               fixARSUserFiles = true;
+            }
          }
 
          AddLog("Getting People Sites From Umbraco...");
          GeneratePeopleList(forceCacheUpdate);
-         AddLog("Done. Count: " + PEOPLE_LIST.Count);
+         AddLog("Done. Count: " + PEOPLE_LIST.Count, LogFormat.Success);
          AddLog("");
 
          AddLog("Getting Mode Codes From Umbraco...");
          GenerateModeCodeList(forceCacheUpdate);
-         AddLog("Done. Count: " + MODE_CODE_LIST.Count);
+         AddLog("Done. Count: " + MODE_CODE_LIST.Count, LogFormat.Success);
          AddLog("");
 
          AddLog("Getting Doc Folders From Umbraco...");
          GenerateDocFolderList(forceCacheUpdate);
-         AddLog("Done. Count: " + DOC_FOLDER_ID_LIST.Count);
+         AddLog("Done. Count: " + DOC_FOLDER_ID_LIST.Count, LogFormat.Success);
          AddLog("");
 
          AddLog("Getting New Mode Codes...");
          MODE_CODE_NEW_LIST = GetNewModeCodesAll();
-         AddLog("Done. Count: " + MODE_CODE_NEW_LIST.Count);
+         AddLog("Done. Count: " + MODE_CODE_NEW_LIST.Count, LogFormat.Success);
          AddLog("");
 
 
-         AddLog("Importing Docs");
-         ImportDocsTemp(updateNonImportOnly, addHocOnly, personOnly, placeOnly, subsitesOnly);
-
-
-
-      }
-
-
-      static void ImportDocs()
-      {
-         // Get List of documents
-
-         // LOOP THROUGH DOCUMENTS
+         if (false == fixARSUserFiles)
          {
-            ImportPage newPage = new ImportPage();
-
-            newPage.OldDocId = 0; // Current SitePublisher Doc ID
-            newPage.Title = "{{PAGE TITLE}}"; // Document Title
-            newPage.BodyText = "{{PAGE_TEXT}}"; // Document Body Text
-            newPage.OldDocType = "{{DOC TYPE}}"; // SitePublisher Doc Type
-            newPage.PageNumber = 1;
-
-            // DOES IT HAVE DOC PAGES?
-            {
-               newPage.SubPages = new List<ImportPage>();
-
-               // LOOP THOUGH DOCUMENT PAGES (IF THERE ARE ANY)
-               {
-                  newPage.SubPages.Add(new ImportPage() { PageNumber = 2, BodyText = "SUB PAGE TEXT" });
-               }
-            }
-
-            // PICK ONLY 1 OF THE 3 METHODS BELOW
-
-            // IS IT A PAGE FOR A MODE CODE?
-            AddDocToModeCode("{{MODE CODE}}", newPage);
-
-            // IS IT A PAGE FOR A MODE CODE BUT ALSO HAS AN AD HOC?
-            AddDocToAdHoc("{{MODE CODE}}", "{{AD HOC FOLDER NAME}}", newPage);
-
-            // OR IS IT A PAGE FOR A PERSON?
-            AddDocToPersonSite(0, newPage);
+            AddLog("Importing Docs", LogFormat.Header);
+            ImportDocs(updateNonImportOnly, addHocOnly, personOnly, placeOnly, subsitesOnly);
+         }
+         else
+         {
+            AddLog("Fix ARSUserFile Links", LogFormat.Header);
+            FixArsUserFileLinks();
          }
 
 
       }
 
-      static void ImportDocsTemp(bool updateNonImportOnly = false, bool addHocOnly = false, bool personOnly = false, bool placeOnly = false, bool subsitesOnly = false)
+
+      static void ImportDocs(bool updateNonImportOnly = false, bool addHocOnly = false, bool personOnly = false, bool placeOnly = false, bool subsitesOnly = false)
       {
          // IMPORT SUB SITES
 
@@ -344,6 +317,85 @@ namespace USDA_ARS.ImportDocs
          } // if (false == updateNonImportOnly)
 
          using (FileStream fs = File.Create("LOG_FILE.txt"))
+         {
+            // Add some text to file
+            Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);
+            fs.Write(fileText, 0, fileText.Length);
+         }
+      }
+
+
+      static void FixArsUserFileLinks()
+      {
+         AddLog("");
+         AddLog("Getting all Umbraco nodes with body text...");
+         List<UmbracoPropertyData> fullDocsList = GetAllBodyTextData();
+
+         int bodyTextUpdatedCount = 0;
+
+         if (fullDocsList != null && fullDocsList.Any())
+         {
+            AddLog(" - Found: " + fullDocsList.Count, LogFormat.Success);
+            AddLog("");
+
+            int recordInc = 1;
+            int recordCount = fullDocsList.Count;
+
+            foreach (UmbracoPropertyData node in fullDocsList)
+            {
+               AddLog("Record " + recordInc + " / " + recordCount);
+               AddLog("Umbraco Node ("+ node.UmbracoId +"): " + node.Title, LogFormat.White);
+
+               AddLog(" - Checking body text...");
+
+               string bodyText = node.DataNtext;
+
+               string bodyTextFixed = CleanHtml.CleanUpHtml(bodyText);
+
+               if (bodyText != bodyTextFixed)
+               {
+                  AddLog(" - Change detected...");
+
+                  //List<string> diff;
+                  //IEnumerable<string> set1 = bodyText.Split(' ').Distinct();
+                  //IEnumerable<string> set2 = bodyTextFixed.Split(' ').Distinct();
+
+                  //if (set2.Count() > set1.Count())
+                  //{
+                  //   diff = set2.Except(set1).ToList();
+                  //}
+                  //else
+                  //{
+                  //   diff = set1.Except(set2).ToList();
+                  //}
+
+                  //AddLog(" - Changes:");
+                  //foreach (string line in diff)
+                  //{
+                  //   AddLog(" - " + line, LogFormat.Info);
+                  //}
+
+                  UpdateUmbracoNode(node.UmbracoId, bodyTextFixed);
+
+                  bodyTextUpdatedCount++;
+               }
+               else
+               {
+                  AddLog(" --- No Update Needed", LogFormat.Okay);
+               }
+               AddLog("");
+
+               recordInc++;
+            }
+
+            AddLog("");
+            AddLog("");
+            AddLog("");
+            AddLog(" - Umbraco nodes updated: " + bodyTextUpdatedCount, LogFormat.Info);
+            AddLog("");
+         }
+
+         using (FileStream fs = File.Create("LOG_FILE_ARS_FIX.txt"))
          {
             // Add some text to file
             Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);
@@ -681,7 +733,7 @@ namespace USDA_ARS.ImportDocs
 
          if (responseBack != null && responseBack.Success)
          {
-            AddLog(" -- Page Updated.");
+            AddLog(" --- Page Updated.");
          }
       }
 
@@ -944,6 +996,49 @@ namespace USDA_ARS.ImportDocs
       }
 
 
+      static void UpdateUmbracoNode(int umbracoId, string newBodyText)
+      {
+         AddLog(" - Updating node: " + umbracoId);
+
+         ApiContent content = new ApiContent();
+
+         content.Id = umbracoId;
+
+         List<ApiProperty> properties = new List<ApiProperty>();
+
+         properties.Add(new ApiProperty("bodyText", newBodyText)); // HTML of person site
+
+         content.Properties = properties;
+
+         content.Save = 2;
+
+         ApiRequest request = new ApiRequest();
+
+         request.ContentList = new List<ApiContent>();
+         request.ContentList.Add(content);
+         request.ApiKey = API_KEY;
+
+         ApiResponse responseBack = ApiCalls.PostData(request, "Post", 120000);
+
+         if (responseBack != null && responseBack.Success && responseBack.ContentList != null && responseBack.ContentList.Any())
+         {
+            if (responseBack.ContentList[0].Success)
+            {
+               AddLog(" --- Page Updated and Published.", LogFormat.Success);
+               AddLog(" --- URL: " + responseBack.ContentList[0].Url, LogFormat.White);
+            }
+            else
+            {
+               AddLog(" --- !! ERROR: " + responseBack.ContentList[0].Message, LogFormat.Error);
+            }
+         }
+         else
+         {
+            AddLog(" --- !! API ERROR: null", LogFormat.Error);
+         }
+      }
+
+
       static void PublishChildrenNodes(int parentId)
       {
          AddLog("Publishing nodes...");
@@ -1096,6 +1191,23 @@ namespace USDA_ARS.ImportDocs
       }
 
 
+      static List<UmbracoPropertyData> GetAllBodyTextData()
+      {
+         List<UmbracoPropertyData> umbPropertyDataList = null;
+
+         var db = new Database("umbracoDbDSN");
+
+         string sql = @"SELECT cmsPropertyData.*, umbracoNode.uniqueID, umbracoNode.text FROM cmsPropertyData 
+                           LEFT JOIN umbracoNode ON umbracoNode.id = cmsPropertyData.contentNodeId
+                           WHERE NOT dataNtext IS NULL AND versionId IN
+                           (SELECT versionId FROM cmsDocument WHERE published = 1) AND propertytypeid IN (SELECT id FROM cmsPropertyType WHERE Alias = 'bodytext')";
+
+         umbPropertyDataList = db.Query<UmbracoPropertyData>(sql).ToList();
+
+         return umbPropertyDataList;
+      }
+
+
       static void UpdateNonImportedPage(string pageTitle, string url, int umbracoId, string oldId, string oldUrl = null)
       {
          AddLog("Updating Non-Imported Page: " + pageTitle);
@@ -1207,11 +1319,79 @@ namespace USDA_ARS.ImportDocs
       }
 
 
-      static void AddLog(string line)
+      static void AddLog(string line, LogFormat logFormat = LogFormat.Normal)
       {
          Debug.WriteLine(line);
+
+         if (logFormat == LogFormat.Normal)
+         {
+            Console.ResetColor();
+         }
+         else if (logFormat == LogFormat.Header)
+         {
+            Console.BackgroundColor = ConsoleColor.DarkBlue;
+            Console.ForegroundColor = ConsoleColor.White;
+         }
+         else if (logFormat == LogFormat.Success)
+         {
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Green;
+         }
+         else if (logFormat == LogFormat.Okay)
+         {
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.DarkGreen;
+         }
+         else if (logFormat == LogFormat.Warning)
+         {
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Yellow;
+         }
+         else if (logFormat == LogFormat.Error)
+         {
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.Red;
+         }
+         else if (logFormat == LogFormat.ErrorBad)
+         {
+            Console.BackgroundColor = ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.DarkRed;
+         }
+         else if (logFormat == LogFormat.Info)
+         {
+            Console.BackgroundColor = ConsoleColor.Cyan;
+            Console.ForegroundColor = ConsoleColor.DarkBlue;
+         }
+         else if (logFormat == LogFormat.Gray)
+         {
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+         }
+         else if (logFormat == LogFormat.White)
+         {
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.White;
+         }
+
          Console.WriteLine(line);
+         Console.ResetColor();
          LOG_FILE_TEXT += line + "\r\n";
+      }
+
+
+
+      enum LogFormat
+      {
+         Normal,
+         Header,
+         Success,
+         Okay,
+         Warning,
+         Error,
+         ErrorBad,
+         Info,
+         Gray,
+         White
       }
 
 

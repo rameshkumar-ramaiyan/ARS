@@ -290,6 +290,7 @@
     <Compile Include="Models\ModeCodeLookup.cs" />
     <Compile Include="Models\SubSiteLookup.cs" />
     <Compile Include="Models\TestModel.cs" />
+    <Compile Include="Models\UmbracoPropertyData.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

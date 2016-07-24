@@ -64,7 +64,7 @@
 
             for (int i = startYear; i >= endYear; i--)
             {
-                <a href="/services/publications/?modecode=@(modeCode)&locpubs=yes&filterYear=@(i)" id="anch_51">@(i)</a>@Html.Raw(" | ")
+                <a href="/research/publications/?modecode=@(modeCode)&locpubs=yes&filterYear=@(i)" id="anch_51">@(i)</a>@Html.Raw(" | ")
             }
 
         }
@@ -96,8 +96,8 @@
         <br><br>
 
         <b>
-            Show <a href="/services/publications/?modecode=@(modeCode)&filteryear=@(filterYear)" id="anch_75">All Publications</a> ||
-            <a href="/services/publications/?modecode=@(modeCode)&show=pubtype&filteryear=@(filterYear)" id="anch_76">Peer Reviewed Journal Publications Only</a>
+            Show <a href="/research/publications/?modecode=@(modeCode)&filteryear=@(filterYear)" id="anch_75">All Publications</a> ||
+            <a href="/research/publications/?modecode=@(modeCode)&show=pubtype&filteryear=@(filterYear)" id="anch_76">Peer Reviewed Journal Publications Only</a>
         </b>
 
         <br>
@@ -139,7 +139,7 @@
                         @{
                             if (startList >= displayCount)
                             {
-                                <a href="/services/publications/?modecode=@(modeCode)&start=@(startList - displayCount)&display=@(displayCount)&filterYear=@(filterYear)&show=@(show)" class="nextNRecords" id="anch_77">&lt;&lt;-Previous</a>
+                                <a href="/research/publications/?modecode=@(modeCode)&start=@(startList - displayCount)&display=@(displayCount)&filterYear=@(filterYear)&show=@(show)" class="nextNRecords" id="anch_77">&lt;&lt;-Previous</a>
                             }
                         }
                     </td>
@@ -148,7 +148,7 @@
                         @{
                             if ((displayCount + startList) < publicationSearch.Count)
                             {
-                                <a href="/services/publications/?modecode=@(modeCode)&start=@(startList + displayCount)&display=@(displayCount)&filterYear=@(filterYear)&show=@(show)" class="nextNRecords" id="anch_78">Next-&gt;&gt;</a>
+                                <a href="/research/publications/?modecode=@(modeCode)&start=@(startList + displayCount)&display=@(displayCount)&filterYear=@(filterYear)&show=@(show)" class="nextNRecords" id="anch_78">Next-&gt;&gt;</a>
                             }
                         }
                     </td>
@@ -217,7 +217,7 @@
                             <td>
                                 @if (startList >= displayCount)
                                 {
-                                    <a href="/services/publications/?modecode=@(modeCode)&start=@(startList - displayCount)&display=@(displayCount)&filterYear=@(filterYear)&show=@(show)" class="nextNRecords" id="anch_101">&lt;&lt;-Previous</a>
+                                    <a href="/research/publications/?modecode=@(modeCode)&start=@(startList - displayCount)&display=@(displayCount)&filterYear=@(filterYear)&show=@(show)" class="nextNRecords" id="anch_101">&lt;&lt;-Previous</a>
                                 }
                             </td>
 
@@ -225,7 +225,7 @@
                                 @{
                                     if ((displayCount + startList) < publicationSearch.Count)
                                     {
-                                        <a href="/services/publications/?modecode=@(modeCode)&start=@(startList + displayCount)&display=@(displayCount)&filterYear=@(filterYear)&show=@(show)" class="nextNRecords" id="anch_78">Next-&gt;&gt;</a>
+                                        <a href="/research/publications/?modecode=@(modeCode)&start=@(startList + displayCount)&display=@(displayCount)&filterYear=@(filterYear)&show=@(show)" class="nextNRecords" id="anch_78">Next-&gt;&gt;</a>
                                     }
                                 }
                             </td>

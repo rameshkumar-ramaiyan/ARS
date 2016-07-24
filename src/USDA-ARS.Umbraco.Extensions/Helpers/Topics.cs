@@ -60,6 +60,12 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                      string templateSelect = navItem.GetPropertyValue<string>("leftNavTemplate");
                      string docTypeSelect = navItem.GetPropertyValue<string>("leftNavDocType");
 
+                     // If a NP Document, use the NP info
+                     if (currentNode.Parent != null && currentNode.Parent.DocumentTypeAlias == "NationalProgramFolderContainer")
+                     {
+                        currentNode = currentNode.Parent.Parent;
+                     }
+
                      if (false == string.IsNullOrEmpty(navCategorySelect))
                      {
                         if (currentNode.HasValue("navigationCategory") && currentNode.GetPropertyValue<string>("navigationCategory").ToLower() == navCategorySelect.ToLower())

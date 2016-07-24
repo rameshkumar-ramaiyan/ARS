@@ -630,8 +630,9 @@ namespace USDA_ARS.ImportNP
          properties.Add(new ApiProperty("bodyText", bodyText)); // Body Text
          properties.Add(new ApiProperty("npCode", npCode)); // NP Code (National Program Code)
          properties.Add(new ApiProperty("folderLabel", "np" + npCode)); // NP Code (National Program Code)
-         properties.Add(new ApiProperty("navigationCategory", "f5231859-9053-4e75-835e-2fd07e3575e6"));
-         properties.Add(new ApiProperty("navigationCategoryBottom", "0ad2420a-b81b-4f59-be86-e9e1b298f09c"));
+         properties.Add(new ApiProperty("navigationCategory", ""));
+         //properties.Add(new ApiProperty("navigationCategoryBottom", "0ad2420a-b81b-4f59-be86-e9e1b298f09c"));
+         properties.Add(new ApiProperty("oldUrl", "/research/programs/programs.htm?NP_CODE=" + npCode)); // current URL 
 
          content.Properties = properties;
 

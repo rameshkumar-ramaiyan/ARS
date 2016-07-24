@@ -43,6 +43,15 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
          return null;
       }
 
+      public static IEnumerable<IPublishedContent> NewsYearList()
+      {
+         IPublishedContent newsFolder = Homepage().Descendants().FirstOrDefault(n => n.IsDocumentType("NewsFolder"));
+
+         IEnumerable<IPublishedContent> newsYearList = newsFolder.Children;
+
+         return newsYearList;
+      }
+
       public static IEnumerable<IPublishedContent> MainNavigationList()
       {
          IPublishedContent mainNav = SiteSettings().Children.FirstOrDefault(n => n.IsDocumentType("MainNavigation"));

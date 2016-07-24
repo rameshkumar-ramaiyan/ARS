@@ -357,13 +357,18 @@ namespace USDA_ARS.ImportNavigation
 
          if (UMBRACO_OLD_URL_LOOKUP != null)
          {
+            //############################################
+            UMBRACO_OLD_URL_LOOKUP = UMBRACO_OLD_URL_LOOKUP.Where(p => p.OldUrl.Contains("/research/programs/programs.htm")).ToList();
+            //############################################
+
+
             recordTotal = UMBRACO_DOC_LOOKUP.Count;
 
             foreach (UmbracoDocLookup oldNode in UMBRACO_OLD_URL_LOOKUP)
             {
                AddLog("");
                AddLog("Record " + recordNum + " / " + recordTotal);
-               AddLog("URL: " + oldNode.OldUrl);
+               AddLog("URL: " + oldNode.OldUrl, LogFormat.Gray);
                AddLog("Umbraco ID: " + oldNode.UmbracoId);
 
                if (oldNode != null)
@@ -377,6 +382,10 @@ namespace USDA_ARS.ImportNavigation
                   else if (oldNode.OldUrl.Contains("/is/pr/"))
                   {
                      navByPage = new NavByPage() { NavLeft = 0, NavRight = 23, NavMain = "" };
+                  }
+                  else if (oldNode.OldUrl.Contains("/research/programs/programs.htm?np_code=") && oldNode.OldUrl.Contains("&docid="))
+                  {
+                     navByPage = null;
                   }
                   else if (oldNode.OldUrl.Contains("/main/site_main.htm?modecode="))
                   {
@@ -1374,12 +1383,7 @@ namespace USDA_ARS.ImportNavigation
                   }
                   else if (false == string.IsNullOrWhiteSpace(navItem.NavURL) && false == string.IsNullOrWhiteSpace(navItem.NavLabel))
                   {
-                     navItem.NavURL = navItem.NavURL.ToLower().Replace("/pandp/people/people.htm?personid=", "/people-locations/person?person-id=");
-                     navItem.NavURL = navItem.NavURL.ToLower().Replace("http://www.ars.usda.gov", "");
-                     navItem.NavURL = navItem.NavURL.ToLower().Replace("http://ars.usda.gov", "");
-                     navItem.NavURL = navItem.NavURL.ToLower().Replace("/sp2userfiles/place", "/ARSUserFiles");
-                     navItem.NavURL = navItem.NavURL.ToLower().Replace("/sp2userfiles/people", "/ARSUserFiles");
-                     navItem.NavURL = navItem.NavURL.ToLower().Replace("/sp2userfiles/person", "/ARSUserFiles");
+                     navItem.NavURL = CleanHtml.CleanUpHtml(navItem.NavURL);
 
                      fieldsetTopic.Alias = "topicsItem";
                      fieldsetTopic.Disabled = false;
@@ -1812,6 +1816,11 @@ namespace USDA_ARS.ImportNavigation
             Console.BackgroundColor = ConsoleColor.Cyan;
             Console.ForegroundColor = ConsoleColor.DarkBlue;
          }
+         else if (logFormat == LogFormat.Gray)
+         {
+            Console.BackgroundColor = ConsoleColor.Black;
+            Console.ForegroundColor = ConsoleColor.DarkGray;
+         }
 
          Console.WriteLine(line);
          LOG_FILE_TEXT += line + "\r\n";
@@ -1828,7 +1837,8 @@ namespace USDA_ARS.ImportNavigation
          Warning,
          Error,
          ErrorBad,
-         Info
+         Info,
+         Gray
       }
    }
 }

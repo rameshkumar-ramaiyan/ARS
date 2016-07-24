@@ -47,85 +47,21 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
             if (node != null)
             {
-               //if (node.ContentType.Alias == "PersonSite")
-               //{
-               //   navFolder = node.Children.Where(p => p.DocumentTypeAlias == "SiteNavFolder").FirstOrDefault();
-               //}
-
-               //if (node.ContentType.Alias != "ARSLocations" && node.ContentType.Alias != "PersonSite")
-               //{
-               //   IPublishedContent checkNode = node.AncestorsOrSelf(1).FirstOrDefault();
-
-               //   if (checkNode.ContentType.Alias == "Homepage")
-               //   {
-               //      node = node.Ancestors().FirstOrDefault();
-               //      navFolder = node.Children.Where(p => p.DocumentTypeAlias == "SiteNavFolder").FirstOrDefault();
-               //   }
-               //   else
-               //   {
-               //      if (node.Parent.ContentType.Alias == "ResearchUnit")
-               //      {
-               //         node = node.Parent;
-               //         navFolder = node.Children.Where(p => p.DocumentTypeAlias == "SiteNavFolder").FirstOrDefault();
-               //      }
-               //      else if (node.Parent.Parent.ContentType.Alias == "ResearchUnit")
-               //      {
-               //         node = node.Parent.Parent;
-               //      }
-               //      else
-               //      {
-               //         IPublishedContent checkNode3 = node.AncestorsOrSelf(2).FirstOrDefault();
-
-               //         if (checkNode3.ContentType.Alias == "Area")
-               //         {
-               //            node = checkNode3;
-               //         }
-               //      }
-               //   }
-
-               //   if (node != null)
-               //   {
-               //      navFolder = node.Children.Where(p => p.DocumentTypeAlias == "SiteNavFolder").FirstOrDefault();
-               //   }
-               //}
-
-               //if (node.ContentType.Alias == "ARSLocations")
-               //{
-               //   navFolder = node.Children.Where(p => p.DocumentTypeAlias == "SiteNavFolder").FirstOrDefault();
-               //   selectList.AddRange(GetTopicList(navFolder));
-               //}
-               //else
-               //{
-               //   List<IPublishedContent> subNodeList = new List<IPublishedContent>();
-               //   IPublishedContent tempNode = node;
-
-               //   int level = tempNode.Level;
-
-               //   if (level > 2)
-               //   {
-               //      while (level > 2)
-               //      {
-               //         tempNode = tempNode.Parent;
-               //         level = tempNode.Level;
-
-               //         subNodeList.Add(tempNode);
-               //      }
-               //   }
-
-
-               //   subNodeList.AddRange(node.Descendants().Where(p => p.DocumentTypeAlias == "SiteNavFolder"));
-
-               //   foreach (IPublishedContent subNode in subNodeList)
-               //   {
-               //      selectList.AddRange(GetTopicList(subNode));
-               //   }
-               //}
-
                List<IPublishedContent> nodesList = nodesList = node.AncestorsOrSelf<IPublishedContent>().ToList();
+
+               if (node.DocumentTypeAlias == "NationalProgram")
+               {
+                  IPublishedContent homeNode = Helpers.Nodes.Homepage();
+
+                  if (homeNode != null)
+                  {
+                     nodesList.Insert(0, homeNode);
+                  }
+               }
 
                if (nodesList != null)
                {
-                  nodesList = nodesList.OrderBy(p => p.Level).ToList();
+                  nodesList = nodesList.OrderBy(p => p.Level).ThenBy(x => x.Name).ToList();
 
                   foreach (IPublishedContent subNode in nodesList)
                   {
@@ -136,6 +72,8 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                         navFolderList.Add(navFolder);
                      }
                   }
+
+                  //if (cu)
                }
 
                if (navFolderList != null)
@@ -202,11 +140,15 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
       {
          List<TopicPickerItem> pickerList = new List<TopicPickerItem>();
 
-         if (node.Children != null && node.Children.Any())
+         IEnumerable<IPublishedContent> nodeChildrenList = node.Children;
+
+         if (nodeChildrenList != null && nodeChildrenList.Any())
          {
-            foreach (var topicNode in node.Children)
+            nodeChildrenList = nodeChildrenList.OrderBy(p => p.Name);
+
+            foreach (var topicNode in nodeChildrenList)
             {
-               string textStr = topicNode.Name + "   (" + topicNode.Parent.Parent.Name +")";
+               string textStr = topicNode.Name + "  //  (" + topicNode.Parent.Parent.Name +")";
 
                pickerList.Add(new TopicPickerItem(topicNode.Id.ToString(), textStr));
             }
