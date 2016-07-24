@@ -349,6 +349,8 @@
     <Content Include="delete-all-national-programs.aspx" />
     <Content Include="getFileNamesForSoftwareIdFolders.txt" />
     <Content Include="news-import.aspx" />
+    <Content Include="Scripts-Misc\1.SequenceOfScripts.txt" />
+    <Content Include="Scripts-Misc\configForAdhoc.txt" />
     <Content Include="StoredProcedures\dbo.uspgetAllDocumentIdsBasedOnPersonId.sql" />
     <Content Include="StoredProcedures\dbo.uspgetAllDocumentPagesBasedOnCurrentVersionId.sql" />
     <Content Include="StoredProcedures\uspgetAllAreasCarouselSlides.sql" />
@@ -445,6 +447,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Plugins\RJP.MultiUrlPicker\package.manifest" />
+    <Content Include="Scripts-Misc\CopySp2ToARSUserFiles.bat1" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
