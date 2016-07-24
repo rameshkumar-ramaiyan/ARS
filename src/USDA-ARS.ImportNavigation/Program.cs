@@ -48,12 +48,14 @@ namespace USDA_ARS.ImportNavigation
       static DateTime TIME_STARTED = DateTime.MinValue;
       static DateTime TIME_ENDED = DateTime.MinValue;
 
+      static int StartRecord = 0;
+
       static void Main(string[] args)
       {
          bool runImportNav = false;
          bool runLinkNav = false;
 
-         if (args != null && args.Length == 1)
+         if (args != null && args.Length >= 1)
          {
             if (args[0] == "import-nav")
             {
@@ -63,6 +65,11 @@ namespace USDA_ARS.ImportNavigation
             else if (args[0] == "link-nav")
             {
                runLinkNav = true;
+            }
+
+            if (args.Length == 2)
+            {
+               StartRecord = Convert.ToInt32(args[1]);
             }
          }
 
@@ -182,155 +189,162 @@ namespace USDA_ARS.ImportNavigation
 
             foreach (NavSystem navSysModeCodeItem in navSysModeCodeList)
             {
-               AddLog("");
-               AddLog("Record " + navSysInc + " of " + navSysCount);
-               AddLog("Site Type: " + navSysModeCodeItem.OriginSiteType + " // Origin Site ID: " + navSysModeCodeItem.OriginSiteId);
-
-               ////////////////////////////////////////////////////////////////
-               //== PROGRAM
-               if (navSysModeCodeItem.OriginSiteType.ToLower() == "program")
+               if (navSysInc >= StartRecord)
                {
-                  List<NavSystem> filteredNavSysCode = NavSystems.GetNavSysListByPlace(navSysModeCodeItem.OriginSiteId, navSysModeCodeItem.OriginSiteType);
+                  AddLog("");
+                  AddLog("Record " + navSysInc + " of " + navSysCount);
+                  AddLog("Site Type: " + navSysModeCodeItem.OriginSiteType + " // Origin Site ID: " + navSysModeCodeItem.OriginSiteId);
 
-                  ProgramLookup programCode = PROGRAM_LIST.Where(p => p.ProgramCode == navSysModeCodeItem.OriginSiteId).FirstOrDefault();
-
-                  if (programCode != null)
+                  ////////////////////////////////////////////////////////////////
+                  //== PROGRAM
+                  if (navSysModeCodeItem.OriginSiteType.ToLower() == "program")
                   {
-                     AddLog(" - NP Code Found: " + programCode.ProgramCode + " umbId: " + programCode.UmbracoId);
+                     List<NavSystem> filteredNavSysCode = NavSystems.GetNavSysListByPlace(navSysModeCodeItem.OriginSiteId, navSysModeCodeItem.OriginSiteType);
 
-                     CreateLeftNav(programCode.NavUmbracoId, navSysModeCodeItem.OriginSiteType + " // " + navSysModeCodeItem.OriginSiteId, filteredNavSysCode);
-                  }
-                  else
-                  {
-                     AddLog("!! NP Code NOT Found (Most Likely Old NP Code): " + navSysModeCodeItem.OriginSiteId, LogFormat.Warning);
-                  }
-               }
+                     ProgramLookup programCode = PROGRAM_LIST.Where(p => p.ProgramCode == navSysModeCodeItem.OriginSiteId).FirstOrDefault();
 
-
-               ////////////////////////////////////////////////////////////////
-               //== SUBSITE
-               if (navSysModeCodeItem.OriginSiteType.ToLower() == "subsite")
-               {
-                  List<NavSystem> filteredNavSysCode = NavSystems.GetNavSysListByPlace(navSysModeCodeItem.OriginSiteId, navSysModeCodeItem.OriginSiteType);
-
-                  SubsiteLookup subsiteLookup = UMBRACO_SUBSITES_LOOKUP.Where(p => p.Subsite == navSysModeCodeItem.OriginSiteId).FirstOrDefault();
-
-                  if (subsiteLookup != null)
-                  {
-                     AddLog(" - Subsite Found: " + subsiteLookup.Subsite + " umbId: " + subsiteLookup.UmbracoId);
-
-                     CreateLeftNav(subsiteLookup.NavUmbracoId, navSysModeCodeItem.OriginSiteType + " // " + navSysModeCodeItem.OriginSiteId, filteredNavSysCode);
-                  }
-                  else
-                  {
-                     AddLog("!! NP Code NOT Found (Most Likely Old NP Code): " + navSysModeCodeItem.OriginSiteId, LogFormat.Warning);
-                  }
-               }
-
-
-               ////////////////////////////////////////////////////////////////
-               //== PLACE
-               else if (navSysModeCodeItem.OriginSiteType.ToLower() == "place")
-               {
-                  string siteId = navSysModeCodeItem.OriginSiteId;
-
-                  List<NavSystem> filteredNavSysModeCode = NavSystems.GetNavSysListByPlace(siteId, navSysModeCodeItem.OriginSiteType);
-
-                  List<NavSystem> filteredNavSysAdHoc = NavSystems.GetNavSysListByAdHoc(siteId);
-
-                  if (filteredNavSysAdHoc == null)
-                  {
-                     List<ModeCodeNew> modeCodeNewList = MODE_CODE_NEW_LIST.Where(p => p.ModecodeNew == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(siteId)).ToList();
-
-                     if (modeCodeNewList != null && modeCodeNewList.Any())
+                     if (programCode != null)
                      {
-                        foreach (ModeCodeNew oldModeCode in modeCodeNewList)
-                        {
-                           filteredNavSysAdHoc = NavSystems.GetNavSysListByAdHoc(Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(oldModeCode.ModecodeOld));
+                        AddLog(" - NP Code Found: " + programCode.ProgramCode + " umbId: " + programCode.UmbracoId);
 
-                           if (filteredNavSysAdHoc != null & filteredNavSysAdHoc.Any())
-                           {
-                              filteredNavSysModeCode.AddRange(filteredNavSysAdHoc);
-                           }
-                        }
-                     }
-                  }
-                  else if (filteredNavSysAdHoc != null && filteredNavSysAdHoc.Any())
-                  {
-                     filteredNavSysModeCode.AddRange(filteredNavSysAdHoc);
-                  }
-
-                  ModeCodeLookup modeCode = MODE_CODE_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(siteId)).FirstOrDefault();
-
-                  if (modeCode != null)
-                  {
-                     AddLog(" - Mode Code Found: " + modeCode.ModeCode + " umbId: " + modeCode.UmbracoId);
-
-                     // UPDATE FOR NEWS
-
-                     if (modeCode.ModeCode == "00-00-00-00")
-                     {
-                        List<NavSystem> filteredNavSysNews = filteredNavSysModeCode.Where(p => p.BBSect == "News").ToList();
-                        List<NavSystem> filteredNavSysNonNews = filteredNavSysModeCode.Where(p => p.BBSect != "News").ToList();
-
-                        CreateLeftNav(165575, "News", filteredNavSysNews);
-
-                        CreateLeftNav(modeCode.NavUmbracoId, "ARS Home", filteredNavSysNonNews);
+                        CreateLeftNav(programCode.NavUmbracoId, navSysModeCodeItem.OriginSiteType + " // " + navSysModeCodeItem.OriginSiteId, filteredNavSysCode);
                      }
                      else
                      {
-                        CreateLeftNav(modeCode.NavUmbracoId, modeCode.ModeCode, filteredNavSysModeCode);
+                        AddLog("!! NP Code NOT Found (Most Likely Old NP Code): " + navSysModeCodeItem.OriginSiteId, LogFormat.Warning);
                      }
-
                   }
-                  else
+
+
+                  ////////////////////////////////////////////////////////////////
+                  //== SUBSITE
+                  if (navSysModeCodeItem.OriginSiteType.ToLower() == "subsite")
                   {
-                     AddLog("!! Mode Code NOT Found (Most Likely Old Mode Code): " + navSysModeCodeItem.OriginSiteId, LogFormat.Warning);
-                  }
-               }
+                     List<NavSystem> filteredNavSysCode = NavSystems.GetNavSysListByPlace(navSysModeCodeItem.OriginSiteId, navSysModeCodeItem.OriginSiteType);
 
-               ////////////////////////////////////////////////////////////////
-               //== PERSON
-               else if (navSysModeCodeItem.OriginSiteType.ToLower() == "person")
-               {
-                  string personId = navSysModeCodeItem.OriginSiteId;
-                  int personIdInt = 0;
-                  int umbracoPersonNodeId = 0;
+                     SubsiteLookup subsiteLookup = UMBRACO_SUBSITES_LOOKUP.Where(p => p.Subsite == navSysModeCodeItem.OriginSiteId).FirstOrDefault();
 
-                  if (true == int.TryParse(personId, out personIdInt))
-                  {
-                     PersonLookup personUmbracoNode = UMBRACO_PERSON_LOOKUP.Where(p => p.PersonId == personIdInt).FirstOrDefault();
-
-                     if (personUmbracoNode != null)
+                     if (subsiteLookup != null)
                      {
-                        AddLog(" - Person Site Found: " + personUmbracoNode.PersonId + " umbId: " + personUmbracoNode.UmbracoId);
+                        AddLog(" - Subsite Found: " + subsiteLookup.Subsite + " umbId: " + subsiteLookup.UmbracoId);
 
-                        umbracoPersonNodeId = personUmbracoNode.UmbracoId;
+                        CreateLeftNav(subsiteLookup.NavUmbracoId, navSysModeCodeItem.OriginSiteType + " // " + navSysModeCodeItem.OriginSiteId, filteredNavSysCode);
+                     }
+                     else
+                     {
+                        AddLog("!! NP Code NOT Found (Most Likely Old NP Code): " + navSysModeCodeItem.OriginSiteId, LogFormat.Warning);
+                     }
+                  }
 
-                        UmbracoDocLookup personParentModeNode = GetModeCodeByUmbracoPersonId(personId);
 
-                        if (personParentModeNode != null)
+                  ////////////////////////////////////////////////////////////////
+                  //== PLACE
+                  else if (navSysModeCodeItem.OriginSiteType.ToLower() == "place")
+                  {
+                     string siteId = navSysModeCodeItem.OriginSiteId;
+
+                     List<NavSystem> filteredNavSysModeCode = NavSystems.GetNavSysListByPlace(siteId, navSysModeCodeItem.OriginSiteType);
+
+                     List<NavSystem> filteredNavSysAdHoc = NavSystems.GetNavSysListByAdHoc(siteId);
+
+                     if (filteredNavSysAdHoc == null)
+                     {
+                        List<ModeCodeNew> modeCodeNewList = MODE_CODE_NEW_LIST.Where(p => p.ModecodeNew == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(siteId)).ToList();
+
+                        if (modeCodeNewList != null && modeCodeNewList.Any())
                         {
-                           List<NavSystem> filteredNavSysModeCode = NavSystems.GetNavSysListByPlace(Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(personId.ToString()), "person");
-
-                           if (filteredNavSysModeCode != null)
+                           foreach (ModeCodeNew oldModeCode in modeCodeNewList)
                            {
-                              if (filteredNavSysModeCode != null)
+                              filteredNavSysAdHoc = NavSystems.GetNavSysListByAdHoc(Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(oldModeCode.ModecodeOld));
+
+                              if (filteredNavSysAdHoc != null & filteredNavSysAdHoc.Any())
                               {
-                                 CreateLeftNav(personUmbracoNode.NavUmbracoId, "Person ID: " + navSysModeCodeItem.OriginSiteId, filteredNavSysModeCode);
+                                 filteredNavSysModeCode.AddRange(filteredNavSysAdHoc);
                               }
                            }
                         }
                      }
+                     else if (filteredNavSysAdHoc != null && filteredNavSysAdHoc.Any())
+                     {
+                        filteredNavSysModeCode.AddRange(filteredNavSysAdHoc);
+                     }
+
+                     ModeCodeLookup modeCode = MODE_CODE_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(siteId)).FirstOrDefault();
+
+                     if (modeCode != null)
+                     {
+                        AddLog(" - Mode Code Found: " + modeCode.ModeCode + " umbId: " + modeCode.UmbracoId);
+
+                        // UPDATE FOR NEWS
+
+                        if (modeCode.ModeCode == "00-00-00-00")
+                        {
+                           List<NavSystem> filteredNavSysNews = filteredNavSysModeCode.Where(p => p.BBSect == "News").ToList();
+                           List<NavSystem> filteredNavSysNonNews = filteredNavSysModeCode.Where(p => p.BBSect != "News").ToList();
+
+                           CreateLeftNav(165575, "News", filteredNavSysNews);
+
+                           CreateLeftNav(modeCode.NavUmbracoId, "ARS Home", filteredNavSysNonNews);
+                        }
+                        else
+                        {
+                           CreateLeftNav(modeCode.NavUmbracoId, modeCode.ModeCode, filteredNavSysModeCode);
+                        }
+
+                     }
                      else
                      {
-                        AddLog("!! Person Site NOT Found: " + navSysModeCodeItem.OriginSiteId, LogFormat.Warning);
+                        AddLog("!! Mode Code NOT Found (Most Likely Old Mode Code): " + navSysModeCodeItem.OriginSiteId, LogFormat.Warning);
                      }
                   }
-                  else
+
+                  ////////////////////////////////////////////////////////////////
+                  //== PERSON
+                  else if (navSysModeCodeItem.OriginSiteType.ToLower() == "person")
                   {
-                     AddLog("!! Invalid Person ID: " + navSysModeCodeItem.OriginSiteId, LogFormat.Error);
+                     string personId = navSysModeCodeItem.OriginSiteId;
+                     int personIdInt = 0;
+                     int umbracoPersonNodeId = 0;
+
+                     if (true == int.TryParse(personId, out personIdInt))
+                     {
+                        PersonLookup personUmbracoNode = UMBRACO_PERSON_LOOKUP.Where(p => p.PersonId == personIdInt).FirstOrDefault();
+
+                        if (personUmbracoNode != null)
+                        {
+                           AddLog(" - Person Site Found: " + personUmbracoNode.PersonId + " umbId: " + personUmbracoNode.UmbracoId);
+
+                           umbracoPersonNodeId = personUmbracoNode.UmbracoId;
+
+                           UmbracoDocLookup personParentModeNode = GetModeCodeByUmbracoPersonId(personId);
+
+                           if (personParentModeNode != null)
+                           {
+                              List<NavSystem> filteredNavSysModeCode = NavSystems.GetNavSysListByPlace(Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(personId.ToString()), "person");
+
+                              if (filteredNavSysModeCode != null)
+                              {
+                                 if (filteredNavSysModeCode != null)
+                                 {
+                                    CreateLeftNav(personUmbracoNode.NavUmbracoId, "Person ID: " + navSysModeCodeItem.OriginSiteId, filteredNavSysModeCode);
+                                 }
+                              }
+                           }
+                        }
+                        else
+                        {
+                           AddLog("!! Person Site NOT Found: " + navSysModeCodeItem.OriginSiteId, LogFormat.Warning);
+                        }
+                     }
+                     else
+                     {
+                        AddLog("!! Invalid Person ID: " + navSysModeCodeItem.OriginSiteId, LogFormat.Error);
+                     }
                   }
+               }
+               else
+               {
+                  AddLog("...Bypassing...");
                }
 
                navSysInc++;
@@ -1138,7 +1152,7 @@ namespace USDA_ARS.ImportNavigation
          requestPublish3.ContentList = new List<ApiContent>();
          requestPublish3.ContentList.Add(contentPublish3);
 
-         ApiResponse responseBackPublish3 = ApiCalls.PostData(requestPublish3, "PublishWithChildren");
+         ApiResponse responseBackPublish3 = ApiCalls.PostData(requestPublish3, "PublishWithChildren", 120000);
 
          if (responseBackPublish3 != null)
          {
