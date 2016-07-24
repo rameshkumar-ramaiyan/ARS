@@ -1243,7 +1243,9 @@ namespace USDA_ARS.ImportNavigation
                   request.ContentList.Add(content);
                   request.ApiKey = API_KEY;
 
-                  ApiResponse responseBack = ApiCalls.PostData(request, "Post");
+                  AddLog(" - Saving...");
+
+                  ApiResponse responseBack = ApiCalls.PostData(request, "Post", 60000);
 
                   if (responseBack != null && responseBack.ContentList != null && responseBack.ContentList.Count > 0)
                   {
