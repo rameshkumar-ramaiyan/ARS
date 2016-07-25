@@ -86,7 +86,11 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
          if (NationalProgramsRoot != null)
          {
-            return NationalProgramsRoot.Children;
+            IEnumerable<IPublishedContent> nationalProgramsGroupList = NationalProgramsRoot.Children;
+
+            nationalProgramsGroupList = nationalProgramsGroupList.Where(p => p.DocumentTypeAlias != "SiteNavFolder");
+
+            return nationalProgramsGroupList;
          }
 
          return null;
