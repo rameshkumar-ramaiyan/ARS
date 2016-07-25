@@ -14,6 +14,7 @@
     PeopleInfo peopleInfo = null;
     List<PeoplePublication> peoplePublicationList = null;
     List<ProjectInfo> personProjectList = null;
+    List<ProjectInfo> personProjectLeaderList = null;
     List<IPublishedContent> personNewsList = null;
 
     if (false == string.IsNullOrEmpty(Request.QueryString["person-id"]))
@@ -31,6 +32,7 @@
                 peoplePublicationList = Publications.PublicationsByPerson(personId);
 
                 personProjectList = Projects.GetProjectsByPerson(peopleInfo.EmpId);
+                personProjectLeaderList = Projects.GetNationalProgramLeaderByPerson(personId);
                 personNewsList = NewsInterLinks.GetNewsByPersonId(personId);
             }
         }
@@ -145,8 +147,29 @@ remote.location.href = u;
 
                      <p> </p>
 
-                     @if (personProjectList != null && personProjectList.Any())
-                            {
+                     @if (personProjectLeaderList != null && personProjectLeaderList.Any())
+                     {
+                        <p>
+                           <strong>National Program Leader For:</strong>
+                           <br>
+                           <img src="/images/headline_bar.gif">
+                        </p>
+
+                        <ul style="list-style:none;padding-left:0;">
+                           @foreach (ProjectInfo project in personProjectList)
+                           {
+                              <li>
+                                 <a href="/research/project/?accnNo=@(project.AccountNo)" id="anch_51">@(project.ProjectTitle)</a>
+                                 <br />
+                                 <div style="margin-left:10px;">Accession Number: @(project.AccountNo)</div>
+                                 <img src="/images/content-divider.gif">
+                                 <br>
+                              </li>
+                           }
+                        </ul>
+   }
+   else if (personProjectList != null && personProjectList.Any())
+   {
                         <table width="368">
                            <tbody>
                               <tr>
@@ -186,7 +209,7 @@ remote.location.href = u;
                            </tbody>
                         </table>
 
-                            }
+   }
 
                      @if (peoplePublicationList != null && peoplePublicationList.Any())
                             {

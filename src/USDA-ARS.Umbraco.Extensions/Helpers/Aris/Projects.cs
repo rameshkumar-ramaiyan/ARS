@@ -8,72 +8,72 @@ using USDA_ARS.Umbraco.Extensions.Models.Aris;
 
 namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 {
-    public class Projects
-    {
-        public static List<UsdaProject> ListProjects(string modeCode, int count = -1)
-        {
-            List<UsdaProject> projectList = null;
+   public class Projects
+   {
+      public static List<UsdaProject> ListProjects(string modeCode, int count = -1)
+      {
+         List<UsdaProject> projectList = null;
 
-            List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
+         List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
 
-            var db = new Database("arisPublicWebDbDSN");
+         var db = new Database("arisPublicWebDbDSN");
 
-            Sql sql = null;
+         Sql sql = null;
 
-            if (modeCodeArray != null && modeCodeArray.Count == 4)
+         if (modeCodeArray != null && modeCodeArray.Count == 4)
+         {
+            string where = "MODECODE_1 = '" + modeCodeArray[0] + "' AND ";
+
+            if (modeCodeArray[1] != "00")
             {
-                string where = "MODECODE_1 = '" + modeCodeArray[0] + "' AND ";
-
-                if (modeCodeArray[1] != "00")
-                {
-                    where += "MODECODE_2 = '" + modeCodeArray[1] + "' AND ";
-                }
-                if (modeCodeArray[2] != "00")
-                {
-                    where += "MODECODE_3 = '" + modeCodeArray[2] + "' AND ";
-                }
-                if (modeCodeArray[3] != "00")
-                {
-                    where += "MODECODE_4 = '" + modeCodeArray[3] + "' AND ";
-                }
-
-                if (where.EndsWith(" AND "))
-                {
-                    where = where.Substring(0, where.LastIndexOf(" AND "));
-                }
-
-                where += " AND status_code = 'a' AND prj_type = 'd'";
-
-                sql = new Sql()
-                 .Select("*")
-                 .From("V_CLEAN_PROJECTS")
-                 .Where(where);
-
-                projectList = db.Query<UsdaProject>(sql).ToList();
+               where += "MODECODE_2 = '" + modeCodeArray[1] + "' AND ";
+            }
+            if (modeCodeArray[2] != "00")
+            {
+               where += "MODECODE_3 = '" + modeCodeArray[2] + "' AND ";
+            }
+            if (modeCodeArray[3] != "00")
+            {
+               where += "MODECODE_4 = '" + modeCodeArray[3] + "' AND ";
             }
 
-            if (projectList != null && projectList.Count > 0)
+            if (where.EndsWith(" AND "))
             {
-                projectList = projectList.OrderBy(p => p.Title).ToList();
-
-                if (count > 0)
-                {
-                    projectList = projectList.Take(count).ToList();
-                }
+               where = where.Substring(0, where.LastIndexOf(" AND "));
             }
 
+            where += " AND status_code = 'a' AND prj_type = 'd'";
 
-            return projectList;
-        }
+            sql = new Sql()
+             .Select("*")
+             .From("V_CLEAN_PROJECTS")
+             .Where(where);
+
+            projectList = db.Query<UsdaProject>(sql).ToList();
+         }
+
+         if (projectList != null && projectList.Count > 0)
+         {
+            projectList = projectList.OrderBy(p => p.Title).ToList();
+
+            if (count > 0)
+            {
+               projectList = projectList.Take(count).ToList();
+            }
+         }
 
 
-        public static List<UsdaProject> SearchProjects(string query, string type)
-        {
-            List<UsdaProject> projectList = null;
+         return projectList;
+      }
 
-            var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"SELECT	p.accn_no, 
+      public static List<UsdaProject> SearchProjects(string query, string type)
+      {
+         List<UsdaProject> projectList = null;
+
+         var db = new Database("arisPublicWebDbDSN");
+
+         string sql = @"SELECT	p.accn_no, 
 	                upper(substring(p.prj_title,1,1)) + lower(substring(p.prj_title, 
 	                2, 
 	                len(p.prj_title))) prj_title, 
@@ -85,31 +85,31 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 	                (
 		                1=0 
                     ";
-            if (type == "all")
-            {
-                sql += " OR PRJ_TITLE LIKE '%'+ @query +'%'";
-                sql += " OR APPROACH LIKE '%'+ @query +'%'";
-                sql += " OR OBJECTIVE LIKE '%'+ @query +'%'";
-                sql += " OR ProjectNumber LIKE '%'+ @query +'%' OR accn_no LIKE '%'+ @query +'%'";
-            }
-            else if (type == "title")
-            {
-                sql += " OR PRJ_TITLE LIKE '%'+ @query +'%'";
-            }
-            else if (type == "approach")
-            {
-                sql += " OR APPROACH LIKE '%'+ @query +'%'";
-            }
-            else if (type == "objective")
-            {
-                sql += " OR OBJECTIVE LIKE '%'+ @query +'%'";
-            }
-            else if (type == "project_number")
-            {
-                sql += " OR ProjectNumber LIKE '%'+ @query +'%' OR accn_no LIKE '%'+ @query +'%'";
-            }
+         if (type == "all")
+         {
+            sql += " OR PRJ_TITLE LIKE '%'+ @query +'%'";
+            sql += " OR APPROACH LIKE '%'+ @query +'%'";
+            sql += " OR OBJECTIVE LIKE '%'+ @query +'%'";
+            sql += " OR ProjectNumber LIKE '%'+ @query +'%' OR accn_no LIKE '%'+ @query +'%'";
+         }
+         else if (type == "title")
+         {
+            sql += " OR PRJ_TITLE LIKE '%'+ @query +'%'";
+         }
+         else if (type == "approach")
+         {
+            sql += " OR APPROACH LIKE '%'+ @query +'%'";
+         }
+         else if (type == "objective")
+         {
+            sql += " OR OBJECTIVE LIKE '%'+ @query +'%'";
+         }
+         else if (type == "project_number")
+         {
+            sql += " OR ProjectNumber LIKE '%'+ @query +'%' OR accn_no LIKE '%'+ @query +'%'";
+         }
 
-            sql += @"				
+         sql += @"				
 	            )
 			
 	            AND		(PRJ_TYPE <> 'J')
@@ -121,61 +121,61 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 	            order by web_label";
 
 
-            projectList = db.Query<UsdaProject>(sql, new { query = query }).ToList();
+         projectList = db.Query<UsdaProject>(sql, new { query = query }).ToList();
 
-            if (projectList != null && projectList.Count > 0)
-            {
-                projectList = projectList.OrderByDescending(p => p.ProjectNumber).ToList();
-            }
-
-
-            return projectList;
-        }
+         if (projectList != null && projectList.Count > 0)
+         {
+            projectList = projectList.OrderByDescending(p => p.ProjectNumber).ToList();
+         }
 
 
+         return projectList;
+      }
 
-        public static List<ProjectTeam> GetProjectTeam(int accountNo)
-        {
-            List<ProjectTeam> teamList = null;
 
-            var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"SELECT	PERSONID,PRIME_INDICATOR, PERLNAME,PERFNAME,PERCOMMONNAME
+      public static List<ProjectTeam> GetProjectTeam(int accountNo)
+      {
+         List<ProjectTeam> teamList = null;
+
+         var db = new Database("arisPublicWebDbDSN");
+
+         string sql = @"SELECT	PERSONID,PRIME_INDICATOR, PERLNAME,PERFNAME,PERCOMMONNAME
 			        FROM 	V_PROJECT_TEAM
 			        WHERE	ACCN_NO = @accountNo
 			        ORDER BY PRIME_INDICATOR desc";
 
-            teamList = db.Query<ProjectTeam>(sql, new { accountNo = accountNo }).ToList();
+         teamList = db.Query<ProjectTeam>(sql, new { accountNo = accountNo }).ToList();
 
-            return teamList;
-        }
+         return teamList;
+      }
 
 
-        public static List<string> GetProjectAnnualReportYears(int accountNo)
-        {
-            List<string> yearList = null;
+      public static List<string> GetProjectAnnualReportYears(int accountNo)
+      {
+         List<string> yearList = null;
 
-            var db = new Database("arisPublicWebDbDSN");
+         var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"SELECT	DISTINCT A421Q.FY
+         string sql = @"SELECT	DISTINCT A421Q.FY
 			        FROM	A421_QUESTIONS A421Q
 			        WHERE 	A421Q.ACCN_NO = @accountNo
 			        and		FY <> @currentYear		
 			        ORDER BY fy desc";
 
-            yearList = db.Query<string>(sql, new { accountNo = accountNo, currentYear = DateTime.Now.Year }).ToList();
+         yearList = db.Query<string>(sql, new { accountNo = accountNo, currentYear = DateTime.Now.Year }).ToList();
 
-            return yearList;
-        }
+         return yearList;
+      }
 
 
-        public static ProjectInfo GetProjectInfo(int accountNo)
-        {
-            ProjectInfo projectInfo = null;
+      public static ProjectInfo GetProjectInfo(int accountNo)
+      {
+         ProjectInfo projectInfo = null;
 
-            var db = new Database("arisPublicWebDbDSN");
+         var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"SELECT ACCN_NO, START_DATE, TERM_DATE, PROJECT_START, PROJECT_END, STATUS_CODE, PRJ_TITLE, AGREEMENT_CODE,
+         string sql = @"SELECT ACCN_NO, START_DATE, TERM_DATE, PROJECT_START, PROJECT_END, STATUS_CODE, PRJ_TITLE, AGREEMENT_CODE,
 			        inst_code, FY, RESEARCH_FACILITIES, DURATION, modecode_1, modecode_2, modecode_3, modecode_4, ProjectNumber,
 			        PRJ_NO_1, PRJ_NO_2, PRJ_NO_3, PRJ_NO_4, PRJ_TYPE, AGMNT_NO_1, AGMNT_NO_2, AGMNT_NO_3, AGMNT_NO_4, AGMNT_NO_5,
 			        AGMNT_NO_6, SEQ_NO_425, COOPERATORS, BASIC_RESEARCH, APPLIED_RESEARCH, DEVELOPMENTAL_EFFORT, objective,
@@ -184,45 +184,45 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 			        FROM V_CLEAN_PROJECTS_ALL
 			        WHERE accn_no = @accountNo ";
 
-            projectInfo = db.Query<ProjectInfo>(sql, new { accountNo = accountNo }).FirstOrDefault();
+         projectInfo = db.Query<ProjectInfo>(sql, new { accountNo = accountNo }).FirstOrDefault();
 
-            return projectInfo;
-        }
+         return projectInfo;
+      }
 
 
-        public static bool HasProjectPublication(int accountNo)
-        {
-            bool hasPublications = false;
+      public static bool HasProjectPublication(int accountNo)
+      {
+         bool hasPublications = false;
 
-            var db = new Database("arisPublicWebDbDSN");
+         var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"SELECT accn_no
+         string sql = @"SELECT accn_no
 		        FROM gen_public_115s
 		        WHERE ACCN_NO = @accountNo
 		        ORDER BY journal_accpt_date desc
 		        Option  (Robust Plan)";
 
-            string count = db.Query<string>(sql, new { accountNo = accountNo }).FirstOrDefault();
+         string count = db.Query<string>(sql, new { accountNo = accountNo }).FirstOrDefault();
 
-            if (false == string.IsNullOrEmpty(count))
+         if (false == string.IsNullOrEmpty(count))
+         {
+            if (Convert.ToInt32(count) > 0)
             {
-                if (Convert.ToInt32(count) > 0)
-                {
-                    hasPublications = true;
-                }
+               hasPublications = true;
             }
+         }
 
-            return hasPublications;
-        }
+         return hasPublications;
+      }
 
 
-        public static List<ProjectReport> GetProjectReport(int accountNo, string year)
-        {
-            List<ProjectReport> projectReportList = null;
+      public static List<ProjectReport> GetProjectReport(int accountNo, string year)
+      {
+         List<ProjectReport> projectReportList = null;
 
-            var db = new Database("arisPublicWebDbDSN");
+         var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"SELECT 	R421Q.QUESTION_NO, RESPONSE, QUESTION, R421Q.VISUAL_QUESTION_NO,
+         string sql = @"SELECT 	R421Q.QUESTION_NO, RESPONSE, QUESTION, R421Q.VISUAL_QUESTION_NO,
 			            A421Q.Q3_HEADER_TEXT			
 	            FROM 	a421_QUESTIONS 		A421Q, 
 			            REF_421_QUESTIONS 	R421Q
@@ -287,19 +287,19 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 	
 	            ORDER BY R421Q.QUESTION_NO";
 
-            projectReportList = db.Query<ProjectReport>(sql, new { accountNo = accountNo, year = year }).ToList();
+         projectReportList = db.Query<ProjectReport>(sql, new { accountNo = accountNo, year = year }).ToList();
 
-            return projectReportList;
-        }
+         return projectReportList;
+      }
 
 
-        public static List<ProjectAccomplishment> GetProjectAccomplishments(int accountNo, string year)
-        {
-            List<ProjectAccomplishment> projectAccompList = null;
+      public static List<ProjectAccomplishment> GetProjectAccomplishments(int accountNo, string year)
+      {
+         List<ProjectAccomplishment> projectAccompList = null;
 
-            var db = new Database("arisPublicWebDbDSN");
+         var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"select	accomp_no,
+         string sql = @"select	accomp_no,
 				            accomplishment
 		            from	a421_accomplishments
 		            where	accn_no	= @accountNo
@@ -307,19 +307,19 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 		            and		accomplishment IS NOT Null
 		            order by accomp_no";
 
-            projectAccompList = db.Query<ProjectAccomplishment>(sql, new { accountNo = accountNo, year = year }).ToList();
+         projectAccompList = db.Query<ProjectAccomplishment>(sql, new { accountNo = accountNo, year = year }).ToList();
 
-            return projectAccompList;
-        }
+         return projectAccompList;
+      }
 
 
-        public static List<ProjectInfo> GetProjectsByPerson(string employeeId)
-        {
-            List<ProjectInfo> projectInfoList = null;
+      public static List<ProjectInfo> GetProjectsByPerson(string employeeId)
+      {
+         List<ProjectInfo> projectInfoList = null;
 
-            var db = new Database("arisPublicWebDbDSN");
+         var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"SELECT 	a.prj_title, b.prj_type, a.accn_no 
+         string sql = @"SELECT 	a.prj_title, b.prj_type, a.accn_no 
 			        FROM 		
 					        W_PERSON_PROJECTS	a, 			
 						
@@ -332,19 +332,50 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
 			        ORDER BY prj_type";
 
-            projectInfoList = db.Query<ProjectInfo>(sql, new { employeeId = employeeId }).ToList();
+         projectInfoList = db.Query<ProjectInfo>(sql, new { employeeId = employeeId }).ToList();
 
-            return projectInfoList;
-        }
+         return projectInfoList;
+      }
+
+      /// <summary>
+      /// Gets national projects by person who is a leader on
+      /// </summary>
+      /// <param name="employeeId"></param>
+      /// <returns></returns>
+      public static List<ProjectInfo> GetNationalProgramLeaderByPerson(int personId)
+      {
+         List<ProjectInfo> projectList = null;
+
+         var db = new Database("arisPublicWebDbDSN");
+
+         string sql = @"select	p.accn_no, 
+			                     p.prj_title
+	                     from	V_PEOPLE_INFO_2_DIRECTORY	d,
+			                     ref_signature				s,
+			                     a416_responsible_team		t,
+			                     v_clean_projects			p
+	                     where	1=1
+	                     and		d.personid = @personId
+	                     and		s.emp_id = d.emp_id
+	                     and		s.status_code = 'A'
+	                     and		t.RESP_CODE = s.sig_code
+	                     and		t.person_type = 'L'
+	                     and		p.accn_no = t.accn_no
+	                     and		p.prj_type = 'D'";
+
+         projectList = db.Query<ProjectInfo>(sql, new { personId = personId }).ToList();
+
+         return projectList;
+      }
 
 
-        public static List<ProjectInfo> GetProjectsByCountry()
-        {
-            List<ProjectInfo> projectInfoList = null;
+      public static List<ProjectInfo> GetProjectsByCountry()
+      {
+         List<ProjectInfo> projectInfoList = null;
 
-            var db = new Database("arisPublicWebDbDSN");
+         var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"SELECT 	accn_no, c.country_code, country_desc, prj_title 
+         string sql = @"SELECT 	accn_no, c.country_code, country_desc, prj_title 
 		            FROM 		
 				            w_clean_projects p,				
 				            ref_country c, 
@@ -355,20 +386,20 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 		            AND 	p.status_code ='a'
 		            ORDER BY country_desc";
 
-            projectInfoList = db.Query<ProjectInfo>(sql).ToList();
+         projectInfoList = db.Query<ProjectInfo>(sql).ToList();
 
-            return projectInfoList;
-        }
+         return projectInfoList;
+      }
 
 
-        public static List<ProjectInfo> GetProjectsByCollaborations(string modeCode)
-        {
-            List<ProjectInfo> projectList = null;
-            List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
+      public static List<ProjectInfo> GetProjectsByCollaborations(string modeCode)
+      {
+         List<ProjectInfo> projectList = null;
+         List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
 
-            var db = new Database("arisPublicWebDbDSN");
+         var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"select	a.ACCN_NO,
+         string sql = @"select	a.ACCN_NO,
 				        p.PRJ_TITLE,
 				        -- remove extra multiple spaces from RECIPIENT_NAME
 				        -- reference: http://codejotter.wordpress.com/2010/03/12/sql-function-to-remove-extra-multiple-spaces-from-string
@@ -380,32 +411,32 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 				        JOIN   V_CLEAN_PROJECTS p  ON a.ACCN_NO = p.ACCN_NO
 		        where 	p.modecode_1 = 30 ";
 
-            if (modeCodeArray[1] != "00")
-            {
-                sql += " and p.modecode_2 = " + modeCodeArray[1];
-            }
-            if (modeCodeArray[2] != "00")
-            {
-                sql += " and p.modecode_3 = " + modeCodeArray[2];
-            }
-            if (modeCodeArray[3] != "00")
-            {
-                sql += " and p.modecode_4 = " + modeCodeArray[3];
-            }
+         if (modeCodeArray[1] != "00")
+         {
+            sql += " and p.modecode_2 = " + modeCodeArray[1];
+         }
+         if (modeCodeArray[2] != "00")
+         {
+            sql += " and p.modecode_3 = " + modeCodeArray[2];
+         }
+         if (modeCodeArray[3] != "00")
+         {
+            sql += " and p.modecode_4 = " + modeCodeArray[3];
+         }
 
-            projectList = db.Query<ProjectInfo>(sql).ToList();
+         projectList = db.Query<ProjectInfo>(sql).ToList();
 
-            return projectList;
-        }
+         return projectList;
+      }
 
 
-        public static List<ProjectInfo> GetProjectAnnualReportList(string npCode, string sort)
-        {
-            List<ProjectInfo> projectList = null;
+      public static List<ProjectInfo> GetProjectAnnualReportList(string npCode, string sort)
+      {
+         List<ProjectInfo> projectList = null;
 
-            var db = new Database("arisPublicWebDbDSN");
+         var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"SELECT 	distinct p.prj_title, p.accn_no, p.prj_type project_type, q.fy,
+         string sql = @"SELECT 	distinct p.prj_title, p.accn_no, p.prj_type project_type, q.fy,
 					            modecodes.Web_Label, city, rtrim(state_CODE) stateabbr,
 					            modecodes.modecode_1, modecodes.modecode_2, modecodes.modecode_3, modecodes.modecode_4
 			            FROM 			
@@ -425,29 +456,29 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                         
                         ";
 
-            if (false == string.IsNullOrWhiteSpace(sort) && sort.ToLower() == "projecttype")
-            {
-                sql += "ORDER BY p.prj_type, modecodes.modecode_1, modecodes.modecode_2, modecodes.modecode_3, modecodes.modecode_4";
-            }
-            else
-            {
-                sql += "ORDER BY modecodes.modecode_1, modecodes.modecode_2, modecodes.modecode_3, modecodes.modecode_4, p.prj_type";
-            }
+         if (false == string.IsNullOrWhiteSpace(sort) && sort.ToLower() == "projecttype")
+         {
+            sql += "ORDER BY p.prj_type, modecodes.modecode_1, modecodes.modecode_2, modecodes.modecode_3, modecodes.modecode_4";
+         }
+         else
+         {
+            sql += "ORDER BY modecodes.modecode_1, modecodes.modecode_2, modecodes.modecode_3, modecodes.modecode_4, p.prj_type";
+         }
 
 
-            projectList = db.Query<ProjectInfo>(sql, new { npCode = npCode }).ToList();
+         projectList = db.Query<ProjectInfo>(sql, new { npCode = npCode }).ToList();
 
-            return projectList;
-        }
+         return projectList;
+      }
 
 
-        public static List<ProjectSubject> GetProjectSubjects()
-        {
-            List<ProjectSubject> projectSubjectList = null;
+      public static List<ProjectSubject> GetProjectSubjects()
+      {
+         List<ProjectSubject> projectSubjectList = null;
 
-            var db = new Database("arisPublicWebDbDSN");
+         var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"SELECT	soi_code, long_desc
+         string sql = @"SELECT	soi_code, long_desc
 			        FROM 	ref_soi
 			        WHERE 	soi_code IN (
 									        SELECT 	DISTINCT soi_code 
@@ -458,20 +489,20 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 								        )
 			        ORDER BY long_desc";
 
-            projectSubjectList = db.Query<ProjectSubject>(sql).ToList();
+         projectSubjectList = db.Query<ProjectSubject>(sql).ToList();
 
-            return projectSubjectList;
-        }
+         return projectSubjectList;
+      }
 
 
-        public static List<ProjectSubject> GetProjectSubjectsByModeCode(string modeCode)
-        {
-            List<ProjectSubject> projectSubjectList = null;
-            List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
+      public static List<ProjectSubject> GetProjectSubjectsByModeCode(string modeCode)
+      {
+         List<ProjectSubject> projectSubjectList = null;
+         List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
 
-            var db = new Database("arisPublicWebDbDSN");
+         var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"SELECT	soi_code, long_desc
+         string sql = @"SELECT	soi_code, long_desc
 			        FROM	ref_soi
 			        WHERE	soi_code IN 
 						        (
@@ -481,68 +512,68 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 									        a417_subject_of_investigation 	soi 
 							        WHERE	a4m.accn_no  = soi.accn_no";
 
-            sql += " and a4m.modecode_1 = " + modeCodeArray[0];
+         sql += " and a4m.modecode_1 = " + modeCodeArray[0];
 
-            if (modeCodeArray[1] != "00")
-            {
-                sql += " and a4m.modecode_2 = " + modeCodeArray[1];
-            }
-            if (modeCodeArray[2] != "00")
-            {
-                sql += " and a4m.modecode_3 = " + modeCodeArray[2];
-            }
-            if (modeCodeArray[3] != "00")
-            {
-                sql += " and a4m.modecode_4 = " + modeCodeArray[3];
-            }
+         if (modeCodeArray[1] != "00")
+         {
+            sql += " and a4m.modecode_2 = " + modeCodeArray[1];
+         }
+         if (modeCodeArray[2] != "00")
+         {
+            sql += " and a4m.modecode_3 = " + modeCodeArray[2];
+         }
+         if (modeCodeArray[3] != "00")
+         {
+            sql += " and a4m.modecode_4 = " + modeCodeArray[3];
+         }
 
-            sql += @"			        )
+         sql += @"			        )
 			        ORDER BY long_desc";
 
-            projectSubjectList = db.Query<ProjectSubject>(sql).ToList();
+         projectSubjectList = db.Query<ProjectSubject>(sql).ToList();
 
-            return projectSubjectList;
-        }
+         return projectSubjectList;
+      }
 
 
-        public static List<ProjectInfo> GetProjectsBySubject(string modeCode, int soiCode)
-        {
-            List<ProjectInfo> projectList = null;
+      public static List<ProjectInfo> GetProjectsBySubject(string modeCode, int soiCode)
+      {
+         List<ProjectInfo> projectList = null;
 
-            var db = new Database("arisPublicWebDbDSN");
-            string sql = "";
+         var db = new Database("arisPublicWebDbDSN");
+         string sql = "";
 
-            if (false == string.IsNullOrEmpty(modeCode))
-            {
-                List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
+         if (false == string.IsNullOrEmpty(modeCode))
+         {
+            List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
 
-                sql = @"SELECT 	distinct a4m.ACCN_NO, prj_title
+            sql = @"SELECT 	distinct a4m.ACCN_NO, prj_title
 			        FROM 			
 					        W_CLEAN_PROJECTS				as a4m,				
 					        a417_subject_of_investigation 	as soi
 			        WHERE 	a4m.accn_no  = soi.accn_no";
 
-                sql += " and a4m.modecode_1 = " + modeCodeArray[0];
+            sql += " and a4m.modecode_1 = " + modeCodeArray[0];
 
-                if (modeCodeArray[1] != "00")
-                {
-                    sql += " and a4m.modecode_2 = " + modeCodeArray[1];
-                }
-                if (modeCodeArray[2] != "00")
-                {
-                    sql += " and a4m.modecode_3 = " + modeCodeArray[2];
-                }
-                if (modeCodeArray[3] != "00")
-                {
-                    sql += " and a4m.modecode_4 = " + modeCodeArray[3];
-                }
-
-                sql += @" and soi.soi_code = @soiCode
-			        ORDER BY prj_title";
-            }
-            else
+            if (modeCodeArray[1] != "00")
             {
-                sql = @"SELECT	distinct a4m.ACCN_NO, 
+               sql += " and a4m.modecode_2 = " + modeCodeArray[1];
+            }
+            if (modeCodeArray[2] != "00")
+            {
+               sql += " and a4m.modecode_3 = " + modeCodeArray[2];
+            }
+            if (modeCodeArray[3] != "00")
+            {
+               sql += " and a4m.modecode_4 = " + modeCodeArray[3];
+            }
+
+            sql += @" and soi.soi_code = @soiCode
+			        ORDER BY prj_title";
+         }
+         else
+         {
+            sql = @"SELECT	distinct a4m.ACCN_NO, 
 					        prj_title
 			        FROM			
 					        W_CLEAN_PROJECTS		a4m,		
@@ -550,22 +581,22 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 			        WHERE	a4m.accn_no  = soi.accn_no
 			        AND		soi.soi_code =  @soiCode			
 			        ORDER BY prj_title";
-            }
+         }
 
 
-            projectList = db.Query<ProjectInfo>(sql, new { soiCode = soiCode }).ToList();
+         projectList = db.Query<ProjectInfo>(sql, new { soiCode = soiCode }).ToList();
 
-            return projectList;
-        }
+         return projectList;
+      }
 
 
-        public static List<ProjectInfo> GetProjectsByStateAndProgram(string state, string npCode)
-        {
-            List<ProjectInfo> projectInfoList = null;
+      public static List<ProjectInfo> GetProjectsByStateAndProgram(string state, string npCode)
+      {
+         List<ProjectInfo> projectInfoList = null;
 
-            var db = new Database("arisPublicWebDbDSN");
+         var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"SELECT	
+         string sql = @"SELECT	
 				            case
 					            when modecodes.modecode_4_desc = '' OR modecodes.modecode_4_desc IS NULL			
 						            then modecodes.modecode_3_desc
@@ -605,20 +636,20 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 					            modecode_desc,							
 					            A4M.ACCN_NO	";
 
-            projectInfoList = db.Query<ProjectInfo>(sql, new { state = state, npCode = npCode }).ToList();
+         projectInfoList = db.Query<ProjectInfo>(sql, new { state = state, npCode = npCode }).ToList();
 
-            return projectInfoList;
-        }
+         return projectInfoList;
+      }
 
 
-        public static List<ProjectInfo> GetProjectsByProgramFilter(string npCode, string projectStatus = "A",
-                string peopleList = "", string projectType = "", string location = "", string orderBy = "")
-        {
-            List<ProjectInfo> projectInfoList = null;
+      public static List<ProjectInfo> GetProjectsByProgramFilter(string npCode, string projectStatus = "A",
+              string peopleList = "", string projectType = "", string location = "", string orderBy = "")
+      {
+         List<ProjectInfo> projectInfoList = null;
 
-            var db = new Database("arisPublicWebDbDSN");
+         var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"SELECT 	projects.accn_no, projects.prj_title, projects.PRJ_TYPE project_type, 
+         string sql = @"SELECT 	projects.accn_no, projects.prj_title, projects.PRJ_TYPE project_type, 
 					                modecodes.Web_Label,city, rtrim(state_CODE) stateabbr, perfname, perlname, 
 					                (city + ',' + ' ' + state_code) AS location
 			                FROM 									
@@ -647,84 +678,84 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 			
 			                AND		(PRJ_TYPE <> 'J')";
 
-            if (false == string.IsNullOrEmpty(peopleList))
-            {
-                sql += " AND v_people_info.personid IN (" + Utilities.Strings.CleanSqlString(peopleList) + ") ";
-            }
-            if (false == string.IsNullOrEmpty(projectType))
-            {
-                sql += " AND projects.prj_type = '" + Utilities.Strings.CleanSqlString(projectType) + "' ";
-            }
-            if (false == string.IsNullOrEmpty(projectType))
-            {
-                sql += " AND (city + ',' + ' ' + state_code) = '" + Utilities.Strings.CleanSqlString(location) + "' ";
-            }
-            sql += " ORDER BY ";
+         if (false == string.IsNullOrEmpty(peopleList))
+         {
+            sql += " AND v_people_info.personid IN (" + Utilities.Strings.CleanSqlString(peopleList) + ") ";
+         }
+         if (false == string.IsNullOrEmpty(projectType))
+         {
+            sql += " AND projects.prj_type = '" + Utilities.Strings.CleanSqlString(projectType) + "' ";
+         }
+         if (false == string.IsNullOrEmpty(projectType))
+         {
+            sql += " AND (city + ',' + ' ' + state_code) = '" + Utilities.Strings.CleanSqlString(location) + "' ";
+         }
+         sql += " ORDER BY ";
 
-            if (false == string.IsNullOrEmpty(orderBy))
-            {
-                sql += orderBy + ", ";
-            }
-            sql += "modecodes.modecode_1, modecodes.modecode_2, modecodes.modecode_3, modecodes.modecode_4";
-
-
-            projectInfoList = db.Query<ProjectInfo>(sql, new { npCode = npCode, projectStatus = projectStatus }).ToList();
-
-            return projectInfoList;
-        }
+         if (false == string.IsNullOrEmpty(orderBy))
+         {
+            sql += orderBy + ", ";
+         }
+         sql += "modecodes.modecode_1, modecodes.modecode_2, modecodes.modecode_3, modecodes.modecode_4";
 
 
-        public static string ProjectTypeByCode(string code)
-        {
-            if (code == "A")
-            {
-                return "General Cooperative Agreement";
-            }
-            else if (code == "C")
-            {
-                return "Contract";
-            }
-            else if (code == "D")
-            {
-                return "Appropriated";
-            }
-            else if (code == "G")
-            {
-                return "Grant";
-            }
-            else if (code == "I")
-            {
-                return "Interagency Reimbursable Agreement";
-            }
-            else if (code == "M")
-            {
-                return "Memorandum of Understanding";
-            }
-            else if (code == "N")
-            {
-                return "Nonfunded Cooperative Agreement";
-            }
-            else if (code == "R")
-            {
-                return "Reimbursable";
-            }
-            else if (code == "S")
-            {
-                return "Specific Cooperative Agreement";
-            }
-            else if (code == "T")
-            {
-                return "Trust";
-            }
-            else if (code == "X")
-            {
-                return "Other";
-            }
-            else
-            {
-                return "Invalid Project Type";
-            }
-        }
+         projectInfoList = db.Query<ProjectInfo>(sql, new { npCode = npCode, projectStatus = projectStatus }).ToList();
 
-    }
+         return projectInfoList;
+      }
+
+
+      public static string ProjectTypeByCode(string code)
+      {
+         if (code == "A")
+         {
+            return "General Cooperative Agreement";
+         }
+         else if (code == "C")
+         {
+            return "Contract";
+         }
+         else if (code == "D")
+         {
+            return "Appropriated";
+         }
+         else if (code == "G")
+         {
+            return "Grant";
+         }
+         else if (code == "I")
+         {
+            return "Interagency Reimbursable Agreement";
+         }
+         else if (code == "M")
+         {
+            return "Memorandum of Understanding";
+         }
+         else if (code == "N")
+         {
+            return "Nonfunded Cooperative Agreement";
+         }
+         else if (code == "R")
+         {
+            return "Reimbursable";
+         }
+         else if (code == "S")
+         {
+            return "Specific Cooperative Agreement";
+         }
+         else if (code == "T")
+         {
+            return "Trust";
+         }
+         else if (code == "X")
+         {
+            return "Other";
+         }
+         else
+         {
+            return "Invalid Project Type";
+         }
+      }
+
+   }
 }

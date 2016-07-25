@@ -83,6 +83,16 @@
             Response.RedirectPermanent(agMagUrl);
          }
       }
+      else if (badUrl.ToLower().IndexOf("/main/site_main.htm?modecode=") >= 0)
+      {
+         string modeCodeFind = badUrl.ToLower().Replace("/main/site_main.htm?modecode=", "");
+         IPublishedContent findNode = Nodes.GetNodeByModeCode(modeCodeFind);
+
+         if (findNode != null)
+         {
+            Response.RedirectPermanent(findNode.Url);
+         }
+      }
       else if (badUrl.ToLower().IndexOf("/pandp/locations/NPSLocation.htm?modecode=") >= 0)
       {
          Response.RedirectPermanent(badUrl.ToLower().Replace("/pandp/locations/NPSLocation.htm?modecode=", "/people-locations/people-list-national-program/?modeCode="));

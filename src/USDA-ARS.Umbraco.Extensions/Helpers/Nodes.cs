@@ -16,21 +16,39 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
    {
       public static UmbracoHelper UmbHelper = new UmbracoHelper(UmbracoContext.Current);
 
+      /// <summary>
+      /// Get the Homepage node (ARS Home)
+      /// </summary>
+      /// <returns>The IPublishedContent object of the homepage node</returns>
       public static IPublishedContent Homepage()
       {
          return UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("Homepage"));
       }
 
+
+      /// <summary>
+      /// Get the Site Settings node
+      /// </summary>
+      /// <returns>The IPublishedContent object of the site settings node</returns>
       public static IPublishedContent SiteSettings()
       {
          return UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("SiteSettings"));
       }
 
+
+      /// <summary>
+      /// Get the National Program root node
+      /// </summary>
+      /// <returns>The IPublishedContent object of the national program root node</returns>
       public static IPublishedContent NationProgramsMain()
       {
          return UmbHelper.TypedContentAtRoot().FirstOrDefault(n => n.IsDocumentType("NationalProgramMain"));
       }
 
+      /// <summary>
+      /// Get the Research - National Program main info node
+      /// </summary>
+      /// <returns>The IPublishedContent object of the research/programs (national programs) info node</returns>
       public static IPublishedContent NationProgramsPage()
       {
          IPublishedContent homepage = Homepage();

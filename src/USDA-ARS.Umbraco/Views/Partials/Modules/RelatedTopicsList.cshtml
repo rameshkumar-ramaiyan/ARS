@@ -91,7 +91,7 @@
          }
       }
 
-      @if (Model.DocumentTypeAlias == "NationalProgram" || Model.Parent.DocumentTypeAlias == "NationalProgramFolderContainer")
+      @if (Model.DocumentTypeAlias == "NationalProgram" || (Model.Parent != null && Model.Parent.DocumentTypeAlias == "NationalProgramFolderContainer"))
       {
          @Html.Partial("~/Views/Partials/Modules/ResearchProgramNavigation.cshtml", Model)
       }
