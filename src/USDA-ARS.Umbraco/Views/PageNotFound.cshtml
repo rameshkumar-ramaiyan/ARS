@@ -7,166 +7,171 @@
 @using USDA_ARS.Umbraco.Extensions.Helpers
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
-    Layout = "_Master.cshtml";
+   Layout = "_Master.cshtml";
 
-    IPublishedContent currentPage = Model.Content;
+   IPublishedContent currentPage = Model.Content;
 
-    bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
+   bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
 
-    string bodyText = currentPage.GetPropertyValue<string>("bodyText");
-    string modeCode = "";
+   string bodyText = currentPage.GetPropertyValue<string>("bodyText");
+   string modeCode = "";
 
-    if (Request.QueryString["modeCode"] != null)
-    {
-        modeCode = Request.QueryString.Get("modeCode");
-    }
+   if (Request.QueryString["modeCode"] != null)
+   {
+      modeCode = Request.QueryString.Get("modeCode");
+   }
 
-    bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
+   bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
 
-    string badUrl = "";
+   string badUrl = "";
 
-    if (HttpContext.Current != null)
-    {
-        var context = HttpContext.Current;
+   if (HttpContext.Current != null)
+   {
+      var context = HttpContext.Current;
 
-        badUrl = context.Request.QueryString["aspxerrorpath"] ?? context.Request.RawUrl;
-    }
+      badUrl = context.Request.QueryString["aspxerrorpath"] ?? context.Request.RawUrl;
+   }
 
-    if (false == string.IsNullOrEmpty(badUrl))
-    {
-        // Is this a AgMagazine URL?
-        if (badUrl.ToLower().IndexOf("/is/ar") >= 0)
-        {
-            // /is/AR/2016/mar16/cookies.htm
+   if (false == string.IsNullOrEmpty(badUrl))
+   {
+      // Is this a AgMagazine URL?
+      if (badUrl.ToLower().IndexOf("/is/ar") >= 0)
+      {
+         // /is/AR/2016/mar16/cookies.htm
 
-            List<string> badUrlArray = badUrl.ToLower().Split('/').ToList();
+         List<string> badUrlArray = badUrl.ToLower().Split('/').ToList();
 
-            if (badUrlArray != null && badUrlArray.Count == 6)
+         if (badUrlArray != null && badUrlArray.Count == 6)
+         {
+            string agMagUrl = "https://agresearchmag.ars.usda.gov/";
+
+            int index = 4;
+
+            string month = badUrlArray[index].Substring(0, 3);
+            string year = badUrlArray[index].Substring(3, 2);
+
+            if (Convert.ToInt32(year) <= 99 && Convert.ToInt32(year) >= 50)
             {
-                string agMagUrl = "http://agresearchmag.ars.usda.gov/";
-
-                int index = 4;
-
-                string month = badUrlArray[index].Substring(0, 3);
-                string year = badUrlArray[index].Substring(3, 2);
-
-                if (Convert.ToInt32(year) <= 99 && Convert.ToInt32(year) >= 50)
-                {
-                    year = "19" + year;
-                }
-                else
-                {
-                    year = "20" + year;
-                }
-
-                agMagUrl += year + "/";
-                agMagUrl += month + "/";
-                index++;
-                string endUrl = badUrlArray[index].Replace(".htm", "");
-
-                if (false == string.IsNullOrEmpty(endUrl))
-                {
-                    if (endUrl.Length >= 4)
-                    {
-                        endUrl = endUrl.Substring(0, endUrl.Length - 4);
-                    }
-                }
-
-                agMagUrl += endUrl;
-
-
-                Response.RedirectPermanent(agMagUrl);
+               year = "19" + year;
             }
-        }
-        else if (badUrl.ToLower().IndexOf("/pandp/locations/NPSLocation.htm?modecode=") >= 0)
-        {
-            Response.RedirectPermanent(badUrl.ToLower().Replace("/pandp/locations/NPSLocation.htm?modecode=", "/people-locations/people-list-national-program/?modeCode="));
-        }
-        else if (badUrl.ToLower().IndexOf("/pandp/people/people.htm?personid=") >= 0)
-        {
-            Response.RedirectPermanent(badUrl.ToLower().Replace("/pandp/people/people.htm?personid=", "/people-locations/person?person-id="));
-        }
-        else
-        {
-            List<RedirectItem> nodesList = Nodes.NodesWithRedirectsList();
-
-            if (nodesList != null && nodesList.Any())
+            else
             {
-                RedirectItem redirectItem = nodesList.Where(p => p.OldUrl == badUrl.ToLower()).FirstOrDefault();
-
-                if (redirectItem != null)
-                {
-                    int umbracoId = redirectItem.UmbracoId;
-
-                    IPublishedContent foundRedirectNode = Nodes.GetNodeById(umbracoId);
-
-                    if (foundRedirectNode != null)
-                    {
-                        Response.RedirectPermanent(foundRedirectNode.Url);
-                    }
-                }
+               year = "20" + year;
             }
-        }
 
-        if (badUrl.ToLower().IndexOf("docid=") >= 0)
-        {
-            int docId = 0;
+            agMagUrl += year + "/";
+            agMagUrl += month + "/";
+            index++;
+            string endUrl = badUrlArray[index].Replace(".htm", "");
 
-            Match m2 = Regex.Match(badUrl, @"docid=([\d]*)", RegexOptions.Singleline);
-            if (m2.Success)
+            if (false == string.IsNullOrEmpty(endUrl) && false == endUrl.ToLower().EndsWith(".pdf"))
             {
-                if (int.TryParse(m2.Groups[1].Value, out docId))
-                {
-                    IPublishedContent docNode = Nodes.GetNodeByOldDocId(docId.ToString());
-
-                    if (docNode != null)
-                    {
-                        Response.RedirectPermanent(docNode.Url);
-                    }
-                }
+               if (endUrl.Length >= 4)
+               {
+                  endUrl = endUrl.Substring(0, endUrl.Length - 4);
+               }
             }
-        }
-    }
+
+            agMagUrl += endUrl;
+
+            if (endUrl.ToLower().EndsWith(".pdf"))
+            {
+               agMagUrl = agMagUrl.Replace("https://agresearchmag.ars.usda.gov/", "https://agresearchmag.ars.usda.gov/ar/archive/");
+            }
+
+
+            Response.RedirectPermanent(agMagUrl);
+         }
+      }
+      else if (badUrl.ToLower().IndexOf("/pandp/locations/NPSLocation.htm?modecode=") >= 0)
+      {
+         Response.RedirectPermanent(badUrl.ToLower().Replace("/pandp/locations/NPSLocation.htm?modecode=", "/people-locations/people-list-national-program/?modeCode="));
+      }
+      else if (badUrl.ToLower().IndexOf("/pandp/people/people.htm?personid=") >= 0)
+      {
+         Response.RedirectPermanent(badUrl.ToLower().Replace("/pandp/people/people.htm?personid=", "/people-locations/person?person-id="));
+      }
+      else
+      {
+         List<RedirectItem> nodesList = Nodes.NodesWithRedirectsList();
+
+         if (nodesList != null && nodesList.Any())
+         {
+            RedirectItem redirectItem = nodesList.Where(p => p.OldUrl == badUrl.ToLower()).FirstOrDefault();
+
+            if (redirectItem != null)
+            {
+               int umbracoId = redirectItem.UmbracoId;
+
+               IPublishedContent foundRedirectNode = Nodes.GetNodeById(umbracoId);
+
+               if (foundRedirectNode != null)
+               {
+                  Response.RedirectPermanent(foundRedirectNode.Url);
+               }
+            }
+         }
+      }
+
+      if (badUrl.ToLower().IndexOf("docid=") >= 0)
+      {
+         int docId = 0;
+
+         Match m2 = Regex.Match(badUrl, @"docid=([\d]*)", RegexOptions.Singleline);
+         if (m2.Success)
+         {
+            if (int.TryParse(m2.Groups[1].Value, out docId))
+            {
+               IPublishedContent docNode = Nodes.GetNodeByOldDocId(docId.ToString());
+
+               if (docNode != null)
+               {
+                  Response.RedirectPermanent(docNode.Url);
+               }
+            }
+         }
+      }
+   }
 }
 
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
 
 <div id="fullPage">
 
-    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
 
-    <div id="pageContent">
+   <div id="pageContent">
 
-        @if (false == hideHeaderTitle)
-        {
-            <table border="0" width="100%">
-                <tr>
-                    <td class="pageHeading">@currentPage.Name</td>
-                </tr>
-                <tr>
-                    <td>
-                        <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
-                    </td>
-                </tr>
-            </table>
-        }
-
-
-        <!-- display URLs of subpages start -->
-        <!--  display URLs of subpages end -->
-        <!-- document content start -->
-
-        @Html.Raw(bodyText)
-
-        <!-- document content end -->
+      @if (false == hideHeaderTitle)
+      {
+         <table border="0" width="100%">
+            <tr>
+               <td class="pageHeading">@currentPage.Name</td>
+            </tr>
+            <tr>
+               <td>
+                  <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
+               </td>
+            </tr>
+         </table>
+      }
 
 
-        <br />
+      <!-- display URLs of subpages start -->
+      <!--  display URLs of subpages end -->
+      <!-- document content start -->
+
+      @Html.Raw(bodyText)
+
+      <!-- document content end -->
+
+
+      <br />
 
 
 
-        <p></p>
+      <p></p>
 
 
-    </div>
+   </div>
 </div>
