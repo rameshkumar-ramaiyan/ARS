@@ -371,11 +371,6 @@ namespace USDA_ARS.ImportNavigation
 
          if (UMBRACO_OLD_URL_LOOKUP != null)
          {
-            //############################################
-            UMBRACO_OLD_URL_LOOKUP = UMBRACO_OLD_URL_LOOKUP.Where(p => p.OldUrl.Contains("/research/programs/programs.htm")).ToList();
-            //############################################
-
-
             recordTotal = UMBRACO_DOC_LOOKUP.Count;
 
             foreach (UmbracoDocLookup oldNode in UMBRACO_OLD_URL_LOOKUP)
