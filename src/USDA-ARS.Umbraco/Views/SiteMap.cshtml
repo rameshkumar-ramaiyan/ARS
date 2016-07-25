@@ -11,6 +11,10 @@
 
     List<IPublishedContent> nodeList = rootNode.Children.ToList();
 
+   nodeList = nodeList.Where(p => p.DocumentTypeAlias != "SiteNavFolder").ToList();
+   nodeList = nodeList.Where(p => p.DocumentTypeAlias != "SiteCarouselFolder").ToList();
+   nodeList = nodeList.Where(p => p.DocumentTypeAlias != "SiteSoftwareFolder").ToList();
+
     bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
 
     string bodyText = currentPage.GetPropertyValue<string>("bodyText");
@@ -28,56 +32,66 @@
 
 <div id="fullPage">
 
-    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
 
-    <div id="pageContent">
+   <div id="pageContent">
 
-        @if (false == hideHeaderTitle)
+      @if (false == hideHeaderTitle)
         {
-            <table border="0" width="100%">
-                <tr>
-                    <td class="pageHeading">@currentPage.Name</td>
-                </tr>
-                <tr>
-                    <td>
-                        <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
-                    </td>
-                </tr>
-            </table>
+         <table border="0" width="100%">
+            <tr>
+               <td class="pageHeading">@currentPage.Name</td>
+            </tr>
+            <tr>
+               <td>
+                  <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
+               </td>
+            </tr>
+         </table>
         }
 
 
-        <!-- display URLs of subpages start -->
-        <!--  display URLs of subpages end -->
-        <!-- document content start -->
-        <p><a href="/">Home</a></p>
-        <p><img src="/images/content-divider.gif" /></p>
+      <!-- display URLs of subpages start -->
+      <!--  display URLs of subpages end -->
+      <!-- document content start -->
+      <p><a href="/">Home</a></p>
+      <p><img src="/images/content-divider.gif" /></p>
 
-        @foreach (IPublishedContent nodeItem in nodeList)
+      @foreach (IPublishedContent nodeItem in nodeList)
         {
-            <p>
-                <a href="@nodeItem.Url">@nodeItem.Name</a>
-                @if (nodeItem != null && nodeItem.Children != null && nodeItem.Children.Any())
+         <p>
+            <a href="@nodeItem.Url">@nodeItem.Name</a>
+                                    @{
+
+            IEnumerable<IPublishedContent> childNodeList = nodeItem.Children;
+
+            if (childNodeList != null)
+            {
+               childNodeList = childNodeList.Where(p => p.DocumentTypeAlias != "SiteNavFolder");
+            }
+
+            if (nodeItem != null && childNodeList != null && childNodeList.Any())
                 {
-                    <br />
-                    foreach (IPublishedContent nodeChild in nodeItem.Children)
+               <br />
+                    foreach (IPublishedContent nodeChild in childNodeList)
                     {
-                        <div style="padding: 5px 0 0 20px;"><a href="@nodeChild.Url">@nodeChild.Name</a></div>
+               <div style="padding: 5px 0 0 20px;"><a href="@nodeChild.Url">@nodeChild.Name</a></div>
                     }
                 }
-            </p>
-            <p><img src="/images/content-divider.gif" /></p>
+                                    }
+         </p>
+         <p><img src="/images/content-divider.gif" /></p>
         }
 
-        <!-- document content end -->
+      <!-- document content end -->
 
 
-        <br />
+      <br />
 
 
 
-        <p></p>
+      <p></p>
 
 
-    </div>
+   </div>
 </div>

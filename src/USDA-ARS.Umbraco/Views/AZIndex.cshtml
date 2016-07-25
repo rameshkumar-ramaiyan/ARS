@@ -15,9 +15,12 @@
 
     if (nodeList != null && nodeList.Any())
     {
+         nodeList = nodeList.Where(p => false == p.Name.StartsWith("(Missing")).ToList();
+         nodeList = nodeList.Where(p => false == p.Name.StartsWith("[Missing")).ToList(); 
+
         nodeList = nodeList.OrderBy(p => p.Name).ToList();
 
-        alphaList = nodeList.DistinctBy(p => p.Name.Substring(0, 1)).ToList();
+        alphaList = nodeList.DistinctBy(p => p.Name.ToLower().Substring(0, 1)).ToList();
 
         if (alphaList != null && alphaList.Any())
         {

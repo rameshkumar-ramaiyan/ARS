@@ -78,6 +78,10 @@
                 Response.RedirectPermanent(agMagUrl);
             }
         }
+        else if (badUrl.ToLower().IndexOf("/pandp/locations/NPSLocation.htm?modecode=") >= 0)
+        {
+            Response.RedirectPermanent(badUrl.ToLower().Replace("/pandp/locations/NPSLocation.htm?modecode=", "/people-locations/people-list-national-program/?modeCode="));
+        }
         else if (badUrl.ToLower().IndexOf("/pandp/people/people.htm?personid=") >= 0)
         {
             Response.RedirectPermanent(badUrl.ToLower().Replace("/pandp/people/people.htm?personid=", "/people-locations/person?person-id="));

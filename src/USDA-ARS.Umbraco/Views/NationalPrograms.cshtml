@@ -70,7 +70,7 @@
 
                         <tr>
                             <td class="BodyTextBlack">
-                                @foreach (IPublishedContent itemSub in item.Children)
+                                @foreach (IPublishedContent itemSub in item.Children.Where(p => p.DocumentTypeAlias != "SiteNavFolder"))
                                 {
                                     string npCode = itemSub.GetPropertyValue<string>("npCode");
                                     <li><a href="@(itemSub.Url)">@(itemSub.Name)</a> (NP #@(npCode))</li>

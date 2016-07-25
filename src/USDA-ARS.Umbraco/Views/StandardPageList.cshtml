@@ -8,7 +8,7 @@
 
     IPublishedContent currentPage = Model.Content;
 
-   List<IPublishedContent> childrenList = currentPage.Children;
+   IEnumerable<IPublishedContent> childrenList = currentPage.Children;
 
    if (childrenList != null && childrenList.Any())
    {
@@ -43,7 +43,7 @@
          <ul>
             @foreach(IPublishedContent page in currentPage.Children)
                 {
-               <li><a href="@(page.Url)">@(page.Name)</a></li>
+               <li><a href="@(page.Url)">@USDA_ARS.Umbraco.Extensions.Utilities.Strings.RemoveHtmlTags(page.Name)</a></li>
                 }
          </ul>
         }
