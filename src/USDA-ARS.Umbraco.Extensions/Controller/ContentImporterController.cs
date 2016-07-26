@@ -474,9 +474,80 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                   foreach (IContent node in modeCodeNodesList)
                   {
-
-
                      response.ContentList.Add(ConvertContentObj(node));
+                  }
+
+                  response.Message = "Success";
+                  response.Success = true;
+               }
+            }
+            else
+            {
+               response.Message = "The JSON object was not properly formatted.";
+               response.Success = false;
+            }
+
+         }
+         catch (Exception ex)
+         {
+            //LogHelper.Error<DataImporterController>("Content Import Post Error", ex);
+
+            response.Message = ex.ToString();
+         }
+
+         return response;
+      }
+
+
+      [System.Web.Http.HttpPost]
+      public Models.Import.ApiResponse GetAllModeCodeNodesWithSubNodes([FromBody] dynamic json)
+      {
+         Models.Import.ApiResponse response = new Models.Import.ApiResponse();
+
+         Models.Import.ApiRequest request = JsonConvert.DeserializeObject<Models.Import.ApiRequest>(json.ToString());
+
+         try
+         {
+            if (request != null)
+            {
+               //Check object
+               if (true == string.IsNullOrWhiteSpace(request.ApiKey))
+               {
+                  response.Message = "API Key is missing.";
+               }
+               else if (request.ApiKey != _apiKey)
+               {
+                  response.Message = "API Key is invalid.";
+               }
+               else
+               {
+                  response.Success = true;
+                  response.ContentList = new List<Models.Import.ApiContent>();
+
+                  List<IContent> modeCodeNodesList = new List<IContent>();
+
+                  IEnumerable<IContent> rootNodeList = _contentService.GetRootContent();
+
+                  foreach (IContent rootNode in rootNodeList)
+                  {
+                     if (rootNode.HasProperty("modeCode") && false == string.IsNullOrEmpty(rootNode.GetValue<string>("modeCode")))
+                     {
+                        modeCodeNodesList.Add(rootNode);
+                     }
+
+                     IEnumerable<IContent> nodeList = _contentService.GetDescendants(rootNode.Id);
+
+                     modeCodeNodesList.AddRange(nodeList.Where(p => (p.ContentType.Alias == "Homepage" || p.ContentType.Alias == "Area" || p.ContentType.Alias == "City" || p.ContentType.Alias == "ResearchUnit" || p.ContentType.Alias == "NationalProgramGroup")
+                                 && p.Properties.Any(s => s.Value != null && s.Alias == "modeCode" && false == string.IsNullOrEmpty(s.Value.ToString()))).ToList());
+                  }
+
+                  response.ContentList = new List<Models.Import.ApiContent>();
+
+                  foreach (IContent node in modeCodeNodesList)
+                  {
+
+
+                     response.ContentList.Add(ConvertContentObj(node, true));
                   }
 
                   response.Message = "Success";
@@ -979,7 +1050,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
       /// </summary>
       /// <param name="content"></param>
       /// <returns></returns>
-      private Models.Import.ApiContent ConvertContentObj(IContent content)
+      private Models.Import.ApiContent ConvertContentObj(IContent content, bool includeSubNodes = false)
       {
          Models.Import.ApiContent contentObj = new Models.Import.ApiContent();
 
@@ -1008,24 +1079,27 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
             contentObj.Properties.Add(propObj);
          }
 
-         if (content.Children().Any())
+         if (true == includeSubNodes)
          {
-            contentObj.ChildContentList = new List<Models.Import.ApiContent>();
-
-            IContent navNode = content.Children().Where(p => p.ContentType.Alias == "SiteNavFolder").FirstOrDefault();
-
-            if (navNode != null)
+            if (content.Children().Any())
             {
-               Models.Import.ApiContent contentNavObj = new Models.Import.ApiContent();
+               contentObj.ChildContentList = new List<Models.Import.ApiContent>();
 
-               contentNavObj.Id = navNode.Id;
-               contentNavObj.Name = navNode.Name;
-               contentNavObj.Url = "";
-               contentNavObj.ParentId = navNode.ParentId;
-               contentNavObj.DocType = navNode.ContentType.Alias;
-               contentNavObj.Template = "";
+               IContent navNode = content.Children().Where(p => p.ContentType.Alias == "SiteNavFolder").FirstOrDefault();
 
-               contentObj.ChildContentList.Add(contentNavObj);
+               if (navNode != null)
+               {
+                  Models.Import.ApiContent contentNavObj = new Models.Import.ApiContent();
+
+                  contentNavObj.Id = navNode.Id;
+                  contentNavObj.Name = navNode.Name;
+                  contentNavObj.Url = "";
+                  contentNavObj.ParentId = navNode.ParentId;
+                  contentNavObj.DocType = navNode.ContentType.Alias;
+                  contentNavObj.Template = "";
+
+                  contentObj.ChildContentList.Add(contentNavObj);
+               }
             }
          }
 

@@ -565,7 +565,7 @@ namespace USDA_ARS.ImportNavigation
 
          request.ApiKey = API_KEY;
 
-         ApiResponse responseBack = ApiCalls.PostData(request, "GetAllModeCodeNodes");
+         ApiResponse responseBack = ApiCalls.PostData(request, "GetAllModeCodeNodesWithSubNodes");
 
          if (responseBack != null && responseBack.Success)
          {

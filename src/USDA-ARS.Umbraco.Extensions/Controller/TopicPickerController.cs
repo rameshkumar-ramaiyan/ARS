@@ -47,34 +47,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
             if (node != null)
             {
-               List<IPublishedContent> nodesList = nodesList = node.AncestorsOrSelf<IPublishedContent>().ToList();
-
-               if (node.DocumentTypeAlias == "NationalProgram")
-               {
-                  IPublishedContent homeNode = Helpers.Nodes.Homepage();
-
-                  if (homeNode != null)
-                  {
-                     nodesList.Insert(0, homeNode);
-                  }
-               }
-
-               if (nodesList != null)
-               {
-                  nodesList = nodesList.OrderBy(p => p.Level).ThenBy(x => x.Name).ToList();
-
-                  foreach (IPublishedContent subNode in nodesList)
-                  {
-                     IPublishedContent navFolder = subNode.Children.Where(p => p.DocumentTypeAlias == "SiteNavFolder").FirstOrDefault();
-
-                     if (navFolder != null)
-                     {
-                        navFolderList.Add(navFolder);
-                     }
-                  }
-
-                  //if (cu)
-               }
+               navFolderList = GetFolderList(node);
 
                if (navFolderList != null)
                {
@@ -83,8 +56,6 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                      selectList.AddRange(GetTopicList(navNode));
                   }
                }
-
-
 
                output = JsonConvert.SerializeObject(selectList);
             }
@@ -100,37 +71,41 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
       [System.Web.Http.AcceptVerbs("GET")]
       [System.Web.Http.HttpGet]
-      public string GetTitle(string id)
+      public string GetTitle(string id, string nodeId)
       {
          string output = "";
 
-         //UmbracoHelper umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
+         try
+         {
+            var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
+            IPublishedContent node = umbracoHelper.TypedContent(id);
+            List<TopicPickerItem> selectList = new List<TopicPickerItem>();
+            List<IPublishedContent> navFolderList = new List<IPublishedContent>();
 
-         //IEnumerable<IPublishedContent> nodeList = umbracoHelper.TypedContentAtRoot();
+            if (node != null)
+            {
+               navFolderList = GetFolderList(node);
 
-         //foreach (IPublishedContent node in nodeList)
-         //{
-         //    List<TopicPickerItem> pickerListParent = GetTopicList(node);
+               if (navFolderList != null)
+               {
+                  foreach (IPublishedContent navNode in navFolderList)
+                  {
+                     selectList.AddRange(GetTopicList(navNode));
+                  }
 
-         //    TopicPickerItem pickerItemParent = pickerListParent.Where(p => p.Value.ToLower() == id.ToLower()).FirstOrDefault();
+                  TopicPickerItem pickerItem = selectList.Where(p => p.Value.Value.ToLower() == id.ToLower()).FirstOrDefault();
 
-         //    if (pickerItemParent != null)
-         //    {
-         //        return pickerItemParent.Text;
-         //    }
-
-         //    foreach (IPublishedContent subNode in node.Descendants())
-         //    {
-         //        List<TopicPickerItem> pickerList = GetTopicList(subNode);
-
-         //        TopicPickerItem pickerItem = pickerList.Where(p => p.Value.ToLower() == id.ToLower()).FirstOrDefault();
-
-         //        if (pickerItem != null)
-         //        {
-         //            return pickerItem.Text;
-         //        }
-         //    }
-         //}
+                  if (pickerItem != null)
+                  {
+                     output = pickerItem.Text;
+                  }
+               }
+            }
+         }
+         catch (Exception ex)
+         {
+            LogHelper.Error<DataImporterController>("Usda Topic Get Title Error", ex);
+         }
 
          return output;
       }
@@ -148,13 +123,50 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
             foreach (var topicNode in nodeChildrenList)
             {
-               string textStr = topicNode.Name + "  //  (" + topicNode.Parent.Parent.Name +")";
+               string textStr = topicNode.Name + "  //  (" + topicNode.Parent.Parent.Name + ")";
 
                pickerList.Add(new TopicPickerItem(topicNode.Id.ToString(), textStr));
             }
          }
 
          return pickerList;
+      }
+
+
+      private List<IPublishedContent> GetFolderList(IPublishedContent node)
+      {
+         List<IPublishedContent> navFolderList = new List<IPublishedContent>();
+         List<IPublishedContent> nodesList = nodesList = node.AncestorsOrSelf<IPublishedContent>().ToList();
+
+         if (node.DocumentTypeAlias == "NationalProgram")
+         {
+            IPublishedContent homeNode = Helpers.Nodes.Homepage();
+
+            if (homeNode != null)
+            {
+               nodesList.Insert(0, homeNode);
+            }
+         }
+
+         if (nodesList != null)
+         {
+            nodesList = nodesList.OrderBy(p => p.Level).ThenBy(x => x.Name).ToList();
+
+            foreach (IPublishedContent subNode in nodesList)
+            {
+               IPublishedContent navFolder = subNode.Children.Where(p => p.DocumentTypeAlias == "SiteNavFolder").FirstOrDefault();
+
+               if (navFolder != null)
+               {
+                  navFolderList.Add(navFolder);
+               }
+            }
+
+            //if (cu)
+         }
+
+
+         return navFolderList;
       }
    }
 
