@@ -1009,6 +1009,7 @@ namespace USDA_ARS.LocationsWebApp.DL
             bodyText = Regex.Replace(bodyText, @"/SP2UserFiles/ad_hoc/m", "/ARSUserFiles/00000000/m", RegexOptions.IgnoreCase);
             bodyText = Regex.Replace(bodyText, @"/SP2UserFiles/ad_hoc/SANDwitch", "/ARSUserFiles/80400530/SANDwitch", RegexOptions.IgnoreCase);
 
+            bodyText = Regex.Replace(bodyText, @"href\=\""/ARSUserFiles/oc/", "href=\"/is/", RegexOptions.IgnoreCase);
 
             output = htmlCompressor.compress(bodyText);
          }

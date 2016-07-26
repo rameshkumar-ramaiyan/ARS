@@ -371,7 +371,7 @@ namespace USDA_ARS.ImportNavigation
 
          if (UMBRACO_OLD_URL_LOOKUP != null)
          {
-            recordTotal = UMBRACO_DOC_LOOKUP.Count;
+            recordTotal = UMBRACO_OLD_URL_LOOKUP.Count;
 
             foreach (UmbracoDocLookup oldNode in UMBRACO_OLD_URL_LOOKUP)
             {
