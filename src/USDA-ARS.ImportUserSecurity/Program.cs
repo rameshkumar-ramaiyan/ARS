@@ -41,17 +41,6 @@ namespace USDA_ARS.ImportUserSecurity
          GenerateModeCodeList(false);
          AddLog("Done. Count: " + UMBRACO_PAGE_LIST.Count);
 
-         AddLog("Adding Special Pages...");
-         UMBRACO_PAGE_LIST.Add(new UmbracoPageLookup() { ModeCodeOrPage = "ARS Home", UmbracoId = 1075 });
-         UMBRACO_PAGE_LIST.Add(new UmbracoPageLookup() { ModeCodeOrPage = "National Programs", UmbracoId = 31699 });
-         UMBRACO_PAGE_LIST.Add(new UmbracoPageLookup() { ModeCodeOrPage = "Office of International Research Programs", UmbracoId = 130729 });
-         UMBRACO_PAGE_LIST.Add(new UmbracoPageLookup() { ModeCodeOrPage = "Office of Outreach, Diversity, and Equal Opportunity", UmbracoId = 130739 });
-         UMBRACO_PAGE_LIST.Add(new UmbracoPageLookup() { ModeCodeOrPage = "Office of Pest Management Policy", UmbracoId = 130739 });
-         UMBRACO_PAGE_LIST.Add(new UmbracoPageLookup() { ModeCodeOrPage = "Office of Scientific Quality Review", UmbracoId = 2133 });
-         UMBRACO_PAGE_LIST.Add(new UmbracoPageLookup() { ModeCodeOrPage = "Office of Technology Transfer", UmbracoId = 2220 });
-         UMBRACO_PAGE_LIST.Add(new UmbracoPageLookup() { ModeCodeOrPage = "National Advisory Council for Office Professionals", UmbracoId = 130737 });
-         AddLog("Done. Count: " + UMBRACO_PAGE_LIST.Count);
-
          AddLog("");
          AddLog("Gathering data from Excel file...");
 
@@ -68,30 +57,33 @@ namespace USDA_ARS.ImportUserSecurity
             username = excelReader.GetString(0);
             modeCodeOrPage = excelReader.GetString(2);
 
-            AddLog("Looking up user in Umbraco...");
-
-            int userId = GetUserId(username);
-
-            if (userId > 0)
+            if (false == string.IsNullOrWhiteSpace(username))
             {
-               string modeCodeTest = modeCodeOrPage;
+               AddLog("Looking up user in Umbraco: "+ username);
 
-               if (modeCodeTest.Length == 10)
-               {
-                  modeCodeOrPage = USDA_ARS.Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(modeCodeOrPage);
-                  modeCodeOrPage = USDA_ARS.Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCodeOrPage);
-               }
+               int userId = GetUserId(username);
 
-               UmbracoPageLookup pageLookup = UMBRACO_PAGE_LIST.Where(p => p.ModeCodeOrPage.ToLower() == modeCodeOrPage.ToLower()).FirstOrDefault();
+               if (userId > 0)
+               {
+                  string modeCodeTest = modeCodeOrPage;
 
-               if (pageLookup != null && false == string.IsNullOrWhiteSpace(modeCodeOrPage))
-               {
-                  UpdateUserStartNode(userId, pageLookup.UmbracoId, username);
-                  AddLog("Start node udpated [" + username + "]: " + modeCodeOrPage);
-               }
-               else
-               {
-                  AddLog("Unable to find modeCode/page: " + modeCodeOrPage);
+                  if (modeCodeTest.Length == 10)
+                  {
+                     modeCodeOrPage = USDA_ARS.Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(modeCodeOrPage);
+                     modeCodeOrPage = USDA_ARS.Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCodeOrPage);
+                  }
+
+                  UmbracoPageLookup pageLookup = UMBRACO_PAGE_LIST.Where(p => p.ModeCodeOrPage.ToLower() == modeCodeOrPage.ToLower()).FirstOrDefault();
+
+                  if (pageLookup != null && false == string.IsNullOrWhiteSpace(modeCodeOrPage))
+                  {
+                     UpdateUserStartNode(userId, pageLookup.UmbracoId, username);
+                     AddLog("Start node udpated [" + username + "]: " + modeCodeOrPage);
+                  }
+                  else
+                  {
+                     AddLog("Unable to find modeCode/page: " + modeCodeOrPage);
+                  }
                }
             }
 
@@ -217,6 +209,30 @@ namespace USDA_ARS.ImportUserSecurity
             }
          }
 
+         AddLog(" - Adding Page : ARS Home");
+         modeCodeLookupList.Add(new UmbracoPageLookup() { ModeCodeOrPage = "ARS Home", UmbracoId = 1075 });
+
+         AddLog(" - Adding Page : National Programs");
+         modeCodeLookupList.Add(new UmbracoPageLookup() { ModeCodeOrPage = "National Programs", UmbracoId = 31699 });
+
+         AddLog(" - Adding Page : Office of International Research Programs");
+         modeCodeLookupList.Add(new UmbracoPageLookup() { ModeCodeOrPage = "Office of International Research Programs", UmbracoId = 130729 });
+
+         AddLog(" - Adding Page : Office of Outreach, Diversity, and Equal Opportunity");
+         modeCodeLookupList.Add(new UmbracoPageLookup() { ModeCodeOrPage = "Office of Outreach, Diversity, and Equal Opportunity", UmbracoId = 130739 });
+
+         AddLog(" - Adding Page : Office of Pest Management Policy");
+         modeCodeLookupList.Add(new UmbracoPageLookup() { ModeCodeOrPage = "Office of Pest Management Policy", UmbracoId = 130739 });
+
+         AddLog(" - Adding Page : Office of Scientific Quality Review");
+         modeCodeLookupList.Add(new UmbracoPageLookup() { ModeCodeOrPage = "Office of Scientific Quality Review", UmbracoId = 2133 });
+
+         AddLog(" - Adding Page : Office of Technology Transfer");
+         modeCodeLookupList.Add(new UmbracoPageLookup() { ModeCodeOrPage = "Office of Technology Transfer", UmbracoId = 2220 });
+
+         AddLog(" - Adding Page : National Advisory Council for Office Professionals");
+         modeCodeLookupList.Add(new UmbracoPageLookup() { ModeCodeOrPage = "National Advisory Council for Office Professionals", UmbracoId = 130737 });
+         
          return modeCodeLookupList;
       }
 
