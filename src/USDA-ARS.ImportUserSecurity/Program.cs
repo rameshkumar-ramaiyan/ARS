@@ -38,7 +38,7 @@ namespace USDA_ARS.ImportUserSecurity
          AddLog("");
 
          AddLog("Getting Mode Codes From Umbraco...");
-         UMBRACO_PAGE_LIST = GetModeCodesAll();
+         GenerateModeCodeList(false);
          AddLog("Done. Count: " + UMBRACO_PAGE_LIST.Count);
 
          AddLog("Adding Special Pages...");
