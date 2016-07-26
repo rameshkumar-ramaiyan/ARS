@@ -78,7 +78,7 @@ namespace USDA_ARS.ImportUserSecurity
                   if (pageLookup != null && false == string.IsNullOrWhiteSpace(modeCodeOrPage))
                   {
                      UpdateUserStartNode(userId, pageLookup.UmbracoId, username);
-                     AddLog("Start node udpated [" + username + "]: " + modeCodeOrPage);
+                     AddLog("Start node updated [" + username + "]: " + modeCodeOrPage);
                   }
                   else
                   {
