@@ -119,6 +119,65 @@ namespace USDA_ARS.ImportUserSecurity
       }
 
 
+
+      static void GenerateModeCodeList(bool forceCacheUpdate)
+      {
+         UMBRACO_PAGE_LIST = GetModeCodeLookupCache();
+
+         if (true == forceCacheUpdate || UMBRACO_PAGE_LIST == null || UMBRACO_PAGE_LIST.Count <= 0)
+         {
+            UMBRACO_PAGE_LIST = CreateModeCodeLookupCache();
+         }
+      }
+
+      static List<UmbracoPageLookup> GetModeCodeLookupCache()
+      {
+         string filename = "umbraco-lookup-cache.txt";
+         List<UmbracoPageLookup> modeCodeList = new List<UmbracoPageLookup>();
+
+         if (true == File.Exists(filename))
+         {
+            using (StreamReader sr = File.OpenText(filename))
+            {
+               string s = "";
+               while ((s = sr.ReadLine()) != null)
+               {
+                  string[] lineArray = s.Split('~');
+
+                  modeCodeList.Add(new UmbracoPageLookup() { ModeCodeOrPage = lineArray[0], UmbracoId = Convert.ToInt32(lineArray[1]) });
+               }
+            }
+         }
+
+         return modeCodeList;
+      }
+
+      static List<UmbracoPageLookup> CreateModeCodeLookupCache()
+      {
+         List<UmbracoPageLookup> modeCodeList = new List<UmbracoPageLookup>();
+
+         modeCodeList = GetModeCodesAll();
+
+         StringBuilder sb = new StringBuilder();
+
+         if (modeCodeList != null)
+         {
+            foreach (UmbracoPageLookup modeCodeItem in modeCodeList)
+            {
+               sb.AppendLine(modeCodeItem.ModeCodeOrPage + "~" + modeCodeItem.UmbracoId);
+            }
+
+            using (FileStream fs = File.Create("umbraco-lookup-cache.txt"))
+            {
+               // Add some text to file
+               Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
+               fs.Write(fileText, 0, fileText.Length);
+            }
+         }
+
+         return modeCodeList;
+      }
+
       static List<UmbracoPageLookup> GetModeCodesAll()
       {
          List<UmbracoPageLookup> modeCodeLookupList = new List<UmbracoPageLookup>();
@@ -160,6 +219,9 @@ namespace USDA_ARS.ImportUserSecurity
 
          return modeCodeLookupList;
       }
+
+
+
 
 
       static int GetUserId(string username)
