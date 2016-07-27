@@ -71,41 +71,50 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
       [System.Web.Http.AcceptVerbs("GET")]
       [System.Web.Http.HttpGet]
-      public string GetTitle(string id, string nodeId)
+      public string GetTitle(string id)
       {
          string output = "";
 
-         try
+
+         IPublishedContent node = Helpers.Nodes.GetNavNodeIdByGuid(id);
+
+         if (node != null)
          {
-            var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
-            IPublishedContent node = umbracoHelper.TypedContent(id);
-            List<TopicPickerItem> selectList = new List<TopicPickerItem>();
-            List<IPublishedContent> navFolderList = new List<IPublishedContent>();
-
-            if (node != null)
-            {
-               navFolderList = GetFolderList(node);
-
-               if (navFolderList != null)
-               {
-                  foreach (IPublishedContent navNode in navFolderList)
-                  {
-                     selectList.AddRange(GetTopicList(navNode));
-                  }
-
-                  TopicPickerItem pickerItem = selectList.Where(p => p.Value.Value.ToLower() == id.ToLower()).FirstOrDefault();
-
-                  if (pickerItem != null)
-                  {
-                     output = pickerItem.Text;
-                  }
-               }
-            }
+            output = node.Name + "  //  (" + node.Parent.Parent.Name + ")";
          }
-         catch (Exception ex)
-         {
-            LogHelper.Error<DataImporterController>("Usda Topic Get Title Error", ex);
-         }
+
+
+         //try
+         //{
+         //   var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
+         //   IPublishedContent node = umbracoHelper.TypedContent(id);
+         //   List<TopicPickerItem> selectList = new List<TopicPickerItem>();
+         //   List<IPublishedContent> navFolderList = new List<IPublishedContent>();
+
+         //   if (node != null)
+         //   {
+         //      navFolderList = GetFolderList(node);
+
+         //      if (navFolderList != null)
+         //      {
+         //         foreach (IPublishedContent navNode in navFolderList)
+         //         {
+         //            selectList.AddRange(GetTopicList(navNode));
+         //         }
+
+         //         TopicPickerItem pickerItem = selectList.Where(p => p.Value.Value.ToLower() == id.ToLower()).FirstOrDefault();
+
+         //         if (pickerItem != null)
+         //         {
+         //            output = JsonConvert.SerializeObject(pickerItem);
+         //         }
+         //      }
+         //   }
+         //}
+         //catch (Exception ex)
+         //{
+         //   LogHelper.Error<DataImporterController>("Usda Topic Get Title Error", ex);
+         //}
 
          return output;
       }
@@ -123,7 +132,9 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
             foreach (var topicNode in nodeChildrenList)
             {
-               string textStr = topicNode.Name + "  //  (" + topicNode.Parent.Parent.Name + ")";
+               string textStr = "";
+
+               textStr = topicNode.Name + "  //  (" + topicNode.Parent.Parent.Name + ")";
 
                pickerList.Add(new TopicPickerItem(topicNode.Id.ToString(), textStr));
             }

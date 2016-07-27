@@ -11,5 +11,6 @@ namespace USDA_ARS.ImportNavigation.Models
       public int PersonId { get; set; }
       public int UmbracoId { get; set; }
       public int NavUmbracoId { get; set; }
+      public string Name { get; set; } 
    }
 }

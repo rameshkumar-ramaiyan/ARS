@@ -358,6 +358,25 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
       }
 
 
+      public static IPublishedContent GetNavNodeIdByGuid(string guid)
+      {
+         IPublishedContent node = null;
+
+         var db = new Database("umbracoDbDSN");
+
+         string sql = @"SELECT nodeId FROM [cmsContentXml] WHERE xml LIKE '<LeftNavigationSet%' AND xml LIKE '%"+ guid + "%'";
+
+         string contentNodeId = db.Query<string>(sql).FirstOrDefault();
+
+         if (false == string.IsNullOrEmpty(contentNodeId))
+         {
+            node = UmbHelper.TypedContent(Convert.ToInt32(contentNodeId));
+         }
+
+         return node;
+      }
+
+
       public static List<IPublishedContent> GetNodesListOfModeCodes(bool useCache = true)
       {
          List<IPublishedContent> nodeList = null;

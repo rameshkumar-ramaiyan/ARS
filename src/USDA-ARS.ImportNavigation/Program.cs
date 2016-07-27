@@ -54,6 +54,7 @@ namespace USDA_ARS.ImportNavigation
       {
          bool runImportNav = false;
          bool runLinkNav = false;
+         bool runFixNav = false;
 
          if (args != null && args.Length >= 1)
          {
@@ -65,6 +66,11 @@ namespace USDA_ARS.ImportNavigation
             else if (args[0] == "link-nav")
             {
                runLinkNav = true;
+            }
+
+            else if (args[0] == "fix-nav")
+            {
+               runFixNav = true;
             }
 
             if (args.Length == 2)
@@ -147,6 +153,10 @@ namespace USDA_ARS.ImportNavigation
             if (true == runLinkNav)
             {
                LinkNavs();
+            }
+            if (true == runFixNav)
+            {
+               FixNavs();
             }
 
          }
@@ -499,6 +509,128 @@ namespace USDA_ARS.ImportNavigation
       }
 
 
+      static void FixNavs()
+      {
+         List<UmbracoPropertyData> brokenNavList = GetBrokenNavLinks();
+
+         var jsonSettings = new JsonSerializerSettings();
+         jsonSettings.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
+
+         int recordNum = 1;
+         int recordTotal = 0;
+
+         if (brokenNavList != null)
+         {
+            recordTotal = brokenNavList.Count;
+
+            foreach (UmbracoPropertyData data in brokenNavList)
+            {
+               bool updatedNav = false;
+
+               int id = data.contentNodeId;
+
+               string leftNavJson = data.dataNtext;
+
+               AddLog("Record: " + recordNum + " / " + recordTotal);
+               AddLog("Found Nav: Umbraco ID: " + data.contentNodeId, LogFormat.Info);
+
+               ApiArchetype navArchetypeItem = JsonConvert.DeserializeObject<ApiArchetype>(leftNavJson);
+
+               if (navArchetypeItem != null && navArchetypeItem.Fieldsets != null && navArchetypeItem.Fieldsets.Any())
+               {
+                  if (navArchetypeItem.Fieldsets[0].Properties.Any())
+                  {
+                     AddLog(" - Found Nav Picker Item.");
+
+                     foreach (Property prop in navArchetypeItem.Fieldsets[0].Properties)
+                     {
+                        Dictionary dictionary = JsonConvert.DeserializeObject<Dictionary>(prop.Value);
+
+                        if (dictionary != null)
+                        {
+                           if (dictionary.Text == null || false == dictionary.Text.Contains("//"))
+                           {
+                              int navNodeId = Convert.ToInt32(dictionary.Value);
+
+                              if (navNodeId > 0)
+                              {
+                                 ApiResponse apiNode = GetUmbracoNode(navNodeId);
+
+                                 AddLog(" - Getting Nav Folder...");
+
+                                 ModeCodeLookup navLookup = MODE_CODE_LIST.Where(p => p.NavUmbracoId == apiNode.ContentList[0].ParentId).FirstOrDefault();
+
+                                 if (navLookup != null)
+                                 {
+                                    ApiResponse apiNodeParent = GetUmbracoNode(navLookup.UmbracoId);
+
+                                    AddLog(" - Getting Parent Node...");
+
+                                    if (apiNodeParent != null)
+                                    {
+                                       string newNavText = apiNode.ContentList[0].Name + " // (" + apiNodeParent.ContentList[0].Name + ")";
+
+                                       dictionary.Text = newNavText;
+
+                                       prop.Value = JsonConvert.SerializeObject(dictionary);
+
+                                       updatedNav = true;
+                                       AddLog(" - New nav text: " + newNavText);
+                                    }
+                                 }
+                              }
+                           }
+                           else
+                           {
+                              AddLog(" - Navigation already fixed: " + dictionary.Text, LogFormat.Okay);
+                           }
+                        }
+                     }
+
+                     if (true == updatedNav)
+                     {
+                        AddLog(" - Updating navigiation via API...");
+
+                        string jsonUpdate = JsonConvert.SerializeObject(navArchetypeItem, Newtonsoft.Json.Formatting.None, jsonSettings);
+                        ApiResponse apiResponse = FixUmbracoPageNav(id, jsonUpdate);
+
+                        if (apiResponse != null && apiResponse.ContentList != null && apiResponse.ContentList.Count == 1)
+                        {
+                           if (apiResponse.ContentList[0].Success)
+                           {
+                              AddLog(" - Saved and Published: (" + apiResponse.ContentList[0].Id + ") " + apiResponse.ContentList[0].Name, LogFormat.Success);
+                           }
+                           else
+                           {
+                              AddLog(" !! Couldn't save nav. " + apiResponse.ContentList[0].Message, LogFormat.Error);
+                           }
+                        }
+                        else if (apiResponse != null)
+                        {
+                           AddLog(" !! Couldn't save nav" + apiResponse.Message, LogFormat.Error);
+                        }
+                        else
+                        {
+                           AddLog(" !! Couldn't save nav", LogFormat.Error);
+                        }
+                     }
+                     else
+                     {
+                        AddLog(" - No update required.", LogFormat.Okay);
+                     }
+                  }
+               }
+
+               AddLog("");
+               recordNum++;
+            }
+         }
+
+
+
+         //FixUmbracoPageNav(id, leftNav);
+      }
+
 
       static void GenerateModeCodeList(bool forceCacheUpdate)
       {
@@ -600,7 +732,7 @@ namespace USDA_ARS.ImportNavigation
                            }
                         }
 
-                        modeCodeList.Add(new ModeCodeLookup { ModeCode = modeCode.Value.ToString(), UmbracoId = node.Id, NavUmbracoId = umbracoNavId, Url = node.Url, OldUrl = oldUrl });
+                        modeCodeList.Add(new ModeCodeLookup { ModeCode = modeCode.Value.ToString(), UmbracoId = node.Id, NavUmbracoId = umbracoNavId, Url = node.Url, OldUrl = oldUrl, Name = node.Name });
 
                         AddLog(" - Adding ModeCode (" + modeCode.Value + "):" + node.Name);
                      }
@@ -718,7 +850,7 @@ namespace USDA_ARS.ImportNavigation
                            }
                         }
 
-                        modeCodeList.Add(new ProgramLookup { ProgramCode = npCode.Value.ToString(), UmbracoId = node.Id, NavUmbracoId = umbracoNavId, Url = node.Url, OldUrl = oldUrl });
+                        modeCodeList.Add(new ProgramLookup { ProgramCode = npCode.Value.ToString(), UmbracoId = node.Id, NavUmbracoId = umbracoNavId, Url = node.Url, OldUrl = oldUrl, Name = node.Name });
 
                         AddLog(" - Adding NP Code (" + npCode.Value + "):" + node.Name);
                      }
@@ -756,7 +888,7 @@ namespace USDA_ARS.ImportNavigation
                {
                   string[] lineArray = s.Split('|');
 
-                  personList.Add(new PersonLookup() { PersonId = Convert.ToInt32(lineArray[0]), UmbracoId = Convert.ToInt32(lineArray[1]), NavUmbracoId = Convert.ToInt32(lineArray[2]) });
+                  personList.Add(new PersonLookup() { PersonId = Convert.ToInt32(lineArray[0]), UmbracoId = Convert.ToInt32(lineArray[1]), NavUmbracoId = Convert.ToInt32(lineArray[2]), Name = lineArray[3] });
                }
             }
          }
@@ -776,7 +908,7 @@ namespace USDA_ARS.ImportNavigation
          {
             foreach (PersonLookup programItem in personList)
             {
-               sb.AppendLine(programItem.PersonId + "|" + programItem.UmbracoId + "|" + programItem.NavUmbracoId);
+               sb.AppendLine(programItem.PersonId + "|" + programItem.UmbracoId + "|" + programItem.NavUmbracoId +"|" + programItem.Name);
             }
 
             using (FileStream fs = File.Create("person-cache.txt"))
@@ -832,7 +964,7 @@ namespace USDA_ARS.ImportNavigation
                            }
                         }
 
-                        personList.Add(new PersonLookup { PersonId = Convert.ToInt32(personId.Value), UmbracoId = node.Id, NavUmbracoId = umbracoNavId });
+                        personList.Add(new PersonLookup { PersonId = Convert.ToInt32(personId.Value), UmbracoId = node.Id, NavUmbracoId = umbracoNavId, Name = node.Name });
 
                         AddLog(" - Adding NP Code (" + personId.Value + "):" + node.Name);
                      }
@@ -1231,6 +1363,12 @@ namespace USDA_ARS.ImportNavigation
                      }
                   }
 
+                  if (navSys.ParentNodeTitle != null)
+                  {
+                     title += " // (" + navSys.ParentNodeTitle + ")";
+                  }
+
+
                   content.Id = 0;
                   content.Name = title;
                   content.ParentId = navUmbracoId;
@@ -1453,6 +1591,33 @@ namespace USDA_ARS.ImportNavigation
          {
             foreach (ImportedNav nav in importedNavList)
             {
+               string parentNodeName = "";
+
+               ModeCodeLookup modeCodeLookup = MODE_CODE_LIST.Where(p => p.NavUmbracoId == nav.ParentId).FirstOrDefault();
+
+               if (modeCodeLookup != null)
+               {
+                  parentNodeName = " // (" + modeCodeLookup.Name + ")";
+               }
+               else
+               {
+                  ProgramLookup programLookup = PROGRAM_LIST.Where(p => p.NavUmbracoId == nav.ParentId).FirstOrDefault();
+
+                  if (programLookup != null)
+                  {
+                     parentNodeName = " // (" + programLookup.Name + ")";
+                  }
+                  else
+                  {
+                     PersonLookup personLookup = UMBRACO_PERSON_LOOKUP.Where(p => p.NavUmbracoId == nav.ParentId).FirstOrDefault();
+
+                     if (personLookup != null)
+                     {
+                        parentNodeName = " // (" + personLookup.Name + ")";
+                     }
+                  }
+               }
+
                // LOOP START
                Fieldset fieldsetNav = new Fieldset();
 
@@ -1474,6 +1639,21 @@ namespace USDA_ARS.ImportNavigation
          }
 
          return output;
+      }
+
+
+
+      static List<UmbracoPropertyData> GetBrokenNavLinks()
+      {
+         var db = new Database("umbracoDbDSN");
+
+         string sql = @"SELECT * FROM cmsPropertyData WHERE propertytypeid IN (SELECT id FROM cmsPropertyType WHERE Alias = 'leftNavPicker')
+                            AND dataNtext IS NOT NULL AND versionId IN
+                            (SELECT versionId FROM cmsDocument WHERE published = 1)";
+
+         List<UmbracoPropertyData> propertyDataList = db.Query<UmbracoPropertyData>(sql).ToList();
+
+         return propertyDataList;
       }
 
 
@@ -1550,6 +1730,55 @@ namespace USDA_ARS.ImportNavigation
 
             responseBack = ApiCalls.PostData(request, "Post");
          }
+
+         return responseBack;
+      }
+
+
+      static ApiResponse FixUmbracoPageNav(int id, string leftNav)
+      {
+         ApiResponse responseBack = null;
+         ApiContent content = new ApiContent();
+
+         if (false == string.IsNullOrEmpty(leftNav))
+         {
+            content.Id = id;
+
+            List<ApiProperty> properties = new List<ApiProperty>();
+
+            properties.Add(new ApiProperty("leftNavPicker", leftNav)); // 
+
+            content.Properties = properties;
+
+            content.Save = 2;
+
+            ApiRequest request = new ApiRequest();
+
+            request.ContentList = new List<ApiContent>();
+            request.ContentList.Add(content);
+            request.ApiKey = API_KEY;
+
+            responseBack = ApiCalls.PostData(request, "Post");
+         }
+
+         return responseBack;
+      }
+
+
+      static ApiResponse GetUmbracoNode(int id)
+      {
+         ApiResponse responseBack = null;
+         ApiContent content = new ApiContent();
+
+            content.Id = id;
+
+            ApiRequest request = new ApiRequest();
+
+            request.ContentList = new List<ApiContent>();
+            request.ContentList.Add(content);
+            request.ApiKey = API_KEY;
+
+            responseBack = ApiCalls.PostData(request, "Get");
 
          return responseBack;
       }
