@@ -55,6 +55,14 @@ namespace USDA_ARS.ImportNews
             }
             else if (args[0] == "create-interlinks")
             {
+               AddLog("Getting Mode Codes From Umbraco...");
+               GenerateModeCodeList(false);
+               AddLog("Done. Count: " + MODE_CODE_LIST.Count);
+               AddLog("");
+
+               AddLog("Getting New Mode Codes From Umbraco...");
+               MODE_CODE_NEW_LIST = GetNewModeCodesAll();
+
                LinkInterlinksNews();
             }
             else
