@@ -1,88 +1,122 @@
-﻿@using Umbraco.Core.Models
+﻿@using Archetype.Models
+@using Umbraco.Core.Models
 @using Umbraco.Core.Services
 @using USDA_ARS.Umbraco.Extensions.Models
 @using USDA_ARS.Umbraco.Extensions.Models.Aris
+@using RJP.MultiUrlPicker.Models
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
-    Layout = null;
+   Layout = null;
 }<?xml version="1.0" encoding="UTF-8" ?>
 @{
-    umbraco.library.ChangeContentType("text/xml");
-    IPublishedContent currentNode = Model.Content;
-    List<IPublishedContent> newsList = null;
+   umbraco.library.ChangeContentType("text/xml");
+   IPublishedContent currentNode = Model.Content;
+   List<IPublishedContent> newsList = null;
+   ArchetypeModel newsManualList = null;
 
-    string productName = "Research News";
-    string topic = "";
+   string productName = "Research News";
+   string topic = "";
 
-    if (false == string.IsNullOrEmpty(Request.QueryString["productName"]))
-    {
-        productName = USDA_ARS.Umbraco.Extensions.Utilities.Strings.RemoveHtmlTags(Request.QueryString.Get("productName"));
+   if (false == string.IsNullOrEmpty(Request.QueryString["productName"]))
+   {
+      productName = USDA_ARS.Umbraco.Extensions.Utilities.Strings.RemoveHtmlTags(Request.QueryString.Get("productName"));
 
-        if (productName == "Food & Nutrition Research Briefs")
-        {
-            DateTime startDate = DateTime.Parse(DateTime.Now.AddYears(-2).ToString("1/1/yyyy"));
-            DateTime endDate = DateTime.Now.AddDays(1);
+      if (productName == "Food & Nutrition Research Briefs")
+      {
+         ArchetypeModel fnrbNodeList = currentNode.GetPropertyValue<ArchetypeModel>("fnrbPageList");
 
-            newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNewsByProduct(productName, int.MaxValue, null, startDate, endDate);
-        }
-        else if (productName == "Briefing Room Materials")
-        {
-            newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNewsByProduct(productName, int.MaxValue);
-        }
-        else // Research News
-        {
-            newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNewsByProduct(productName, 8);
-        }
-    }
-    else if (false == string.IsNullOrEmpty(Request.QueryString["topic"]))
-    {
-        topic = USDA_ARS.Umbraco.Extensions.Utilities.Strings.RemoveHtmlTags(Request.QueryString.Get("topic"));
+         newsManualList = fnrbNodeList;
+      }
+      else if (productName == "Briefing Room Materials")
+      {
+         ArchetypeModel brNodeList = currentNode.GetPropertyValue<ArchetypeModel>("briefingRoomPageList");
 
-        DateTime startDate = DateTime.Parse(DateTime.Now.AddMonths(-2).ToString("M/1/yyyy"));
-        DateTime endDate = DateTime.Now.AddDays(1);
+         newsManualList = brNodeList;
+      }
+      else // Research News
+      {
+         newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNewsByProduct(productName, 8);
+      }
+   }
+   else if (false == string.IsNullOrEmpty(Request.QueryString["topic"]))
+   {
+      topic = USDA_ARS.Umbraco.Extensions.Utilities.Strings.RemoveHtmlTags(Request.QueryString.Get("topic"));
 
-        newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNewsByTopic(topic, int.MaxValue, null, startDate, endDate);
-    }
-    else
-    {
-        newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNews(20);
-    }
+      DateTime startDate = DateTime.Parse(DateTime.Now.AddMonths(-2).ToString("M/1/yyyy"));
+      DateTime endDate = DateTime.Now.AddDays(1);
 
-    string siteURL = "http://" + Request.Url.Host.ToString();
+      newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNewsByTopic(topic, int.MaxValue, null, startDate, endDate);
+   }
+   else
+   {
+      newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNews(20);
+   }
+
+   string siteURL = "http://" + Request.Url.Host.ToString();
 }
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
-    <channel>
-        <atom:link href="@siteURL/rss" rel="self" type="application/rss+xml" />
-        <title>@(currentNode.Name)</title>
-        @Html.Raw("<link>")@siteURL@Html.Raw("</link>")
-        <description>The United States Department of Agriculture</description>
+   <channel>
+      <atom:link href="@siteURL/rss" rel="self" type="application/rss+xml" />
+      <title>@(currentNode.Name)</title>
+      @Html.Raw("<link>")@siteURL@Html.Raw("</link>")
+      <description>The United States Department of Agriculture</description>
 
-        @if (newsList != null && newsList.Any())
-        {
-            <pubDate>@String.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", newsList[0].GetPropertyValue<DateTime>("articleDate"))</pubDate>
-        }
+      @if (newsList != null && newsList.Any())
+      {
+         <pubDate>@String.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", newsList[0].GetPropertyValue<DateTime>("articleDate"))</pubDate>
+      }
 
-        <lastBuildDate>@String.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", DateTime.Now)</lastBuildDate>
-        <language>en</language>
-        <managingEditor>ARS Information Staff info@ars.usda.gov</managingEditor>
-        <webMaster>USDA ARS Webmaster webmaster@ars.usda.gov</webMaster>
+      <lastBuildDate>@String.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", DateTime.Now)</lastBuildDate>
+      <language>en</language>
+      <managingEditor>ARS Information Staff info@ars.usda.gov</managingEditor>
+      <webMaster>USDA ARS Webmaster webmaster@ars.usda.gov</webMaster>
 
-        @if (newsList != null && newsList.Any())
-        {
-            foreach (IPublishedContent article in newsList)
-            {
+      @if (newsList != null && newsList.Any())
+      {
+         foreach (IPublishedContent article in newsList)
+         {
             <item>
-                <title>@(article.Name)</title>
-                @Html.Raw("<link>")@(siteURL + article.Url)@Html.Raw("</link>")
-                <description>
-                    <![CDATA[
-                    @Html.Raw(article.GetPropertyValue<string>("bodyText"))
-                    ]]>
-                </description>
-                <pubDate>@(string.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", article.GetPropertyValue<DateTime>("articleDate")))</pubDate>
-                <guid>@(siteURL + article.Url)</guid>
+               <title>@(article.Name)</title>
+               @Html.Raw("<link>")@(siteURL + article.Url)@Html.Raw("</link>")
+               <description>
+                  <![CDATA[
+                  @Html.Raw(article.GetPropertyValue<string>("bodyText"))
+                  ]]>
+               </description>
+               <pubDate>@(string.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", article.GetPropertyValue<DateTime>("articleDate")))</pubDate>
+               <guid>@(siteURL + article.Url)</guid>
             </item>
+         }
+      }
+      else if (newsManualList != null && newsManualList.Any())
+      {
+         foreach (var item in newsManualList)
+         {
+            string urlLink = "#";
+
+            if (item.HasValue("url"))
+            {
+               Link navLink = item.GetValue<MultiUrls>("url").FirstOrDefault();
+
+               if (navLink != null && navLink.Url != null)
+               {
+                  urlLink = navLink.Url;
+               }
             }
-        }
-    </channel>
+
+            <item>
+               <title>@(item.GetValue<string>("title"))</title>
+               @Html.Raw("<link>")@(siteURL + urlLink)@Html.Raw("</link>")
+               <description>
+                  <![CDATA[
+                  @Html.Raw(item.GetValue<string>("description"))
+                  ]]>
+               </description>
+               <pubDate>@(string.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", item.GetValue<DateTime>("publishDate")))</pubDate>
+               <guid>@(siteURL + urlLink)</guid>
+            </item>
+         }
+      }
+
+   </channel>
 </rss>

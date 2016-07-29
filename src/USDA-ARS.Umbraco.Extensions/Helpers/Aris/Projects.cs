@@ -409,7 +409,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 				        r.country_description	
 		        from 	AETS_Agreements a JOIN	REF_ETS_RECIPIENT r ON r.RECIPIENT_CODE = a.RECIPIENT_CODE
 				        JOIN   V_CLEAN_PROJECTS p  ON a.ACCN_NO = p.ACCN_NO
-		        where 	p.modecode_1 = 30 ";
+		        where 	p.modecode_1 = " + modeCodeArray[0];
 
          if (modeCodeArray[1] != "00")
          {

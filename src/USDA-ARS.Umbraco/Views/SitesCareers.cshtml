@@ -15,7 +15,7 @@
     string careersText = currentPage.GetPropertyValue<string>("bodyText");
     string careersTextDefault = careersPage.GetPropertyValue<string>("bodyText");
     string careersBelow = careersPage.GetPropertyValue<string>("bodyTextBelow");
-    string usajobUrl = currentPage.GetPropertyValue<string>("usajobUrl", "#badUrl");
+    string usajobUrl = careersPage.GetPropertyValue<string>("usajobUrl", "#badUrl");
     string usajobUrlList = "";
 
     modeCode = rootNode.GetPropertyValue<string>("modeCode");
