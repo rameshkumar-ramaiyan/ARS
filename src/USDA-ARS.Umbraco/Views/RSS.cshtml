@@ -16,6 +16,7 @@
 
    string productName = "Research News";
    string topic = "";
+   bool blurbOnly = false;
 
    if (false == string.IsNullOrEmpty(Request.QueryString["productName"]))
    {
@@ -40,6 +41,8 @@
    }
    else if (false == string.IsNullOrEmpty(Request.QueryString["topic"]))
    {
+      blurbOnly = true;
+
       topic = USDA_ARS.Umbraco.Extensions.Utilities.Strings.RemoveHtmlTags(Request.QueryString.Get("topic"));
 
       DateTime startDate = DateTime.Parse(DateTime.Now.AddMonths(-2).ToString("M/1/yyyy"));
@@ -80,43 +83,52 @@
                @Html.Raw("<link>")@(siteURL + article.Url)@Html.Raw("</link>")
                <description>
                   <![CDATA[
-                  @Html.Raw(article.GetPropertyValue<string>("bodyText"))
+                  @{
+                     if (true == blurbOnly)
+                     {
+                        @Html.Raw(article.GetPropertyValue<string>("newsBlurb"))
+                     }
+                     else
+                     {
+                        @Html.Raw(article.GetPropertyValue<string>("bodyText"))
+                     }
+                  }
                   ]]>
                </description>
                <pubDate>@(string.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", article.GetPropertyValue<DateTime>("articleDate")))</pubDate>
                <guid>@(siteURL + article.Url)</guid>
             </item>
-         }
-      }
-      else if (newsManualList != null && newsManualList.Any())
-      {
-         foreach (var item in newsManualList)
-         {
-            string urlLink = "#";
+                        }
+                     }
+                     else if (newsManualList != null && newsManualList.Any())
+                     {
+                        foreach (var item in newsManualList)
+                        {
+                           string urlLink = "#";
 
-            if (item.HasValue("url"))
-            {
-               Link navLink = item.GetValue<MultiUrls>("url").FirstOrDefault();
+                           if (item.HasValue("url"))
+                           {
+                              Link navLink = item.GetValue<MultiUrls>("url").FirstOrDefault();
 
-               if (navLink != null && navLink.Url != null)
-               {
-                  urlLink = navLink.Url;
-               }
-            }
+                              if (navLink != null && navLink.Url != null)
+                              {
+                                 urlLink = navLink.Url;
+                              }
+                           }
 
-            <item>
-               <title>@(item.GetValue<string>("title"))</title>
-               @Html.Raw("<link>")@(siteURL + urlLink)@Html.Raw("</link>")
-               <description>
-                  <![CDATA[
-                  @Html.Raw(item.GetValue<string>("description"))
-                  ]]>
-               </description>
-               <pubDate>@(string.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", item.GetValue<DateTime>("publishDate")))</pubDate>
-               <guid>@(siteURL + urlLink)</guid>
-            </item>
-         }
-      }
+                           <item>
+                              <title>@(item.GetValue<string>("title"))</title>
+                              @Html.Raw("<link>")@(siteURL + urlLink)@Html.Raw("</link>")
+                              <description>
+                                 <![CDATA[
+                                 @Html.Raw(item.GetValue<string>("description"))
+                                 ]]>
+                              </description>
+                              <pubDate>@(string.Format("{0:ddd, dd MMM yyyy HH:mm:ss} EST", item.GetValue<DateTime>("publishDate")))</pubDate>
+                              <guid>@(siteURL + urlLink)</guid>
+                           </item>
+                        }
+                     }
 
    </channel>
 </rss>
