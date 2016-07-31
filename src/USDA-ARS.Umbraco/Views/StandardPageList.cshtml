@@ -7,52 +7,59 @@
     Layout = "_Master.cshtml";
 
     IPublishedContent currentPage = Model.Content;
+
+   IEnumerable<IPublishedContent> childrenList = currentPage.Children;
+
+   if (childrenList != null && childrenList.Any())
+   {
+      childrenList = childrenList.Where(p => p.DocumentTypeAlias != "SiteNavFolder").ToList();
+   }
 }
 
 <div id="fullPage">
 
-    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
 
-    <div id="pageContent">
-        <table border="0" width="100%">
-            <tr>
-                <td class="pageHeading">@currentPage.Name</td>
-            </tr>
-            <tr>
-                <td>
-                    <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
-                </td>
-            </tr>
-        </table>
+   <div id="pageContent">
+      <table border="0" width="100%">
+         <tr>
+            <td class="pageHeading">@currentPage.Name</td>
+         </tr>
+         <tr>
+            <td>
+               <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
+            </td>
+         </tr>
+      </table>
 
 
 
-        <!-- display URLs of subpages start -->
-        <!--  display URLs of subpages end -->
-        <!-- document content start -->
+      <!-- display URLs of subpages start -->
+      <!--  display URLs of subpages end -->
+      <!-- document content start -->
 
-        @if (currentPage != null && currentPage.Children != null && currentPage.Children.Any())
+      @if (currentPage != null && currentPage.Children != null && currentPage.Children.Any())
         {
-            <ul>
-                @foreach(IPublishedContent page in currentPage.Children)
+         <ul>
+            @foreach(IPublishedContent page in currentPage.Children)
                 {
-                    <li><a href="@(page.Url)">@(page.Name)</a></li>
+               <li><a href="@(page.Url)">@USDA_ARS.Umbraco.Extensions.Utilities.Strings.RemoveHtmlTags(page.Name)</a></li>
                 }
-            </ul>
+         </ul>
         }
         else
         {
-            <p>No pages to list.</p>
+         <p>No pages to list.</p>
         }
-        <!-- document content end -->
+      <!-- document content end -->
 
 
-        <br />
+      <br />
 
 
 
-        <p></p>
+      <p></p>
 
 
-    </div>
+   </div>
 </div>

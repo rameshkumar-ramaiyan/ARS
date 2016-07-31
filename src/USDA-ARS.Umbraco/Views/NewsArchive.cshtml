@@ -2,36 +2,43 @@
 @using USDA_ARS.Umbraco.Extensions.Models.Aris
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
-    Layout = "_Master.cshtml";
+   Layout = "_Master.cshtml";
 
-    IPublishedContent currentPage = Model.Content;
-    bool viewListYears = false;
-    int currentYear = DateTime.Now.Year;
-    int selectedYear = currentYear;
+   IPublishedContent currentPage = Model.Content;
+   bool viewListYears = false;
+   List<IPublishedContent> yearNodeList = null;
+   int currentYear = DateTime.Now.Year;
+   int selectedYear = currentYear;
 
-    if (false == string.IsNullOrWhiteSpace(Request.QueryString["year"]))
-    {
-        int.TryParse(Request.QueryString["year"], out selectedYear);
+   if (false == string.IsNullOrWhiteSpace(Request.QueryString["year"]))
+   {
+      int.TryParse(Request.QueryString["year"], out selectedYear);
 
-        if (selectedYear < 1900 || selectedYear > DateTime.Now.AddYears(1).Year)
-        {
-            selectedYear = currentYear;
-        }
-    }
-    else if (false == string.IsNullOrWhiteSpace(Request.QueryString["view"]))
-    {
-        viewListYears = true;
-    }
+      if (selectedYear < 1900 || selectedYear > DateTime.Now.AddYears(1).Year)
+      {
+         selectedYear = currentYear;
+      }
+   }
+   else if (false == string.IsNullOrWhiteSpace(Request.QueryString["view"]))
+   {
+      viewListYears = true;
+      yearNodeList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.NewsYearList().ToList();
+
+      if (yearNodeList != null && yearNodeList.Any())
+      {
+         yearNodeList.Remove(yearNodeList[0]);
+      }
+   }
 
 
-    DateTime dateStart = DateTime.Parse("1/1/" + selectedYear);
-    DateTime dateEnd = dateStart.AddYears(1).AddMinutes(-1);
-    List<IPublishedContent> newsList = null;
+   DateTime dateStart = DateTime.Parse("1/1/" + selectedYear);
+   DateTime dateEnd = dateStart.AddYears(1).AddMinutes(-1);
+   List<IPublishedContent> newsList = null;
 
-    if (false == viewListYears)
-    {
-        newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNews(999999999, null, dateStart, dateEnd);
-    }
+   if (false == viewListYears)
+   {
+      newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNews(999999999, null, dateStart, dateEnd);
+   }
 
 }
 
@@ -39,71 +46,78 @@
 
 <div id="fullPage">
 
-    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
 
-    <div id="pageContent">
-        @if (false == viewListYears)
-        {
+   <div id="pageContent">
+      @if (false == viewListYears)
+      {
         <!--newsheader-->
-            <table border="0" cellpadding="5" cellspacing="5" width="100%" align="CENTER">
-                <tbody>
-                    <tr valign="TOP">
-                        <td colspan="2" height="101">
-                            <h2>@(selectedYear) News Archive</h2>
-                            <p>
-                                <a href="/news-events/latest-news/">Latest News</a> | <a href="/news-events/latest-news/">Subscribe</a> | <a href="?view=yearList" id="anch_78">
-                                    More Archives
-                                    (1996-@(currentYear - 1))
-                                </a>
-                            </p>
-                        </td>
-                    </tr>
+         <table border="0" cellpadding="5" cellspacing="5" width="100%" align="CENTER">
+            <tbody>
+               <tr valign="TOP">
+                  <td colspan="2" height="101">
+                     <h2>@(selectedYear) News Archive</h2>
+                     <p>
+                        <a href="/news-events/latest-news/">Latest News</a> | <a href="/news-events/latest-news/">Subscribe</a> | <a href="?view=yearList" id="anch_78">
+                           More Archives
+                           (1996-@(currentYear - 1))
+                        </a>
+                     </p>
+                  </td>
+               </tr>
 
-                    @{
-                        int currentMonth = 0;
+               @{
+                  int currentMonth = 0;
 
-                        if (newsList != null && newsList.Count > 0)
+                  if (newsList != null && newsList.Count > 0)
+                  {
+                     currentMonth = newsList[0].GetPropertyValue<DateTime>("articleDate").Month;
+
+                     foreach (IPublishedContent item in newsList)
+                     {
+                        string pageUrl = item.Url;
+
+                        if (currentMonth != item.GetPropertyValue<DateTime>("articleDate").Month)
                         {
-                            currentMonth = newsList[0].GetPropertyValue<DateTime>("articleDate").Month;
-
-                            foreach (IPublishedContent item in newsList)
-                            {
-                                string pageUrl = item.Url;
-
-                                if (currentMonth != item.GetPropertyValue<DateTime>("articleDate").Month)
-                                {
-                                    <tr valign="TOP">
-                                        <td align="LEFT" valign="TOP" nowrap="NOWRAP">&nbsp;</td>
-                                        <td valign="TOP" align="LEFT">&nbsp;</td>
-                                    </tr>
-                                }
-
-                                <tr valign="TOP">
-                                    <td align="LEFT" valign="TOP" nowrap="NOWRAP">@(item.GetPropertyValue<DateTime>("articleDate").ToString("MMMM d"))</td>
-                                    <td valign="TOP" align="LEFT"><a href="@(pageUrl)" id="anch_79">@(item.Name)</a></td>
-                                </tr>
-
-                                currentMonth = item.GetPropertyValue<DateTime>("articleDate").Month;
-                            }
+                           <tr valign="TOP">
+                              <td align="LEFT" valign="TOP" nowrap="NOWRAP">&nbsp;</td>
+                              <td valign="TOP" align="LEFT">&nbsp;</td>
+                           </tr>
                         }
-                    }
-                </tbody>
-            </table>
-            }
-            else
-            {
-                <h2>News Archives, (1996-@(currentYear - 1))</h2>
 
-                <ul>
-                    @for (int iYear = (currentYear - 1); iYear >= 1996; iYear--)
-                    {
-                        <li><a href="?year=@(iYear)">@(iYear)</a>
-                            <br />&nbsp;</li>
-                    }
-                </ul>
-            }
-        <!--footer-->
-        <p></p>
-    </div>
+                        <tr valign="TOP">
+                           <td align="LEFT" valign="TOP" nowrap="NOWRAP">@(item.GetPropertyValue<DateTime>("articleDate").ToString("MMMM d"))</td>
+                           <td valign="TOP" align="LEFT"><a href="@(pageUrl)" id="anch_79">@(item.Name)</a></td>
+                        </tr>
+
+                        currentMonth = item.GetPropertyValue<DateTime>("articleDate").Month;
+                     }
+                  }
+               }
+            </tbody>
+         </table>
+                  }
+                  else if (yearNodeList != null && yearNodeList.Any())
+                  {
+                     <h2>News Archives, (1996-@(yearNodeList[0].Name))</h2>
+
+                     <ul>
+                        @foreach (IPublishedContent yearNode in yearNodeList)
+                        {
+                           <li>
+                              <a href="?year=@(yearNode.Name)">@(yearNode.Name)</a>
+                              <br />&nbsp;
+                           </li>
+                        }
+                     </ul>
+                  }
+                  else
+                  {
+                     <h2>No other years available</h2>
+                  }
+
+      <!--footer-->
+      <p></p>
+   </div>
 
 </div>

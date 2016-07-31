@@ -160,8 +160,8 @@
       <HintPath>..\packages\MiniProfiler.2.1.0\lib\net40\MiniProfiler.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySql.Data.6.9.8\lib\net45\MySql.Data.dll</HintPath>
+    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -349,6 +349,8 @@
     <Content Include="delete-all-national-programs.aspx" />
     <Content Include="getFileNamesForSoftwareIdFolders.txt" />
     <Content Include="news-import.aspx" />
+    <Content Include="Scripts-Misc\1.SequenceOfScripts.txt" />
+    <Content Include="Scripts-Misc\configForAdhoc.txt" />
     <Content Include="StoredProcedures\dbo.uspgetAllDocumentIdsBasedOnPersonId.sql" />
     <Content Include="StoredProcedures\dbo.uspgetAllDocumentPagesBasedOnCurrentVersionId.sql" />
     <Content Include="StoredProcedures\uspgetAllAreasCarouselSlides.sql" />
@@ -445,6 +447,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Plugins\RJP.MultiUrlPicker\package.manifest" />
+    <Content Include="Scripts-Misc\CopySp2ToARSUserFiles.bat1" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

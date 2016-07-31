@@ -14,6 +14,7 @@
     PeopleInfo peopleInfo = null;
     List<PeoplePublication> peoplePublicationList = null;
     List<ProjectInfo> personProjectList = null;
+    List<ProjectInfo> personProjectLeaderList = null;
     List<IPublishedContent> personNewsList = null;
 
     if (false == string.IsNullOrEmpty(Request.QueryString["person-id"]))
@@ -31,6 +32,7 @@
                 peoplePublicationList = Publications.PublicationsByPerson(personId);
 
                 personProjectList = Projects.GetProjectsByPerson(peopleInfo.EmpId);
+                personProjectLeaderList = Projects.GetNationalProgramLeaderByPerson(personId);
                 personNewsList = NewsInterLinks.GetNewsByPersonId(personId);
             }
         }
@@ -46,11 +48,11 @@
 
 <div id="fullPage">
 
-    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
 
-    <div id="pageContent">
+   <div id="pageContent">
 
-        <script language="javascript">
+      <script language="javascript">
 <!--
 window.name = 'nps2000';
 var remote = null;
@@ -64,30 +66,30 @@ remote.location.href = u;
 }
 }
 //-->
-        </script>
+      </script>
 
 
-        @if (peopleInfo != null)
+      @if (peopleInfo != null)
         {
 
-            <table width="100%" border="0">
-                <tbody>
-                    <tr>
-                        <td valign="top">
-                            <b>
-                                @peopleInfo.FirstName @peopleInfo.MiddleName @peopleInfo.LastName
+         <table width="100%" border="0">
+            <tbody>
+               <tr>
+                  <td valign="top">
+                     <b>
+                        @peopleInfo.FirstName @peopleInfo.MiddleName @peopleInfo.LastName
 
-                                @if (false == string.IsNullOrEmpty(peopleInfo.CommonName))
+                        @if (false == string.IsNullOrEmpty(peopleInfo.CommonName))
                                 {
-                                    @("(" + peopleInfo.CommonName + ")")
+                           @("(" + peopleInfo.CommonName + ")")
                                 }
-                            </b>
-                            <br />
+                     </b>
+                     <br />
 
-                            <font size="-1">
-                                <!-- Get this and parent Modecodes-->
+                     <font size="-1">
+                        <!-- Get this and parent Modecodes-->
 
-                                @{
+                        @{
                                     string modeCode = "";
                                     int modeCodeCheck = Convert.ToInt32(peopleInfo.MySiteCode.Substring(0, 2));
                                     if (modeCodeCheck >= 12 && modeCodeCheck <= 79)
@@ -103,124 +105,147 @@ remote.location.href = u;
 
                                     if (node != null)
                                     {
-                                        <a href="@node.Url">@node.Name</a>
+                           <a href="@node.Url">@node.Name</a>
                                     }
                                     else
                                     {
-                                        <em>Location not available</em>
+                           <em>Location not available</em>
                                     }
 
-                                }
+                        }
 
-                            </font>
+                     </font>
 
-                            <script language="JavaScript">function DisplayEmail(username, domain) { document.write(username + "&#64;" + domain); }</script>
-                            <br>
+                     <script language="JavaScript">function DisplayEmail(username, domain) { document.write(username + "&#64;" + domain); }</script>
+                     <br>
 
-                            @(peopleInfo.TitleWorking)<br />
+                     @(peopleInfo.TitleWorking)<br />
 
-                            <a href="mailto:@(peopleInfo.Email)?Subject=From ARS website">
-                                @if (peopleInfo.Email != null && peopleInfo.Email.Split('@').Length == 2)
+                     <a href="mailto:@(peopleInfo.Email)?Subject=From ARS website">
+                        @if (peopleInfo.Email != null && peopleInfo.Email.Split('@').Length == 2)
                                 {
-                                    <script language="javascript">DisplayEmail('@(peopleInfo.Email.Split('@')[0])', '@(peopleInfo.Email.Split('@')[1])');</script>
+                           <script language="javascript">DisplayEmail('@(peopleInfo.Email.Split('@')[0])', '@(peopleInfo.Email.Split('@')[1])');</script>
                                 }
-                            </a><br>
+                     </a><br>
 
 
-                            Phone: @(Strings.FormatPhoneNumber(peopleInfo.PhoneAreaCode + peopleInfo.Phone))
-                            @(false == string.IsNullOrEmpty(peopleInfo.PhoneExt) ? " ext. " + peopleInfo.PhoneExt : "")
-                            <br />
+                     Phone: @(Strings.FormatPhoneNumber(peopleInfo.PhoneAreaCode + peopleInfo.Phone))
+                     @(false == string.IsNullOrEmpty(peopleInfo.PhoneExt) ? " ext. " + peopleInfo.PhoneExt : "")
+                     <br />
 
-                            Fax: @(Strings.FormatPhoneNumber(peopleInfo.FaxAreaCode + peopleInfo.Fax))<br />
+                     Fax: @(Strings.FormatPhoneNumber(peopleInfo.FaxAreaCode + peopleInfo.Fax))<br />
 
-                            @Html.Raw(false == string.IsNullOrEmpty(peopleInfo.RoomNumber) ? "Room " + peopleInfo.RoomNumber + "<br />" : "")
+                     @Html.Raw(false == string.IsNullOrEmpty(peopleInfo.RoomNumber) ? "Room " + peopleInfo.RoomNumber + "<br />" : "")
 
-                            <br />
-                            @peopleInfo.Address1<br />
-                            @Html.Raw(false == string.IsNullOrWhiteSpace(peopleInfo.Address2) ? peopleInfo.Address2 + "<br />" : "")
-                            @(peopleInfo.City +",") @peopleInfo.State @peopleInfo.PostalCode<br />
+                     <br />
+                     @peopleInfo.Address1<br />
+                     @Html.Raw(false == string.IsNullOrWhiteSpace(peopleInfo.Address2) ? peopleInfo.Address2 + "<br />" : "")
+                     @Html.Raw(false == string.IsNullOrWhiteSpace(peopleInfo.AddressBuilding) ? peopleInfo.AddressBuilding + "<br />" : "")
+
+                     @(peopleInfo.City +",") @peopleInfo.State @peopleInfo.PostalCode<br />
 
 
-                            <p> </p>
+                     <p> </p>
 
-                            @if (personProjectList != null && personProjectList.Any())
-                            {
-                                <table width="368">
-                                    <tbody>
-                                        <tr>
-                                            <td class="hdrBlackBold"><b>Projects</b></td>
-                                        </tr>
-                                        <tr>
-                                            <td><img src="/images/headline_bar.gif"></td>
-                                        </tr>
+                     @if (personProjectLeaderList != null && personProjectLeaderList.Any())
+                     {
+                        <p>
+                           <strong>National Program Leader For:</strong>
+                           <br>
+                           <img src="/images/headline_bar.gif">
+                        </p>
 
-                                        @foreach (ProjectInfo project in personProjectList)
+                        <ul style="list-style:none;padding-left:0;">
+                           @foreach (ProjectInfo project in personProjectList)
+                           {
+                              <li>
+                                 <a href="/research/project/?accnNo=@(project.AccountNo)" id="anch_51">@(project.ProjectTitle)</a>
+                                 <br />
+                                 <div style="margin-left:10px;">Accession Number: @(project.AccountNo)</div>
+                                 <img src="/images/content-divider.gif">
+                                 <br>
+                              </li>
+                           }
+                        </ul>
+   }
+   else if (personProjectList != null && personProjectList.Any())
+   {
+                        <table width="368">
+                           <tbody>
+                              <tr>
+                                 <td class="hdrBlackBold"><b>Projects</b></td>
+                              </tr>
+                              <tr>
+                                 <td><img src="/images/headline_bar.gif"></td>
+                              </tr>
+
+                              @foreach (ProjectInfo project in personProjectList)
                                         {
-                                            <tr>
-                                                <td>
-                                                    <a href="/research/project/?accnNo=@(project.AccountNo)" class="projectNav" id="anch_53">@(project.ProjectTitle)</a>
-                                                    <table border="0">
-                                                        <tbody>
-                                                            <tr>
-                                                                <td></td>
-                                                                <td class="bodyTextBlack">
-                                                                    @(Projects.ProjectTypeByCode(project.ProjectType))
-
-                                                                    (@project.ProjectType)
-                                                                </td>
-                                                            </tr>
-                                                            <tr>
-                                                                <td>&nbsp;</td>
-                                                                <td class="bodyTextBlack">Accession Number: @(project.AccountNo)</td>
-                                                            </tr>
-                                                        </tbody>
-                                                    </table>
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td><img src="/images/content-divider.gif"></td>
-                                            </tr>
-                                        }
-                                    </tbody>
-                                </table>
-
-                            }
-
-                            @if (peoplePublicationList != null && peoplePublicationList.Any())
-                            {
-                                <br />
-
-                                <table width="368">
-                                    <tbody>
-                                        <tr>
-                                            <td>
-                                                <strong>Publications</strong>
-                                                <font size="-2">
-                                                    (Clicking on the reprint icon
-                                                    <img src="/images/reprintURLIcon.gif" alt="Reprint Icon" border="0">
-                                                    will take you to the publication reprint.)
-                                                </font>
-                                            </td>
-                                        </tr>
-
-                                        <tr>
-                                            <td><img src="/images/headline_bar.gif"></td>
-                                        </tr>
-
-                                        @foreach (PeoplePublication peoplePub in peoplePublicationList)
-                                        {
-                                            <tr>
+                                 <tr>
+                                    <td>
+                                       <a href="/research/project/?accnNo=@(project.AccountNo)" class="projectNav" id="anch_53">@(project.ProjectTitle)</a>
+                                       <table border="0">
+                                          <tbody>
+                                             <tr>
+                                                <td></td>
                                                 <td class="bodyTextBlack">
-                                                    <a href="/research/publications/publication/?seqNo115=@(peoplePub.SeqNo115)" class="projectNav" id="anch_60">@(peoplePub.Title)</a>
+                                                   @(Projects.ProjectTypeByCode(project.ProjectType))
 
-                                                    @if (false == string.IsNullOrWhiteSpace(peoplePub.ReprintUrl))
+                                                   (@project.ProjectType)
+                                                </td>
+                                             </tr>
+                                             <tr>
+                                                <td>&nbsp;</td>
+                                                <td class="bodyTextBlack">Accession Number: @(project.AccountNo)</td>
+                                             </tr>
+                                          </tbody>
+                                       </table>
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                    <td><img src="/images/content-divider.gif"></td>
+                                 </tr>
+                                        }
+                           </tbody>
+                        </table>
+
+   }
+
+                     @if (peoplePublicationList != null && peoplePublicationList.Any())
+                            {
+                        <br />
+
+                        <table width="368">
+                           <tbody>
+                              <tr>
+                                 <td>
+                                    <strong>Publications</strong>
+                                    <font size="-2">
+                                       (Clicking on the reprint icon
+                                       <img src="/images/reprintURLIcon.gif" alt="Reprint Icon" border="0">
+                                       will take you to the publication reprint.)
+                                    </font>
+                                 </td>
+                              </tr>
+
+                              <tr>
+                                 <td><img src="/images/headline_bar.gif"></td>
+                              </tr>
+
+                              @foreach (PeoplePublication peoplePub in peoplePublicationList)
+                                        {
+                                 <tr>
+                                    <td class="bodyTextBlack">
+                                       <a href="/research/publications/publication/?seqNo115=@(peoplePub.SeqNo115)" class="projectNav" id="anch_60">@(peoplePub.Title)</a>
+
+                                       @if (false == string.IsNullOrWhiteSpace(peoplePub.ReprintUrl))
                                                     {
-                                                        <a href="http://@(peoplePub.ReprintUrl)" target="_blank" title="Reprint URL" id="anch_65">
-                                                            <img src="/images/reprintURLIcon.gif" alt="Reprint Icon" border="0">
-                                                        </a>
+                                          <a href="http://@(peoplePub.ReprintUrl)" target="_blank" title="Reprint URL" id="anch_65">
+                                             <img src="/images/reprintURLIcon.gif" alt="Reprint Icon" border="0">
+                                          </a>
                                                     }
-                                                    -
-                                                    @{
+                                       -
+                                       @{
                                                         string publicationType = "";
 
                                                         if (peoplePub.PubTypeCode == "J")
@@ -237,64 +262,64 @@ remote.location.href = u;
                                                         }
 
                                                         Html.Raw("(" + publicationType + ")");
-                                                    }
-                                                </td>
-                                            </tr>
-                                            <tr>
-                                                <td style="padding-left:10px;" class="bodyTextBlack">
-                                                    @(peoplePub.Citation)
-                                                </td>
-                                            </tr>
+                                       }
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                    <td style="padding-left:10px;" class="bodyTextBlack">
+                                       @(peoplePub.Citation)
+                                    </td>
+                                 </tr>
 
-                                            <tr>
-                                                <td><img src="/images/content-divider.gif"></td>
-                                            </tr>
+                                 <tr>
+                                    <td><img src="/images/content-divider.gif"></td>
+                                 </tr>
                                                         }
 
-                                    </tbody>
-                                </table>
+                           </tbody>
+                        </table>
                                                         }
 
 
-                        </td>
-                        <td valign="top">
-                            @if (personNewsList != null && personNewsList.Any())
+                  </td>
+                  <td valign="top">
+                     @if (personNewsList != null && personNewsList.Any())
                             {
-                                <font face="verdana,arial" size="-2" color="#014c3e">
-                                    <b>ARS News Articles</b>
-                                    <br>
-                                </font>
-                                <div align="left">
-                                    <table>
-                                        <tbody>
-                                            @foreach (IPublishedContent newsItem in personNewsList)
+                        <font face="verdana,arial" size="-2" color="#014c3e">
+                           <b>ARS News Articles</b>
+                           <br>
+                        </font>
+                        <div align="left">
+                           <table>
+                              <tbody>
+                                 @foreach (IPublishedContent newsItem in personNewsList)
                                             {
-                                                <tr>
-                                                    <td valign="top"><img src="/ARSUserFiles/incme/images/bullet.gif" border="0" alt="item"></td>
-                                                    <td valign="top" align="left" background="/ARSUserFiles/incme/images/spacer.gif">
-                                                        <font face="verdana,arial" size="-1">
-                                                            <a href="@newsItem.Url">@newsItem.Name</a>
-                                                        </font>
-                                                    </td>
-                                                </tr>
+                                    <tr>
+                                       <td valign="top"><img src="/ARSUserFiles/incme/images/bullet.gif" border="0" alt="item"></td>
+                                       <td valign="top" align="left" background="/ARSUserFiles/incme/images/spacer.gif">
+                                          <font face="verdana,arial" size="-1">
+                                             <a href="@newsItem.Url">@newsItem.Name</a>
+                                          </font>
+                                       </td>
+                                    </tr>
                                             }
-                                        </tbody>
-                                    </table>
+                              </tbody>
+                           </table>
 
-                                </div>
+                        </div>
                             }
-                        </td>
+                  </td>
 
-                    </tr>
-                </tbody>
-            </table>
+               </tr>
+            </tbody>
+         </table>
 
             }
             else
             {
-                <strong><em>The person you selected is invalid or no longer available.</em></strong>
+         <strong><em>The person you selected is invalid or no longer available.</em></strong>
             }
 
-    </div>
+   </div>
 
 </div>

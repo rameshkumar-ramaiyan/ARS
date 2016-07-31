@@ -24,6 +24,8 @@
 
     List<PeopleByCity> peopleFullList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByCity(modeCodeCity);
 
+    peopleFullList = peopleFullList.Where(p => false == string.IsNullOrEmpty(p.SiteLabel)).ToList();
+
     List<PeopleByCity> siteLabelList = peopleFullList.DistinctBy(p => p.SiteLabel).ToList();
 
     if (siteLabelList != null && siteLabelList.Any())
@@ -96,25 +98,25 @@
 <div id="CityPeopleListing">
 
 
-    @if (currentNode != null)
+   @if (currentNode != null)
     {
-    <b>
-        People and Locations at
-        @currentNode.Name
-    </b>
-    <br /><br />
+      <b>
+         People and Locations at
+         @currentNode.Name
+      </b>
+      <br /><br />
 
 
     <!-- Expand/Collapse All -->
-    <div style="margin-left:450px;">
-        <a href="#" class="expand">[Expand All]</a> |
-        <a href="#" class="collapse">[Collapse All]</a>
-    </div>
+      <div style="margin-left:450px;">
+         <a href="#" class="expand">[Expand All]</a> |
+         <a href="#" class="collapse">[Collapse All]</a>
+      </div>
 
 
-    <div id="accordion" style="width:600px">
+      <div id="accordion" style="width:600px">
 
-        @if (siteLabelList != null && siteLabelList.Any())
+         @if (siteLabelList != null && siteLabelList.Any())
         {
             foreach (PeopleByCity siteLabel in siteLabelList)
             {
@@ -128,55 +130,55 @@
                     {
                         int peopleCount = peopleList.Count;
 
-                        <h4 id="@(siteLabel.SiteCode)">
-                            @(siteLabel.SiteLabel)
+            <h4 id="@(siteLabel.SiteCode)">
+               @(siteLabel.SiteLabel)
 
-                            @("(" + peopleCount + " " + (peopleCount == 1 ? "person" : "people") + ")")
-                        </h4>
+               @("(" + peopleCount + " " + (peopleCount == 1 ? "person" : "people") + ")")
+            </h4>
 
-                        <div>
-                            <p>
-                                <b>Home Page:</b>
-                                <a href="@(siteNode.Url)" title="@(siteNode.Name) home page" id="anch_55">
-                                    @(siteNode.Name)
-                                </a>
-                            </p>
-                            <p>
-                                <ul>
-                                    @if (peopleList != null && peopleList.Any())
+            <div>
+               <p>
+                  <b>Home Page:</b>
+                  <a href="@(siteNode.Url)" title="@(siteNode.Name) home page" id="anch_55">
+                     @(siteNode.Name)
+                  </a>
+               </p>
+               <p>
+                  <ul>
+                     @if (peopleList != null && peopleList.Any())
                                     {
                                         foreach (PeopleByCity person in peopleList)
                                         {
-                                            <li>
-                                                <a href="/people-locations/person?person-id=@(person.PersonId)" class="listItems">
-                                                    @(person.LastName),
-                                                    @(person.FirstName)
-                                                    @Html.Raw(false == string.IsNullOrWhiteSpace(person.CommonName) ? " - <em>" + person.CommonName + "</em>" : "")
-                                                </a>
-                                                <br>
-                                                @(USDA_ARS.Umbraco.Extensions.Utilities.Strings.FormatPhoneNumber(person.PhoneAreaCode + person.Phone))
+                        <li>
+                           <a href="/people-locations/person?person-id=@(person.PersonId)" class="listItems">
+                              @(person.LastName),
+                              @(person.FirstName)
+                              @Html.Raw(false == string.IsNullOrWhiteSpace(person.CommonName) ? " - <em>" + person.CommonName + "</em>" : "")
+                           </a>
+                           <br>
+                           @(USDA_ARS.Umbraco.Extensions.Utilities.Strings.FormatPhoneNumber(person.PhoneAreaCode + person.Phone))
 
-                                                @(false == string.IsNullOrEmpty(person.PhoneExt) ? " ext." + person.PhoneExt : "")
+                           @(false == string.IsNullOrEmpty(person.PhoneExt) ? " ext." + person.PhoneExt : "")
 
-                                                <br /> @(person.Email) <br /> @(person.TitleWorking)
-                                                <br />
-                                                <br />
-                                            </li>
+                           <br /> @(person.Email) <br /> @(person.TitleWorking)
+                           <br />
+                           <br />
+                        </li>
                                         }
                                     }
-                                </ul>
-                            </p>
-                        </div>
+                  </ul>
+               </p>
+            </div>
                     }
                 }
             }
         }
 
-    </div>
+      </div>
     }
     else
 
     {
-        <em>Location not found</em>
+      <em>Location not found</em>
     }
 </div>

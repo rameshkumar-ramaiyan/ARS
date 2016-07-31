@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<language alias="en_us" intName="English (US)" localName="English (US)" lcid="" culture="en-US">
+  <creator>
+    <name>Danny Drogt</name>
+    <link>http://www.yeeve.nl</link>
+  </creator>
+  <area alias="deleteAllChildren">
+    <key alias="menuTitle">Delete all children</key>
+    <key alias="confirmDeleteAllChildren">Are you sure you want to delete all child content for item</key>
+    <key alias="confirmDeleteAllChildrenLabel">Yes, delete all child content</key>
+  </area>
+</language>

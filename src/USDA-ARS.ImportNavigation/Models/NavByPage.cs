@@ -6,9 +6,10 @@ using System.Threading.Tasks;
 
 namespace USDA_ARS.ImportNavigation.Models
 {
-    public class NavByPage
-    {
-        public int NavLeft { get; set; }
-        public int NavRight { get; set; }
-    }
+   public class NavByPage
+   {
+      public int NavLeft { get; set; }
+      public int NavRight { get; set; }
+      public string NavMain { get; set; }
+   }
 }

@@ -115,12 +115,12 @@ namespace USDA_ARS.ImportPeopleSites
                                 // Make sure the HTML is not empty
                                 if (false == string.IsNullOrWhiteSpace(personSiteHtml))
                                 {
-                                    Logs.AddLog(ref LOG_FILE_TEXT, " - Adding Person: " + personName);
+                                    Logs.AddLog(ref LOG_FILE_TEXT, " - Adding Person: " + personName + " to Umbraco Node ID: " + peopleFolderUmbracoId);
                                     ApiResponse apiResponse = AddUmbracoPersonPage(peopleFolderUmbracoId, personId, personName, personSiteHtml);
 
-                                    if (apiResponse != null && apiResponse.Success)
+                                    if (apiResponse != null && apiResponse.Success && apiResponse.ContentList != null && apiResponse.ContentList.Any())
                                     {
-                                        Logs.AddLog(ref LOG_FILE_TEXT, " - Added Person (" + personId + "): " + personName);
+                                        Logs.AddLog(ref LOG_FILE_TEXT, " - Added Person (" + personId + ") Umbraco ID ("+ apiResponse.ContentList[0].Id +") : " + personName);
 
                                         peopleSiteAdded = true;
                                     }

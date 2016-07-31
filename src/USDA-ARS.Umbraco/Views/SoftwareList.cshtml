@@ -5,136 +5,121 @@
 @using RJP.MultiUrlPicker.Models
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
-    Layout = "_Master.cshtml";
+   Layout = "_Master.cshtml";
 
-    IPublishedContent currentPage = Model.Content;
-    string modeCode = "";
-    List<IPublishedContent> softwareNodeList = new List<IPublishedContent>();
-    bool showLocationText = false;
-    int softwareCount = 0;
+   IPublishedContent currentPage = Model.Content;
+   string modeCode = "";
+   List<IPublishedContent> softwareNodeList = new List<IPublishedContent>();
+   bool showLocationText = false;
+   int softwareCount = 0;
 
-    if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
-    {
-        modeCode = Request.QueryString.Get("modeCode");
-    }
+   if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
+   {
+      modeCode = Request.QueryString.Get("modeCode");
+   }
 
-    if (false == string.IsNullOrEmpty(modeCode))
-    {
-        IPublishedContent sitePage = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode, false);
+   if (false == string.IsNullOrEmpty(modeCode))
+   {
+      IPublishedContent sitePage = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode, false);
 
-        if (sitePage != null)
-        {
-            softwareNodeList.Add(sitePage);
-        }
-    }
-    else
-    {
-        showLocationText = true;
-        softwareNodeList = Software.GetSoftwareNodes();
-    }
+      if (sitePage != null)
+      {
+         softwareNodeList.Add(sitePage);
+      }
+   }
+   else
+   {
+      showLocationText = true;
+      softwareNodeList = Software.GetSoftwareNodes();
+   }
 }
 
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
 
 <div id="fullPage">
 
-    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
 
-    <div id="pageContent">
-        @Html.Partial("~/Views/Partials/Modules/HeaderTitle.cshtml", currentPage)
+   <div id="pageContent">
+      @Html.Partial("~/Views/Partials/Modules/HeaderTitle.cshtml", currentPage)
 
-        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+      @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
 
-        @if (softwareNodeList != null && softwareNodeList.Any())
-        {
-            foreach (IPublishedContent softwareNode in softwareNodeList)
-            {
-                ArchetypeModel softwareList = softwareNode.GetPropertyValue<ArchetypeModel>("software");
+      @if (softwareNodeList != null && softwareNodeList.Any())
+      {
+         <table cellspacing="2" cellpadding="0" border="0" style="width: 100%">
+            <tbody>
+               @foreach (var softwareItem in softwareNodeList)
+               {
+                  string id = "";
+                  string title = "";
+                  string desc = "";
 
-                softwareList.Fieldsets = softwareList.Fieldsets.OrderBy(p => p.GetValue<string>("title"));
+                  if (softwareItem.HasValue("softwareID"))
+                  {
+                     id = softwareItem.GetPropertyValue<string>("softwareID");
 
-                if (softwareList != null && softwareList.Any())
-                {
-                    <table cellspacing="2" cellpadding="0" border="0">
-                        <tbody>
-                            @foreach (var softwareItem in softwareList)
-                            {
-                                if (false == softwareItem.Disabled)
-                                {
-                                    string id = "";
-                                    string title = "";
-                                    string desc = "";
+                     title = softwareItem.Name;
 
-                                    if (softwareItem.HasValue("softwareID"))
-                                    {
-                                        id = softwareItem.GetValue<string>("softwareID");
+                     if (softwareItem.HasValue("shortBlurb"))
+                     {
+                        desc = softwareItem.GetPropertyValue<string>("shortBlurb");
+                     }
+                     <tr>
+                        <td valign="top">
+                           <h2>@title</h2>
 
-                                        if (softwareItem.HasValue("title"))
-                                        {
-                                            title = softwareItem.GetValue<string>("title");
-                                        }
-                                        if (softwareItem.HasValue("shortBlurb"))
-                                        {
-                                            desc = softwareItem.GetValue<string>("shortBlurb");
-                                        }
-                                        <tr>
-                                            <td valign="top">
-                                                <h2>@title</h2>
+                           @if (true == showLocationText)
+                           {
+                              <h5>@(Software.GetSoftwareLocation(softwareItem))</h5>
+                           }
 
-                                                @if (true == showLocationText)
-                                                {
-                                                    <h5>@(Software.GetSoftwareLocation(softwareNode))</h5>
-                                                }
+                           @(Html.Raw(desc))
+                        </td>
+                     </tr>
+                     <tr>
+                        <td valign="top">
+                           <a href="@(currentPage.Url + "download/?softwareid=" + Server.UrlEncode(id) + "&modecode=" + softwareItem.Parent.Parent.GetPropertyValue<string>("modeCode"))" id="anch_54">Download</a>
+                        </td>
+                     </tr>
+                        <tr>
+                           <td>
+                              <img src="/images/content-divider.gif">
+                              <br /><br />
+                           </td>
+                        </tr>
+                  }
+                  else
+                  {
+                     <tr>
+                        <td>
+                           @if (softwareItem.HasValue("title"))
+                           {
+                              <h2>@(softwareItem.GetPropertyValue<string>("title"))</h2>
+                           }
+                           <em>Software is currently unavailable. Invalid software ID.</em>
+                        </td>
+                     </tr>
+                  }
 
-                                                @(USDA_ARS.Umbraco.Extensions.Utilities.Strings.RemoveHtmlTags(desc))
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td valign="top">
-                                                <a href="@(currentPage.Url + "download/?softwareid=" + Server.UrlEncode(id) + "&modecode=" + softwareNode.GetPropertyValue<string>("modeCode"))" id="anch_54">Download</a>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <td>
-                                                <img src="/images/content-divider.gif">
-                                                <br /><br />
-                                            </td>
-                                        </tr>
-                                    }
-                                    else
-                                    {
-                                        <tr>
-                                            <td>
-                                                @if (softwareItem.HasValue("title"))
-                                                {
-                                                    <h2>@(softwareItem.GetValue<string>("title"))</h2>
-                                                }
-                                                <em>Software is currently unavailable. Invalid software ID.</em>
-                                            </td>
-                                        </tr>
-                                    }
-
-                                }
-                            }
-                        </tbody>
-                    </table>
-                }
-            }
-        }
+               }
+            </tbody>
+         </table>
+      }
 
 
 
 
 
-        <!-- document content end -->
+      <!-- document content end -->
 
 
-        <br />
+      <br />
 
 
 
-        <p></p>
+      <p></p>
 
 
-    </div>
+   </div>
 </div>

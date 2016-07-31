@@ -145,8 +145,8 @@
       <HintPath>..\packages\morelinq.1.4.0\lib\net35\MoreLinq.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="MySql.Data, Version=6.9.8.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\packages\MySql.Data.6.9.8\lib\net45\MySql.Data.dll</HintPath>
+    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=6.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
@@ -279,13 +279,18 @@
   <ItemGroup>
     <Compile Include="Models\Document.cs" />
     <Compile Include="Models\ImportedNav.cs" />
+    <Compile Include="Models\PersonLookup.cs" />
+    <Compile Include="Models\SubsiteLookup.cs" />
     <Compile Include="Models\ModeCodeLookup.cs" />
     <Compile Include="Models\NavByPage.cs" />
     <Compile Include="Models\Navigation.cs" />
     <Compile Include="Models\NavSystem.cs" />
+    <Compile Include="Models\ProgramLookup.cs" />
     <Compile Include="Models\SubSite.cs" />
     <Compile Include="Models\ModeCodeFolderLookup.cs" />
     <Compile Include="Models\UmbracoDocLookup.cs" />
+    <Compile Include="Models\UmbracoNode.cs" />
+    <Compile Include="Models\UmbracoPropertyData.cs" />
     <Compile Include="Objects\SubSites.cs" />
     <Compile Include="Objects\Documents.cs" />
     <Compile Include="Objects\Navigations.cs" />
