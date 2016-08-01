@@ -4,6 +4,7 @@
 @using RJP.MultiUrlPicker.Models
 @using Umbraco.Core.Persistence
 @using USDA_ARS.Umbraco.Extensions.Models.Aris
+@using USDA_ARS.Umbraco.Extensions.Helpers
 @using USDA_ARS.Umbraco.Extensions.Helpers.Aris
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
@@ -13,6 +14,10 @@
     IPublishedContent regionPage = currentPage.AncestorOrSelf(2);
     IPublishedContent rootPage = currentPage.AncestorOrSelf(1);
     string modeCode = currentPage.GetPropertyValue<string>("modeCode");
+
+    IPublishedContent programsAndProjects = Nodes.ProgramsAndProjects();
+    IPublishedContent newsNode = Nodes.NewsAndEvents();
+    IPublishedContent publicationsAtThisLocation = Nodes.PublicationsAtThisLocation();
 
     string defaultCarouselImage = rootPage.GetPropertyValue<string>("defaultCarouselImage");
 
@@ -207,15 +212,15 @@
                             foreach (UsdaProject item in researchList)
                             {
                             <li>
-                                <a href="/research/projects-programs/project/?account-no=@item.AccountNo">
-                                    @item.Title
-                                </a>
+                               <a href="@(programsAndProjects.Url)project/?accnNo=@item.AccountNo">
+                                  @item.Title
+                               </a>
                             </li>
                             }
                         }
 
                         <li class="textAlignRight">
-                            <a href="/research/projects-programs/?modecode=@modeCode">&gt;&gt;&gt;More</a>
+                           <a href="@(programsAndProjects.Url)?modecode=@modeCode">&gt;&gt;&gt;More</a>
                         </li>
 
                     </ul>
@@ -237,7 +242,7 @@
                         }
 
                         <li class="textAlignRight">
-                            <a href="#TODO">&gt;&gt;&gt;More</a>
+                            <a href="@(newsNode.Url)?modecode=@modeCode">&gt;&gt;&gt;More</a>
                         </li>
                     </ul>
                 </div>
@@ -250,15 +255,15 @@
                             foreach (UsdaPublication item in publicationList)
                             {
                             <li>
-                                <a href="/services/publications/publication/?seqNo115=@item.SeqNo115">
-                                    @item.Title
-                                </a>
+                               <a href="@(publicationsAtThisLocation.Url)publication/?seqNo115=@item.SeqNo115">
+                                  @item.Title
+                               </a>
                             </li>
                             }
                         }
 
                         <li class="textAlignRight">
-                            <a href="/services/publications/?modecode=@modeCode">&gt;&gt;&gt;More</a>
+                           <a href="@(publicationsAtThisLocation.Url)?modecode=@modeCode">&gt;&gt;&gt;More</a>
                         </li>
                     </ul>
                 </div>

@@ -164,6 +164,30 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
          return null;
       }
 
+      public static IPublishedContent NewsAndEvents()
+      {
+         IPublishedContent homepage = Homepage();
+
+         if (homepage != null)
+         {
+            return homepage.Descendants().FirstOrDefault(n => n.IsDocumentType("NewsHome"));
+         }
+
+         return null;
+      }
+
+      public static IPublishedContent PublicationsAtThisLocation()
+      {
+         IPublishedContent homepage = Homepage();
+
+         if (homepage != null)
+         {
+            return homepage.Descendants().FirstOrDefault(n => n.IsDocumentType("Publications"));
+         }
+
+         return null;
+      }
+
 
       public static IPublishedContent GetEmailTemplate(string nodeName)
       {
