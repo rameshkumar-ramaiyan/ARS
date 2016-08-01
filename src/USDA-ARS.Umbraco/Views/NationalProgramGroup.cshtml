@@ -153,7 +153,7 @@
                                                         <td>
                                                             <table border="0" cellpadding="4">
                                                                 <tbody>
-                                                                    @foreach (IPublishedContent npItem in nationalProgramsMain.Children)
+                                                                    @foreach (IPublishedContent npItem in nationalProgramsMain.Children.Where(p => p.DocumentTypeAlias != "SiteNavFolder"))
                                                                     {
                                                                         <tr>
                                                                             <td><a href="@(peopleListNationalProgram.Url + "?modeCode=" + npItem.GetPropertyValue<string>("modeCode"))" class="projectNav">@(npItem.Name)</a></td>
@@ -226,7 +226,7 @@
                                     </tr>
                                     @if (currentPage.Children != null)
                                     {
-                                        foreach (IPublishedContent program in currentPage.Children)
+                                        foreach (IPublishedContent program in currentPage.Children.Where(p => p.DocumentTypeAlias != "SiteNavFolder"))
                                         {
                                             <tr>
                                                 <td valign="top"><img src="/ARSUserFiles/incme/images/bullet.gif" border="0" alt="item"></td>

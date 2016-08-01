@@ -514,7 +514,7 @@ namespace USDA_ARS.ImportNews
          content.Id = 0;
          content.Name = year;
          content.ParentId = Convert.ToInt32(ConfigurationManager.AppSettings.Get("NewsArticles:ParentId"));
-         content.DocType = "NewsFolder";
+         content.DocType = "NewsYear";
          content.Template = ""; // Leave blank
 
          List<ApiProperty> properties = new List<ApiProperty>();

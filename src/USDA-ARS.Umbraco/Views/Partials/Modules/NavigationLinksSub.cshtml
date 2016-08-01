@@ -86,6 +86,14 @@
             {
                 nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.GetPropertyValue<string>("breadcrumbLabel", breadcrumb.Name), breadcrumb.Url + "?modeCode=" + modeCode, breadcrumb.Level));
             }
+            else if (breadcrumb.DocumentTypeAlias == "NewsYear" || (breadcrumb.DocumentTypeAlias == "NewsFolder" && breadcrumb.Name.Length == 4))
+            {
+               nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.Name, "/news-events/news-archive/?year=" + breadcrumb.Name, breadcrumb.Level));
+            }
+            else if (breadcrumb.DocumentTypeAlias == "NewsFolder")
+            {
+               nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.Name, "/news-events/news-archive/", breadcrumb.Level));
+            }
             else
             {
                 nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.GetPropertyValue<string>("breadcrumbLabel", breadcrumb.Name), breadcrumb.Url, breadcrumb.Level));
