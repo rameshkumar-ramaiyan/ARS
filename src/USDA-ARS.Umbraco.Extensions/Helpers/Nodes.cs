@@ -211,16 +211,24 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
       {
          IEnumerable<IPublishedContent> researchUnitList = city.Children.Where(n => n.IsDocumentType("City") || n.IsDocumentType("ResearchUnit"));
 
-         foreach (IPublishedContent unit in researchUnitList)
+         if (researchUnitList != null && researchUnitList.Any())
          {
-            ResearchUnitDisplay researchUnitDisplay = new ResearchUnitDisplay();
+            if (researchUnitList.FirstOrDefault().DocumentTypeAlias == "ResearchUnit")
+            {
+               researchUnitList = researchUnitList.OrderBy(p => p.Name);
+            }
 
-            researchUnitDisplay.ResearchUnit = unit;
-            researchUnitDisplay.Level = level;
+            foreach (IPublishedContent unit in researchUnitList)
+            {
+               ResearchUnitDisplay researchUnitDisplay = new ResearchUnitDisplay();
 
-            researchUnits.Add(researchUnitDisplay);
+               researchUnitDisplay.ResearchUnit = unit;
+               researchUnitDisplay.Level = level;
 
-            CityResearchUnitList(ref researchUnits, unit, level + 1);
+               researchUnits.Add(researchUnitDisplay);
+
+               CityResearchUnitList(ref researchUnits, unit, level + 1);
+            }
          }
       }
 
