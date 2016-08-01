@@ -4,55 +4,58 @@
 @using USDA_ARS.Umbraco.Extensions.Models.Aris
 @model IPublishedContent
 @{
-    IPublishedContent currentNode = Model;
-    string modeCode = Model.GetPropertyValue<string>("modeCode");
-    string modeCodeCity = modeCode;
-    string javascriptInsert = "";
-    int incValue = -1;
-
-    if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
-    {
-        modeCode = Request.QueryString.Get("modeCode");
-
-        List<string> modeCodeArray = USDA_ARS.Umbraco.Extensions.Helpers.ModeCodes.ModeCodeArray(modeCode);
-
-        modeCodeCity = modeCodeArray[0] + "-" + modeCodeArray[1] + "-00-00";
-
-        currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCodeCity, false);
-    }
+   IPublishedContent currentNode = Model;
+   string modeCode = Model.GetPropertyValue<string>("modeCode");
+   string modeCodeCity = modeCode;
+   string modeCodeCityShort = "";
+   string javascriptInsert = "";
+   int incValue = -1;
 
 
-    List<PeopleByCity> peopleFullList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByCity(modeCodeCity);
+   if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
+   {
+      modeCode = Request.QueryString.Get("modeCode");
 
-    peopleFullList = peopleFullList.Where(p => false == string.IsNullOrEmpty(p.SiteLabel)).ToList();
+      List<string> modeCodeArray = USDA_ARS.Umbraco.Extensions.Helpers.ModeCodes.ModeCodeArray(modeCode);
 
-    List<PeopleByCity> siteLabelList = peopleFullList.DistinctBy(p => p.SiteLabel).ToList();
+      modeCodeCityShort = modeCodeArray[0] + "-" + modeCodeArray[1];
+      modeCodeCity = modeCodeCityShort + "-00-00";
 
-    if (siteLabelList != null && siteLabelList.Any())
-    {
-        int i = 0;
-        foreach (PeopleByCity peopleByCity in siteLabelList)
-        {
-            if (incValue == -1 && peopleByCity.ModeCode == modeCode)
-            {
-                incValue = i;
-            }
+      currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCodeCity, false);
+   }
 
-            i++;
-        }
-    }
 
-    if (incValue >= 0)
-    {
-        javascriptInsert += @"
+   List<PeopleByCity> peopleFullList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByCity(modeCodeCity);
+
+   peopleFullList = peopleFullList.Where(p => false == string.IsNullOrEmpty(p.ModeCodeConcat)).ToList();
+
+   List<PeopleByCity> siteLabelList = peopleFullList.DistinctBy(p => p.ModeCodeConcat).ToList();
+
+   if (siteLabelList != null && siteLabelList.Any())
+   {
+      int i = 0;
+      foreach (PeopleByCity peopleByCity in siteLabelList)
+      {
+         if (incValue == -1 && peopleByCity.ModeCode == modeCode)
+         {
+            incValue = i;
+         }
+
+         i++;
+      }
+   }
+
+   if (incValue >= 0)
+   {
+      javascriptInsert += @"
                  // Open the panel by modecode
         ";
-        javascriptInsert += "$('#accordion').accordion('activate', " + incValue + ");\r\n";
+      javascriptInsert += "$('#accordion').accordion('activate', " + incValue + ");\r\n";
 
-        javascriptInsert += @"         // auto scroll to a div
+      javascriptInsert += @"         // auto scroll to a div
         $('html, body').animate({";
-        javascriptInsert += " scrollTop: $('#" + modeCode.Replace("-","") + "').offset().top}, 2000);";
-    }
+      javascriptInsert += " scrollTop: $('#" + modeCode.Replace("-", "") + "').offset().top}, 2000);";
+   }
 }
 
 <!-- jQuery accordion -->
@@ -99,7 +102,7 @@
 
 
    @if (currentNode != null)
-    {
+   {
       <b>
          People and Locations at
          @currentNode.Name
@@ -117,68 +120,84 @@
       <div id="accordion" style="width:600px">
 
          @if (siteLabelList != null && siteLabelList.Any())
-        {
+         {
+            siteLabelList = siteLabelList.OrderBy(p => p.ModeCodeConcat).ToList();
+
             foreach (PeopleByCity siteLabel in siteLabelList)
             {
-                IPublishedContent siteNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(siteLabel.ModeCode, false);
+               IPublishedContent siteNode = null;
 
-                if (siteNode != null)
-                {
-                    List<PeopleByCity> peopleList = peopleFullList.Where(p => p.SiteLabel == siteLabel.SiteLabel).ToList();
+               if (false == string.IsNullOrEmpty(siteLabel.ModeCode))
+               {
+                  siteNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(siteLabel.ModeCode, false);
+               }
 
-                    if (peopleList != null && peopleList.Count > 0)
-                    {
-                        int peopleCount = peopleList.Count;
+               List<PeopleByCity> peopleList = peopleFullList.Where(p => p.ModeCodeConcat == siteLabel.ModeCodeConcat).ToList();
 
-            <h4 id="@(siteLabel.ModeCodeConcat)">
-               @(siteLabel.SiteLabel)
+               if (peopleList != null && peopleList.Any() && peopleList[0].ModeCodeConcat != null &&
+                        peopleList[0].ModeCodeConcat.Length > 3 && 
+                        (peopleList[0].ModeCodeConcat.Substring(4, 2) == "01" || peopleList[0].ModeCodeConcat.Substring(4, 2) == "02"))
+               {
+                  //peopleList = peopleList.OrderBy()
+                  siteLabel.SiteLabel = "Location Support Staff";
+               }
 
-               @("(" + peopleCount + " " + (peopleCount == 1 ? "person" : "people") + ")")
-            </h4>
 
-            <div>
-               <p>
-                  <b>Home Page:</b>
-                  <a href="@(siteNode.Url)" title="@(siteNode.Name) home page" id="anch_55">
-                     @(siteNode.Name)
-                  </a>
-               </p>
-               <p>
-                  <ul>
-                     @if (peopleList != null && peopleList.Any())
-                                    {
-                                        foreach (PeopleByCity person in peopleList)
-                                        {
-                        <li>
-                           <a href="/people-locations/person?person-id=@(person.PersonId)" class="listItems">
-                              @(person.LastName),
-                              @(person.FirstName)
-                              @Html.Raw(false == string.IsNullOrWhiteSpace(person.CommonName) ? " - <em>" + person.CommonName + "</em>" : "")
-                           </a>
-                           <br>
-                           @(USDA_ARS.Umbraco.Extensions.Utilities.Strings.FormatPhoneNumber(person.PhoneAreaCode + person.Phone))
+               if (peopleList != null && peopleList.Count > 0)
+               {
+                  int peopleCount = peopleList.Count;
 
-                           @(false == string.IsNullOrEmpty(person.PhoneExt) ? " ext." + person.PhoneExt : "")
+                     <h4 id="@(siteLabel.ModeCodeConcat)">
+                        @(siteLabel.SiteLabel)
 
-                           <br /> @(person.Email) <br /> @(person.TitleWorking)
-                           <br />
-                           <br />
-                        </li>
-                                        }
-                                    }
-                  </ul>
-               </p>
-            </div>
-                    }
-                }
+                        @("(" + peopleCount + " " + (peopleCount == 1 ? "person" : "people") + ")")
+                     </h4>
+
+                     <div>
+                        @if (siteNode != null)
+                        {
+                           <p>
+                              <b>Home Page:</b>
+                              <a href="@(siteNode.Url)" title="@(siteNode.Name) home page" id="anch_55">
+                                 @(siteNode.Name)
+                              </a>
+                           </p>
+                        }
+                        <p>
+                           <ul>
+                              @if (peopleList != null && peopleList.Any())
+                              {
+                                 foreach (PeopleByCity person in peopleList)
+                                 {
+                                    <li>
+                                       <a href="/people-locations/person?person-id=@(person.PersonId)" class="listItems">
+                                          @(person.LastName),
+                                          @(person.FirstName)
+                                          @Html.Raw(false == string.IsNullOrWhiteSpace(person.CommonName) ? " - <em>" + person.CommonName + "</em>" : "")
+                                       </a>
+                                       <br>
+                                       @(USDA_ARS.Umbraco.Extensions.Utilities.Strings.FormatPhoneNumber(person.PhoneAreaCode + person.Phone))
+
+                                       @(false == string.IsNullOrEmpty(person.PhoneExt) ? " ext." + person.PhoneExt : "")
+
+                                       <br /> @(person.Email) <br /> @(person.TitleWorking)
+                                       <br />
+                                       <br />
+                                    </li>
+                                 }
+                              }
+                           </ul>
+                        </p>
+                     </div>
+                  }
             }
-        }
+         }
 
       </div>
-    }
-    else
+   }
+   else
 
-    {
+   {
       <em>Location not found</em>
-    }
+   }
 </div>
