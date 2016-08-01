@@ -124,7 +124,7 @@ namespace USDA_ARS.ImportUserSecurity
 
       static List<UmbracoPageLookup> GetModeCodeLookupCache()
       {
-         string filename = "umbraco-lookup-cache.txt";
+         string filename = "USER_SECURITY_umbraco-lookup-cache.txt";
          List<UmbracoPageLookup> modeCodeList = new List<UmbracoPageLookup>();
 
          if (true == File.Exists(filename))
@@ -159,7 +159,7 @@ namespace USDA_ARS.ImportUserSecurity
                sb.AppendLine(modeCodeItem.ModeCodeOrPage + "~" + modeCodeItem.UmbracoId);
             }
 
-            using (FileStream fs = File.Create("umbraco-lookup-cache.txt"))
+            using (FileStream fs = File.Create("USER_SECURITY_umbraco-lookup-cache.txt"))
             {
                // Add some text to file
                Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());

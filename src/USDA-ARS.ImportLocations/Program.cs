@@ -42,7 +42,7 @@ namespace USDA_ARS.ImportLocations
                Delete();
             }
 
-            using (FileStream fs = File.Create("LOG_FILE.txt"))
+            using (FileStream fs = File.Create("LOCATIONS_LOG_FILE.txt"))
             {
                // Add some text to file
                Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);

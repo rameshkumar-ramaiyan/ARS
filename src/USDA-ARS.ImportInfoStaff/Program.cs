@@ -40,7 +40,7 @@ namespace USDA_ARS.ImportInfoStaff
             {
                if (args.Length == 2)
                {
-                  if (args[1] == "force-cache-update")
+                  if (args[1] == "INFO_STAFF_force-cache-update")
                   {
                      forceCacheUpdate = true;
                   }
@@ -263,7 +263,7 @@ namespace USDA_ARS.ImportInfoStaff
          //AddLog 
 
 
-         using (FileStream fs = File.Create("LOG_FILE.txt"))
+         using (FileStream fs = File.Create("INFO_STAFF_LOG_FILE.txt"))
          {
             // Add some text to file
             Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);
@@ -797,7 +797,7 @@ namespace USDA_ARS.ImportInfoStaff
                sb.AppendLine(modeCodeItem.ModeCode + "|" + modeCodeItem.UmbracoId + "|" + modeCodeItem.Url);
             }
 
-            using (FileStream fs = File.Create("mode-code-cache.txt"))
+            using (FileStream fs = File.Create("INFO_STAFF_mode-code-cache.txt"))
             {
                // Add some text to file
                Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
@@ -811,7 +811,7 @@ namespace USDA_ARS.ImportInfoStaff
 
       static List<ModeCodeLookup> GetModeCodeLookupCache()
       {
-         string filename = "mode-code-cache.txt";
+         string filename = "INFO_STAFF_mode-code-cache.txt";
          List<ModeCodeLookup> modeCodeList = new List<ModeCodeLookup>();
 
          if (true == File.Exists(filename))

@@ -398,7 +398,7 @@ namespace USDA_ARS.ImportNews
 
       static List<ModeCodeLookup> GetModeCodeLookupCache()
       {
-         string filename = "mode-code-cache.txt";
+         string filename = "NEWS_mode-code-cache.txt";
          List<ModeCodeLookup> modeCodeList = new List<ModeCodeLookup>();
 
          if (true == System.IO.File.Exists(filename))
@@ -433,7 +433,7 @@ namespace USDA_ARS.ImportNews
                sb.AppendLine(modeCodeItem.ModeCode + "|" + modeCodeItem.UmbracoId + "|" + modeCodeItem.Url);
             }
 
-            using (FileStream fs = System.IO.File.Create("mode-code-cache.txt"))
+            using (FileStream fs = System.IO.File.Create("NEWS_mode-code-cache.txt"))
             {
                // Add some text to file
                Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());

@@ -62,7 +62,7 @@ namespace USDA_ARS.ImportNP
             AddLog(ex.ToString());
          }
 
-         using (FileStream fs = File.Create("LOG_FILE.txt"))
+         using (FileStream fs = File.Create("NP_LOG_FILE.txt"))
          {
             // Add some text to file
             Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);

@@ -22,6 +22,7 @@ using System.IO;
 using Umbraco.Core.Persistence;
 using USDA_ARS.Umbraco.Extensions.Models.Aris;
 using System.Net;
+using USDA_ARS.Umbraco.Extensions.Helpers;
 
 namespace USDA_ARS.ImportDocs
 {
@@ -261,7 +262,7 @@ namespace USDA_ARS.ImportDocs
 
                      if (true == string.IsNullOrWhiteSpace(title))
                      {
-                        title = "[Missing Page]";
+                        title = "[Missing Title]";
                      }
 
                      string adHocFolderName = string.Empty;
@@ -316,7 +317,7 @@ namespace USDA_ARS.ImportDocs
             } // for (int k = 0; k < list.Count; k++)
          } // if (false == updateNonImportOnly)
 
-         using (FileStream fs = File.Create("LOG_FILE.txt"))
+         using (FileStream fs = File.Create("DOCS_LOG_FILE.txt"))
          {
             // Add some text to file
             Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);
@@ -344,7 +345,7 @@ namespace USDA_ARS.ImportDocs
             foreach (UmbracoPropertyData node in fullDocsList)
             {
                AddLog("Record " + recordInc + " / " + recordCount);
-               AddLog("Umbraco Node ("+ node.UmbracoId +"): " + node.Title, LogFormat.White);
+               AddLog("Umbraco Node (" + node.UmbracoId + "): " + node.Title, LogFormat.White);
 
                AddLog(" - Checking body text...");
 
@@ -395,7 +396,7 @@ namespace USDA_ARS.ImportDocs
             AddLog("");
          }
 
-         using (FileStream fs = File.Create("LOG_FILE_ARS_FIX.txt"))
+         using (FileStream fs = File.Create("DOCS_LOG_FILE_ARS_FIX.txt"))
          {
             // Add some text to file
             Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);
@@ -519,34 +520,66 @@ namespace USDA_ARS.ImportDocs
          {
             int umbracoParentId = getDocFolder.UmbracoDocFolderId;
 
-            ApiResponse response = AddUmbracoPage(umbracoParentId, importPage.Title, importPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, importPage.HtmlHeader, importPage.Keywords, 1);
+            int subNodeUmbracoId = 0;
+            bool updateSubNode = false;
 
-            if (response != null && response.ContentList != null && response.ContentList.Any())
+            if (importPage.OldDocType.ToLower() == "research" && importPage.Title.ToLower() == "index")
             {
-               int umbracoId = response.ContentList[0].Id;
+               AddLog(" - Found Research index page.", LogFormat.Info);
 
-               AddLog(" - Page added:[Mode Code: " + modeCode + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title);
+               subNodeUmbracoId = GetNodeChildSubNode(modeCode, "SitesResearch");
+            }
+            else if (importPage.OldDocType.ToLower() == "careers" && importPage.Title.ToLower() == "index")
+            {
+               AddLog(" - Found Careers index page.", LogFormat.Info);
 
-               if (importPage.SubPages != null && importPage.SubPages.Any())
+               subNodeUmbracoId = GetNodeChildSubNode(modeCode, "SitesCareers");
+            }
+            else if (importPage.OldDocType.ToLower() == "news" && importPage.Title.ToLower() == "index")
+            {
+               AddLog(" - Found News index page.", LogFormat.Info);
+
+               subNodeUmbracoId = GetNodeChildSubNode(modeCode, "SitesNews");
+            }
+
+            if (subNodeUmbracoId > 0)
+            {
+               AddLog(" - Updating Page for: " + importPage.OldDocType + "...");
+               UpdateUmbracoNode(subNodeUmbracoId, importPage.BodyText, "/" + importPage.OldDocType + "/docs.htm?docid=" + importPage.OldDocId, importPage.OldDocId.ToString());
+            }
+
+
+            if (false == updateSubNode)
+            {
+               ApiResponse response = AddUmbracoPage(umbracoParentId, importPage.Title, importPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, importPage.HtmlHeader, importPage.Keywords, 1);
+
+               if (response != null && response.ContentList != null && response.ContentList.Any())
                {
-                  foreach (ImportPage subPage in importPage.SubPages)
-                  {
-                     ApiResponse subpageResponse = AddUmbracoPage(umbracoId, "Page " + subPage.PageNumber, subPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, importPage.HtmlHeader, importPage.Keywords, subPage.PageNumber);
+                  int umbracoId = response.ContentList[0].Id;
 
-                     if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
+                  AddLog(" - Page added:[Mode Code: " + modeCode + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title);
+
+                  if (importPage.SubPages != null && importPage.SubPages.Any())
+                  {
+                     foreach (ImportPage subPage in importPage.SubPages)
                      {
-                        AddLog(" --- SubPage added:(" + subpageResponse.ContentList[0].Id + ") " + subPage.Title);
-                     }
-                     else
-                     {
-                        AddLog("!!ERROR SUBPAGE NOT ADDED!");
+                        ApiResponse subpageResponse = AddUmbracoPage(umbracoId, "Page " + subPage.PageNumber, subPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, importPage.HtmlHeader, importPage.Keywords, subPage.PageNumber);
+
+                        if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
+                        {
+                           AddLog(" --- SubPage added:(" + subpageResponse.ContentList[0].Id + ") " + subPage.Title);
+                        }
+                        else
+                        {
+                           AddLog("!!ERROR SUBPAGE NOT ADDED!");
+                        }
                      }
                   }
                }
-            }
-            else
-            {
-               AddLog("!!ERROR SUBPAGE NOT ADDED!");
+               else
+               {
+                  AddLog("!!ERROR SUBPAGE NOT ADDED!");
+               }
             }
          }
          else
@@ -996,7 +1029,7 @@ namespace USDA_ARS.ImportDocs
       }
 
 
-      static void UpdateUmbracoNode(int umbracoId, string newBodyText)
+      static void UpdateUmbracoNode(int umbracoId, string newBodyText, string oldUrl = "", string oldId = "")
       {
          AddLog(" - Updating node: " + umbracoId);
 
@@ -1006,7 +1039,16 @@ namespace USDA_ARS.ImportDocs
 
          List<ApiProperty> properties = new List<ApiProperty>();
 
-         properties.Add(new ApiProperty("bodyText", newBodyText)); // HTML of person site
+         properties.Add(new ApiProperty("bodyText", newBodyText)); // HTML of page
+
+         if (false == string.IsNullOrEmpty(oldUrl))
+         {
+            properties.Add(new ApiProperty("oldUrl", oldUrl));
+         }
+         if (false == string.IsNullOrEmpty(oldId))
+         {
+            properties.Add(new ApiProperty("oldId", oldId));
+         }
 
          content.Properties = properties;
 
@@ -1061,6 +1103,42 @@ namespace USDA_ARS.ImportDocs
             AddLog(" - Message: " + responseBack.Message);
          }
       }
+
+
+      static int GetNodeChildSubNode(string modeCode, string docType)
+      {
+         int umbracoSubNodeId = 0;
+
+         ApiContent subNode = null;
+
+         ModeCodeLookup modeCodeLookup = MODE_CODE_LIST.Where(p => p.ModeCode == ModeCodes.ModeCodeAddDashes(modeCode)).FirstOrDefault();
+
+         if (modeCodeLookup != null)
+         {
+            AddLog(" - Getting Sub Nodes for: " + modeCode);
+            ApiResponse modeCodeNode = GetCalls.GetNodeByUmbracoId(modeCodeLookup.UmbracoId);
+
+            if (modeCodeNode != null && modeCodeNode.ContentList != null && modeCodeNode.ContentList.Any() && modeCodeNode.ContentList[0].ChildContentList != null && modeCodeNode.ContentList[0].ChildContentList.Any())
+            {
+               AddLog(" - Looking for sub node: " + docType);
+
+               subNode = modeCodeNode.ContentList[0].ChildContentList.Where(p => p.DocType == docType).FirstOrDefault();
+            }
+         }
+
+         if (subNode != null)
+         {
+            AddLog(" - Sub node found for: " + docType + " | Umbraco Id: " + subNode.Id, LogFormat.Okay);
+            umbracoSubNodeId = subNode.Id;
+         }
+         else
+         {
+            AddLog(" - !! Sub node not found for: " + docType, LogFormat.Warning);
+         }
+
+         return umbracoSubNodeId;
+      }
+
 
 
       static List<DocFolderLookup> GetDocFoldersAll()
@@ -1741,7 +1819,7 @@ namespace USDA_ARS.ImportDocs
                sb.AppendLine(docFolder.ModeCode + "|" + docFolder.UmbracoDocFolderId);
             }
 
-            using (FileStream fs = File.Create("doc-folder-cache.txt"))
+            using (FileStream fs = File.Create("DOCS_doc-folder-cache.txt"))
             {
                // Add some text to file
                Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
@@ -1755,7 +1833,7 @@ namespace USDA_ARS.ImportDocs
 
       static List<DocFolderLookup> GetDocFolderCache()
       {
-         string filename = "doc-folder-cache.txt";
+         string filename = "DOCS_doc-folder-cache.txt";
          List<DocFolderLookup> docFoldersList = new List<DocFolderLookup>();
 
          if (true == File.Exists(filename))
@@ -1791,7 +1869,7 @@ namespace USDA_ARS.ImportDocs
                sb.AppendLine(modeCodeItem.ModeCode + "|" + modeCodeItem.UmbracoId + "|" + modeCodeItem.Url);
             }
 
-            using (FileStream fs = File.Create("mode-code-cache.txt"))
+            using (FileStream fs = File.Create("DOCS_mode-code-cache.txt"))
             {
                // Add some text to file
                Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
@@ -1805,7 +1883,7 @@ namespace USDA_ARS.ImportDocs
 
       static List<ModeCodeLookup> GetModeCodeLookupCache()
       {
-         string filename = "mode-code-cache.txt";
+         string filename = "DOCS_mode-code-cache.txt";
          List<ModeCodeLookup> modeCodeList = new List<ModeCodeLookup>();
 
          if (true == File.Exists(filename))
@@ -1841,7 +1919,7 @@ namespace USDA_ARS.ImportDocs
                sb.AppendLine(personItem.PersonId + "|" + personItem.UmbracoPersonId);
             }
 
-            using (FileStream fs = File.Create("person-cache.txt"))
+            using (FileStream fs = File.Create("DOCS_person-cache.txt"))
             {
                // Add some text to file
                Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
@@ -1855,7 +1933,7 @@ namespace USDA_ARS.ImportDocs
 
       static List<PersonLookup> GetPersonLookupCache()
       {
-         string filename = "person-cache.txt";
+         string filename = "DOCS_person-cache.txt";
          List<PersonLookup> personList = new List<PersonLookup>();
 
          if (true == File.Exists(filename))

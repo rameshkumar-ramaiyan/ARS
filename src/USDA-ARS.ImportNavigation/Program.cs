@@ -168,7 +168,7 @@ namespace USDA_ARS.ImportNavigation
          AddLog("/// Time to complete: " + timeLength.ToString(@"hh") + " hours : " + timeLength.ToString(@"mm") + " minutes : " + timeLength.ToString(@"ss") + " seconds ///", LogFormat.Info);
          AddLog("");
 
-         using (FileStream fs = File.Create("LOG_FILE.txt"))
+         using (FileStream fs = File.Create("NAVIGATION_LOG_FILE.txt"))
          {
             // Add some text to file
             Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);
@@ -181,9 +181,9 @@ namespace USDA_ARS.ImportNavigation
       static void ImportNavs()
       {
          // DELETE CACHE FILE
-         if (File.Exists("imported-nav.txt"))
+         if (File.Exists("NAVIGATION_imported-nav.txt"))
          {
-            File.Delete("imported-nav.txt");
+            File.Delete("NAVIGATION_imported-nav.txt");
          }
 
          List<NavSystem> navSysModeCodeList = NavSystems.GetNavModeCodeList();
@@ -361,7 +361,7 @@ namespace USDA_ARS.ImportNavigation
             }
          }
 
-         using (FileStream fs = File.Create("LOG_FILE_IMPORT_NAVS.txt"))
+         using (FileStream fs = File.Create("NAVIGATION_LOG_FILE_IMPORT_NAVS.txt"))
          {
             // Add some text to file
             Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);
@@ -500,7 +500,7 @@ namespace USDA_ARS.ImportNavigation
          }
 
 
-         using (FileStream fs = File.Create("LOG_FILE_LINK_NAVS.txt"))
+         using (FileStream fs = File.Create("NAVIGATION_LOG_FILE_LINK_NAVS.txt"))
          {
             // Add some text to file
             Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);
@@ -644,7 +644,7 @@ namespace USDA_ARS.ImportNavigation
 
       static List<ModeCodeLookup> GetModeCodeLookupCache()
       {
-         string filename = "mode-code-cache.txt";
+         string filename = "NAVIGATION_mode-code-cache.txt";
          List<ModeCodeLookup> modeCodeList = new List<ModeCodeLookup>();
 
          if (true == File.Exists(filename))
@@ -679,7 +679,7 @@ namespace USDA_ARS.ImportNavigation
                sb.AppendLine(modeCodeItem.ModeCode + "|" + modeCodeItem.UmbracoId + "|" + modeCodeItem.NavUmbracoId + "|" + modeCodeItem.Url);
             }
 
-            using (FileStream fs = File.Create("mode-code-cache.txt"))
+            using (FileStream fs = File.Create("NAVIGATION_mode-code-cache.txt"))
             {
                // Add some text to file
                Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
@@ -762,7 +762,7 @@ namespace USDA_ARS.ImportNavigation
 
       static List<ProgramLookup> GetProgramLookupCache()
       {
-         string filename = "program-cache.txt";
+         string filename = "NAVIGATION_program-cache.txt";
          List<ProgramLookup> programList = new List<ProgramLookup>();
 
          if (true == File.Exists(filename))
@@ -797,7 +797,7 @@ namespace USDA_ARS.ImportNavigation
                sb.AppendLine(programItem.ProgramCode + "|" + programItem.UmbracoId + "|" + programItem.NavUmbracoId + "|" + programItem.Url);
             }
 
-            using (FileStream fs = File.Create("program-cache.txt"))
+            using (FileStream fs = File.Create("NAVIGATION_program-cache.txt"))
             {
                // Add some text to file
                Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
@@ -876,7 +876,7 @@ namespace USDA_ARS.ImportNavigation
 
       static List<PersonLookup> GetPersonLookupCache()
       {
-         string filename = "person-cache.txt";
+         string filename = "NAVIGATION_person-cache.txt";
          List<PersonLookup> personList = new List<PersonLookup>();
 
          if (true == File.Exists(filename))
@@ -911,7 +911,7 @@ namespace USDA_ARS.ImportNavigation
                sb.AppendLine(programItem.PersonId + "|" + programItem.UmbracoId + "|" + programItem.NavUmbracoId +"|" + programItem.Name);
             }
 
-            using (FileStream fs = File.Create("person-cache.txt"))
+            using (FileStream fs = File.Create("NAVIGATION_person-cache.txt"))
             {
                // Add some text to file
                Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
@@ -991,7 +991,7 @@ namespace USDA_ARS.ImportNavigation
 
       static List<ModeCodeFolderLookup> GetModeCodeFolderLookupCache()
       {
-         string filename = "mode-code-folder-cache.txt";
+         string filename = "NAVIGATION_mode-code-folder-cache.txt";
          List<ModeCodeFolderLookup> modeCodeList = new List<ModeCodeFolderLookup>();
 
          if (true == File.Exists(filename))
@@ -1026,7 +1026,7 @@ namespace USDA_ARS.ImportNavigation
                sb.AppendLine(modeCodeItem.ModeCode + "|" + modeCodeItem.FolderName + "|" + modeCodeItem.UmbracoId);
             }
 
-            using (FileStream fs = File.Create("mode-code-folder-cache.txt"))
+            using (FileStream fs = File.Create("NAVIGATION_mode-code-folder-cache.txt"))
             {
                // Add some text to file
                Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
@@ -1102,7 +1102,7 @@ namespace USDA_ARS.ImportNavigation
 
       static List<ImportedNav> GetNavImportLookupCache()
       {
-         string filename = "nav-import-cache.txt";
+         string filename = "NAVIGATION_nav-import-cache.txt";
          List<ImportedNav> navImportList = new List<ImportedNav>();
 
          if (true == File.Exists(filename))
@@ -1138,7 +1138,7 @@ namespace USDA_ARS.ImportNavigation
                sb.AppendLine(navImportItem.NavSysId + "|" + navImportItem.UmbracoNodeId + "|" + navImportItem.NavTitle + "|" + navImportItem.Section + "|" + navImportItem.Label);
             }
 
-            using (FileStream fs = File.Create("nav-import-cache.txt"))
+            using (FileStream fs = File.Create("NAVIGATION_nav-import-cache.txt"))
             {
                // Add some text to file
                Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
@@ -1445,7 +1445,7 @@ namespace USDA_ARS.ImportNavigation
       {
          IMPORTED_NAV.Add(importedNav);
 
-         using (StreamWriter sw = File.AppendText("imported-nav.txt"))
+         using (StreamWriter sw = File.AppendText("NAVIGATION_imported-nav.txt"))
          {
             sw.Write(importedNav.NavSysId + "~");
             sw.Write(importedNav.UmbracoNodeId + "~");
