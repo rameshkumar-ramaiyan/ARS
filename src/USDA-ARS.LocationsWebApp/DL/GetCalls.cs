@@ -34,7 +34,7 @@ namespace USDA_ARS.LocationsWebApp.DL
             request.ContentList = new List<ApiContent>();
             request.ContentList.Add(content);
 
-            ApiResponse responseBack = ApiCalls.PostData(request, "Get");
+            ApiResponse responseBack = ApiCalls.PostData(request, "Get", 120000);
 
             return responseBack;
         }

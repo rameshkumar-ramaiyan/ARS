@@ -33,7 +33,7 @@
         int i = 0;
         foreach (PeopleByCity peopleByCity in siteLabelList)
         {
-            if (incValue == 0 && peopleByCity.ModeCode == modeCode)
+            if (incValue == -1 && peopleByCity.ModeCode == modeCode)
             {
                 incValue = i;
             }
@@ -130,7 +130,7 @@
                     {
                         int peopleCount = peopleList.Count;
 
-            <h4 id="@(siteLabel.SiteCode)">
+            <h4 id="@(siteLabel.ModeCodeConcat)">
                @(siteLabel.SiteLabel)
 
                @("(" + peopleCount + " " + (peopleCount == 1 ? "person" : "people") + ")")
