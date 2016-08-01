@@ -358,13 +358,52 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
       }
 
 
+      public static IPublishedContent GetSubLocationNodeByModeCode(string modeCode, LocationSubNodeOptions subNodeType, bool useCache = true)
+      {
+         IPublishedContent node = null;
+         IPublishedContent locationNode = null;
+         modeCode = Helpers.ModeCodes.ModeCodeAddDashes(modeCode);
+
+         locationNode = GetNodeByModeCode(modeCode, useCache);
+
+         if (locationNode != null)
+         {
+            string subNodeDocType = "";
+
+            if (subNodeType == LocationSubNodeOptions.Careers)
+            {
+               subNodeDocType = "SitesCareers";
+            }
+            else if (subNodeType == LocationSubNodeOptions.News)
+            {
+               subNodeDocType = "SitesNews";
+            }
+            else if (subNodeType == LocationSubNodeOptions.People)
+            {
+               subNodeDocType = "PeopleFolder";
+            }
+            else if (subNodeType == LocationSubNodeOptions.Research)
+            {
+               subNodeDocType = "SitesResearch";
+            }
+            
+            if (false == string.IsNullOrEmpty(subNodeDocType))
+            {
+               node = locationNode.Children.Where(p => p.IsDocumentType("SitesCareers")).FirstOrDefault();
+            }
+         }
+
+         return node;
+      }
+
+
       public static IPublishedContent GetNavNodeIdByGuid(string guid)
       {
          IPublishedContent node = null;
 
          var db = new Database("umbracoDbDSN");
 
-         string sql = @"SELECT nodeId FROM [cmsContentXml] WHERE xml LIKE '<LeftNavigationSet%' AND xml LIKE '%"+ guid + "%'";
+         string sql = @"SELECT nodeId FROM [cmsContentXml] WHERE xml LIKE '<LeftNavigationSet%' AND xml LIKE '%" + guid + "%'";
 
          string contentNodeId = db.Query<string>(sql).FirstOrDefault();
 
@@ -491,6 +530,14 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
          }
 
          return node;
+      }
+
+      public enum LocationSubNodeOptions
+      {
+         Research,
+         Careers,
+         News,
+         People
       }
    }
 }

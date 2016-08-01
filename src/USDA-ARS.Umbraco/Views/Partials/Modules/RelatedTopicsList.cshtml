@@ -2,196 +2,254 @@
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
 @using USDA_ARS.Umbraco.Extensions
-@using USDA_ARS.Umbraco.Extensions.Models
-@using Newtonsoft.Json
-@model IPublishedContent
-@{
-   string modeCode = "";
+@using USDA_ARS.Umbraco.Extensions.Helpers
+   @using USDA_ARS.Umbraco.Extensions.Models
+   @using Newtonsoft.Json
+   @model IPublishedContent
+   @{
+      string modeCode = "";
 
-   modeCode = Model.GetPropertyValue<string>("modeCode");
+      modeCode = Model.GetPropertyValue<string>("modeCode");
 
-   IPublishedContent rootPage = Model.AncestorOrSelf(1);
+      IPublishedContent rootPage = Model.AncestorOrSelf(1);
 
-   if (false == string.IsNullOrEmpty(Request.QueryString["modeCode"]))
-   {
-      modeCode = Request.QueryString.Get("modeCode");
-   }
-   if (true == string.IsNullOrEmpty(modeCode))
-   {
-      modeCode = rootPage.GetPropertyValue<string>("modeCode");
-   }
-
-   ArchetypeModel currentRelatedTopics = null;
-
-   if (Model.Parent != null && Model.Parent.DocumentTypeAlias == "NationalProgramFolderContainer")
-   {
-      currentRelatedTopics = Model.Parent.Parent.GetPropertyValue<ArchetypeModel>("leftNavPicker");
-   }
-   else
-   {
-      currentRelatedTopics = Model.GetPropertyValue<ArchetypeModel>("leftNavPicker");
-   }
-
-
-   List<IPublishedContent> siteRelatedTopicsTop = null;
-   List<IPublishedContent> siteRelatedTopicsBottom = null;
-
-   USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetSiteGlobalNav(Model, ref siteRelatedTopicsTop, ref siteRelatedTopicsBottom);
-
-   bool foundExternalLink = false;
-}
-
-<!--[if lt IE 9]>
-    <div class="IErounded-sidetop"
-         style="display:block; height:20px; width:250px; position:relative; left:25px; top:5px;">
-        <img src="/images/redesign/rounded-sidetop.png" alt="spacing">
-    </div>
-    <style>#relatedTopics {margin-top:-10px !important; z-index:300 !important;}</style>
-<![endif]-->
-<div id="relatedTopics">
-   <h1 class="related_topics">Related Topics</h1>
-   <ul>
-      @if (siteRelatedTopicsTop != null && siteRelatedTopicsTop.Any())
+      if (false == string.IsNullOrEmpty(Request.QueryString["modeCode"]))
       {
-         foreach (var siteNavTop in siteRelatedTopicsTop)
-         {
-            ArchetypeModel navigationItems = siteNavTop.GetPropertyValue<ArchetypeModel>("navigationItems");
+         modeCode = Request.QueryString.Get("modeCode");
+      }
+      if (true == string.IsNullOrEmpty(modeCode))
+      {
+         modeCode = rootPage.GetPropertyValue<string>("modeCode");
+      }
 
-            foreach (var navItem in navigationItems)
-            {
-               if (navItem != null)
-               {
-                  @Html.Raw(OutputTopic(navItem, modeCode, ref foundExternalLink))
-               }
-            }
+      ArchetypeModel parentRelatedTopics = null;
+      ArchetypeModel currentRelatedTopics = null;
+
+      if (Model.Parent != null)
+      {
+         // Get Parent Left Nav (Research, Careers, News)
+         if (Model.Parent.DocumentTypeAlias == "SitesResearch" || Model.Parent.DocumentTypeAlias == "SitesCareers" || Model.Parent.DocumentTypeAlias == "SitesNews")
+         {
+            parentRelatedTopics = Model.Parent.GetPropertyValue<ArchetypeModel>("leftNavPicker");
          }
       }
 
-      @if (currentRelatedTopics != null && currentRelatedTopics.Any())
+      if (false == string.IsNullOrEmpty(modeCode))
       {
-         foreach (var topicList in currentRelatedTopics)
+         IPublishedContent subNode = null;
+         if (Model.AncestorOrSelf(2).DocumentTypeAlias == "Research")
          {
-            foreach (var topicItemList in topicList.Properties)
+            subNode = Nodes.GetSubLocationNodeByModeCode(modeCode, Nodes.LocationSubNodeOptions.Research);
+         }
+         else if (Model.AncestorOrSelf(2).DocumentTypeAlias == "NewsHome")
+         {
+            subNode = Nodes.GetSubLocationNodeByModeCode(modeCode, Nodes.LocationSubNodeOptions.News);
+         }
+         else if (Model.AncestorOrSelf(2).DocumentTypeAlias == "Careers")
+         {
+            subNode = Nodes.GetSubLocationNodeByModeCode(modeCode, Nodes.LocationSubNodeOptions.Careers);
+         }
+
+         // Found subNode? Get Nav!
+         if (subNode != null)
+         {
+            parentRelatedTopics = subNode.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+         }
+      }
+
+      if (Model.Parent != null && Model.Parent.DocumentTypeAlias == "NationalProgramFolderContainer")
+      {
+         currentRelatedTopics = Model.Parent.Parent.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+      }
+      else
+      {
+         currentRelatedTopics = Model.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+      }
+
+
+      List<IPublishedContent> siteRelatedTopicsTop = null;
+      List<IPublishedContent> siteRelatedTopicsBottom = null;
+
+      USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetSiteGlobalNav(Model, ref siteRelatedTopicsTop, ref siteRelatedTopicsBottom);
+
+      bool foundExternalLink = false;
+   }
+
+   <!--[if lt IE 9]>
+       <div class="IErounded-sidetop"
+            style="display:block; height:20px; width:250px; position:relative; left:25px; top:5px;">
+           <img src="/images/redesign/rounded-sidetop.png" alt="spacing">
+       </div>
+       <style>#relatedTopics {margin-top:-10px !important; z-index:300 !important;}</style>
+   <![endif]-->
+   <div id="relatedTopics">
+      <h1 class="related_topics">Related Topics</h1>
+      <ul>
+         @if (siteRelatedTopicsTop != null && siteRelatedTopicsTop.Any())
+         {
+            foreach (var siteNavTop in siteRelatedTopicsTop)
             {
-               TopicPickerValue topicItemListValue = JsonConvert.DeserializeObject<TopicPickerValue>(topicItemList.Value.ToString());
+               ArchetypeModel navigationItems = siteNavTop.GetPropertyValue<ArchetypeModel>("navigationItems");
 
-               if (topicItemListValue != null && false == string.IsNullOrEmpty(topicItemListValue.Value))
+               foreach (var navItem in navigationItems)
                {
-                  ArchetypeModel topicItem = USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetTopicsById(Convert.ToInt32(topicItemListValue.Value));
-
-                  if (topicItem != null)
+                  if (navItem != null)
                   {
-                     foreach (var item in topicItem)
+                     @Html.Raw(OutputTopic(navItem, modeCode, ref foundExternalLink))
+                  }
+               }
+            }
+         }
+
+         @if (parentRelatedTopics != null && parentRelatedTopics.Any())
+         {
+            foreach (var topicList in parentRelatedTopics)
+            {
+               foreach (var topicItemList in topicList.Properties)
+               {
+                  TopicPickerValue topicItemListValue = JsonConvert.DeserializeObject<TopicPickerValue>(topicItemList.Value.ToString());
+
+                  if (topicItemListValue != null && false == string.IsNullOrEmpty(topicItemListValue.Value))
+                  {
+                     ArchetypeModel topicItem = USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetTopicsById(Convert.ToInt32(topicItemListValue.Value));
+
+                     if (topicItem != null)
                      {
-         @Html.Raw(OutputTopic(item, modeCode, ref foundExternalLink))
+                        foreach (var item in topicItem)
+                        {
+                           @Html.Raw(OutputTopic(item, modeCode, ref foundExternalLink))
+                        }
                      }
                   }
                }
             }
          }
-      }
 
-      @if (Model.DocumentTypeAlias == "NationalProgram" || (Model.Parent != null && Model.Parent.DocumentTypeAlias == "NationalProgramFolderContainer"))
-      {
-         @Html.Partial("~/Views/Partials/Modules/ResearchProgramNavigation.cshtml", Model)
-      }
-
-      @if (siteRelatedTopicsBottom != null && siteRelatedTopicsBottom.Any())
-      {
-         foreach (var siteNavBottom in siteRelatedTopicsBottom)
+         @if (currentRelatedTopics != null && currentRelatedTopics.Any())
          {
-            ArchetypeModel navigationItems = siteNavBottom.GetPropertyValue<ArchetypeModel>("navigationItems");
-
-            foreach (var navItem in navigationItems)
+            foreach (var topicList in currentRelatedTopics)
             {
-               if (navItem != null)
+               foreach (var topicItemList in topicList.Properties)
                {
-         @Html.Raw(OutputTopic(navItem, modeCode, ref foundExternalLink))
+                  TopicPickerValue topicItemListValue = JsonConvert.DeserializeObject<TopicPickerValue>(topicItemList.Value.ToString());
+
+                  if (topicItemListValue != null && false == string.IsNullOrEmpty(topicItemListValue.Value))
+                  {
+                     ArchetypeModel topicItem = USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetTopicsById(Convert.ToInt32(topicItemListValue.Value));
+
+                     if (topicItem != null)
+                     {
+                        foreach (var item in topicItem)
+                        {
+                           @Html.Raw(OutputTopic(item, modeCode, ref foundExternalLink))
+                        }
+                     }
+                  }
                }
             }
          }
+
+         @if (Model.DocumentTypeAlias == "NationalProgram" || (Model.Parent != null && Model.Parent.DocumentTypeAlias == "NationalProgramFolderContainer"))
+         {
+            @Html.Partial("~/Views/Partials/Modules/ResearchProgramNavigation.cshtml", Model)
+         }
+
+         @if (siteRelatedTopicsBottom != null && siteRelatedTopicsBottom.Any())
+         {
+            foreach (var siteNavBottom in siteRelatedTopicsBottom)
+            {
+               ArchetypeModel navigationItems = siteNavBottom.GetPropertyValue<ArchetypeModel>("navigationItems");
+
+               foreach (var navItem in navigationItems)
+               {
+                  if (navItem != null)
+                  {
+                     @Html.Raw(OutputTopic(navItem, modeCode, ref foundExternalLink))
+                  }
+               }
+            }
+         }
+      </ul>
+      @if (true == foundExternalLink)
+      {
+         <br />
+         <span style="padding: 0 0 0 20px;">* Goes to a non-federal site</span>
       }
-   </ul>
-   @if (true == foundExternalLink)
-   {
-      <br />
-      <span style="padding: 0 0 0 20px;">* Goes to a non-federal site</span>
-   }
-</div>
-<!--[if lt IE 9]>
-    <div class="IErounded-sidebot"
-            style="display:block; height:20px; width:250px; position:relative; left:25px; top:-12px;">
-        <img src="/images/redesign/rounded-sidebottom.png" alt="spacing">
-    </div>
-<![endif]-->
+   </div>
+   <!--[if lt IE 9]>
+       <div class="IErounded-sidebot"
+               style="display:block; height:20px; width:250px; position:relative; left:25px; top:-12px;">
+           <img src="/images/redesign/rounded-sidebottom.png" alt="spacing">
+       </div>
+   <![endif]-->
 
 
 
-@functions
+   @functions
 {
-   string OutputTopic(ArchetypeFieldsetModel item, string modeCode, ref bool foundExternalLink)
-   {
-      string html = null;
-
-      if (item.Alias == "topicsItem")
+      string OutputTopic(ArchetypeFieldsetModel item, string modeCode, ref bool foundExternalLink)
       {
-         string urlLink = "#";
-         string targetLink = "";
-         bool appendModeCode = false;
+         string html = null;
 
-         if (item.HasValue("location"))
+         if (item.Alias == "topicsItem")
          {
-            Link navLink = item.GetValue<MultiUrls>("location").FirstOrDefault();
+            string urlLink = "#";
+            string targetLink = "";
+            bool appendModeCode = false;
 
-            if (navLink != null && navLink.Url != null)
+            if (item.HasValue("location"))
             {
-               urlLink = navLink.Url;
+               Link navLink = item.GetValue<MultiUrls>("location").FirstOrDefault();
+
+               if (navLink != null && navLink.Url != null)
+               {
+                  urlLink = navLink.Url;
+               }
             }
+            else if (item.HasValue("linkToFile"))
+            {
+               urlLink = item.GetValue<string>("linkToFile");
+               targetLink = " target=\"_blank\"";
+            }
+
+
+            appendModeCode = item.GetValue<bool>("appendModeCode");
+
+            if (true == appendModeCode && false == string.IsNullOrEmpty(modeCode))
+            {
+               if (true == urlLink.Contains("?"))
+               {
+                  urlLink += "&";
+               }
+               else
+               {
+                  urlLink += "?";
+               }
+               urlLink += "modeCode=" + modeCode;
+            }
+
+            string externalIcon = "";
+
+            if (urlLink.StartsWith("http"))
+            {
+               if (urlLink.ToLower().IndexOf(".gov") < 0)
+               {
+                  externalIcon = " *";
+
+                  foundExternalLink = true;
+               }
+            }
+
+            html = "<li><a href=\"" + urlLink + "\"" + targetLink + ">" + item.GetValue<string>("title") + externalIcon + "</a></li>";
          }
-         else if (item.HasValue("linkToFile"))
+         else if (item.Alias == "topicsHeader")
          {
-            urlLink = item.GetValue<string>("linkToFile");
-            targetLink = " target=\"_blank\"";
+            html = "<h2 class=\"related_topics\">" + item.GetValue<string>("sectionTitle") + "</h2>";
          }
 
+         html += "\r\n";
 
-         appendModeCode = item.GetValue<bool>("appendModeCode");
-
-         if (true == appendModeCode && false == string.IsNullOrEmpty(modeCode))
-         {
-            if (true == urlLink.Contains("?"))
-            {
-               urlLink += "&";
-            }
-            else
-            {
-               urlLink += "?";
-            }
-            urlLink += "modeCode=" + modeCode;
-         }
-
-         string externalIcon = "";
-
-         if (urlLink.StartsWith("http"))
-         {
-            if (urlLink.ToLower().IndexOf(".gov") < 0)
-            {
-               externalIcon = " *";
-
-               foundExternalLink = true;
-            }
-         }
-
-         html = "<li><a href=\"" + urlLink + "\"" + targetLink + ">" + item.GetValue<string>("title") + externalIcon + "</a></li>";
+         return html;
       }
-      else if (item.Alias == "topicsHeader")
-      {
-         html = "<h2 class=\"related_topics\">" + item.GetValue<string>("sectionTitle") + "</h2>";
-      }
 
-      html += "\r\n";
-
-      return html;
    }
-
-}
