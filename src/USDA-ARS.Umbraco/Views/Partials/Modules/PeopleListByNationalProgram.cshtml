@@ -70,8 +70,10 @@ remote.location.href = u;
                                 <table width="100%" cellspacing="0" cellpadding="3" border="0">
 
                                     <tbody>
-                                        @if (peopleFullList != null && peopleFullList.Any())
+                                                                                @if (peopleFullList != null && peopleFullList.Any())
                                         {
+                                             peopleFullList = peopleFullList.OrderBy(p => p.LastName).ThenBy(p => p.FirstName).ToList();
+
                                             foreach (PeopleInfo person in peopleFullList)
                                             {
                                                 <tr>

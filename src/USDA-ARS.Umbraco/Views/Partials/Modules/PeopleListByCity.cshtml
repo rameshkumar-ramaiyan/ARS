@@ -119,7 +119,7 @@
 
       <div id="accordion" style="width:600px">
 
-         @if (siteLabelList != null && siteLabelList.Any())
+                  @if (siteLabelList != null && siteLabelList.Any())
          {
             siteLabelList = siteLabelList.OrderBy(p => p.ModeCodeConcat).ToList();
 
@@ -135,7 +135,7 @@
                List<PeopleByCity> peopleList = peopleFullList.Where(p => p.ModeCodeConcat == siteLabel.ModeCodeConcat).ToList();
 
                if (peopleList != null && peopleList.Any() && peopleList[0].ModeCodeConcat != null &&
-                        peopleList[0].ModeCodeConcat.Length > 3 && 
+                        peopleList[0].ModeCodeConcat.Length > 3 &&
                         (peopleList[0].ModeCodeConcat.Substring(4, 2) == "01" || peopleList[0].ModeCodeConcat.Substring(4, 2) == "02"))
                {
                   //peopleList = peopleList.OrderBy()
@@ -145,6 +145,8 @@
 
                if (peopleList != null && peopleList.Count > 0)
                {
+                  peopleList = peopleList.OrderBy(p => p.LastName).ThenBy(p => p.FirstName).ToList();
+
                   int peopleCount = peopleList.Count;
 
                      <h4 id="@(siteLabel.ModeCodeConcat)">

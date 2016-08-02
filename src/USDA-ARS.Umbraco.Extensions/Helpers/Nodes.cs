@@ -209,11 +209,11 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
       public static void CityResearchUnitList(ref List<ResearchUnitDisplay> researchUnits, IPublishedContent city, int level)
       {
-         IEnumerable<IPublishedContent> researchUnitList = city.Children.Where(n => n.IsDocumentType("City") || n.IsDocumentType("ResearchUnit"));
+         IEnumerable<IPublishedContent> researchUnitList = city.Children.Where(n => n.IsDocumentType("City") || n.IsDocumentType("ResearchUnit") || n.IsDocumentType("ResearchUnitClosed"));
 
          if (researchUnitList != null && researchUnitList.Any())
          {
-            if (researchUnitList.FirstOrDefault().DocumentTypeAlias == "ResearchUnit")
+            if (researchUnitList.FirstOrDefault().DocumentTypeAlias == "ResearchUnit" || researchUnitList.FirstOrDefault().DocumentTypeAlias == "ResearchUnitClosed")
             {
                researchUnitList = researchUnitList.OrderBy(p => p.Name);
             }

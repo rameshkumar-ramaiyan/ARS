@@ -24,7 +24,7 @@
 
       if (sitePage != null)
       {
-         softwareNodeList.Add(sitePage);
+         softwareNodeList = Software.GetSofwareListByNode(sitePage).ToList();
       }
    }
    else

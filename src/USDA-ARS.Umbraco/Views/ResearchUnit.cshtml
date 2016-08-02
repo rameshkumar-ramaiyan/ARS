@@ -23,7 +23,7 @@
 
     ArchetypeModel defaultPopularTopics = rootPage.GetPropertyValue<ArchetypeModel>("popularTopics");
 
-    ArchetypeModel softwareDownloads = currentPage.GetPropertyValue<ArchetypeModel>("software");
+    IEnumerable<IPublishedContent> softwareDownloads = Software.GetSofwareListByNode(currentPage);
 
     ArchetypeModel popularTopics = currentPage.GetPropertyValue<ArchetypeModel>("popularTopics");
     ArchetypeModel carouselSlides = currentPage.GetPropertyValue<ArchetypeModel>("carouselSlides");
