@@ -19,6 +19,11 @@
     }
 
     bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
+
+    if (currentPage.Url.StartsWith("/oc/"))
+   {
+      bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.Modify300DpiDownload(currentPage, bodyText);
+   }
 }
 
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)

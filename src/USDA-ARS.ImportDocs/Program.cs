@@ -936,6 +936,12 @@ namespace USDA_ARS.ImportDocs
          ApiContent content = new ApiContent();
 
          string oldUrl = "";
+
+         if (true == string.IsNullOrWhiteSpace(oldDocType))
+         {
+            oldDocType = "main";
+         }
+
          oldUrl = "/" + oldDocType + "/docs.htm?docid=" + oldId;
 
          if (pageNum > 1)
