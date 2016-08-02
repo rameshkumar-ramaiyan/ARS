@@ -908,7 +908,7 @@ namespace USDA_ARS.ImportLocations
 
          for (int i = 0; i < lines.Length; i++)
          {
-            if (lines[i].Contains(softwareId.ToString()))
+            if (lines[i].StartsWith(softwareId.ToString()+"\\"))
             {
                myCollection.Add(lines[i]);
             }
@@ -1165,40 +1165,47 @@ namespace USDA_ARS.ImportLocations
                }
             }
 
-            properties.Add(new ApiProperty("fileDownloads", fileListJson));
-
-            content.Properties = properties;
-            content.Save = 1; // 0=Unpublish (update only), 1=Saved, 2=Save And Publish
-
-            request.ContentList = new List<ApiContent>();
-            request.ContentList.Add(content);
-
-            AddLog("Saving software in Umbraco: '" + content.Name + "'...");
-
-            ApiResponse responseBack = ApiCalls.PostData(request, "Post");
-
-            if (responseBack != null && responseBack.ContentList != null && responseBack.ContentList.Any())
+            if (filePathSP2List != null && filePathSP2List.Count > 0)
             {
-               if (true == responseBack.ContentList[0].Success)
+               properties.Add(new ApiProperty("fileDownloads", fileListJson));
+
+               content.Properties = properties;
+               content.Save = 1; // 0=Unpublish (update only), 1=Saved, 2=Save And Publish
+
+               request.ContentList = new List<ApiContent>();
+               request.ContentList.Add(content);
+
+               AddLog("Saving software in Umbraco: '" + content.Name + "'...");
+
+               ApiResponse responseBack = ApiCalls.PostData(request, "Post");
+
+               if (responseBack != null && responseBack.ContentList != null && responseBack.ContentList.Any())
                {
-                  AddLog(" - Saved: " + responseBack.ContentList[0].Name);
-                  publishLater = true;
+                  if (true == responseBack.ContentList[0].Success)
+                  {
+                     AddLog(" - Saved: " + responseBack.ContentList[0].Name);
+                     publishLater = true;
+                  }
+                  else
+                  {
+                     AddLog(" !!! NOT SAVED !!!: " + responseBack.ContentList[0].Message);
+                  }
                }
                else
                {
-                  AddLog(" !!! NOT SAVED !!!: " + responseBack.ContentList[0].Message);
+                  if (responseBack == null || responseBack.ContentList != null || false == responseBack.ContentList.Any())
+                  {
+                     AddLog(" !!! NOT Saved");
+                  }
+                  else
+                  {
+                     AddLog(" !!! NOT Saved!");
+                  }
                }
             }
             else
             {
-               if (responseBack == null || responseBack.ContentList != null || false == responseBack.ContentList.Any())
-               {
-                  AddLog(" !!! NOT Saved");
-               }
-               else
-               {
-                  AddLog(" !!! NOT Saved!");
-               }
+               AddLog(" - Software bypassed because no files were linked.");
             }
          }
 
