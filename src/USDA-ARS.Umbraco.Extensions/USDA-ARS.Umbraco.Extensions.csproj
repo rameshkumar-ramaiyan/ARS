@@ -335,6 +335,7 @@
     <Compile Include="Helpers\News.cs" />
     <Compile Include="Helpers\Nodes.cs" />
     <Compile Include="Helpers\Redirects.cs" />
+    <Compile Include="Helpers\Scripts.cs" />
     <Compile Include="Helpers\SelectList.cs" />
     <Compile Include="Helpers\Software.cs" />
     <Compile Include="Helpers\SubscriptionForm.cs" />
