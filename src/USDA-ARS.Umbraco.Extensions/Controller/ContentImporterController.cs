@@ -539,7 +539,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
                      IEnumerable<IPublishedContent> nodeList = rootNode.Descendants();
 
-                     modeCodeNodesList.AddRange(nodeList.Where(p => (p.ContentType.Alias == "Homepage" || p.ContentType.Alias == "Area" || p.ContentType.Alias == "City" || p.ContentType.Alias == "ResearchUnit" || p.ContentType.Alias == "NationalProgramGroup")
+                     modeCodeNodesList.AddRange(nodeList.Where(p => (p.DocumentTypeAlias == "Homepage" || p.DocumentTypeAlias == "Area" || p.DocumentTypeAlias == "City" || p.DocumentTypeAlias == "ResearchUnit" || p.DocumentTypeAlias == "NationalProgramGroup")
                                  && p.Properties.Any(s => s.Value != null && s.PropertyTypeAlias == "modeCode" && false == string.IsNullOrEmpty(s.Value.ToString()))).ToList());
                   }
 
@@ -605,7 +605,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                   {
                      IEnumerable<IPublishedContent> nodeList = rootNode.Descendants();
 
-                     personNodeList.AddRange(nodeList.Where(p => (p.ContentType.Alias == "PersonSite")
+                     personNodeList.AddRange(nodeList.Where(p => (p.DocumentTypeAlias == "PersonSite")
                                  && p.Properties.Any(s => s.Value != null && s.PropertyTypeAlias == "personLink" && false == string.IsNullOrEmpty(s.Value.ToString()))).ToList());
                   }
 
@@ -671,7 +671,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                   {
                      IEnumerable<IPublishedContent> nodeList = rootNode.Descendants();
 
-                     navList.AddRange(nodeList.Where(p => (p.ContentType.Alias == "LeftNavigationSet")).ToList());
+                     navList.AddRange(nodeList.Where(p => (p.DocumentTypeAlias == "LeftNavigationSet")).ToList());
                   }
 
                   response.ContentList = new List<Models.Import.ApiContent>();
@@ -738,7 +738,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                   {
                      IEnumerable<IPublishedContent> nodeList = rootNode.Descendants();
 
-                     peopleFolderList.AddRange(nodeList.Where(p => p.ContentType.Alias == "PeopleFolder").ToList());
+                     peopleFolderList.AddRange(nodeList.Where(p => p.DocumentTypeAlias == "PeopleFolder").ToList());
                   }
 
                   response.ContentList = new List<Models.Import.ApiContent>();
@@ -803,7 +803,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                   {
                      IEnumerable<IPublishedContent> nodeList = rootNode.Descendants();
 
-                     nationalProgramsList.AddRange(nodeList.Where(p => p.ContentType.Alias == "NationalProgram").ToList());
+                     nationalProgramsList.AddRange(nodeList.Where(p => p.DocumentTypeAlias == "NationalProgram").ToList());
                   }
 
                   response.ContentList = new List<Models.Import.ApiContent>();
@@ -1114,8 +1114,15 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
          contentObj.Id = content.Id;
          contentObj.Name = content.Name;
          contentObj.Url = Umbraco.NiceUrl(content.Id);
-         contentObj.ParentId = content.Parent.Id;
-         contentObj.DocType = content.ContentType.Alias;
+         if (content.Parent != null)
+         {
+            contentObj.ParentId = content.Parent.Id;
+         }
+         else
+         {
+            contentObj.ParentId = 0;
+         }
+         contentObj.DocType = content.DocumentTypeAlias;
          contentObj.Template = content.TemplateId.ToString();
          contentObj.Properties = new List<Models.Import.ApiProperty>();
 
@@ -1149,7 +1156,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                   contentNavObj.Name = navNode.Name;
                   contentNavObj.Url = "";
                   contentNavObj.ParentId = navNode.Parent.Id;
-                  contentNavObj.DocType = navNode.ContentType.Alias;
+                  contentNavObj.DocType = navNode.DocumentTypeAlias;
                   contentNavObj.Template = "";
 
                   contentObj.ChildContentList.Add(contentNavObj);
