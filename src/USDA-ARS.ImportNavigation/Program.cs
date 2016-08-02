@@ -1311,7 +1311,6 @@ namespace USDA_ARS.ImportNavigation
 
 
       static void CreateLeftNav(int navUmbracoId, string location, List<NavSystem> navSysList)
-
       {
          bool publishPages = false;
 

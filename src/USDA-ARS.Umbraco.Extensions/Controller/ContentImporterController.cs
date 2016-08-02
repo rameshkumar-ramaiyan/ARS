@@ -17,6 +17,7 @@ using Umbraco.Core;
 using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
 using Umbraco.Core.Services;
+using Umbraco.Web;
 using Umbraco.Web.Mvc;
 using Umbraco.Web.WebApi;
 using USDA_ARS.Core;
@@ -27,6 +28,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
    public class ContentImporterController : UmbracoApiController
    {
       private static readonly IContentService _contentService = ApplicationContext.Current.Services.ContentService;
+      private static UmbracoHelper UmbHelper = new UmbracoHelper(UmbracoContext.Current);
       private static string _apiKey = "E027CF8B-C5B8-45F6-A37B-979DB02A8544";
 
       [System.Web.Http.HttpPost]
@@ -524,30 +526,28 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                   response.Success = true;
                   response.ContentList = new List<Models.Import.ApiContent>();
 
-                  List<IContent> modeCodeNodesList = new List<IContent>();
+                  List<IPublishedContent> modeCodeNodesList = new List<IPublishedContent>();
 
-                  IEnumerable<IContent> rootNodeList = _contentService.GetRootContent();
+                  IEnumerable<IPublishedContent> rootNodeList = UmbHelper.TypedContentAtRoot();
 
-                  foreach (IContent rootNode in rootNodeList)
+                  foreach (IPublishedContent rootNode in rootNodeList)
                   {
-                     if (rootNode.HasProperty("modeCode") && false == string.IsNullOrEmpty(rootNode.GetValue<string>("modeCode")))
+                     if (rootNode.HasProperty("modeCode") && false == string.IsNullOrEmpty(rootNode.GetPropertyValue<string>("modeCode")))
                      {
                         modeCodeNodesList.Add(rootNode);
                      }
 
-                     IEnumerable<IContent> nodeList = _contentService.GetDescendants(rootNode.Id);
+                     IEnumerable<IPublishedContent> nodeList = rootNode.Descendants();
 
                      modeCodeNodesList.AddRange(nodeList.Where(p => (p.ContentType.Alias == "Homepage" || p.ContentType.Alias == "Area" || p.ContentType.Alias == "City" || p.ContentType.Alias == "ResearchUnit" || p.ContentType.Alias == "NationalProgramGroup")
-                                 && p.Properties.Any(s => s.Value != null && s.Alias == "modeCode" && false == string.IsNullOrEmpty(s.Value.ToString()))).ToList());
+                                 && p.Properties.Any(s => s.Value != null && s.PropertyTypeAlias == "modeCode" && false == string.IsNullOrEmpty(s.Value.ToString()))).ToList());
                   }
 
                   response.ContentList = new List<Models.Import.ApiContent>();
 
-                  foreach (IContent node in modeCodeNodesList)
+                  foreach (IPublishedContent node in modeCodeNodesList)
                   {
-
-
-                     response.ContentList.Add(ConvertContentObj(node, true));
+                     response.ContentList.Add(ConvertPublishedContentObj(node, true));
                   }
 
                   response.Message = "Success";
@@ -597,23 +597,23 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                   response.Success = true;
                   response.ContentList = new List<Models.Import.ApiContent>();
 
-                  List<IContent> personNodeList = new List<IContent>();
+                  List<IPublishedContent> personNodeList = new List<IPublishedContent>();
 
-                  IEnumerable<IContent> rootNodeList = _contentService.GetRootContent();
+                  IEnumerable<IPublishedContent> rootNodeList = UmbHelper.TypedContentAtRoot();
 
-                  foreach (IContent rootNode in rootNodeList)
+                  foreach (IPublishedContent rootNode in rootNodeList)
                   {
-                     IEnumerable<IContent> nodeList = _contentService.GetDescendants(rootNode.Id);
+                     IEnumerable<IPublishedContent> nodeList = rootNode.Descendants();
 
                      personNodeList.AddRange(nodeList.Where(p => (p.ContentType.Alias == "PersonSite")
-                                 && p.Properties.Any(s => s.Value != null && s.Alias == "personLink" && false == string.IsNullOrEmpty(s.Value.ToString()))).ToList());
+                                 && p.Properties.Any(s => s.Value != null && s.PropertyTypeAlias == "personLink" && false == string.IsNullOrEmpty(s.Value.ToString()))).ToList());
                   }
 
                   response.ContentList = new List<Models.Import.ApiContent>();
 
-                  foreach (IContent node in personNodeList)
+                  foreach (IPublishedContent node in personNodeList)
                   {
-                     response.ContentList.Add(ConvertContentObj(node));
+                     response.ContentList.Add(ConvertPublishedContentObj(node, true));
                   }
 
                   response.Message = "Success";
@@ -663,22 +663,22 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                   response.Success = true;
                   response.ContentList = new List<Models.Import.ApiContent>();
 
-                  List<IContent> navList = new List<IContent>();
+                  List<IPublishedContent> navList = new List<IPublishedContent>();
 
-                  IEnumerable<IContent> rootNodeList = _contentService.GetRootContent();
+                  IEnumerable<IPublishedContent> rootNodeList = UmbHelper.TypedContentAtRoot();
 
-                  foreach (IContent rootNode in rootNodeList)
+                  foreach (IPublishedContent rootNode in rootNodeList)
                   {
-                     IEnumerable<IContent> nodeList = _contentService.GetDescendants(rootNode.Id);
+                     IEnumerable<IPublishedContent> nodeList = rootNode.Descendants();
 
                      navList.AddRange(nodeList.Where(p => (p.ContentType.Alias == "LeftNavigationSet")).ToList());
                   }
 
                   response.ContentList = new List<Models.Import.ApiContent>();
 
-                  foreach (IContent node in navList)
+                  foreach (IPublishedContent node in navList)
                   {
-                     response.ContentList.Add(ConvertContentObj(node));
+                     response.ContentList.Add(ConvertPublishedContentObj(node));
                   }
 
                   response.Message = "Success";
@@ -730,22 +730,22 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                   response.Success = true;
                   response.ContentList = new List<Models.Import.ApiContent>();
 
-                  List<IContent> peopleFolderList = new List<IContent>();
+                  List<IPublishedContent> peopleFolderList = new List<IPublishedContent>();
 
-                  IEnumerable<IContent> rootNodeList = _contentService.GetRootContent();
+                  IEnumerable<IPublishedContent> rootNodeList = UmbHelper.TypedContentAtRoot();
 
-                  foreach (IContent rootNode in rootNodeList)
+                  foreach (IPublishedContent rootNode in rootNodeList)
                   {
-                     IEnumerable<IContent> nodeList = _contentService.GetDescendants(rootNode.Id);
+                     IEnumerable<IPublishedContent> nodeList = rootNode.Descendants();
 
                      peopleFolderList.AddRange(nodeList.Where(p => p.ContentType.Alias == "PeopleFolder").ToList());
                   }
 
                   response.ContentList = new List<Models.Import.ApiContent>();
 
-                  foreach (IContent node in peopleFolderList)
+                  foreach (IPublishedContent node in peopleFolderList)
                   {
-                     response.ContentList.Add(ConvertContentObj(node));
+                     response.ContentList.Add(ConvertPublishedContentObj(node, true));
                   }
 
                   response.Message = "Success";
@@ -795,22 +795,22 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                   response.Success = true;
                   response.ContentList = new List<Models.Import.ApiContent>();
 
-                  List<IContent> nationalProgramsList = new List<IContent>();
+                  List<IPublishedContent> nationalProgramsList = new List<IPublishedContent>();
 
-                  IEnumerable<IContent> rootNodeList = _contentService.GetRootContent();
+                  IEnumerable<IPublishedContent> rootNodeList = UmbHelper.TypedContentAtRoot();
 
-                  foreach (IContent rootNode in rootNodeList)
+                  foreach (IPublishedContent rootNode in rootNodeList)
                   {
-                     IEnumerable<IContent> nodeList = _contentService.GetDescendants(rootNode.Id);
+                     IEnumerable<IPublishedContent> nodeList = rootNode.Descendants();
 
                      nationalProgramsList.AddRange(nodeList.Where(p => p.ContentType.Alias == "NationalProgram").ToList());
                   }
 
                   response.ContentList = new List<Models.Import.ApiContent>();
 
-                  foreach (IContent node in nationalProgramsList)
+                  foreach (IPublishedContent node in nationalProgramsList)
                   {
-                     response.ContentList.Add(ConvertContentObj(node));
+                     response.ContentList.Add(ConvertPublishedContentObj(node, true));
                   }
 
                   response.Message = "Success";
@@ -1095,6 +1095,60 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                   contentNavObj.Name = navNode.Name;
                   contentNavObj.Url = "";
                   contentNavObj.ParentId = navNode.ParentId;
+                  contentNavObj.DocType = navNode.ContentType.Alias;
+                  contentNavObj.Template = "";
+
+                  contentObj.ChildContentList.Add(contentNavObj);
+               }
+            }
+         }
+
+         return contentObj;
+      }
+
+
+      private Models.Import.ApiContent ConvertPublishedContentObj(IPublishedContent content, bool includeSubNodes = false)
+      {
+         Models.Import.ApiContent contentObj = new Models.Import.ApiContent();
+
+         contentObj.Id = content.Id;
+         contentObj.Name = content.Name;
+         contentObj.Url = Umbraco.NiceUrl(content.Id);
+         contentObj.ParentId = content.Parent.Id;
+         contentObj.DocType = content.ContentType.Alias;
+         contentObj.Template = content.TemplateId.ToString();
+         contentObj.Properties = new List<Models.Import.ApiProperty>();
+
+         foreach (var property in content.Properties)
+         {
+            string propValue = "";
+
+            if (property.Value != null)
+            {
+               propValue = property.Value.ToString();
+            }
+
+            Models.Import.ApiProperty propObj = new Models.Import.ApiProperty(property.PropertyTypeAlias, propValue);
+
+            contentObj.Properties.Add(propObj);
+         }
+
+         if (true == includeSubNodes)
+         {
+            if (content.Children.Any())
+            {
+               contentObj.ChildContentList = new List<Models.Import.ApiContent>();
+
+               IPublishedContent navNode = content.Children.Where(p => p.DocumentTypeAlias == "SiteNavFolder").FirstOrDefault();
+
+               if (navNode != null)
+               {
+                  Models.Import.ApiContent contentNavObj = new Models.Import.ApiContent();
+
+                  contentNavObj.Id = navNode.Id;
+                  contentNavObj.Name = navNode.Name;
+                  contentNavObj.Url = "";
+                  contentNavObj.ParentId = navNode.Parent.Id;
                   contentNavObj.DocType = navNode.ContentType.Alias;
                   contentNavObj.Template = "";
 

@@ -895,7 +895,7 @@ namespace USDA_ARS.ImportInfoStaff
                      page = new PageImport();
 
                      page.Title = title;
-                     page.BodyText = between;
+                     page.BodyText = CleanHtml.CleanUpHtml(between);
                      page.OldPath = url;
                   }
                }
