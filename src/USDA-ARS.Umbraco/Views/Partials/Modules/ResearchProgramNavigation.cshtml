@@ -2,76 +2,94 @@
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
 @using USDA_ARS.Umbraco.Extensions
+@using USDA_ARS.Umbraco.Extensions.Helpers
 @using USDA_ARS.Umbraco.Extensions.Models
 @using Newtonsoft.Json
 @model IPublishedContent
 @{
-    IPublishedContent docsFolder = null;
+   IPublishedContent docsFolder = null;
 
-    if (Model.DocumentTypeAlias == "NationalProgram")
-    {
-        docsFolder = Model.Children.FirstOrDefault(n => n.IsDocumentType("NationalProgramFolderContainer"));
-    }
-    else if (Model.Parent.DocumentTypeAlias == "NationalProgramFolderContainer")
-    {
-        docsFolder = Model.Parent;
-    }
+   if (Model.DocumentTypeAlias == "NationalProgram")
+   {
+      docsFolder = Model.Children.FirstOrDefault(n => n.IsDocumentType("NationalProgramFolderContainer"));
+   }
+   else if (Model.Parent.DocumentTypeAlias == "NationalProgramFolderContainer")
+   {
+      docsFolder = Model.Parent;
+   }
+   else if (Model.DocumentTypeAlias == "ProgramsAndProjects")
+   {
+      string npCode = "";
 
-    List<IPublishedContent> programDocsList = null;
-    //List<IPublishedContent> programDocsTypeList = null;
+      if (Request.QueryString["npCode"] != null)
+      {
+         npCode = Request.QueryString.Get("npCode");
 
-    if (docsFolder != null && docsFolder.Children != null && docsFolder.Children.Any())
-    {
-        programDocsList = docsFolder.Children.ToList();
-    }
+         IPublishedContent nationalProgram = Nodes.GetNodeByNpCode(npCode);
+
+         if (nationalProgram != null)
+         {
+            docsFolder = nationalProgram.Children.FirstOrDefault(n => n.IsDocumentType("NationalProgramFolderContainer"));
+         }
+      }
+   }
+
+
+   List<IPublishedContent> programDocsList = null;
+   //List<IPublishedContent> programDocsTypeList = null;
+
+   if (docsFolder != null && docsFolder.Children != null && docsFolder.Children.Any())
+   {
+      programDocsList = docsFolder.Children.ToList();
+   }
 
 }
 @if (programDocsList != null && programDocsList.Any())
 {
-    // Program Inputs
-    List<IPublishedContent> programDocsInputsList = programDocsList.Where(p => p.DocumentTypeAlias == "NPProgramInputs").ToList();
+   // Program Inputs
+   List<IPublishedContent> programDocsInputsList = programDocsList.Where(p => p.DocumentTypeAlias == "NPProgramInputs").ToList();
 
-    if (programDocsInputsList != null && programDocsInputsList.Any())
-    {
-        <h2 class="related_topics"><div id="rightNavigation">Program Inputs</div></h2>
-        foreach (IPublishedContent doc in programDocsInputsList)
-        {
-            <li>
-                <a href="@(doc.Url)" title="@(doc.Name)">
-                    @(doc.Name)
-                </a>
-            </li>
-        }
-    }
-    // Program Planning
-    List<IPublishedContent> programDocsPlanningList = programDocsList.Where(p => p.DocumentTypeAlias == "NPProgramPlanning").ToList();
+   if (programDocsInputsList != null && programDocsInputsList.Any())
+   {
+      <h2 class="related_topics"><div id="rightNavigation">Program Inputs</div></h2>
+      foreach (IPublishedContent doc in programDocsInputsList)
+      {
+         <li>
+            <a href="@(doc.Url)" title="@(doc.Name)">
+               @(doc.Name)
+            </a>
+         </li>
+      }
+   }
+   // Program Planning
+   List<IPublishedContent> programDocsPlanningList = programDocsList.Where(p => p.DocumentTypeAlias == "NPProgramPlanning").ToList();
 
-    if (programDocsPlanningList != null && programDocsPlanningList.Any())
-    {
-        <h2 class="related_topics"><div id="rightNavigation">Program Planning</div></h2>
-        foreach (IPublishedContent doc in programDocsPlanningList)
-        {
-            <li>
-                <a href="@(doc.Url)" title="@(doc.Name)">
-                    @(doc.Name)
-                </a>
-            </li>
-        }
-    }
-    // Program Reports
-    List<IPublishedContent> programDocsReportsList = programDocsList.Where(p => p.DocumentTypeAlias == "NPProgramReports").ToList();
+   if (programDocsPlanningList != null && programDocsPlanningList.Any())
+   {
+      <h2 class="related_topics"><div id="rightNavigation">Program Planning</div></h2>
+      foreach (IPublishedContent doc in programDocsPlanningList)
+      {
+         <li>
+            <a href="@(doc.Url)" title="@(doc.Name)">
+               @(doc.Name)
+            </a>
+         </li>
+      }
+   }
+   // Program Reports
+   List<IPublishedContent> programDocsReportsList = programDocsList.Where(p => p.DocumentTypeAlias == "NPProgramReports").ToList();
 
-    if (programDocsReportsList != null && programDocsReportsList.Any())
-    {
-        <h2 class="related_topics"><div id="rightNavigation">Program Reports</div></h2>
-        foreach (IPublishedContent doc in programDocsReportsList)
-        {
-            <li>
-                <a href="@(doc.Url)" title="@(doc.Name)">
-                    @(doc.Name)
-                </a>
-            </li>
-        }
-    }
+   if (programDocsReportsList != null && programDocsReportsList.Any())
+   {
+      <h2 class="related_topics"><div id="rightNavigation">Program Reports</div></h2>
+      foreach (IPublishedContent doc in programDocsReportsList)
+      {
+         <li>
+            <a href="@(doc.Url)" title="@(doc.Name)">
+               @(doc.Name)
+            </a>
+         </li>
+      }
+   }
 
 }

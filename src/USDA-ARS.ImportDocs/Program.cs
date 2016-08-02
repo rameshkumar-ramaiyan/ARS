@@ -143,6 +143,10 @@ namespace USDA_ARS.ImportDocs
             UpdateNonImportedPage("Briefing Room", "/News/docs.htm?docid=1281", 8003, "");
             UpdateNonImportedPage("Social Media Tools and Resources", "/News/Docs.htm?docid=23888", 131742, "");
             UpdateNonImportedPage("Image Gallery", "/News/Docs.htm?docid=23559", 1145, "");
+
+            UpdateNonImportedPage("Manuscripts by Strategic Topical Areas", "/services/TTBrowse.htm", 8101, null, null, true);
+
+
          }
          else if (true == subsitesOnly)
          {
@@ -1286,7 +1290,7 @@ namespace USDA_ARS.ImportDocs
       }
 
 
-      static void UpdateNonImportedPage(string pageTitle, string url, int umbracoId, string oldId, string oldUrl = null)
+      static void UpdateNonImportedPage(string pageTitle, string url, int umbracoId, string oldId, string oldUrl = null, bool updateOldUrlOnly = false)
       {
          AddLog("Updating Non-Imported Page: " + pageTitle);
          ApiContent content = new ApiContent();
@@ -1294,11 +1298,15 @@ namespace USDA_ARS.ImportDocs
          content.Id = umbracoId;
 
          List<ApiProperty> properties = new List<ApiProperty>();
+         string body = null;
 
-         AddLog(" - Getting production body text...");
-         string body = GetProductionPage(url);
+         if (false == updateOldUrlOnly)
+         {
+            AddLog(" - Getting production body text...");
+            body = GetProductionPage(url);
+         }
 
-         if (false == string.IsNullOrEmpty(body))
+         if (true == updateOldUrlOnly || false == string.IsNullOrEmpty(body))
          {
             AddLog(" - Done.");
 
@@ -1307,7 +1315,10 @@ namespace USDA_ARS.ImportDocs
                oldUrl = url;
             }
 
-            properties.Add(new ApiProperty("bodyText", body));
+            if (false == updateOldUrlOnly)
+            {
+               properties.Add(new ApiProperty("bodyText", body));
+            }
             properties.Add(new ApiProperty("oldUrl", oldUrl));
             properties.Add(new ApiProperty("oldId", oldId));
 
