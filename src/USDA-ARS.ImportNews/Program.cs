@@ -303,6 +303,9 @@ namespace USDA_ARS.ImportNews
 
       static void LinkInterlinksNews()
       {
+         int recordNum = 1;
+         int recordCount = 0;
+
          AddLog("Getting Mode Codes From Umbraco...");
          GenerateModeCodeList(false);
          AddLog("Done. Count: " + MODE_CODE_LIST.Count);
@@ -312,6 +315,8 @@ namespace USDA_ARS.ImportNews
 
          if (umbracoNewsList != null && umbracoNewsList.Any())
          {
+            recordCount = umbracoNewsList.Count;
+
             AddLog("");
             AddLog("News Articles found: " + umbracoNewsList.Count);
 
@@ -324,6 +329,7 @@ namespace USDA_ARS.ImportNews
 
             foreach (Models.UmbracoPropertyData node in umbracoNewsList)
             {
+               AddLog("Record " + recordNum + " / " + recordCount);
                AddLog("Processing article: " + node.Title);
                string bodyText = node.DataNtext;
 
@@ -331,10 +337,15 @@ namespace USDA_ARS.ImportNews
 
                if (linkItemList != null)
                {
-                  AddLog("Found Interlinks: " + linkItemList.Count);
+                  AddLog("Found Interlinks...");
                   NewsInterLinks.GenerateInterLinks(node.UmbracoId, node.UmbracoGuid, linkItemList, MODE_CODE_LIST);
                }
+
+               AddLog("");
+               recordNum++;
             }
+
+            AddLog("// Done //");
          }
          else
          {

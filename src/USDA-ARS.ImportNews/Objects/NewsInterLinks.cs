@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -230,19 +233,45 @@ namespace USDA_ARS.ImportNews.Objects
 
       public static string DoesNodeHaveSingleResearchUnits(string foundModeCode)
       {
+         foundModeCode = ModeCodes.ModeCodeNoDashes(foundModeCode);
+
          string modeCode = foundModeCode;
 
-         var db = new Database("arisPublicWebDbDSN");
 
-         string sql = "exec uspgetAllReassignModeCodesForCityWithSingleChild '"+ foundModeCode +"'";
+         string sql = "exec [uspgetAllReassignModeCodesForCityWithSingleChild] " + foundModeCode;
+         DataTable dt = new DataTable();
+         SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["arisPublicWebDbDSN"].ConnectionString);
 
-         string newModeCode = db.Query<string>(sql).FirstOrDefault();
-
-         if (false == string.IsNullOrEmpty(newModeCode))
+         try
          {
-            modeCode = newModeCode;
-         }
+            SqlDataAdapter da = new SqlDataAdapter();
+            SqlCommand sqlComm = new SqlCommand(sql, conn);
 
+
+            da.SelectCommand = sqlComm;
+            da.SelectCommand.CommandType = CommandType.Text;
+
+            DataSet ds = new DataSet();
+            da.Fill(ds, "ModeCode");
+
+            dt = ds.Tables["ModeCode"];
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+               if (dt.Rows[0][0] != null && false == string.IsNullOrEmpty(dt.Rows[0].Field<string>(0)))
+               {
+                  modeCode = dt.Rows[0].Field<string>(0);
+               }
+            }
+         }
+         catch (Exception ex)
+         {
+            throw ex;
+         }
+         finally
+         {
+            conn.Close();
+         }
 
 
          //ApiContent node = GetUmbracoPageByModeCode(foundModeCode);
