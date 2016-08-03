@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using USDA_ARS.ImportLocations.Models;
 using USDA_ARS.LocationsWebApp.DL;
 using USDA_ARS.LocationsWebApp.Models;
+using USDA_ARS.Umbraco.Extensions.Helpers;
 using USDA_ARS.Umbraco.Extensions.Models.Import;
 
 namespace USDA_ARS.ImportLocations
@@ -1221,7 +1222,7 @@ namespace USDA_ARS.ImportLocations
          ApiProperty topicProperty = null;
          string topicString = null;
 
-         List<PopularLink> linkList = LocationsWebApp.DL.PopularTopics.GetPopularTopicsByModeCode(modeCode);
+         List<PopularLink> linkList = PopularTopics.GetPopularTopicsByModeCode(ModeCodes.ModeCodeNoDashes(modeCode));
 
          ////popular topics
          AddLog(" - Getting topics for (" + modeCode + ")...");

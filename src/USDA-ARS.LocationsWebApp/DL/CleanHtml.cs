@@ -39,9 +39,9 @@ namespace USDA_ARS.LocationsWebApp.DL
             bodyText = Regex.Replace(bodyText, @"/sp2userfiles/person", "/ARSUserFiles", RegexOptions.IgnoreCase);
             bodyText = Regex.Replace(bodyText, @"/sp2userfiles/Program/", "/ARSUserFiles/np", RegexOptions.IgnoreCase);
 
-            bodyText = Regex.Replace(bodyText, @"\""/images/", "\"/ARSUserFiles/images/", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"\""/incme/", "\"/ARSUserFiles/incme/", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"src\=\""/is/", "src=\"/ARSUserFiles/oc/", RegexOptions.IgnoreCase);
+            //bodyText = Regex.Replace(bodyText, "\"/images/", "\"/ARSUserFiles/images/", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, "\"/incme/", "\"/ARSUserFiles/incme/", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"src\=""/is/", "src=\"/ARSUserFiles/oc/", RegexOptions.IgnoreCase);
 
             bodyText = Regex.Replace(bodyText, @"/ARSUserFiles/news/", "/ARSUserFiles/oc/", RegexOptions.IgnoreCase);
 
@@ -79,15 +79,15 @@ namespace USDA_ARS.LocationsWebApp.DL
 
 
 
-            bodyText = Regex.Replace(bodyText, @"/News/Docs\.htm\?docid\=23712", "/{localLink:8002}", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"/News/Docs\.htm\?docid\=23559", "/{localLink:1145}", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"/is/graphics/photos/", "/{localLink:1145}", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"/is/pr/index\.html", "/{localLink:6996}", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"/News/docs\.htm\?docid\=6697", "/{localLink:9134}", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"/News/docs\.htm\?docid\=1383", "/{localLink:8030}", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"/News/docs\.htm\?docid\=1281", "/{localLink:8003}", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"/news/events\.htm", "/{localLink:8024}", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"/news/events\.htm", "/{localLink:8024}", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"""/News/Docs\.htm\?docid\=23712""", "\"/{localLink:8002}\"", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"""/News/Docs\.htm\?docid\=23559""", "\"/{localLink:1145}\"", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"""/is/graphics/photos/""", "\"/{localLink:1145}\"", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"""/is/pr/index\.html""", "\"/{localLink:6996}\"", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"""/News/docs\.htm\?docid\=6697""", "\"/{localLink:9134}\"", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"""/News/docs\.htm\?docid\=1383""", "\"/{localLink:8030}\"", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"""/News/docs\.htm\?docid\=1281""", "\"/{localLink:8003}\"", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"""/news/events\.htm""", "\"/{localLink:8024}\"", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"""/news/events\.htm""", "\"/{localLink:8024}\"", RegexOptions.IgnoreCase);
 
             bodyText = Regex.Replace(bodyText, @"/SP2UserFiles/Subsite/sciQualRev", "/ARSUserFiles/OSQR", RegexOptions.IgnoreCase);
             bodyText = Regex.Replace(bodyText, @"/SP2UserFiles/Subsite/HQsubsite", "/ARSUserFiles/NACOP", RegexOptions.IgnoreCase);

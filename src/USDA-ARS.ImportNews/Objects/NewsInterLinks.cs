@@ -233,46 +233,50 @@ namespace USDA_ARS.ImportNews.Objects
 
       public static string DoesNodeHaveSingleResearchUnits(string foundModeCode)
       {
-         foundModeCode = ModeCodes.ModeCodeNoDashes(foundModeCode);
-
          string modeCode = foundModeCode;
-
-
-         string sql = "exec [uspgetAllReassignModeCodesForCityWithSingleChild] " + foundModeCode;
-         DataTable dt = new DataTable();
-         SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["arisPublicWebDbDSN"].ConnectionString);
 
          try
          {
-            SqlDataAdapter da = new SqlDataAdapter();
-            SqlCommand sqlComm = new SqlCommand(sql, conn);
+            foundModeCode = ModeCodes.ModeCodeNoDashes(foundModeCode);
 
+            string sql = "exec [uspgetAllReassignModeCodesForCityWithSingleChild] " + foundModeCode;
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["arisPublicWebDbDSN"].ConnectionString);
 
-            da.SelectCommand = sqlComm;
-            da.SelectCommand.CommandType = CommandType.Text;
-
-            DataSet ds = new DataSet();
-            da.Fill(ds, "ModeCode");
-
-            dt = ds.Tables["ModeCode"];
-
-            if (dt != null && dt.Rows.Count > 0)
+            try
             {
-               if (dt.Rows[0][0] != null && false == string.IsNullOrEmpty(dt.Rows[0].Field<string>(0)))
+               SqlDataAdapter da = new SqlDataAdapter();
+               SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+               da.SelectCommand = sqlComm;
+               da.SelectCommand.CommandType = CommandType.Text;
+
+               DataSet ds = new DataSet();
+               da.Fill(ds, "ModeCode");
+
+               dt = ds.Tables["ModeCode"];
+
+               if (dt != null && dt.Rows.Count > 0)
                {
-                  modeCode = dt.Rows[0].Field<string>(0);
+                  if (dt.Rows[0][0] != null && false == string.IsNullOrEmpty(dt.Rows[0].Field<string>(0)))
+                  {
+                     modeCode = dt.Rows[0].Field<string>(0);
+                  }
                }
             }
+            catch (Exception ex)
+            {
+               throw ex;
+            }
+            finally
+            {
+               conn.Close();
+            }
          }
-         catch (Exception ex)
+         catch(Exception ex)
          {
-            throw ex;
+            //
          }
-         finally
-         {
-            conn.Close();
-         }
-
 
          //ApiContent node = GetUmbracoPageByModeCode(foundModeCode);
 
