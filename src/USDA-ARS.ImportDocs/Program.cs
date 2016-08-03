@@ -992,7 +992,7 @@ namespace USDA_ARS.ImportDocs
             AddLog(" - Adding keywords...");
          }
 
-         properties.Add(new ApiProperty("pageHeaderScripts", htmlHeader)); // hide page title
+         properties.Add(new ApiProperty("pageHeaderScripts", CleanHtml.CleanUpHtml(htmlHeader))); // hide page title
          properties.Add(new ApiProperty("keywords", keywords)); // hide page title
 
          content.Properties = properties;

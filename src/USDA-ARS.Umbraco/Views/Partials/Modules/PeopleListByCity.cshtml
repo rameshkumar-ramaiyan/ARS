@@ -1,153 +1,167 @@
 ﻿@using Archetype.Models
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
-@using USDA_ARS.Umbraco.Extensions.Models.Aris
-@model IPublishedContent
-@{
-   IPublishedContent currentNode = Model;
-   string modeCode = Model.GetPropertyValue<string>("modeCode");
-   string modeCodeCity = modeCode;
-   string modeCodeCityShort = "";
-   string javascriptInsert = "";
-   int incValue = -1;
+@using USDA_ARS.Umbraco.Extensions.Helpers
+   @using USDA_ARS.Umbraco.Extensions.Models.Aris
+   @model IPublishedContent
+   @{
+      IPublishedContent currentNode = Model;
+      string modeCode = Model.GetPropertyValue<string>("modeCode");
+      string modeCodeCity = modeCode;
+      string modeCodeCityShort = "";
+      string javascriptInsert = "";
+      int incValue = -1;
 
 
-   if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
-   {
-      modeCode = Request.QueryString.Get("modeCode");
-
-      List<string> modeCodeArray = USDA_ARS.Umbraco.Extensions.Helpers.ModeCodes.ModeCodeArray(modeCode);
-
-      modeCodeCityShort = modeCodeArray[0] + "-" + modeCodeArray[1];
-      modeCodeCity = modeCodeCityShort + "-00-00";
-
-      currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCodeCity, false);
-   }
-
-
-   List<PeopleByCity> peopleFullList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByCity(modeCodeCity);
-
-   peopleFullList = peopleFullList.Where(p => false == string.IsNullOrEmpty(p.ModeCodeConcat)).ToList();
-
-   List<PeopleByCity> siteLabelList = peopleFullList.DistinctBy(p => p.ModeCodeConcat).ToList();
-
-   if (siteLabelList != null && siteLabelList.Any())
-   {
-      int i = 0;
-      foreach (PeopleByCity peopleByCity in siteLabelList)
+      if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
       {
-         if (incValue == -1 && peopleByCity.ModeCode == modeCode)
-         {
-            incValue = i;
-         }
+         modeCode = Request.QueryString.Get("modeCode");
 
-         i++;
+         List<string> modeCodeArray = USDA_ARS.Umbraco.Extensions.Helpers.ModeCodes.ModeCodeArray(modeCode);
+
+         modeCodeCityShort = modeCodeArray[0] + "-" + modeCodeArray[1];
+         modeCodeCity = modeCodeCityShort + "-00-00";
+
+         currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCodeCity, false);
       }
-   }
 
-   if (incValue >= 0)
-   {
-      javascriptInsert += @"
+
+      List<PeopleByCity> peopleFullList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByCity(modeCodeCity);
+
+      peopleFullList = peopleFullList.Where(p => false == string.IsNullOrEmpty(p.ModeCodeConcat)).ToList();
+
+      // Fix people with mode codes ending in 01
+      if (peopleFullList != null && peopleFullList.Any())
+      {
+         foreach (PeopleByCity personItem in peopleFullList)
+         {
+            if (personItem.ModeCodeConcat.EndsWith("01"))
+            {
+               personItem.ModeCodeConcat = personItem.ModeCodeConcat.Substring(0, 6) + "00";
+               personItem.ModeCode = ModeCodes.ModeCodeAddDashes(personItem.ModeCodeConcat);
+            }
+         }
+      }
+
+      List<PeopleByCity> siteLabelList = peopleFullList.DistinctBy(p => p.ModeCodeConcat).ToList();
+
+      if (siteLabelList != null && siteLabelList.Any())
+      {
+         siteLabelList = siteLabelList.OrderBy(p => p.ModeCodeConcat).ToList();
+
+         int i = 0;
+         foreach (PeopleByCity peopleByCity in siteLabelList)
+         {
+            if (incValue == -1 && peopleByCity.ModeCode == modeCode)
+            {
+               incValue = i;
+            }
+
+            i++;
+         }
+      }
+
+      if (incValue >= 0)
+      {
+         javascriptInsert += @"
                  // Open the panel by modecode
         ";
-      javascriptInsert += "$('#accordion').accordion('activate', " + incValue + ");\r\n";
+         javascriptInsert += "$('#accordion').accordion('activate', " + incValue + ");\r\n";
 
-      javascriptInsert += @"         // auto scroll to a div
+         javascriptInsert += @"         // auto scroll to a div
         $('html, body').animate({";
-      javascriptInsert += " scrollTop: $('#" + modeCode.Replace("-", "") + "').offset().top}, 2000);";
+         javascriptInsert += " scrollTop: $('#" + modeCode.Replace("-", "") + "').offset().top}, 2000);";
+      }
    }
-}
-
-<!-- jQuery accordion -->
-<script>
-    $(document).ready(function () {
-        $("#accordion")
-            .accordion({
+   <!-- jQuery accordion -->
+   <script>
+      $(document).ready(function () {
+         $("#accordion")
+             .accordion({
                 header: "h4",
                 active: false,
                 collapsible: true,
                 icons: {
-                    // Icon for collapsed headers
-                    header: "ui-icon-plus",
+                   // Icon for collapsed headers
+                   header: "ui-icon-plus",
 
-                    // Icon for active header
-                    activeHeader: "ui-icon-minus"
+                   // Icon for active header
+                   activeHeader: "ui-icon-minus"
                 },
                 heightStyle: "content"
-            });
+             });
 
-        // Expand/Collapse all
-        $('.expand').click(function () {
+         // Expand/Collapse all
+         $('.expand').click(function () {
             $('.ui-widget-content').show();
-        });
-        $('.collapse').click(function () {
+         });
+         $('.collapse').click(function () {
             $('.ui-widget-content').hide();
-        });
+         });
 
 
-        @Html.Raw(javascriptInsert)
+         @Html.Raw(javascriptInsert)
 
-        /*
-        $('.toggle').click(function() {
-            $('.ui-widget-content').toggle();
-            $(this).text($(this).text() == '[Collapse All]' ? '[Expand All]' : '[Collapse All]');
-        });
-        */
+         /*
+         $('.toggle').click(function() {
+             $('.ui-widget-content').toggle();
+             $(this).text($(this).text() == '[Collapse All]' ? '[Expand All]' : '[Collapse All]');
+         });
+         */
 
-    });
-</script>
-
-
-<div id="CityPeopleListing">
+      });
+   </script>
 
 
-   @if (currentNode != null)
-   {
-      <b>
-         People and Locations at
-         @currentNode.Name
-      </b>
-      <br /><br />
+   <div id="CityPeopleListing">
+
+
+      @if (currentNode != null)
+      {
+         <b>
+            People and Locations at
+            @currentNode.Name
+         </b>
+         <br /><br />
 
 
     <!-- Expand/Collapse All -->
-      <div style="margin-left:450px;">
-         <a href="#" class="expand">[Expand All]</a> |
-         <a href="#" class="collapse">[Collapse All]</a>
-      </div>
+         <div style="margin-left:450px;">
+            <a href="#" class="expand">[Expand All]</a> |
+            <a href="#" class="collapse">[Collapse All]</a>
+         </div>
 
 
-      <div id="accordion" style="width:600px">
+         <div id="accordion" style="width:600px">
 
-                  @if (siteLabelList != null && siteLabelList.Any())
-         {
-            siteLabelList = siteLabelList.OrderBy(p => p.ModeCodeConcat).ToList();
-
-            foreach (PeopleByCity siteLabel in siteLabelList)
+            @if (siteLabelList != null && siteLabelList.Any())
             {
-               IPublishedContent siteNode = null;
-
-               if (false == string.IsNullOrEmpty(siteLabel.ModeCode))
+               foreach (PeopleByCity siteLabel in siteLabelList)
                {
-                  siteNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(siteLabel.ModeCode, false);
-               }
+                  IPublishedContent siteNode = null;
 
-               List<PeopleByCity> peopleList = peopleFullList.Where(p => p.ModeCodeConcat == siteLabel.ModeCodeConcat).ToList();
+                  if (false == string.IsNullOrEmpty(siteLabel.ModeCode))
+                  {
+                     siteNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(siteLabel.ModeCode, false);
+                     siteLabel.SiteLabel = siteNode.Name;
+                  }
 
-               if (peopleList != null && peopleList.Any() && peopleList[0].ModeCodeConcat != null &&
-                        peopleList[0].ModeCodeConcat.Length > 3 &&
-                        (peopleList[0].ModeCodeConcat.Substring(4, 2) == "01" || peopleList[0].ModeCodeConcat.Substring(4, 2) == "02"))
-               {
-                  //peopleList = peopleList.OrderBy()
-                  siteLabel.SiteLabel = "Location Support Staff";
-               }
+                  List<PeopleByCity> peopleList = peopleFullList.Where(p => p.ModeCodeConcat == siteLabel.ModeCodeConcat).ToList();
+
+                  if (peopleList != null && peopleList.Any() && peopleList[0].ModeCodeConcat != null &&
+                           peopleList[0].ModeCodeConcat.Length > 3 &&
+                           (peopleList[0].ModeCodeConcat.Substring(4, 2) == "02"))
+                  {
+                     //peopleList = peopleList.OrderBy()
+                     siteLabel.SiteLabel = "Location Support Staff";
+                  }
 
 
-               if (peopleList != null && peopleList.Count > 0)
-               {
-                  peopleList = peopleList.OrderBy(p => p.LastName).ThenBy(p => p.FirstName).ToList();
+                  if (peopleList != null && peopleList.Count > 0)
+                  {
+                     peopleList = peopleList.OrderBy(p => p.LastName).ThenBy(p => p.FirstName).ToList();
 
-                  int peopleCount = peopleList.Count;
+                     int peopleCount = peopleList.Count;
 
                      <h4 id="@(siteLabel.ModeCodeConcat)">
                         @(siteLabel.SiteLabel)
@@ -192,14 +206,14 @@
                         </p>
                      </div>
                   }
+               }
             }
-         }
 
-      </div>
-   }
-   else
+         </div>
+      }
+      else
 
-   {
-      <em>Location not found</em>
-   }
-</div>
+      {
+         <em>Location not found</em>
+      }
+   </div>
