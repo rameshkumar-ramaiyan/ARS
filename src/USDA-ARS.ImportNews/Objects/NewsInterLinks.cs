@@ -230,33 +230,46 @@ namespace USDA_ARS.ImportNews.Objects
 
       public static string DoesNodeHaveSingleResearchUnits(string foundModeCode)
       {
-         string modeCode = null;
+         string modeCode = foundModeCode;
 
-         ApiContent node = GetUmbracoPageByModeCode(foundModeCode);
+         var db = new Database("arisPublicWebDbDSN");
 
-         if (node != null)
+         string sql = "exec uspgetAllReassignModeCodesForCityWithSingleChild '"+ foundModeCode +"'";
+
+         string newModeCode = db.Query<string>(sql).FirstOrDefault();
+
+         if (false == string.IsNullOrEmpty(newModeCode))
          {
-            ApiProperty modeCodeFoundMain = node.Properties.Where(p => p.Key == "modeCode").FirstOrDefault();
-            if (modeCodeFoundMain != null)
-            {
-               modeCode = modeCodeFoundMain.Value.ToString();
-            }
+            modeCode = newModeCode;
          }
 
-         if (node != null && node.ChildContentList != null && node.ChildContentList.Any())
-         {
-            List<ApiContent> researchUnitList = node.ChildContentList.Where(p => p.DocType == "ResearchUnit").ToList();
 
-            if (researchUnitList != null && researchUnitList.Count == 1)
-            {
-               ApiProperty modeCodeFound = researchUnitList[0].Properties.Where(p => p.Key == "modeCode").FirstOrDefault();
-               
-               if (modeCodeFound != null)
-               {
-                  modeCode = modeCodeFound.Value.ToString();
-               }
-            }
-         }
+
+         //ApiContent node = GetUmbracoPageByModeCode(foundModeCode);
+
+         //if (node != null)
+         //{
+         //   ApiProperty modeCodeFoundMain = node.Properties.Where(p => p.Key == "modeCode").FirstOrDefault();
+         //   if (modeCodeFoundMain != null)
+         //   {
+         //      modeCode = modeCodeFoundMain.Value.ToString();
+         //   }
+         //}
+
+         //if (node != null && node.ChildContentList != null && node.ChildContentList.Any())
+         //{
+         //   List<ApiContent> researchUnitList = node.ChildContentList.Where(p => p.DocType == "ResearchUnit").ToList();
+
+         //   if (researchUnitList != null && researchUnitList.Count == 1)
+         //   {
+         //      ApiProperty modeCodeFound = researchUnitList[0].Properties.Where(p => p.Key == "modeCode").FirstOrDefault();
+
+         //      if (modeCodeFound != null)
+         //      {
+         //         modeCode = modeCodeFound.Value.ToString();
+         //      }
+         //   }
+         //}
 
          return modeCode;
       }
