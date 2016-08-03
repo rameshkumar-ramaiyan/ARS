@@ -34,7 +34,7 @@ BEGIN
 	select  @VariableName=
   count(*) from 
   ( select MODECODE_1,MODECODE_2,MODECODE_3,MODECODE_3_DESC from
-  aris_public_webNew.dbo.REF_MODECODE 
+  aris_public_web.dbo.REF_MODECODE 
 where 
 MODECODE_1 in (@ParentAreaModeCode )
 and MODECODE_2 in(@ParentCityModeCode) and MODECODE_2 <> '1'
@@ -54,17 +54,17 @@ begin
 
 
 select
-cast (MODECODE_1 as varchar(2))+'-'+cast (MODECODE_2 as varchar(2))+'-'+
+
+cast (MODECODE_1 as varchar(2))+cast (MODECODE_2 as varchar(2))+
 CASE 
 WHEN MODECODE_3  >=10 THEN cast (MODECODE_3 as varchar(2))
 ELSE '0'+ cast (MODECODE_3 as varchar(2)) 
 END 
 
-+'-00'as 'Mode Code'
++'00'
 
-,MODECODE_3_DESC as 'Research Unit' 
---,MODECODE_4 as 'Lab Mode Code',MODECODE_4_DESC as 'Lab'
-from aris_public_webNew.dbo.REF_MODECODE 
+
+from aris_public_web.dbo.REF_MODECODE 
 where 
 MODECODE_1=@ParentAreaModeCode 
 and MODECODE_2=@ParentCityModeCode and MODECODE_2 <> '1'
@@ -79,7 +79,7 @@ end
 
 	else 
 	begin
-	 return @ModeCode
+	 return  cast (@ModeCode as varchar(max))
 	 end
 		
 END
