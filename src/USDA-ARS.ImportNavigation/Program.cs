@@ -414,13 +414,17 @@ namespace USDA_ARS.ImportNavigation
                   {
                      navByPage = null;
                   }
-
-
                   else
                   {
                      AddLog(" - Getting production page info...");
                      navByPage = GetNavsByProduction(oldNode.OldUrl);
                   }
+
+                  if (navByPage == null)
+                  {
+
+                  }
+
 
                   if (navByPage != null)
                   {
@@ -1820,7 +1824,7 @@ namespace USDA_ARS.ImportNavigation
 
       static NavByPage GetNavsByProduction(string url)
       {
-         NavByPage navByPage = new NavByPage();
+         NavByPage navByPage = null;
 
          string urlAddress = "http://www.ars.usda.gov" + url;
 
@@ -1851,6 +1855,8 @@ namespace USDA_ARS.ImportNavigation
 
                if (false == string.IsNullOrEmpty(data))
                {
+                  navByPage = new NavByPage();
+
                   int findLeftSysId = 0;
                   int findRightSysId = 0;
 
@@ -1897,6 +1903,8 @@ namespace USDA_ARS.ImportNavigation
                         findRightSysId = navList[0].NavSysId;
                      }
                   }
+
+                  
 
                   if (findLeftSysId > 0 || findRightSysId > 0)
                   {
