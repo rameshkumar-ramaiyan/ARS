@@ -32,7 +32,7 @@ namespace USDA_ARS.LocationsWebApp.DL
             bodyText = Regex.Replace(bodyText, @"http(s)*://www\.ars\.usda\.gov", "", RegexOptions.IgnoreCase);
             bodyText = Regex.Replace(bodyText, @"http(s)*://ars\.usda\.gov", "", RegexOptions.IgnoreCase);
 
-            bodyText = Regex.Replace(bodyText, @"http://", "https://");
+            //bodyText = Regex.Replace(bodyText, @"http://", "https://");
 
             bodyText = Regex.Replace(bodyText, @"/sp2userfiles/place", "/ARSUserFiles", RegexOptions.IgnoreCase);
             bodyText = Regex.Replace(bodyText, @"/sp2userfiles/people", "/ARSUserFiles", RegexOptions.IgnoreCase);
