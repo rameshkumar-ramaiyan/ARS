@@ -68,7 +68,7 @@ namespace USDA_ARS.LocationsWebApp.DL
                                  testUrlPath.EndsWith(".doc") || testUrlPath.EndsWith(".jpeg") || testUrlPath.EndsWith(".pdf") ||
                                  testUrlPath.EndsWith(".xls") || testUrlPath.EndsWith(".doc"))
                         {
-                           string fixUrlPath = urlPath.Substring(4, urlPath.Length);
+                           string fixUrlPath = urlPath.Substring(4, urlPath.Length - 4);
 
                            bodyText = bodyText.Replace(urlPath, "/ARSUserFiles/oc/" + fixUrlPath);
                         }

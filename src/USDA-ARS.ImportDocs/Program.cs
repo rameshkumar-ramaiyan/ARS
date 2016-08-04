@@ -151,31 +151,31 @@ namespace USDA_ARS.ImportDocs
          else if (true == subsitesOnly)
          {
             AddLog("Importing Careers pages...");
-            AddSubsitePages("Careers", 8058, 0); //Umbraco Careers Node ID: 8058
+            AddSubsitePages("Careers", 8058, 0, "careers"); //Umbraco Careers Node ID: 8058
             AddLog("");
 
             AddLog("Importing National Advisory Council for Office Professionals pages...");
-            AddSubsitePages("HQsubsite", 130737, 21071);
+            AddSubsitePages("HQsubsite", 130737, 21071, "NACOP");
             AddLog("");
 
             AddLog("Importing ARS Office of International Research Programs pages...");
-            AddSubsitePages("irp", 130729, 1428);
+            AddSubsitePages("irp", 130729, 1428, "OIRP");
             AddLog("");
 
             AddLog("Importing Office of Legislative Affiars...");
-            AddSubsitePages("ARSLegisAffrs", 130738, 1332);
+            AddSubsitePages("ARSLegisAffrs", 130738, 1332, "OLA");
             AddLog("");
 
             AddLog("Importing Office of Outreach, Diversity, and Equal Opportunity (ODEO) pages...");
-            AddSubsitePages("odeo", 130739, 23071);
+            AddSubsitePages("odeo", 130739, 23071, "ODEO");
             AddLog("");
 
             AddLog("Importing Office of Scientific Quality Review (OSQR) pages...");
-            AddSubsitePages("sciQualRev", 2133, 1286);
+            AddSubsitePages("sciQualRev", 2133, 1286, "OSQR");
             AddLog("");
 
             AddLog("Importing CEAP pages...");
-            AddSpecialAdHocPages("02020000StewardsCEAPsites", 130740, 18645);
+            AddSpecialAdHocPages("02020000StewardsCEAPsites", 130740, 18645, "CEAP");
             //AddSubsitePages("CEAP", 130740, 15358);
             AddLog("");
          }
@@ -270,6 +270,8 @@ namespace USDA_ARS.ImportDocs
                      }
 
                      string adHocFolderName = string.Empty;
+                     string htmlHeader = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>("HTMLHeader");
+                     string keywords = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>("keywords");
                      if (list[k].ToString().Trim() == "ad_hoc")
                      {
                         adHocFolderName = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>("siteLabel").ToString();
@@ -277,12 +279,11 @@ namespace USDA_ARS.ImportDocs
 
                      AddLog(" - Generating import page: " + title);
 
-                     ImportPage newPage = GenerateImportPage(docId, currentversion, title, doctype, published, originSite_Type, originSite_ID, displayTitle, adHocFolderName);
+                     ImportPage newPage = GenerateImportPage(docId, currentversion, title, doctype, published, originSite_Type, originSite_ID, displayTitle, 
+                           adHocFolderName, htmlHeader, keywords);
 
                      if (newPage != null)
                      {
-                        newPage.HtmlHeader = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>("HTMLHeader");
-                        newPage.Keywords = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>("keywords");
                         if (list[k] != "person")
                         {
                            newPage.ParentSiteCode = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>("parent_Site_Code");
@@ -409,7 +410,7 @@ namespace USDA_ARS.ImportDocs
       }
 
 
-      static void AddSubsitePages(string subSite, int umbracoParentId, int mainDocId)
+      static void AddSubsitePages(string subSite, int umbracoParentId, int mainDocId, string folderLabel)
       {
          DataTable subsiteDocs = new DataTable();
          // IMPORT CAREERS DOCS
@@ -430,12 +431,14 @@ namespace USDA_ARS.ImportDocs
                   string originSite_ID = subsiteDocs.Rows[i].Field<string>(5).ToString();
                   bool displayTitle = subsiteDocs.Rows[i].Field<bool>(7);
                   int docId = subsiteDocs.Rows[i].Field<int>(8);
+                  string htmlHeader = subsiteDocs.Rows[i].Field<string>("HTMLHeader");
+                  string keywords = subsiteDocs.Rows[i].Field<string>("keywords");
 
-                  ImportPage page = GenerateImportPage(docId, currentversion, title, doctype, published, originSite_Type, originSite_ID, displayTitle, "");
+                  ImportPage page = GenerateImportPage(docId, currentversion, title, doctype, published, originSite_Type, originSite_ID, displayTitle, "", htmlHeader, keywords);
 
                   if (docId == mainDocId)
                   {
-                     UpdateSubsiteMainPage(subSite, umbracoParentId, page);
+                     UpdateSubsiteMainPage(subSite, umbracoParentId, page, folderLabel);
                   }
                   else
                   {
@@ -456,7 +459,7 @@ namespace USDA_ARS.ImportDocs
       }
 
 
-      static void AddSpecialAdHocPages(string subSite, int umbracoParentId, int mainDocId)
+      static void AddSpecialAdHocPages(string subSite, int umbracoParentId, int mainDocId, string folderLabel)
       {
          DataTable subsiteDocs = new DataTable();
          // IMPORT CAREERS DOCS
@@ -477,12 +480,14 @@ namespace USDA_ARS.ImportDocs
                   string originSite_ID = subsiteDocs.Rows[i].Field<string>(5).ToString();
                   bool displayTitle = subsiteDocs.Rows[i].Field<bool>(7);
                   int docId = subsiteDocs.Rows[i].Field<int>(8);
+                  string htmlHeader = subsiteDocs.Rows[i].Field<string>("HTMLHeader");
+                  string keywords = subsiteDocs.Rows[i].Field<string>("keywords");
 
-                  ImportPage page = GenerateImportPage(docId, currentversion, title, doctype, published, originSite_Type, originSite_ID, displayTitle, "");
+                  ImportPage page = GenerateImportPage(docId, currentversion, title, doctype, published, originSite_Type, originSite_ID, displayTitle, "", htmlHeader, keywords);
 
                   if (docId == mainDocId)
                   {
-                     UpdateSubsiteMainPage(subSite, umbracoParentId, page);
+                     UpdateSubsiteMainPage(subSite, umbracoParentId, page, folderLabel);
                   }
                   else
                   {
@@ -550,6 +555,7 @@ namespace USDA_ARS.ImportDocs
             {
                AddLog(" - Updating Page for: " + importPage.OldDocType + "...");
                UpdateUmbracoNode(subNodeUmbracoId, importPage.BodyText, "/" + importPage.OldDocType + "/docs.htm?docid=" + importPage.OldDocId, importPage.OldDocId.ToString());
+               updateSubNode = true;
             }
 
 
@@ -736,7 +742,7 @@ namespace USDA_ARS.ImportDocs
       }
 
 
-      static void UpdateSubsiteMainPage(string subsite, int umbracoId, ImportPage importPage)
+      static void UpdateSubsiteMainPage(string subsite, int umbracoId, ImportPage importPage, string folderLabel)
       {
          AddLog("Updating doc to subsite main node: " + subsite + "...");
 
@@ -754,7 +760,7 @@ namespace USDA_ARS.ImportDocs
          properties.Add(new ApiProperty("bodyText", body)); // HTML of person site
          properties.Add(new ApiProperty("oldId", importPage.OldDocId.ToString())); // Person's ID              
          properties.Add(new ApiProperty("oldUrl", oldUrl)); // current URL           
-         properties.Add(new ApiProperty("folderLabel", subsite.ToLower()));
+         properties.Add(new ApiProperty("folderLabel", folderLabel.ToLower()));
 
          content.Properties = properties;
 
@@ -781,7 +787,7 @@ namespace USDA_ARS.ImportDocs
 
          if (parentId > 0)
          {
-            ApiResponse response = AddUmbracoPage(parentId, importPage.Title, importPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, importPage.HtmlHeader, importPage.Keywords, 1, 2, subsite);
+            ApiResponse response = AddUmbracoPage(parentId, importPage.Title, importPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, importPage.HtmlHeader, importPage.Keywords, 1, 2);
 
             if (response != null && response.ContentList != null && response.ContentList.Any())
             {
@@ -850,7 +856,7 @@ namespace USDA_ARS.ImportDocs
 
 
       static ImportPage GenerateImportPage(int docId, string currentVersion, string title, string doctype, string published,
-               string originSite_Type, string originSite_ID, bool displayTitle, string adHocFolderName)
+               string originSite_Type, string originSite_ID, bool displayTitle, string adHocFolderName, string htmlHeader, string keywords)
       {
          ImportPage newPage = new ImportPage();
 
@@ -917,6 +923,8 @@ namespace USDA_ARS.ImportDocs
                   newPage.DisableTitle = !displayTitle;
                   newPage.BodyText = decString.Trim(); // Document Body Text
                   newPage.OldDocType = doctype.Trim(); // SitePublisher Doc Type
+                  newPage.HtmlHeader = htmlHeader != null ? htmlHeader.Trim() : "";
+                  newPage.Keywords = keywords != null ? keywords.Trim() : "";
                   newPage.PageNumber = 1;
                }
                else
@@ -931,7 +939,7 @@ namespace USDA_ARS.ImportDocs
       }
 
 
-      static ApiResponse AddUmbracoPage(int parentId, string name, string body, bool hidePageTitle, int oldId, string oldDocType, string htmlHeader, string keywords, int pageNum, int saveType = 2, string subSite = "")
+      static ApiResponse AddUmbracoPage(int parentId, string name, string body, bool hidePageTitle, int oldId, string oldDocType, string htmlHeader, string keywords, int pageNum, int saveType = 2, string folderLabel = "")
       {
          ApiContent content = new ApiContent();
 
@@ -994,6 +1002,11 @@ namespace USDA_ARS.ImportDocs
 
          properties.Add(new ApiProperty("pageHeaderScripts", CleanHtml.CleanUpHtml(htmlHeader))); // hide page title
          properties.Add(new ApiProperty("keywords", keywords)); // hide page title
+
+         if (false == string.IsNullOrEmpty(folderLabel))
+         {
+            properties.Add(new ApiProperty("folderLabel", folderLabel)); // hide page title
+         }
 
          content.Properties = properties;
 
@@ -1596,8 +1609,10 @@ namespace USDA_ARS.ImportDocs
                         OriginSite_Type,
                         OriginSite_ID,
                         oldURL,
-	                    DisplayTitle,
-                        DocId
+	                       DisplayTitle,
+                        DocId,
+                        HTMLHeader,
+						                  keywords
                       FROM sitepublisherii.dbo.Documents
 
                       WHERE
@@ -1649,8 +1664,10 @@ namespace USDA_ARS.ImportDocs
                         OriginSite_Type,
                         OriginSite_ID,
                         oldURL,
-	                    DisplayTitle,
-                        DocId
+	                       DisplayTitle,
+                        DocId,
+                        HTMLHeader,
+						                  keywords
                       FROM sitepublisherii.dbo.Documents
 
                       WHERE

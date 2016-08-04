@@ -212,18 +212,14 @@ namespace USDA_ARS.ImportNews
 
                         if (false == string.IsNullOrEmpty(bodyText))
                         {
-                           bodyText = ReplaceCaseInsensitive(bodyText, "../thelatest.htm", "/{localLink:8001}");
-                           bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/pr/thelatest.htm", "/{localLink:8001}");
+                           bodyText = ReplaceCaseInsensitive(bodyText, "../thelatest.htm", "/is/pr/thelatest.htm");
 
-                           bodyText = ReplaceCaseInsensitive(bodyText, "../subscribe.htm", "/{localLink:8002}");
-                           bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/pr/subscribe.htm", "/{localLink:8002}");
+                           bodyText = ReplaceCaseInsensitive(bodyText, "../subscribe.htm", "/is/pr/subscribe.htm");
 
-                           bodyText = ReplaceCaseInsensitive(bodyText, "../../graphics/", "/ARSUserFiles/news/graphics/");
-                           bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/graphics/", "/ARSUserFiles/oc/graphics/");
+                           bodyText = ReplaceCaseInsensitive(bodyText, "../../graphics/", "/is/graphics/");
 
                            bodyText = ReplaceCaseInsensitive(bodyText, "\"../../", "/");
                            bodyText = ReplaceCaseInsensitive(bodyText, "\"../", "/is/");
-                           bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/", "/");
 
                            bodyText = CleanHtml.CleanUpHtml(bodyText, "", MODE_CODE_NEW_LIST);
                         }
@@ -237,41 +233,6 @@ namespace USDA_ARS.ImportNews
                            if (doc.DocumentNode.SelectSingleNode("//meta[@name='RSSKeywords']") != null)
                            {
                               keywordList = doc.DocumentNode.SelectSingleNode("//meta[@name='RSSKeywords']").Attributes["content"].Value.Split(',').ToList();
-                           }
-                        }
-
-                        bodyText = bodyText.Replace("http://www.ars.usda.gov", "");
-                        //bodyText = Regex.Replace(bodyText, "\"/is/", "\"/ARSUserFiles/oc/", RegexOptions.IgnoreCase);
-                        bodyText = bodyText.Replace("/pandp/people/people.htm?personid=", "/people-locations/person/?person-id=");
-
-                        MatchCollection m1 = Regex.Matches(bodyText, @"/main/site_main\.htm\?modecode=([\d\-]*)", RegexOptions.Singleline);
-
-                        foreach (Match m in m1)
-                        {
-                           string modeCode = m.Groups[1].Value;
-
-                           ApiResponse responsePage = new ApiResponse();
-
-                           // Get the umbraco page by the mode code (Region/Area or Research Unit)
-                           ModeCodeLookup modeCodeLookup = MODE_CODE_LIST.Where(p => p.ModeCode == modeCode).FirstOrDefault();
-
-                           if (modeCodeLookup != null)
-                           {
-                              bodyText = bodyText.Replace(m.Groups[0].Value, "/{localLink:" + modeCodeLookup.UmbracoId + "}");
-                           }
-                           else
-                           {
-                              ModeCodeNew modeCodeNew = MODE_CODE_NEW_LIST.Where(p => p.ModecodeOld == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(modeCode)).FirstOrDefault();
-
-                              if (modeCodeNew != null)
-                              {
-                                 modeCodeLookup = MODE_CODE_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCodeNew.ModecodeNew)).FirstOrDefault();
-
-                                 if (modeCodeLookup != null)
-                                 {
-                                    bodyText = bodyText.Replace(m.Groups[0].Value, "/{localLink:" + modeCodeLookup.UmbracoId + "}");
-                                 }
-                              }
                            }
                         }
 
@@ -298,6 +259,8 @@ namespace USDA_ARS.ImportNews
                }
             }
          }
+
+         AddLog("// Done //");
       }
 
 

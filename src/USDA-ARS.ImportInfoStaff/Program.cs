@@ -258,6 +258,28 @@ namespace USDA_ARS.ImportInfoStaff
             ImportCustomPage(parentId, "Photos - People", "/News/Docs.htm?docid=24138");
             ImportCustomPage(parentId, "Photos - Photo Illustrations", "/News/Docs.htm?docid=24129");
             ImportCustomPage(parentId, "Photos - Plants", "/News/Docs.htm?docid=24127");
+
+            AddLog("Publishing pages '" + tempDir + "'...");
+
+            ApiRequest requestPublish4 = new ApiRequest();
+            ApiContent contentPublish4 = new ApiContent();
+
+            requestPublish4.ApiKey = API_KEY;
+
+            contentPublish4.Id = parentId;
+
+            requestPublish4.ContentList = new List<ApiContent>();
+            requestPublish4.ContentList.Add(contentPublish4);
+
+            ApiResponse responseBackPublish4 = ApiCalls.PostData(requestPublish4, "PublishWithChildren");
+
+            if (responseBackPublish4 != null)
+            {
+               AddLog(" - Success: " + responseBackPublish4.Success);
+               AddLog(" - Message: " + responseBackPublish4.Message);
+            }
+
+            AddLog("");
          }
 
          //AddLog 
