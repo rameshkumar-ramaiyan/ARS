@@ -71,6 +71,24 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
       }
 
 
+      public static IEnumerable<IPublishedContent> GetSofwareListByNode(IPublishedContent node)
+      {
+         IEnumerable<IPublishedContent> softwareList = null;
+
+         if (node != null && node.Children != null && node.Children.Any())
+         {
+            IPublishedContent softwareFolder = node.Children().Where(p => p.DocumentTypeAlias == "SiteSoftwareFolder").FirstOrDefault();
+            
+            if (softwareFolder != null)
+            {
+               softwareList = softwareFolder.Children;
+            }
+         }
+
+         return softwareList;
+      }
+
+
       public static List<IPublishedContent> GetSoftwareNodes()
       {
          List<IPublishedContent> softwareList = new List<IPublishedContent>();

@@ -2,37 +2,37 @@
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
 @{
-    IEnumerable<IPublishedContent> regionSiteList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.RegionSiteList();
+   IEnumerable<IPublishedContent> regionSiteList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.RegionSiteList();
 }
 
 <ul>
-    <a href="/pandp/locations.htm">Research Locations (Map)</a>
+   <a href="/pandp/locations.htm">Research Locations (Map)</a>
 
-    @if (regionSiteList != null && regionSiteList.Any())
-    {
-        foreach (var region in regionSiteList)
-        {
-            if (false == region.GetPropertyValue<bool>("hideFromLocationsList"))
-            {
-                <li class="locationLevel3">
-                    <a href="@region.Url">@region.Name</a>
-                </li>
+   @if (regionSiteList != null && regionSiteList.Any())
+   {
+      foreach (var region in regionSiteList)
+      {
+         if (false == region.GetPropertyValue<bool>("hideFromLocationsList"))
+         {
+            <li class="locationLevel3">
+               <a href="@region.Url">@region.Name</a>
+            </li>
 
-                <li class="locationLevel4">
-                    @{
-                        List<string> stateList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.StateListFromRegion(region);
+               <li class="locationLevel4">
+                  @{
+                     List<string> stateList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.StateListFromRegion(region);
 
-                        if (stateList != null && stateList.Count > 0)
-                        {
-                            string states = string.Join(",", stateList.ToArray());
+                     if (stateList != null && stateList.Count > 0)
+                     {
+                        string states = string.Join(",", stateList.ToArray());
 
-                            states = states.Replace(",", ", ");
+                        states = states.Replace(",", ", ");
 
-                            @Html.Raw("(" + states + ")");
+                        @Html.Raw("(" + states + ")");
+                     }
+                  }
+               </li>
+                           }
                         }
-                    }
-                </li>
-            }
-        }
-    }
+                     }
 </ul>

@@ -40,7 +40,7 @@ namespace USDA_ARS.ImportInfoStaff
             {
                if (args.Length == 2)
                {
-                  if (args[1] == "force-cache-update")
+                  if (args[1] == "INFO_STAFF_force-cache-update")
                   {
                      forceCacheUpdate = true;
                   }
@@ -258,12 +258,34 @@ namespace USDA_ARS.ImportInfoStaff
             ImportCustomPage(parentId, "Photos - People", "/News/Docs.htm?docid=24138");
             ImportCustomPage(parentId, "Photos - Photo Illustrations", "/News/Docs.htm?docid=24129");
             ImportCustomPage(parentId, "Photos - Plants", "/News/Docs.htm?docid=24127");
+
+            AddLog("Publishing pages '" + tempDir + "'...");
+
+            ApiRequest requestPublish4 = new ApiRequest();
+            ApiContent contentPublish4 = new ApiContent();
+
+            requestPublish4.ApiKey = API_KEY;
+
+            contentPublish4.Id = parentId;
+
+            requestPublish4.ContentList = new List<ApiContent>();
+            requestPublish4.ContentList.Add(contentPublish4);
+
+            ApiResponse responseBackPublish4 = ApiCalls.PostData(requestPublish4, "PublishWithChildren");
+
+            if (responseBackPublish4 != null)
+            {
+               AddLog(" - Success: " + responseBackPublish4.Success);
+               AddLog(" - Message: " + responseBackPublish4.Message);
+            }
+
+            AddLog("");
          }
 
          //AddLog 
 
 
-         using (FileStream fs = File.Create("LOG_FILE.txt"))
+         using (FileStream fs = File.Create("INFO_STAFF_LOG_FILE.txt"))
          {
             // Add some text to file
             Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);
@@ -412,6 +434,10 @@ namespace USDA_ARS.ImportInfoStaff
             pageImport.Title = title;
             pageImport.BodyText = bodyText;
             pageImport.OldPath = oldPath;
+            }
+            else
+            {
+                AddLog("** BODY text was not formatted correctly and couldn't be found.");
          }
 
          return pageImport;
@@ -793,7 +819,7 @@ namespace USDA_ARS.ImportInfoStaff
                sb.AppendLine(modeCodeItem.ModeCode + "|" + modeCodeItem.UmbracoId + "|" + modeCodeItem.Url);
             }
 
-            using (FileStream fs = File.Create("mode-code-cache.txt"))
+            using (FileStream fs = File.Create("INFO_STAFF_mode-code-cache.txt"))
             {
                // Add some text to file
                Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
@@ -807,7 +833,7 @@ namespace USDA_ARS.ImportInfoStaff
 
       static List<ModeCodeLookup> GetModeCodeLookupCache()
       {
-         string filename = "mode-code-cache.txt";
+         string filename = "INFO_STAFF_mode-code-cache.txt";
          List<ModeCodeLookup> modeCodeList = new List<ModeCodeLookup>();
 
          if (true == File.Exists(filename))
@@ -891,7 +917,7 @@ namespace USDA_ARS.ImportInfoStaff
                      page = new PageImport();
 
                      page.Title = title;
-                     page.BodyText = between;
+                     page.BodyText = CleanHtml.CleanUpHtml(between);
                      page.OldPath = url;
                   }
                }

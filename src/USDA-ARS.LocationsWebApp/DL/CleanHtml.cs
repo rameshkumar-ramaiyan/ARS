@@ -39,20 +39,55 @@ namespace USDA_ARS.LocationsWebApp.DL
             bodyText = Regex.Replace(bodyText, @"/sp2userfiles/person", "/ARSUserFiles", RegexOptions.IgnoreCase);
             bodyText = Regex.Replace(bodyText, @"/sp2userfiles/Program/", "/ARSUserFiles/np", RegexOptions.IgnoreCase);
 
-            bodyText = Regex.Replace(bodyText, @"\""/images/", "\"/ARSUserFiles/images/", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"\""/incme/", "\"/ARSUserFiles/incme/", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"src\=\""/is/", "src=\"/ARSUserFiles/oc/", RegexOptions.IgnoreCase);
+            //bodyText = Regex.Replace(bodyText, "\"/images/", "\"/ARSUserFiles/images/", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, "\"/incme/", "\"/ARSUserFiles/incme/", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"src\=""/is/", "src=\"/ARSUserFiles/oc/", RegexOptions.IgnoreCase);
+
+            bodyText = Regex.Replace(bodyText, @"/ARSUserFiles/news/", "/ARSUserFiles/oc/", RegexOptions.IgnoreCase);
+
+            // Find Href Matches
+            MatchCollection m1 = Regex.Matches(bodyText, @"(<a.*?>.*?</a>)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+
+            foreach (Match m in m1)
+            {
+               string value = m.Groups[1].Value;
+
+               Match m2 = Regex.Match(value, @"href=\""(.*?)\""",
+               RegexOptions.Singleline);
+               if (m2.Success)
+               {
+                  string urlPath = m2.Groups[1].Value;
+
+                  if (false == string.IsNullOrWhiteSpace(urlPath))
+                  {
+                     string testUrlPath = urlPath.ToLower();
+
+                     if (testUrlPath.StartsWith("/is/") && testUrlPath.Length >= 5)
+                     {
+                        if (testUrlPath.EndsWith(".jpg") || testUrlPath.EndsWith(".gif") || testUrlPath.EndsWith(".zip") ||
+                                 testUrlPath.EndsWith(".doc") || testUrlPath.EndsWith(".jpeg") || testUrlPath.EndsWith(".pdf") ||
+                                 testUrlPath.EndsWith(".xls") || testUrlPath.EndsWith(".doc"))
+                        {
+                           string fixUrlPath = urlPath.Substring(4, urlPath.Length - 4);
+
+                           bodyText = bodyText.Replace(urlPath, "/ARSUserFiles/oc/" + fixUrlPath);
+                        }
+                     }
+                  }
+               }
+            }
 
 
-            bodyText = Regex.Replace(bodyText, @"/News/Docs\.htm\?docid\=23712", "/{localLink:8002}", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"/News/Docs\.htm\?docid\=23559", "/{localLink:1145}", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"/is/graphics/photos/", "/{localLink:1145}", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"/is/pr/index\.html", "/{localLink:6996}", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"/News/docs\.htm\?docid\=6697", "/{localLink:9134}", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"/News/docs\.htm\?docid\=1383", "/{localLink:8030}", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"/News/docs\.htm\?docid\=1281", "/{localLink:8003}", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"/news/events\.htm", "/{localLink:8024}", RegexOptions.IgnoreCase);
-            bodyText = Regex.Replace(bodyText, @"/news/events\.htm", "/{localLink:8024}", RegexOptions.IgnoreCase);
+
+            bodyText = Regex.Replace(bodyText, @"""/News/Docs\.htm\?docid\=23712""", "\"/{localLink:8002}\"", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"""/News/Docs\.htm\?docid\=23559""", "\"/{localLink:1145}\"", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"""/is/graphics/photos/""", "\"/{localLink:1145}\"", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"""/is/pr/index\.html""", "\"/{localLink:6996}\"", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"""/News/docs\.htm\?docid\=6697""", "\"/{localLink:9134}\"", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"""/News/docs\.htm\?docid\=1383""", "\"/{localLink:8030}\"", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"""/News/docs\.htm\?docid\=1281""", "\"/{localLink:8003}\"", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"""/news/events\.htm""", "\"/{localLink:8024}\"", RegexOptions.IgnoreCase);
+            bodyText = Regex.Replace(bodyText, @"""/news/events\.htm""", "\"/{localLink:8024}\"", RegexOptions.IgnoreCase);
 
             bodyText = Regex.Replace(bodyText, @"/SP2UserFiles/Subsite/sciQualRev", "/ARSUserFiles/OSQR", RegexOptions.IgnoreCase);
             bodyText = Regex.Replace(bodyText, @"/SP2UserFiles/Subsite/HQsubsite", "/ARSUserFiles/NACOP", RegexOptions.IgnoreCase);
@@ -1008,8 +1043,6 @@ namespace USDA_ARS.LocationsWebApp.DL
             bodyText = Regex.Replace(bodyText, @"/SP2UserFiles/ad_hoc/eggs", "/ARSUserFiles/80400530/eggs", RegexOptions.IgnoreCase);
             bodyText = Regex.Replace(bodyText, @"/SP2UserFiles/ad_hoc/m", "/ARSUserFiles/00000000/m", RegexOptions.IgnoreCase);
             bodyText = Regex.Replace(bodyText, @"/SP2UserFiles/ad_hoc/SANDwitch", "/ARSUserFiles/80400530/SANDwitch", RegexOptions.IgnoreCase);
-
-            bodyText = Regex.Replace(bodyText, @"href\=\""/ARSUserFiles/oc/", "href=\"/is/", RegexOptions.IgnoreCase);
 
             output = htmlCompressor.compress(bodyText);
          }

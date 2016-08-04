@@ -212,18 +212,14 @@ namespace USDA_ARS.ImportNews
 
                         if (false == string.IsNullOrEmpty(bodyText))
                         {
-                           bodyText = ReplaceCaseInsensitive(bodyText, "../thelatest.htm", "/{localLink:8001}");
-                           bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/pr/thelatest.htm", "/{localLink:8001}");
+                           bodyText = ReplaceCaseInsensitive(bodyText, "../thelatest.htm", "/is/pr/thelatest.htm");
 
-                           bodyText = ReplaceCaseInsensitive(bodyText, "../subscribe.htm", "/{localLink:8002}");
-                           bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/pr/subscribe.htm", "/{localLink:8002}");
+                           bodyText = ReplaceCaseInsensitive(bodyText, "../subscribe.htm", "/is/pr/subscribe.htm");
 
-                           bodyText = ReplaceCaseInsensitive(bodyText, "../../graphics/", "/ARSUserFiles/news/graphics/");
-                           bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/is/graphics/", "/ARSUserFiles/oc/graphics/");
+                           bodyText = ReplaceCaseInsensitive(bodyText, "../../graphics/", "/is/graphics/");
 
                            bodyText = ReplaceCaseInsensitive(bodyText, "\"../../", "/");
                            bodyText = ReplaceCaseInsensitive(bodyText, "\"../", "/is/");
-                           bodyText = ReplaceCaseInsensitive(bodyText, "http://www.ars.usda.gov/", "/");
 
                            bodyText = CleanHtml.CleanUpHtml(bodyText, "", MODE_CODE_NEW_LIST);
                         }
@@ -237,41 +233,6 @@ namespace USDA_ARS.ImportNews
                            if (doc.DocumentNode.SelectSingleNode("//meta[@name='RSSKeywords']") != null)
                            {
                               keywordList = doc.DocumentNode.SelectSingleNode("//meta[@name='RSSKeywords']").Attributes["content"].Value.Split(',').ToList();
-                           }
-                        }
-
-                        bodyText = bodyText.Replace("http://www.ars.usda.gov", "");
-                        //bodyText = Regex.Replace(bodyText, "\"/is/", "\"/ARSUserFiles/oc/", RegexOptions.IgnoreCase);
-                        bodyText = bodyText.Replace("/pandp/people/people.htm?personid=", "/people-locations/person/?person-id=");
-
-                        MatchCollection m1 = Regex.Matches(bodyText, @"/main/site_main\.htm\?modecode=([\d\-]*)", RegexOptions.Singleline);
-
-                        foreach (Match m in m1)
-                        {
-                           string modeCode = m.Groups[1].Value;
-
-                           ApiResponse responsePage = new ApiResponse();
-
-                           // Get the umbraco page by the mode code (Region/Area or Research Unit)
-                           ModeCodeLookup modeCodeLookup = MODE_CODE_LIST.Where(p => p.ModeCode == modeCode).FirstOrDefault();
-
-                           if (modeCodeLookup != null)
-                           {
-                              bodyText = bodyText.Replace(m.Groups[0].Value, "/{localLink:" + modeCodeLookup.UmbracoId + "}");
-                           }
-                           else
-                           {
-                              ModeCodeNew modeCodeNew = MODE_CODE_NEW_LIST.Where(p => p.ModecodeOld == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeNoDashes(modeCode)).FirstOrDefault();
-
-                              if (modeCodeNew != null)
-                              {
-                                 modeCodeLookup = MODE_CODE_LIST.Where(p => p.ModeCode == Umbraco.Extensions.Helpers.ModeCodes.ModeCodeAddDashes(modeCodeNew.ModecodeNew)).FirstOrDefault();
-
-                                 if (modeCodeLookup != null)
-                                 {
-                                    bodyText = bodyText.Replace(m.Groups[0].Value, "/{localLink:" + modeCodeLookup.UmbracoId + "}");
-                                 }
-                              }
                            }
                         }
 
@@ -298,11 +259,16 @@ namespace USDA_ARS.ImportNews
                }
             }
          }
+
+         AddLog("// Done //");
       }
 
 
       static void LinkInterlinksNews()
       {
+         int recordNum = 1;
+         int recordCount = 0;
+
          AddLog("Getting Mode Codes From Umbraco...");
          GenerateModeCodeList(false);
          AddLog("Done. Count: " + MODE_CODE_LIST.Count);
@@ -312,6 +278,8 @@ namespace USDA_ARS.ImportNews
 
          if (umbracoNewsList != null && umbracoNewsList.Any())
          {
+            recordCount = umbracoNewsList.Count;
+
             AddLog("");
             AddLog("News Articles found: " + umbracoNewsList.Count);
 
@@ -324,6 +292,7 @@ namespace USDA_ARS.ImportNews
 
             foreach (Models.UmbracoPropertyData node in umbracoNewsList)
             {
+               AddLog("Record " + recordNum + " / " + recordCount);
                AddLog("Processing article: " + node.Title);
                string bodyText = node.DataNtext;
 
@@ -331,10 +300,15 @@ namespace USDA_ARS.ImportNews
 
                if (linkItemList != null)
                {
-                  AddLog("Found Interlinks: " + linkItemList.Count);
+                  AddLog("Found Interlinks...");
                   NewsInterLinks.GenerateInterLinks(node.UmbracoId, node.UmbracoGuid, linkItemList, MODE_CODE_LIST);
                }
+
+               AddLog("");
+               recordNum++;
             }
+
+            AddLog("// Done //");
          }
          else
          {
@@ -398,7 +372,7 @@ namespace USDA_ARS.ImportNews
 
       static List<ModeCodeLookup> GetModeCodeLookupCache()
       {
-         string filename = "mode-code-cache.txt";
+         string filename = "NEWS_mode-code-cache.txt";
          List<ModeCodeLookup> modeCodeList = new List<ModeCodeLookup>();
 
          if (true == System.IO.File.Exists(filename))
@@ -433,7 +407,7 @@ namespace USDA_ARS.ImportNews
                sb.AppendLine(modeCodeItem.ModeCode + "|" + modeCodeItem.UmbracoId + "|" + modeCodeItem.Url);
             }
 
-            using (FileStream fs = System.IO.File.Create("mode-code-cache.txt"))
+            using (FileStream fs = System.IO.File.Create("NEWS_mode-code-cache.txt"))
             {
                // Add some text to file
                Byte[] fileText = new UTF8Encoding(true).GetBytes(sb.ToString());
@@ -514,7 +488,7 @@ namespace USDA_ARS.ImportNews
          content.Id = 0;
          content.Name = year;
          content.ParentId = Convert.ToInt32(ConfigurationManager.AppSettings.Get("NewsArticles:ParentId"));
-         content.DocType = "NewsFolder";
+         content.DocType = "NewsYear";
          content.Template = ""; // Leave blank
 
          List<ApiProperty> properties = new List<ApiProperty>();

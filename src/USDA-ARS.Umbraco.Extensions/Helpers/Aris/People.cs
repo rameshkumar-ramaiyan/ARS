@@ -276,7 +276,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             where += " (status_code = 'a' OR status_code is null)";
 
-            sql = "SELECT * FROM w_people_info WHERE " + where;
+            sql = "SELECT * FROM v_people_info WHERE " + where;
 
             peopleList = db.Query<PeopleInfo>(sql, new { lname = lname, fname = fname, title = title, phoneText = phone, email = email, city = city, state = state }).ToList();
          }
@@ -403,7 +403,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             sql = new Sql()
              .Select("*")
-             .From("w_people_info")
+             .From("v_people_info")
              .Where(where);
 
             peopleList = db.Query<PeopleInfo>(sql).ToList();

@@ -202,7 +202,7 @@ namespace USDA_ARS.ImportPeopleSites
                 Logs.AddLog(ref LOG_FILE_TEXT, "!!!!!!! ERROR !!!!!!!" + ex.ToString());
             }
 
-            using (FileStream fs = File.Create("LOG_FILE.txt"))
+            using (FileStream fs = File.Create("PEOPLE_SITES_LOG_FILE.txt"))
             {
                 // Add some text to file
                 Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);

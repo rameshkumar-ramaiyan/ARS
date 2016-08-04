@@ -1,5 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -7,14 +10,16 @@ using System.Threading.Tasks;
 using Umbraco.Core.Models;
 using Umbraco.Core.Persistence;
 using USDA_ARS.ImportNews.Models;
+using USDA_ARS.LocationsWebApp.DL;
 using USDA_ARS.Umbraco.Extensions.Helpers;
 using USDA_ARS.Umbraco.Extensions.Models.Aris;
+using USDA_ARS.Umbraco.Extensions.Models.Import;
 
 namespace USDA_ARS.ImportNews.Objects
 {
    public class NewsInterLinks
    {
-      public static List<NewsInterLink> GenerateInterLinks(int umbracoNodeId, Guid umbracoNodeGuid, List<LinkItem> linkList, List<ModeCodeLookup> modeCodeList)
+      public static List<NewsInterLink> GenerateInterLinks(int umbracoNodeId, Guid umbracoNodeGuid, List<LinkItem> linkList, List<ModeCodeLookup> modeCodeList, List<ModeCodeNew> newModeCodeList = null)
       {
          List<NewsInterLink> interLinkList = new List<NewsInterLink>();
 
@@ -47,6 +52,42 @@ namespace USDA_ARS.ImportNews.Objects
                         interLinkItem.LinkId = personId;
                      }
                   }
+                  else if (linkItem.Href.IndexOf("/main/site_main.htm?modecode=") >= 0)
+                  {
+                     string modeCode = linkItem.Href.ToLower().Replace("/main/site_main.htm?modecode=", "");
+                     ModeCodeLookup modeCodeLookup = null;
+
+                     modeCodeLookup = modeCodeList.Where(p => p.ModeCode == ModeCodes.ModeCodeAddDashes(modeCode)).FirstOrDefault();
+
+                     if (modeCodeLookup != null)
+                     {
+                        modeCode = modeCodeLookup.ModeCode;
+                     }
+                     else if (newModeCodeList != null)
+                     {
+                        ModeCodeNew modeCodeNew = newModeCodeList.Where(p => p.ModecodeOld == ModeCodes.ModeCodeNoDashes(modeCode)).FirstOrDefault();
+
+                        if (modeCodeNew != null)
+                        {
+                           modeCodeLookup = modeCodeList.Where(p => p.ModeCode == ModeCodes.ModeCodeAddDashes(modeCodeNew.ModecodeNew)).FirstOrDefault();
+
+                           if (modeCodeLookup != null)
+                           {
+                              modeCode = modeCodeLookup.ModeCode;
+                           }
+                        }
+                     }
+
+                     if (false == string.IsNullOrEmpty(modeCode))
+                     {
+                        modeCode = ModeCodes.ModeCodeNoDashes(modeCode);
+
+                        modeCode = DoesNodeHaveSingleResearchUnits(modeCode);
+
+                        interLinkItem.LinkType = "place";
+                        interLinkItem.LinkId = Convert.ToInt64(modeCode);
+                     }
+                  }
                   else if (linkItem.Href.IndexOf("/{localLink:") >= 0)
                   {
                      //{localLink:2188}
@@ -60,19 +101,24 @@ namespace USDA_ARS.ImportNews.Objects
 
                      if (nodeId > 0)
                      {
-                        ModeCodeLookup node = modeCodeList.Where(p => p.UmbracoId == nodeId).FirstOrDefault();
+                        string modeCode = "";
+                        ModeCodeLookup modeCodeLookup = null;
 
-                        if (node != null)
+                        modeCodeLookup = modeCodeList.Where(p => p.UmbracoId == nodeId).FirstOrDefault();
+
+                        if (modeCodeLookup != null)
                         {
-                           string modeCode = node.ModeCode;
+                           modeCode = modeCodeLookup.ModeCode;
+                        }
 
-                           if (false == string.IsNullOrEmpty(modeCode))
-                           {
-                              modeCode = ModeCodes.ModeCodeNoDashes(modeCode);
+                        if (false == string.IsNullOrEmpty(modeCode))
+                        {
+                           modeCode = ModeCodes.ModeCodeNoDashes(modeCode);
 
-                              interLinkItem.LinkType = "place";
-                              interLinkItem.LinkId = Convert.ToInt64(modeCode);
-                           }
+                           modeCode = DoesNodeHaveSingleResearchUnits(modeCode);
+
+                           interLinkItem.LinkType = "place";
+                           interLinkItem.LinkId = Convert.ToInt64(modeCode);
                         }
                      }
                   }
@@ -89,6 +135,8 @@ namespace USDA_ARS.ImportNews.Objects
                         if (false == string.IsNullOrEmpty(modeCode))
                         {
                            modeCode = ModeCodes.ModeCodeNoDashes(modeCode);
+
+                           modeCode = DoesNodeHaveSingleResearchUnits(modeCode);
 
                            interLinkItem.LinkType = "place";
                            interLinkItem.LinkId = Convert.ToInt64(modeCode);
@@ -166,6 +214,97 @@ namespace USDA_ARS.ImportNews.Objects
          }
 
          return linkItem;
+      }
+
+
+      public static ApiContent GetUmbracoPageByModeCode(string foundModeCode)
+      {
+         ApiResponse modeCodeNode = GetCalls.GetNodeByModeCode(foundModeCode);
+         ApiContent node = null;
+
+         if (modeCodeNode != null && modeCodeNode.ContentList != null && modeCodeNode.ContentList.Any() && true == modeCodeNode.ContentList[0].Success)
+         {
+            node = modeCodeNode.ContentList[0];
+         }
+
+         return node;
+      }
+
+
+      public static string DoesNodeHaveSingleResearchUnits(string foundModeCode)
+      {
+         string modeCode = foundModeCode;
+
+         try
+         {
+            foundModeCode = ModeCodes.ModeCodeNoDashes(foundModeCode);
+
+            string sql = "exec [uspgetAllReassignModeCodesForCityWithSingleChild] " + foundModeCode;
+            DataTable dt = new DataTable();
+            SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["arisPublicWebDbDSN"].ConnectionString);
+
+            try
+            {
+               SqlDataAdapter da = new SqlDataAdapter();
+               SqlCommand sqlComm = new SqlCommand(sql, conn);
+
+               da.SelectCommand = sqlComm;
+               da.SelectCommand.CommandType = CommandType.Text;
+
+               DataSet ds = new DataSet();
+               da.Fill(ds, "ModeCode");
+
+               dt = ds.Tables["ModeCode"];
+
+               if (dt != null && dt.Rows.Count > 0)
+               {
+                  if (dt.Rows[0][0] != null && false == string.IsNullOrEmpty(dt.Rows[0].Field<string>(0)))
+                  {
+                     modeCode = dt.Rows[0].Field<string>(0);
+                  }
+               }
+            }
+            catch (Exception ex)
+            {
+               throw ex;
+            }
+            finally
+            {
+               conn.Close();
+            }
+         }
+         catch(Exception ex)
+         {
+            //
+         }
+
+         //ApiContent node = GetUmbracoPageByModeCode(foundModeCode);
+
+         //if (node != null)
+         //{
+         //   ApiProperty modeCodeFoundMain = node.Properties.Where(p => p.Key == "modeCode").FirstOrDefault();
+         //   if (modeCodeFoundMain != null)
+         //   {
+         //      modeCode = modeCodeFoundMain.Value.ToString();
+         //   }
+         //}
+
+         //if (node != null && node.ChildContentList != null && node.ChildContentList.Any())
+         //{
+         //   List<ApiContent> researchUnitList = node.ChildContentList.Where(p => p.DocType == "ResearchUnit").ToList();
+
+         //   if (researchUnitList != null && researchUnitList.Count == 1)
+         //   {
+         //      ApiProperty modeCodeFound = researchUnitList[0].Properties.Where(p => p.Key == "modeCode").FirstOrDefault();
+
+         //      if (modeCodeFound != null)
+         //      {
+         //         modeCode = modeCodeFound.Value.ToString();
+         //      }
+         //   }
+         //}
+
+         return modeCode;
       }
    }
 }

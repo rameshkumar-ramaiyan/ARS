@@ -2,64 +2,102 @@
 @using Archetype.Models
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
-    Layout = "_Master.cshtml";
+   Layout = "_Master.cshtml";
 
-    IPublishedContent currentPage = Model.Content;
+   IPublishedContent currentPage = Model.Content;
+   PeopleInfo peopleInfo = null;
+   bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
 
-    bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
+   string bodyText = currentPage.GetPropertyValue<string>("bodyText");
+   string modeCode = "";
 
-    string bodyText = currentPage.GetPropertyValue<string>("bodyText");
-    string modeCode = "";
+   if (currentPage.HasValue("personLink"))
+   {
+      int personId = currentPage.GetPropertyValue<int>("personLink");
 
-    if (Request.QueryString["modeCode"] != null)
-    {
-        modeCode = Request.QueryString.Get("modeCode");
-    }
+      IPublishedContent personSite = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByPersonId(personId);
 
-    bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
+      peopleInfo = People.GetPerson(personId);
+   }
+
+
+   if (Request.QueryString["modeCode"] != null)
+   {
+      modeCode = Request.QueryString.Get("modeCode");
+   }
+
+   bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
 }
 
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
 
 <div id="fullPage">
 
-    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
 
-    <div id="pageContent">
+   <div id="pageContent">
 
-        @if (false == hideHeaderTitle)
-        {
-            <table border="0" width="100%">
-                <tr>
-                    <td class="pageHeading">@currentPage.Name</td>
-                </tr>
-                <tr>
-                    <td>
+      <script language="JavaScript">function DisplayEmail(username, domain) { document.write(username + "&#64;" + domain); }</script>
+      @if (peopleInfo != null)
+      {
+         <font class="hdrBlackBold">
+            @peopleInfo.FirstName @peopleInfo.MiddleName @peopleInfo.LastName
 
-                        <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
-                    </td>
-                </tr>
-            </table>
-        }
+            @if (false == string.IsNullOrEmpty(peopleInfo.CommonName))
+            {
+               @("(" + peopleInfo.CommonName + ")")
+            }
+         </font>
+         <br />
+
+         <a href="mailto:@(peopleInfo.Email)?Subject=From ARS website">
+            @if (peopleInfo.Email != null && peopleInfo.Email.Split('@').Length == 2)
+            {
+               <script language="javascript">DisplayEmail('@(peopleInfo.Email.Split('@')[0])', '@(peopleInfo.Email.Split('@')[1])');</script>
+            }
+         </a>
+         <br />
+         <font class="hdrBlackBold">
+            @(peopleInfo.TitleWorking)<br />
+         </font>
+
+         <br />
+         <br />
+      }
+      else
+      {
+         <table border="0" width="100%">
+            <tr>
+               <td class="pageHeading">@currentPage.Name</td>
+            </tr>
+            <tr>
+               <td>
+
+                  <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
+               </td>
+            </tr>
+         </table>
+      }
+
+      <!-- display URLs of subpages start -->
+      <!--  display URLs of subpages end -->
+      <!-- document content start -->
+
+      @Html.Raw(bodyText)
+
+      <!-- document content end -->
 
 
-        <!-- display URLs of subpages start -->
-        <!--  display URLs of subpages end -->
-        <!-- document content start -->
-
-        @Html.Raw(bodyText)
-
-        <!-- document content end -->
-
-
-        <br />
+      <br />
 
 
 
-        <p></p>
+      <p></p>
 
 
-    </div>
+   </div>
 </div>

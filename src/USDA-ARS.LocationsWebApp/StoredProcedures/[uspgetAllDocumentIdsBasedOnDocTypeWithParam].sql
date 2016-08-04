@@ -1,11 +1,11 @@
 USE [aris_public_web]
 GO
 
-/****** Object:  StoredProcedure [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]    Script Date: 7/21/2016 3:28:54 AM ******/
+/****** Object:  StoredProcedure [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]    Script Date: 8/1/2016 10:52:29 AM ******/
 DROP PROCEDURE [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]
 GO
 
-/****** Object:  StoredProcedure [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]    Script Date: 7/21/2016 3:28:54 AM ******/
+/****** Object:  StoredProcedure [dbo].[uspgetAllDocumentIdsBasedOnDocTypeWithParam]    Script Date: 8/1/2016 10:52:29 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -76,7 +76,7 @@ and site_code in (select originsite_id from sitepublisherii.dbo.Documents where 
   BEGIN
 
 
-    --checking condition if index page and is published for person then only fetch that page (could be index or other page as well )
+--    --checking condition if index page and is published for person then only fetch that page (could be index or other page as well )
     SELECT
       * INTO #TempDataTable2
     FROM (
@@ -119,6 +119,8 @@ and site_code in (select originsite_id from sitepublisherii.dbo.Documents where 
       AND sitepublisherii.dbo.Documents.SPSysEndTime IS NULL
 	 
       AND OriginSite_Type = 'person'
+	  and  CAST(sitepublisherii.dbo.People.PersonID AS varchar(max)) in (select originsite_id from sitepublisherii.dbo.Documents where Title = 'index' and spsysendtime is NULL)
+	  and title <>'index'
      
       ORDER BY doctype, CurrentVersion_ID
     END
@@ -192,15 +194,21 @@ END
 
 ----1.site queires
 --select siteLabel, site_Type ,site_Code,site_status  from sitepublisherii.dbo.Sites where site_Type='Place' and site_status=1
---select siteLabel,site_Type,site_Code,site_status from sitepublisherii.dbo.Sites where site_Type='Person' and site_status=1
+--select siteLabel,site_Type,site_Code,site_status from sitepublisherii.dbo.Sites where site_Type='Person' and site_status=1 and site
 --select siteLabel,site_Type,site_Code,site_status  from sitepublisherii.dbo.Sites where site_Type='ad_hoc' and site_status=1
 
-
+--select * from sitepublisherii.dbo.People where PersonID=24458
+--select *from sitepublisherii.dbo.Sites where site_Type='Person' and site_status=1 and siteLabel like '%Schneider%'
+--select title,CurrentVersion_ID,doctype,Published,OriginSite_Type,OriginSite_ID,oldURL from sitepublisherii.dbo.Documents where OriginSite_Type='person' and Published='p'  and originsite_id='24458'order by originsite_id
+-- select * from  sitepublisherii.dbo.DocPages 
+--where DocVer_ID =(9845)  and CurrentVersion = 1 order by  docver_id,docpagenum
 ----1.document queires
 --select title,CurrentVersion_ID,doctype,Published,OriginSite_Type,OriginSite_ID,oldURL from sitepublisherii.dbo.Documents where OriginSite_Type='Place' and Published='p'
 --and DocType not in ('Program Reports', 'Program Planning','Program Inputs')  order by CurrentVersion_ID                                                                                                                                                                       
 
---select title,CurrentVersion_ID,doctype,Published,OriginSite_Type,OriginSite_ID,oldURL from sitepublisherii.dbo.Documents where OriginSite_Type='person' and Published='p'
+--select title,CurrentVersion_ID,doctype,Published,OriginSite_Type,OriginSite_ID,oldURL from sitepublisherii.dbo.Documents where OriginSite_Type='person' and Published='p' order by originsite_id
+
+--select * from sitepublisherii.dbo.Documents where Title = 'index' and spsysendtime is NULL and OriginSite_ID='24458'
 
 -- select title,CurrentVersion_ID,doctype,Published,OriginSite_Type,OriginSite_ID,oldURL from sitepublisherii.dbo.Documents where OriginSite_Type='ad_hoc' and Published='p'
 

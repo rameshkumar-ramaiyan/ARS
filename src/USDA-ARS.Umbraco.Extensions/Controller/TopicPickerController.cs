@@ -44,10 +44,19 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
             IPublishedContent node = umbracoHelper.TypedContent(id);
             List<TopicPickerItem> selectList = new List<TopicPickerItem>();
             List<IPublishedContent> navFolderList = new List<IPublishedContent>();
+            bool restrictToCurrentNode = false;
 
             if (node != null)
             {
-               navFolderList = GetFolderList(node);
+               // Test location 
+               IPublishedContent locationNode = node.Ancestors().Where(p => p.IsDocumentType("ResearchUnit") || p.IsDocumentType("Area")).FirstOrDefault();
+
+               if (locationNode != null)
+               {
+                  restrictToCurrentNode = true;
+               }
+
+               navFolderList = GetFolderList(node, restrictToCurrentNode);
 
                if (navFolderList != null)
                {
@@ -144,10 +153,21 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
       }
 
 
-      private List<IPublishedContent> GetFolderList(IPublishedContent node)
+      private List<IPublishedContent> GetFolderList(IPublishedContent node, bool restrictToCurrentNode = false)
       {
          List<IPublishedContent> navFolderList = new List<IPublishedContent>();
-         List<IPublishedContent> nodesList = nodesList = node.AncestorsOrSelf<IPublishedContent>().ToList();
+         List<IPublishedContent> nodesList = new List<IPublishedContent>();
+
+         if (true == restrictToCurrentNode)
+         {
+            node = node.Ancestors().Where(p => p.IsDocumentType("ResearchUnit") || p.IsDocumentType("Area") || p.IsDocumentType("Homepage") || 
+                        p.IsDocumentType("NationalProgram") || p.IsDocumentType("Subsite")).FirstOrDefault();
+            nodesList.Add(node);
+         }
+         else
+         {
+            nodesList = node.AncestorsOrSelf<IPublishedContent>().ToList();
+         }
 
          if (node.DocumentTypeAlias == "NationalProgram")
          {

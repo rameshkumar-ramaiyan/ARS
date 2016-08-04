@@ -164,6 +164,30 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
          return null;
       }
 
+      public static IPublishedContent NewsAndEvents()
+      {
+         IPublishedContent homepage = Homepage();
+
+         if (homepage != null)
+         {
+            return homepage.Descendants().FirstOrDefault(n => n.IsDocumentType("NewsHome"));
+         }
+
+         return null;
+      }
+
+      public static IPublishedContent PublicationsAtThisLocation()
+      {
+         IPublishedContent homepage = Homepage();
+
+         if (homepage != null)
+         {
+            return homepage.Descendants().FirstOrDefault(n => n.IsDocumentType("Publications"));
+         }
+
+         return null;
+      }
+
 
       public static IPublishedContent GetEmailTemplate(string nodeName)
       {
@@ -185,18 +209,26 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
       public static void CityResearchUnitList(ref List<ResearchUnitDisplay> researchUnits, IPublishedContent city, int level)
       {
-         IEnumerable<IPublishedContent> researchUnitList = city.Children.Where(n => n.IsDocumentType("City") || n.IsDocumentType("ResearchUnit"));
+         IEnumerable<IPublishedContent> researchUnitList = city.Children.Where(n => n.IsDocumentType("City") || n.IsDocumentType("ResearchUnit") || n.IsDocumentType("ResearchUnitClosed"));
 
-         foreach (IPublishedContent unit in researchUnitList)
+         if (researchUnitList != null && researchUnitList.Any())
          {
-            ResearchUnitDisplay researchUnitDisplay = new ResearchUnitDisplay();
+            if (researchUnitList.FirstOrDefault().DocumentTypeAlias == "ResearchUnit" || researchUnitList.FirstOrDefault().DocumentTypeAlias == "ResearchUnitClosed")
+            {
+               researchUnitList = researchUnitList.OrderBy(p => p.Name);
+            }
 
-            researchUnitDisplay.ResearchUnit = unit;
-            researchUnitDisplay.Level = level;
+            foreach (IPublishedContent unit in researchUnitList)
+            {
+               ResearchUnitDisplay researchUnitDisplay = new ResearchUnitDisplay();
 
-            researchUnits.Add(researchUnitDisplay);
+               researchUnitDisplay.ResearchUnit = unit;
+               researchUnitDisplay.Level = level;
 
-            CityResearchUnitList(ref researchUnits, unit, level + 1);
+               researchUnits.Add(researchUnitDisplay);
+
+               CityResearchUnitList(ref researchUnits, unit, level + 1);
+            }
          }
       }
 
@@ -264,34 +296,32 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
          if (redirectList == null)
          {
+            cache.Remove(cacheKey);
+
             redirectList = new List<RedirectItem>();
 
-            foreach (IPublishedContent root in UmbHelper.TypedContentAtRoot())
+            List<UmbracoPropertyData> oldUrlList = GetAllOldUrlNodes();
+
+            if (oldUrlList != null)
             {
-               if (root != null)
+               foreach (UmbracoPropertyData oldUrlItem in oldUrlList)
                {
-                  if (false == string.IsNullOrWhiteSpace(root.GetPropertyValue<string>("oldUrl")))
+                  string oldUrlStr = oldUrlItem.DataNtext;
+
+                  if (false == string.IsNullOrEmpty(oldUrlStr))
                   {
-                     List<string> oldUrlArray = root.GetPropertyValue<string>("oldUrl").Split(',').ToList();
+                     List<string> oldUrlArray = oldUrlStr.Split(',').ToList();
 
                      if (oldUrlArray != null && oldUrlArray.Count > 0)
                      {
                         foreach (string oldUrl in oldUrlArray)
                         {
-                           redirectList.Add(new RedirectItem { OldUrl = oldUrl.Trim().ToLower(), UmbracoId = root.Id });
-                        }
-                     }
-                  }
+                           redirectList.Add(new RedirectItem { OldUrl = oldUrl.Trim().ToLower(), UmbracoId = oldUrlItem.UmbracoId });
 
-                  foreach (IPublishedContent subNode in root.Descendants().Where(n => false == string.IsNullOrWhiteSpace(n.GetPropertyValue<string>("oldUrl"))))
-                  {
-                     List<string> oldUrlArray = subNode.GetPropertyValue<string>("oldUrl").Split(',').ToList();
-
-                     if (oldUrlArray != null && oldUrlArray.Count > 0)
-                     {
-                        foreach (string oldUrl in oldUrlArray)
-                        {
-                           redirectList.Add(new RedirectItem { OldUrl = oldUrl.Trim().ToLower(), UmbracoId = subNode.Id });
+                           if (false == oldUrl.EndsWith("/") && false == oldUrl.ToLower().EndsWith(".htm") && false == oldUrl.ToLower().EndsWith(".html"))
+                           {
+                              redirectList.Add(new RedirectItem { OldUrl = oldUrl.Trim().ToLower() +"/", UmbracoId = oldUrlItem.UmbracoId });
+                           }
                         }
                      }
                   }
@@ -364,7 +394,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
          var db = new Database("umbracoDbDSN");
 
-         string sql = @"SELECT nodeId FROM [cmsContentXml] WHERE xml LIKE '<LeftNavigationSet%' AND xml LIKE '%"+ guid + "%'";
+         string sql = @"SELECT nodeId FROM [cmsContentXml] WHERE xml LIKE '<LeftNavigationSet%' AND xml LIKE '%" + guid + "%'";
 
          string contentNodeId = db.Query<string>(sql).FirstOrDefault();
 
@@ -491,6 +521,20 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
          }
 
          return node;
+      }
+
+
+      public static List<UmbracoPropertyData> GetAllOldUrlNodes()
+      {
+         var db = new Database("umbracoDbDSN");
+
+         string sql = @"SELECT * FROM cmsPropertyData WHERE propertytypeid IN (SELECT id FROM cmsPropertyType WHERE Alias = 'oldUrl')
+                            AND NOT dataNtext IS NULL AND versionId IN
+                            (SELECT versionId FROM cmsDocument WHERE published = 1)";
+
+         List<UmbracoPropertyData> docList = db.Query<UmbracoPropertyData>(sql).ToList();
+
+         return docList;
       }
    }
 }

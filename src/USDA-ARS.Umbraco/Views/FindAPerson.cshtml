@@ -196,6 +196,8 @@
 
             if (peopleInfoList.Count > 0)
             {
+                peopleInfoList = peopleInfoList.OrderBy(p => p.LastName).ThenBy(p => p.FirstName).ToList();
+
                 foreach (PeopleInfo person in peopleInfoList)
                 {
                     <table>

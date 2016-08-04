@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using USDA_ARS.ImportLocations.Models;
 using USDA_ARS.LocationsWebApp.DL;
 using USDA_ARS.LocationsWebApp.Models;
+using USDA_ARS.Umbraco.Extensions.Helpers;
 using USDA_ARS.Umbraco.Extensions.Models.Import;
 
 namespace USDA_ARS.ImportLocations
@@ -42,7 +43,7 @@ namespace USDA_ARS.ImportLocations
                Delete();
             }
 
-            using (FileStream fs = File.Create("LOG_FILE.txt"))
+            using (FileStream fs = File.Create("LOCATIONS_LOG_FILE.txt"))
             {
                // Add some text to file
                Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);
@@ -908,7 +909,7 @@ namespace USDA_ARS.ImportLocations
 
          for (int i = 0; i < lines.Length; i++)
          {
-            if (lines[i].Contains(softwareId.ToString()))
+            if (lines[i].StartsWith(softwareId.ToString()+"\\"))
             {
                myCollection.Add(lines[i]);
             }
@@ -1165,40 +1166,47 @@ namespace USDA_ARS.ImportLocations
                }
             }
 
-            properties.Add(new ApiProperty("fileDownloads", fileListJson));
-
-            content.Properties = properties;
-            content.Save = 1; // 0=Unpublish (update only), 1=Saved, 2=Save And Publish
-
-            request.ContentList = new List<ApiContent>();
-            request.ContentList.Add(content);
-
-            AddLog("Saving software in Umbraco: '" + content.Name + "'...");
-
-            ApiResponse responseBack = ApiCalls.PostData(request, "Post");
-
-            if (responseBack != null && responseBack.ContentList != null && responseBack.ContentList.Any())
+            if (filePathSP2List != null && filePathSP2List.Count > 0)
             {
-               if (true == responseBack.ContentList[0].Success)
+               properties.Add(new ApiProperty("fileDownloads", fileListJson));
+
+               content.Properties = properties;
+               content.Save = 1; // 0=Unpublish (update only), 1=Saved, 2=Save And Publish
+
+               request.ContentList = new List<ApiContent>();
+               request.ContentList.Add(content);
+
+               AddLog("Saving software in Umbraco: '" + content.Name + "'...");
+
+               ApiResponse responseBack = ApiCalls.PostData(request, "Post");
+
+               if (responseBack != null && responseBack.ContentList != null && responseBack.ContentList.Any())
                {
-                  AddLog(" - Saved: " + responseBack.ContentList[0].Name);
-                  publishLater = true;
+                  if (true == responseBack.ContentList[0].Success)
+                  {
+                     AddLog(" - Saved: " + responseBack.ContentList[0].Name);
+                     publishLater = true;
+                  }
+                  else
+                  {
+                     AddLog(" !!! NOT SAVED !!!: " + responseBack.ContentList[0].Message);
+                  }
                }
                else
                {
-                  AddLog(" !!! NOT SAVED !!!: " + responseBack.ContentList[0].Message);
+                  if (responseBack == null || responseBack.ContentList != null || false == responseBack.ContentList.Any())
+                  {
+                     AddLog(" !!! NOT Saved");
+                  }
+                  else
+                  {
+                     AddLog(" !!! NOT Saved!");
+                  }
                }
             }
             else
             {
-               if (responseBack == null || responseBack.ContentList != null || false == responseBack.ContentList.Any())
-               {
-                  AddLog(" !!! NOT Saved");
-               }
-               else
-               {
-                  AddLog(" !!! NOT Saved!");
-               }
+               AddLog(" - Software bypassed because no files were linked.");
             }
          }
 
@@ -1214,7 +1222,7 @@ namespace USDA_ARS.ImportLocations
          ApiProperty topicProperty = null;
          string topicString = null;
 
-         List<PopularLink> linkList = LocationsWebApp.DL.PopularTopics.GetPopularTopicsByModeCode(modeCode);
+         List<PopularLink> linkList = PopularTopics.GetPopularTopicsByModeCode(ModeCodes.ModeCodeNoDashes(modeCode));
 
          ////popular topics
          AddLog(" - Getting topics for (" + modeCode + ")...");
