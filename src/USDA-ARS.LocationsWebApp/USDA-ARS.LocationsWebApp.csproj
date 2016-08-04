@@ -355,6 +355,10 @@
     <Content Include="StoredProcedures\create-ModeCodeActive-table.sql" />
     <Content Include="StoredProcedures\dbo.uspgetAllDocumentIdsBasedOnPersonId.sql" />
     <Content Include="StoredProcedures\dbo.uspgetAllDocumentPagesBasedOnCurrentVersionId.sql" />
+    <Content Include="StoredProcedures\udfCountOfLabsUnderRC.sql" />
+    <Content Include="StoredProcedures\udfCountOfRcsUnderCity.sql" />
+    <Content Include="StoredProcedures\udfGetChildLabModeCodeUnderRC.sql" />
+    <Content Include="StoredProcedures\udfGetChildRCModeCodeUnderCity.sql" />
     <Content Include="StoredProcedures\uspgetAllAreasCarouselSlides.sql" />
     <Content Include="StoredProcedures\uspgetAllAreasPopularTopics.sql" />
     <Content Include="StoredProcedures\uspgetAllCarouselSlidesBasedOnModeCode.sql" />
