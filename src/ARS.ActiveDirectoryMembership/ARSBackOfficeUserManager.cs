@@ -51,12 +51,12 @@ namespace ARS.ActiveDirectoryMembership
                 }
                 catch (Exception ex)
                 {
-                    LogHelper.Warn(typeof(ARSBackOfficeUserManager), "Problem with login: " + username + " | " + ex.ToString());
+                    LogHelper.Warn(typeof(ARSBackOfficeUserManager), "Problem with login: " + username);
                 }
             }
             catch (Exception ex)
             {
-                LogHelper.Warn(typeof(ARSBackOfficeUserManager), "Problem with login: " + username + " | " + ex.ToString());
+                LogHelper.Warn(typeof(ARSBackOfficeUserManager), "Problem with login: " + username);
             }
 
             return resp;
