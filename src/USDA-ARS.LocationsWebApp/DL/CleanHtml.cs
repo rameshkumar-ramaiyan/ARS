@@ -11,7 +11,7 @@ namespace USDA_ARS.LocationsWebApp.DL
 {
    public class CleanHtml
    {
-      public static string CleanUpHtml(string bodyText, string modeCode = "", List<ModeCodeNew> modeCodeNewList = null)
+      public static string CleanUpHtml(string bodyText, string modeCode = "", List<ModeCodeNew> modeCodeNewList = null, string currentUrl = null)
       {
          string output = "";
 

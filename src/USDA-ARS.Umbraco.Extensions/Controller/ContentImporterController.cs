@@ -455,28 +455,28 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                   response.Success = true;
                   response.ContentList = new List<Models.Import.ApiContent>();
 
-                  List<IContent> modeCodeNodesList = new List<IContent>();
+                  List<IPublishedContent> modeCodeNodesList = new List<IPublishedContent>();
 
-                  IEnumerable<IContent> rootNodeList = _contentService.GetRootContent();
+                  IEnumerable<IPublishedContent> rootNodeList = UmbHelper.TypedContentAtRoot();
 
-                  foreach (IContent rootNode in rootNodeList)
+                  foreach (IPublishedContent rootNode in rootNodeList)
                   {
-                     if (rootNode.HasProperty("modeCode") && false == string.IsNullOrEmpty(rootNode.GetValue<string>("modeCode")))
+                     if (rootNode.HasProperty("modeCode") && false == string.IsNullOrEmpty(rootNode.GetPropertyValue<string>("modeCode")))
                      {
                         modeCodeNodesList.Add(rootNode);
                      }
 
-                     IEnumerable<IContent> nodeList = _contentService.GetDescendants(rootNode.Id);
+                     IEnumerable<IPublishedContent> nodeList = rootNode.Descendants();
 
-                     modeCodeNodesList.AddRange(nodeList.Where(p => (p.ContentType.Alias == "Homepage" || p.ContentType.Alias == "Area" || p.ContentType.Alias == "City" || p.ContentType.Alias == "ResearchUnit" || p.ContentType.Alias == "NationalProgramGroup")
-                                 && p.Properties.Any(s => s.Value != null && s.Alias == "modeCode" && false == string.IsNullOrEmpty(s.Value.ToString()))).ToList());
+                     modeCodeNodesList.AddRange(nodeList.Where(p => (p.DocumentTypeAlias == "Homepage" || p.DocumentTypeAlias == "Area" || p.DocumentTypeAlias == "City" || p.DocumentTypeAlias == "ResearchUnit" || p.DocumentTypeAlias == "NationalProgramGroup")
+                                 && p.Properties.Any(s => s.Value != null && s.PropertyTypeAlias == "modeCode" && false == string.IsNullOrEmpty(s.Value.ToString()))).ToList());
                   }
 
                   response.ContentList = new List<Models.Import.ApiContent>();
 
-                  foreach (IContent node in modeCodeNodesList)
+                  foreach (IPublishedContent node in modeCodeNodesList)
                   {
-                     response.ContentList.Add(ConvertContentObj(node));
+                     response.ContentList.Add(ConvertPublishedContentObj(node));
                   }
 
                   response.Message = "Success";

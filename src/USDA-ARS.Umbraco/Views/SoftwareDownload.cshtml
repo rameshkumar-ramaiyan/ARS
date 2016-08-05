@@ -127,7 +127,7 @@
                      <td valign="top"><img src="/ARSUserFiles/incme/images/bullet.gif" border="0" alt="item"></td>
                      <td valign="top" align="left" background="/ARSUserFiles/incme/images/spacer.gif">
                         <font face="verdana,arial" size="-1">
-                           <a href="@(fileDetails.FullName)" id="anch_54">@(fileDetails.Name)</a>
+                           <a href="@(fileItem.GetValue("file"))" id="anch_54">@(fileDetails.Name)</a>
                            (@(USDA_ARS.Umbraco.Extensions.Utilities.Strings.BytesToString(fileDetails.Length)))
                         </font>
                      </td>
