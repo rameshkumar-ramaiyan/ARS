@@ -25,6 +25,8 @@ namespace USDA_ARS.ImportNews.Objects
 
          if (linkList != null && linkList.Any())
          {
+            Console.WriteLine(" - Umbraco ID: " + umbracoNodeId);
+
             foreach (LinkItem linkItem in linkList)
             {
                bool errorDetected = false;
@@ -32,8 +34,7 @@ namespace USDA_ARS.ImportNews.Objects
                NewsInterLink interLinkItem = new NewsInterLink();
 
                interLinkItem.Id = Guid.Empty;
-
-               Console.Write(" - Umbraco ID: " + umbracoNodeId);
+               
                interLinkItem.UmbracoNodeId = umbracoNodeId;
                interLinkItem.UmbracoNodeGuid = umbracoNodeGuid;
 

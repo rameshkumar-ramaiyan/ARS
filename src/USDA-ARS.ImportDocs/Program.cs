@@ -356,7 +356,7 @@ namespace USDA_ARS.ImportDocs
 
                string bodyText = node.DataNtext;
 
-               string bodyTextFixed = CleanHtml.CleanUpHtml(bodyText);
+               string bodyTextFixed = CleanHtml.CleanUpHtml(bodyText, null, MODE_CODE_NEW_LIST);
 
                if (bodyText != bodyTextFixed)
                {
@@ -1000,7 +1000,7 @@ namespace USDA_ARS.ImportDocs
             AddLog(" - Adding keywords...");
          }
 
-         properties.Add(new ApiProperty("pageHeaderScripts", CleanHtml.CleanUpHtml(htmlHeader))); // hide page title
+         properties.Add(new ApiProperty("pageHeaderScripts", CleanHtml.CleanUpHtml(htmlHeader, "", MODE_CODE_NEW_LIST))); // hide page title
          properties.Add(new ApiProperty("keywords", keywords)); // hide page title
 
          if (false == string.IsNullOrEmpty(folderLabel))
@@ -1367,13 +1367,24 @@ namespace USDA_ARS.ImportDocs
       }
 
 
-      static string GetProductionPage(string url)
+      static string GetProductionPage(string url, bool usePreviewSite = true)
       {
          string output = "";
-         string urlAddress = "http://www.ars.usda.gov" + url;
+         string urlAddress = "";
+
+         if (false == usePreviewSite)
+         {
+            urlAddress = "http://www.ars.usda.gov" + url;
+         }
+         else
+         {
+            urlAddress = "http://iapreview.ars.usda.gov" + url;
+         }
 
          try
          {
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlAddress);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 

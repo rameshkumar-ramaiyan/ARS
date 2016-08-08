@@ -7,12 +7,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+//using Umbraco.Core.Persistence;
 using USDA_ARS.ImportLocations.Models;
 using USDA_ARS.LocationsWebApp.DL;
 using USDA_ARS.LocationsWebApp.Models;
 using USDA_ARS.Umbraco.Extensions.Helpers;
+using USDA_ARS.Umbraco.Extensions.Models.Aris;
 using USDA_ARS.Umbraco.Extensions.Models.Import;
 
 namespace USDA_ARS.ImportLocations
@@ -28,6 +28,7 @@ namespace USDA_ARS.ImportLocations
       static string API_URL = ConfigurationManager.AppSettings.Get("Umbraco:ApiUrl");
       static DateTime TIME_STARTED = DateTime.MinValue;
       static DateTime TIME_ENDED = DateTime.MinValue;
+      static List<ModeCodeNew> MODE_CODE_NEW_LIST = null;
 
       static void Main(string[] args)
       {
@@ -64,6 +65,11 @@ namespace USDA_ARS.ImportLocations
       static void Import()
       {
          TIME_STARTED = DateTime.Now;
+
+         AddLog("Getting New Mode Codes...");
+         MODE_CODE_NEW_LIST = GetNewModeCodesAll();
+         AddLog("Done. Count: " + MODE_CODE_NEW_LIST.Count);
+         AddLog("");
 
          AddLog("-= UPDATING ARS HOME =-");
          ImportArsHomeInfo();
@@ -1307,6 +1313,20 @@ namespace USDA_ARS.ImportLocations
             AddLog(" - Success: " + responseBack.Success);
             AddLog(" - Message: " + responseBack.Message);
          }
+      }
+
+
+      static List<ModeCodeNew> GetNewModeCodesAll()
+      {
+         List<ModeCodeNew> modeCodeNewList = new List<ModeCodeNew>();
+
+         //var db = new Database("arisPublicWebDbDSN");
+
+         //string sql = @"SELECT * FROM NewModecodes";
+
+         //modeCodeNewList = db.Query<ModeCodeNew>(sql).ToList();
+
+         return modeCodeNewList;
       }
 
 

@@ -621,7 +621,7 @@ namespace USDA_ARS.ImportInfoStaff
 
       static string UpdateHtml(string bodyText, string oldPath)
       {
-         bodyText = LocationsWebApp.DL.CleanHtml.CleanUpHtml(bodyText);
+         bodyText = LocationsWebApp.DL.CleanHtml.CleanUpHtml(bodyText, null);
 
          bodyText = bodyText.Replace("http://www.ars.usda.gov", "");
          bodyText = bodyText.Replace("/pandp/people/people.htm?personid=", "/people-locations/person/?person-id=");
@@ -867,14 +867,25 @@ namespace USDA_ARS.ImportInfoStaff
       }
 
 
-      static PageImport GetProductionPage(string title, string url)
+      static PageImport GetProductionPage(string title, string url, bool usePreviewSite = true)
       {
          PageImport page = null;
 
-         string urlAddress = "http://www.ars.usda.gov" + url;
+         string urlAddress = "";
+
+         if (false == usePreviewSite)
+         {
+            urlAddress = "http://www.ars.usda.gov" + url;
+         }
+         else
+         {
+            urlAddress = "http://iapreview.ars.usda.gov" + url;
+         }
 
          try
          {
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlAddress);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 

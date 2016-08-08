@@ -873,13 +873,24 @@ namespace USDA_ARS.ImportNP
          return htmlString;
       }
 
-      static string GetProductionPage(string url)
+      static string GetProductionPage(string url, bool usePreviewSite = true)
       {
          string output = "";
-         string urlAddress = "http://www.ars.usda.gov" + url;
+         string urlAddress = "";
+
+         if (false == usePreviewSite)
+         {
+            urlAddress = "http://www.ars.usda.gov" + url;
+         }
+         else
+         {
+            urlAddress = "http://iapreview.ars.usda.gov" + url;
+         }
 
          try
          {
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlAddress);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 

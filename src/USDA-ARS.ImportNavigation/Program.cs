@@ -1555,7 +1555,7 @@ namespace USDA_ARS.ImportNavigation
                   }
                   else if (false == string.IsNullOrWhiteSpace(navItem.NavURL) && false == string.IsNullOrWhiteSpace(navItem.NavLabel))
                   {
-                     navItem.NavURL = CleanHtml.CleanUpHtml(navItem.NavURL);
+                     navItem.NavURL = CleanHtml.CleanUpHtml(navItem.NavURL, "", MODE_CODE_NEW_LIST);
 
                      fieldsetTopic.Alias = "topicsItem";
                      fieldsetTopic.Disabled = false;
