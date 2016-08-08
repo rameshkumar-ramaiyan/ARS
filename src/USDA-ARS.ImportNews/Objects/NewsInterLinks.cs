@@ -27,10 +27,13 @@ namespace USDA_ARS.ImportNews.Objects
          {
             foreach (LinkItem linkItem in linkList)
             {
+               bool errorDetected = false;
+
                NewsInterLink interLinkItem = new NewsInterLink();
 
                interLinkItem.Id = Guid.Empty;
 
+               Console.Write(" - Umbraco ID: " + umbracoNodeId);
                interLinkItem.UmbracoNodeId = umbracoNodeId;
                interLinkItem.UmbracoNodeGuid = umbracoNodeGuid;
 
@@ -85,7 +88,18 @@ namespace USDA_ARS.ImportNews.Objects
                         modeCode = DoesNodeHaveSingleResearchUnits(modeCode, newModeCodeList);
 
                         interLinkItem.LinkType = "place";
-                        interLinkItem.LinkId = Convert.ToInt64(modeCode);
+
+                        long modeCodeNumber = 0;
+
+                        if (long.TryParse(modeCode, out modeCodeNumber))
+                        {
+                              interLinkItem.LinkId = modeCodeNumber;
+                        }
+                        else
+                        {
+                           errorDetected = true;
+                           Console.Write("!!! BAD MODE CODE: " + modeCode);
+                        }
                      }
                   }
                   else if (linkItem.Href.IndexOf("/{localLink:") >= 0)
@@ -118,7 +132,18 @@ namespace USDA_ARS.ImportNews.Objects
                            modeCode = DoesNodeHaveSingleResearchUnits(modeCode, newModeCodeList);
 
                            interLinkItem.LinkType = "place";
-                           interLinkItem.LinkId = Convert.ToInt64(modeCode);
+
+                           long modeCodeNumber = 0;
+
+                           if (long.TryParse(modeCode, out modeCodeNumber))
+                           {
+                              interLinkItem.LinkId = modeCodeNumber;
+                           }
+                           else
+                           {
+                              errorDetected = true;
+                              Console.Write("!!! BAD MODE CODE: " + modeCode);
+                           }
                         }
                      }
                   }
@@ -139,13 +164,24 @@ namespace USDA_ARS.ImportNews.Objects
                            modeCode = DoesNodeHaveSingleResearchUnits(modeCode, newModeCodeList);
 
                            interLinkItem.LinkType = "place";
-                           interLinkItem.LinkId = Convert.ToInt64(modeCode);
+
+                           long modeCodeNumber = 0;
+
+                           if (long.TryParse(modeCode, out modeCodeNumber))
+                           {
+                              interLinkItem.LinkId = modeCodeNumber;
+                           }
+                           else
+                           {
+                              errorDetected = true;
+                              Console.Write("!!! BAD MODE CODE: " + modeCode);
+                           }
                         }
                      }
                   }
                }
 
-               if (false == string.IsNullOrEmpty(interLinkItem.LinkType))
+               if (false == errorDetected && false == string.IsNullOrEmpty(interLinkItem.LinkType))
                {
                   AddLink(interLinkItem);
 
