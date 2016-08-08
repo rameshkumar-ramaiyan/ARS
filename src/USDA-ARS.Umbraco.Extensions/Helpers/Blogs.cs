@@ -41,12 +41,12 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                         CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(30) };
                         cache.Add(cacheKey, blogList, policy);
 
-                        SaveBlogFeed(reader);
+                        //SaveBlogFeed(reader);
                     }
                 }
                 catch (Exception ex)
                 {
-                    LogHelper.Error<Blogs>("Error getting USDA Blog feed", ex);
+                    //LogHelper.Error<Blogs>("Error getting USDA Blog feed", null);
 
                     // Try different method
                     reader = LoadSavedBlogFeed(FixRssFeed());
@@ -66,7 +66,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                             CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(30) };
                             cache.Add(cacheKey, blogList, policy);
 
-                            SaveBlogFeed(reader);
+                            //SaveBlogFeed(reader);
                         }
                     }
                 }
