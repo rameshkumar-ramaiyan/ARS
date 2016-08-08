@@ -7,29 +7,29 @@
 @using USDA_ARS.Umbraco.Extensions.Models.Aris
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
-    Layout = "_Master.cshtml";
+   Layout = "_Master.cshtml";
 
-    IPublishedContent currentPage = Model.Content;
+   IPublishedContent currentPage = Model.Content;
 
-    string bodyText = currentPage.GetPropertyValue<string>("bodyText");
-    string modeCode = "";
-    string showType = Request.QueryString["show"];
-    bool appropriatedOnly = (showType != null && showType == "projecttype" ? true : false);
+   string bodyText = currentPage.GetPropertyValue<string>("bodyText");
+   string modeCode = "";
+   string showType = Request.QueryString["show"];
+   bool appropriatedOnly = (showType != null && showType == "projecttype" ? true : false);
 
-    if (Request.QueryString["modeCode"] != null)
-    {
-        modeCode = Request.QueryString.Get("modeCode");
-    }
+   if (Request.QueryString["modeCode"] != null)
+   {
+      modeCode = Request.QueryString.Get("modeCode");
+   }
 
-    bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
+   bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
 
-    List<ProjectProgram> projectProgramList = ProjectPrograms.GetProjectPrograms(modeCode, appropriatedOnly);
-    List<ProjectProgram> nationalProgramList = null;
+   List<ProjectProgram> projectProgramList = ProjectPrograms.GetProjectPrograms(modeCode, appropriatedOnly);
+   List<ProjectProgram> nationalProgramList = null;
 
-    if (projectProgramList != null && projectProgramList.Any())
-    {
-        nationalProgramList = projectProgramList.DistinctBy(p => p.NpCode).ToList();
-    }
+   if (projectProgramList != null && projectProgramList.Any())
+   {
+      nationalProgramList = projectProgramList.DistinctBy(p => p.NpCode).ToList();
+   }
 
 
 }
@@ -38,99 +38,94 @@
 
 <div id="fullPage">
 
-    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
 
-    <div id="pageContent">
+   <div id="pageContent">
 
-        <!-- site_projects_programs start -->
+      <!-- site_projects_programs start -->
 
-        <table width="100%" border="0">
-            <tbody>
-                <tr>
-                    <td>
-                        <font face="verdana,arial,helvetica" size="+1" color="#FF6600">
-                            @(currentPage.Name)
-                        </font>
-                    </td>
-                </tr>
-
-
-                <tr>
-                    <td>
-                        @Html.Raw(bodyText)
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-        <br />
+      <table width="100%" border="0">
+         <tbody>
+            <tr>
+               <td>
+                  <font face="verdana,arial,helvetica" size="+1" color="#FF6600">
+                     @(currentPage.Name)
+                  </font>
+               </td>
+            </tr>
 
 
-        <b>Current View: <font color="FF3300">@(true == appropriatedOnly ? "Appropriated Projects Only " : "All Projects")</font></b>
+            <tr>
+               <td>
+                  @Html.Raw(bodyText)
+               </td>
+            </tr>
+         </tbody>
+      </table>
+      <br />
 
-        <br /><br />
 
-        <b>
-            Show <a href="@(currentPage.Url +"?modeCode=" + modeCode + "&show=")" id="anch_53">All Projects</a> ||
-            <a href="@(currentPage.Url +"?modeCode=" + modeCode + "&show=projecttype")" id="anch_54">Appropriated Projects Only</a>
-        </b>
+      <b>Current View: <font color="FF3300">@(true == appropriatedOnly ? "Appropriated Projects Only " : "All Projects")</font></b>
 
-        <br />
-        <br />
+      <br /><br />
 
-        <table border="0" cellspacing="10" cellpadding="0">
-            <tbody>
+      <b>
+         Show <a href="@(currentPage.Url +"?modeCode=" + modeCode + "&show=")" id="anch_53">All Projects</a> ||
+         <a href="@(currentPage.Url +"?modeCode=" + modeCode + "&show=projecttype")" id="anch_54">Appropriated Projects Only</a>
+      </b>
 
-                @if (nationalProgramList != null && nationalProgramList.Any())
-                {
-                    foreach (ProjectProgram program in nationalProgramList)
-                    {
-                        IPublishedContent nationalProgram = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByNpCode(program.NpCode.ToString());
+      <br />
+      <br />
 
-                        if (nationalProgram != null)
-                        {
-                            <tr>
-                                <td colspan="3">
-                                    <a href="@(nationalProgram.Url)" class="programNav" id="anch_55">
-                                        @(program.ShortDescription)
-                                        (NP #@(program.NpCode))
-                                    </a>
-                                </td>
-                            </tr>
+      <table border="0" cellspacing="10" cellpadding="0">
+         <tbody>
 
-                            List<ProjectProgram> filterProjects = projectProgramList.Where(p => p.NpCode == program.NpCode).ToList();
+            @if (nationalProgramList != null && nationalProgramList.Any())
+            {
+               foreach (ProjectProgram program in nationalProgramList)
+               {
+                  <tr>
+                     <td colspan="3">
+                        <a href="/research/programs/programs.htm?NP_CODE=@(program.NpCode)" class="programNav" id="anch_55">
+                           @(program.ShortDescription)
+                           (NP #@(program.NpCode))
+                        </a>
+                     </td>
+                  </tr>
 
-                            if (filterProjects != null && filterProjects.Any())
-                            {
-                                foreach (ProjectProgram project in filterProjects)
-                                {
-                                    <tr>
-                                        <td width="20"></td>
-                                        <td valign="top">
-                                            <a href="/research/project/?accnNo=@(project.AccountNo)" class="projectNav" id="anch_56">
-                                                @(project.ProjectTitle)
-                                            </a>
-                                            <br />
-                                            <font size="-1">
-                                                (@(Projects.ProjectTypeByCode(project.ProjectType)))
-                                            </font>
-                                        </td>
-                                    </tr>
-                                }
-                            }
-                        }
-                    }
-                }
+                  IEnumerable<ProjectProgram> filterProjects = projectProgramList.Where(p => p.NpCode == program.NpCode);
 
-            </tbody>
-        </table>
+                  if (filterProjects != null && filterProjects.Any())
+                  {
+                     foreach (ProjectProgram project in filterProjects)
+                     {
+                        <tr>
+                           <td width="20"></td>
+                           <td valign="top">
+                              <a href="/research/project/?accnNo=@(project.AccountNo)" class="projectNav" id="anch_56">
+                                 @(project.ProjectTitle)
+                              </a>
+                              <br />
+                              <font size="-1">
+                                 (@(Projects.ProjectTypeByCode(project.ProjectType)))
+                              </font>
+                           </td>
+                        </tr>
+                     }
+                  }
+               }
+            }
+
+         </tbody>
+      </table>
 
 
 
 
 
-        <!-- site_projects_programs end -->
+      <!-- site_projects_programs end -->
 
 
-    </div>
+   </div>
 
 </div>

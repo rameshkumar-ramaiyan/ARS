@@ -28,6 +28,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
       {
          if (text.Contains("href=\"/isi/index.htm\""))
          {
+            // Find 300 dpi link
             Match m2 = Regex.Match(text, "(<A HREF=\"(http://www.ars.usda.gov)*/isi/index.htm\">)(.*?)(</A>)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
             if (m2.Success)
             {
@@ -36,6 +37,37 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                string href = "<a href=\"/ARSUserFiles/oc/graphics/photos/300dpi/kesa/" + node.Name.ToLower() + ".jpg\" target=\"_blank\">" + m2.Groups[3] + "</a>";
 
                text = text.Replace(m2.Groups[0].Value, href);
+            }
+
+            // Find thumbnail link
+            Match m3 = Regex.Match(text, "(<A HREF=\"([^\"]*)\">)(.*?)(</A>)", RegexOptions.Singleline | RegexOptions.IgnoreCase);
+            if (m3.Success)
+            {
+               string hrefLink = m3.Groups[2].Value;
+               string imagePath = "";
+
+               if (hrefLink.IndexOf("/") < 0)
+               {
+                  Uri nodeUri = new Uri("http://www.ars.usda.gov" + node.Url);
+                  int i = 0;
+                  foreach (string segment in nodeUri.Segments)
+                  {
+                     if (i < nodeUri.Segments.Count() - 1)
+                     {
+                        imagePath += segment;
+                     }
+
+                     i++;
+                  }
+
+                  imagePath += hrefLink;
+
+                  imagePath = imagePath.ToLower().Replace("/oc/", "/ARSUserFiles/oc/");
+               }
+
+               string href = "<a href=\"" + imagePath + "\" target=\"_blank\">" + m3.Groups[3] + "</a>";
+
+               text = text.Replace(m3.Groups[0].Value, href);
             }
          }
 

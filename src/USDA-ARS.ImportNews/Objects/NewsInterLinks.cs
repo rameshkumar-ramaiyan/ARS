@@ -82,7 +82,7 @@ namespace USDA_ARS.ImportNews.Objects
                      {
                         modeCode = ModeCodes.ModeCodeNoDashes(modeCode);
 
-                        modeCode = DoesNodeHaveSingleResearchUnits(modeCode);
+                        modeCode = DoesNodeHaveSingleResearchUnits(modeCode, newModeCodeList);
 
                         interLinkItem.LinkType = "place";
                         interLinkItem.LinkId = Convert.ToInt64(modeCode);
@@ -115,7 +115,7 @@ namespace USDA_ARS.ImportNews.Objects
                         {
                            modeCode = ModeCodes.ModeCodeNoDashes(modeCode);
 
-                           modeCode = DoesNodeHaveSingleResearchUnits(modeCode);
+                           modeCode = DoesNodeHaveSingleResearchUnits(modeCode, newModeCodeList);
 
                            interLinkItem.LinkType = "place";
                            interLinkItem.LinkId = Convert.ToInt64(modeCode);
@@ -136,7 +136,7 @@ namespace USDA_ARS.ImportNews.Objects
                         {
                            modeCode = ModeCodes.ModeCodeNoDashes(modeCode);
 
-                           modeCode = DoesNodeHaveSingleResearchUnits(modeCode);
+                           modeCode = DoesNodeHaveSingleResearchUnits(modeCode, newModeCodeList);
 
                            interLinkItem.LinkType = "place";
                            interLinkItem.LinkId = Convert.ToInt64(modeCode);
@@ -231,13 +231,22 @@ namespace USDA_ARS.ImportNews.Objects
       }
 
 
-      public static string DoesNodeHaveSingleResearchUnits(string foundModeCode)
+      public static string DoesNodeHaveSingleResearchUnits(string foundModeCode, List<ModeCodeNew> newModeCodeList)
       {
          string modeCode = foundModeCode;
 
          try
          {
             foundModeCode = ModeCodes.ModeCodeNoDashes(foundModeCode);
+
+            // Check for old Mode Code
+            ModeCodeNew newModeCode = newModeCodeList.Where(p => p.ModecodeOld == foundModeCode).FirstOrDefault();
+
+            if (newModeCode != null)
+            {
+               foundModeCode = newModeCode.ModecodeOld;
+               modeCode = foundModeCode;
+            }
 
             string sql = "exec [uspgetAllReassignModeCodesForCityWithSingleChild] " + foundModeCode;
             DataTable dt = new DataTable();
