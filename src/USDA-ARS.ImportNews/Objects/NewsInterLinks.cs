@@ -45,7 +45,7 @@ namespace USDA_ARS.ImportNews.Objects
                   {
                      int personId = 0;
 
-                     Match m2 = Regex.Match(linkItem.Href, @"\?person\-id\=(.*)", RegexOptions.Singleline);
+                     Match m2 = Regex.Match(linkItem.Href, @"\?person\-id\=(\d*)", RegexOptions.Singleline);
                      if (m2.Success)
                      {
                         int.TryParse(m2.Groups[1].Value, out personId);
@@ -62,6 +62,13 @@ namespace USDA_ARS.ImportNews.Objects
                   else if (linkItem.Href.IndexOf("/main/site_main.htm?modecode=") >= 0)
                   {
                      string modeCode = linkItem.Href.ToLower().Replace("/main/site_main.htm?modecode=", "");
+
+                     Match m2 = Regex.Match(linkItem.Href, @"\?modecode\=([\d\-]*)", RegexOptions.Singleline);
+                     if (m2.Success)
+                     {
+                        modeCode = m2.Groups[1].Value;
+                     }
+
                      ModeCodeLookup modeCodeLookup = null;
 
                      modeCodeLookup = modeCodeList.Where(p => p.ModeCode == ModeCodes.ModeCodeAddDashes(modeCode)).FirstOrDefault();

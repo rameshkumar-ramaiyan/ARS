@@ -42,7 +42,7 @@ namespace USDA_ARS.ImportInfoStaff
             {
                if (args.Length == 2)
                {
-                  if (args[1] == "INFO_STAFF_force-cache-update")
+                  if (args[1] == "force-cache-update")
                   {
                      forceCacheUpdate = true;
                   }
