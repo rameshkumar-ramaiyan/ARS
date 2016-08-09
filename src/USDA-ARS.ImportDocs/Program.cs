@@ -567,7 +567,7 @@ namespace USDA_ARS.ImportDocs
                {
                   int umbracoId = response.ContentList[0].Id;
 
-                  AddLog(" - Page added:[Mode Code: " + modeCode + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title);
+                  AddLog(" - Page added:[Mode Code: " + modeCode + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title, LogFormat.Success);
 
                   if (importPage.SubPages != null && importPage.SubPages.Any())
                   {
@@ -577,7 +577,7 @@ namespace USDA_ARS.ImportDocs
 
                         if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
                         {
-                           AddLog(" --- SubPage added:(" + subpageResponse.ContentList[0].Id + ") " + subPage.Title);
+                           AddLog(" --- SubPage added:(Umbraco Id: " + subpageResponse.ContentList[0].Id + ") " + subPage.Title, LogFormat.Success);
                         }
                         else
                         {
@@ -615,7 +615,7 @@ namespace USDA_ARS.ImportDocs
             {
                int umbracoId = response.ContentList[0].Id;
 
-               AddLog(" - Page added:[Person Id: " + personId + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title);
+               AddLog(" - Page added:[Person Id: " + personId + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title, LogFormat.Success);
 
                if (importPage.SubPages != null && importPage.SubPages.Any())
                {
@@ -625,23 +625,23 @@ namespace USDA_ARS.ImportDocs
 
                      if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
                      {
-                        AddLog(" --- SubPage added:(" + subpageResponse.ContentList[0].Id + ") " + subPage.Title);
+                        AddLog(" --- SubPage added:(" + subpageResponse.ContentList[0].Id + ") " + subPage.Title, LogFormat.Success);
                      }
                      else
                      {
-                        AddLog("!!ERROR SUBPAGE NOT ADDED!");
+                        AddLog("!!ERROR SUBPAGE NOT ADDED!", LogFormat.Error);
                      }
                   }
                }
             }
             else
             {
-               AddLog("!!ERROR SUBPAGE NOT ADDED!");
+               AddLog("!!ERROR SUBPAGE NOT ADDED!", LogFormat.Error);
             }
          }
          else
          {
-            AddLog("!! PERSON CANNOT BE FOUND !! (" + personId + ")");
+            AddLog("!! PERSON CANNOT BE FOUND !! (" + personId + ")", LogFormat.Warning);
          }
       }
 
@@ -706,7 +706,7 @@ namespace USDA_ARS.ImportDocs
                {
                   int umbracoId = response.ContentList[0].Id;
 
-                  AddLog(" - Page added:[Mode Code: " + modeCode + "/" + adHocFolderName + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title);
+                  AddLog(" - Page added:[Mode Code: " + modeCode + "/" + adHocFolderName + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title, LogFormat.Success);
 
                   if (importPage.SubPages != null && importPage.SubPages.Any())
                   {
@@ -716,7 +716,7 @@ namespace USDA_ARS.ImportDocs
 
                         if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
                         {
-                           AddLog(" --- SubPage added:(" + subpageResponse.ContentList[0].Id + ") " + subPage.Title);
+                           AddLog(" --- SubPage added:(" + subpageResponse.ContentList[0].Id + ") " + subPage.Title, LogFormat.Success);
                         }
                         else
                         {
@@ -793,7 +793,7 @@ namespace USDA_ARS.ImportDocs
             {
                int umbracoId = response.ContentList[0].Id;
 
-               AddLog(" - Page added:[Sub Site: " + subsite + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title);
+               AddLog(" - Page added:[Sub Site: " + subsite + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title, LogFormat.Success);
 
                if (importPage.SubPages != null && importPage.SubPages.Any())
                {
@@ -803,7 +803,7 @@ namespace USDA_ARS.ImportDocs
 
                      if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
                      {
-                        AddLog(" --- SubPage added:(" + subpageResponse.ContentList[0].Id + ") " + subPage.Title);
+                        AddLog(" --- SubPage added:(" + subpageResponse.ContentList[0].Id + ") " + subPage.Title, LogFormat.Success);
                      }
                      else
                      {

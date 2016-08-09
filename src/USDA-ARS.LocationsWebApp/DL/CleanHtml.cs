@@ -1049,15 +1049,15 @@ namespace USDA_ARS.LocationsWebApp.DL
             if (modeCodeNewList == null || false == modeCodeNewList.Any())
             {
                modeCodeNewList = GetNewModeCodesAll();
+            }
 
-               if (modeCodeNewList != null && modeCodeNewList.Any())
+            if (modeCodeNewList != null && modeCodeNewList.Any())
+            {
+               foreach (ModeCodeNew modeCodeNewItem in modeCodeNewList)
                {
-                  foreach (ModeCodeNew modeCodeNewItem in modeCodeNewList)
+                  if (bodyText.IndexOf("/ARSUserFiles/" + modeCodeNewItem.ModecodeOld + "/") >= 0)
                   {
-                     if (bodyText.IndexOf("/ARSUserFiles/" + modeCodeNewItem.ModecodeOld +"/") >= 0)
-                     {
-                        bodyText = bodyText.Replace("/ARSUserFiles/" + modeCodeNewItem.ModecodeOld + "/", "/ARSUserFiles/" + modeCodeNewItem.ModecodeNew + "/");
-                     }
+                     bodyText = bodyText.Replace("/ARSUserFiles/" + modeCodeNewItem.ModecodeOld + "/", "/ARSUserFiles/" + modeCodeNewItem.ModecodeNew + "/");
                   }
                }
             }
