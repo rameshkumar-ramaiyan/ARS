@@ -317,7 +317,12 @@ namespace USDA_ARS.ImportNews.Objects
                modeCode = foundModeCode;
             }
 
-            string sql = "exec [uspgetAllReassignModeCodesForCityWithSingleChild] " + foundModeCode;
+            string sql = "DECLARE	@return_value varchar(30) \r\n";
+
+            sql += "EXEC @return_value = [dbo].[uspgetAllReassignModeCodesForCityWithSingleChild]";
+            sql += "@ModeCode = " + foundModeCode;
+            sql += "SELECT 'Return_Value' = @return_value";
+
             DataTable dt = new DataTable();
             SqlConnection conn = new SqlConnection(ConfigurationManager.ConnectionStrings["arisPublicWebDbDSN"].ConnectionString);
 
