@@ -1,4 +1,5 @@
 ﻿using Excel;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -62,6 +63,11 @@ namespace USDA_ARS.ImportUserSecurity
                AddLog("Looking up user in Umbraco: "+ username);
 
                int userId = GetUserId(username);
+
+               if (userId <= 0)
+               {
+                  userId = AddUserToUmbraco(username);
+               }
 
                if (userId > 0)
                {
@@ -271,6 +277,37 @@ namespace USDA_ARS.ImportUserSecurity
          db.Update("umbracoUser", "id", umbracoUser);
 
          return 1;
+      }
+
+
+      static int AddUserToUmbraco(string username)
+      {
+         int userId = 0;
+         ApiRequest request = new ApiRequest();
+
+         request.ApiKey = API_KEY;
+
+         ApiContent content = new ApiContent();
+
+         AddLog(" - Adding user: " + username);
+
+         content.Id = 0;
+         content.Name = username;
+
+         content.Save = 2; // 1=Saved, 2=Save And Publish
+
+         request.ContentList = new List<ApiContent>();
+
+         request.ContentList.Add(content);
+
+         ApiResponse responseBack = ApiCalls.PostData(request, "AddUser");
+
+         if (responseBack != null && responseBack.ContentList != null && responseBack.ContentList.Any())
+         {
+            userId = responseBack.ContentList[0].Id;
+         }
+
+         return userId;
       }
 
 

@@ -28,6 +28,7 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
    public class ContentImporterController : UmbracoApiController
    {
       private static readonly IContentService _contentService = ApplicationContext.Current.Services.ContentService;
+      private static readonly IUserService _userService = ApplicationContext.Current.Services.UserService;
       private static UmbracoHelper UmbHelper = new UmbracoHelper(UmbracoContext.Current);
       private static string _apiKey = "E027CF8B-C5B8-45F6-A37B-979DB02A8544";
 
@@ -1021,6 +1022,101 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
                      {
                         responseContent.Message = "Content could not be found for deletion.";
                         responseContent.Success = false;
+                     }
+
+                     response.ContentList.Add(responseContent);
+                  }
+               }
+            }
+            else
+            {
+               response.Message = "The JSON object was not properly formatted.";
+               response.Success = false;
+            }
+
+         }
+         catch (Exception ex)
+         {
+            //LogHelper.Error<DataImporterController>("Content Import Post Error", ex);
+
+            response.Message = ex.ToString();
+         }
+
+         return response;
+      }
+
+
+      [System.Web.Http.HttpPost]
+      public Models.Import.ApiResponse AddUser([FromBody] dynamic json)
+      {
+         Models.Import.ApiResponse response = new Models.Import.ApiResponse();
+
+         Models.Import.ApiRequest request = JsonConvert.DeserializeObject<Models.Import.ApiRequest>(json.ToString());
+
+         try
+         {
+            if (request != null)
+            {
+               //Check object
+               if (true == string.IsNullOrWhiteSpace(request.ApiKey))
+               {
+                  response.Message = "API Key is missing.";
+               }
+               else if (request.ApiKey != _apiKey)
+               {
+                  response.Message = "API Key is invalid.";
+               }
+               else if (request.ContentList == null || request.ContentList.Count == 0)
+               {
+                  response.Message = "Content object empty. Needed for GET.";
+               }
+               else
+               {
+                  response.Success = true;
+                  response.ContentList = new List<Models.Import.ApiContent>();
+
+                  foreach (Models.Import.ApiContent contentObj in request.ContentList)
+                  {
+                     IContent content = null;
+                     Models.Import.ApiContent responseContent = new Models.Import.ApiContent();
+
+                     if (contentObj.Id <= 0)
+                     {
+                        var user = _userService.GetByUsername(contentObj.Name);
+
+                        if (user == null)
+                        {
+                           // Create a new user
+                           var newUser = _userService.CreateWithIdentity(contentObj.Name, contentObj.Name.ToLower() + "@ars.usda.gov", "5kjF*1*!S!D3Hsds", _userService.GetDefaultMemberType());
+                           newUser.Name = contentObj.Name;
+
+                           newUser.AddAllowedSection("content");
+                           newUser.RemoveAllowedSection("media");
+                           var adminType = _userService.GetUserTypeByAlias("editor");
+                           newUser.UserType = adminType;
+
+                           _userService.Save(newUser);
+
+
+                           var checkNewUser = _userService.GetByUsername(contentObj.Name);
+
+                           if (checkNewUser != null)
+                           {
+                              responseContent.Id = checkNewUser.Id;
+
+                              responseContent.Message = "User added." + contentObj.Name;
+                              responseContent.Success = true;
+                           }
+                        }
+                        else
+                        {
+                           responseContent.Message = "Must provide a property key and value to return content on.";
+                           responseContent.Success = false;
+                        }
+                     }
+                     else // Find by Id
+                     {
+
                      }
 
                      response.ContentList.Add(responseContent);
