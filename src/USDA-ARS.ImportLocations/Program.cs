@@ -7,12 +7,12 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using Umbraco.Core.Persistence;
 using USDA_ARS.ImportLocations.Models;
 using USDA_ARS.LocationsWebApp.DL;
 using USDA_ARS.LocationsWebApp.Models;
 using USDA_ARS.Umbraco.Extensions.Helpers;
+using USDA_ARS.Umbraco.Extensions.Models.Aris;
 using USDA_ARS.Umbraco.Extensions.Models.Import;
 
 namespace USDA_ARS.ImportLocations
@@ -28,6 +28,7 @@ namespace USDA_ARS.ImportLocations
       static string API_URL = ConfigurationManager.AppSettings.Get("Umbraco:ApiUrl");
       static DateTime TIME_STARTED = DateTime.MinValue;
       static DateTime TIME_ENDED = DateTime.MinValue;
+      static List<ModeCodeNew> MODE_CODE_NEW_LIST = null;
 
       static void Main(string[] args)
       {
@@ -64,6 +65,11 @@ namespace USDA_ARS.ImportLocations
       static void Import()
       {
          TIME_STARTED = DateTime.Now;
+
+         AddLog("Getting New Mode Codes...");
+         MODE_CODE_NEW_LIST = GetNewModeCodesAll();
+         AddLog("Done. Count: " + MODE_CODE_NEW_LIST.Count);
+         AddLog("");
 
          AddLog("-= UPDATING ARS HOME =-");
          ImportArsHomeInfo();
@@ -248,7 +254,7 @@ namespace USDA_ARS.ImportLocations
             }
 
             string areaName = legacyAreasBeforeInsertion.Rows[i].Field<string>(1);
-            string quickLinks = CleanHtml.CleanUpHtml(legacyAreasBeforeInsertion.Rows[i].Field<string>(2), newModeCodeProperty);
+            string quickLinks = CleanHtml.CleanUpHtml(legacyAreasBeforeInsertion.Rows[i].Field<string>(2), newModeCodeProperty, MODE_CODE_NEW_LIST);
             string webtrendsProfileID = legacyAreasBeforeInsertion.Rows[i].Field<string>(3);
             if (completeModeCode.Length < 11)
                completeModeCode = "0" + completeModeCode;
@@ -589,7 +595,7 @@ namespace USDA_ARS.ImportLocations
                   }
 
                   string rCName = legacyResearchUnitsBeforeInsertion.Rows[j].Field<string>(3);
-                  string quickLinks = CleanHtml.CleanUpHtml(legacyResearchUnitsBeforeInsertion.Rows[j].Field<string>(4), newModeCodeProperty);
+                  string quickLinks = CleanHtml.CleanUpHtml(legacyResearchUnitsBeforeInsertion.Rows[j].Field<string>(4), newModeCodeProperty, MODE_CODE_NEW_LIST);
                   string webtrendsProfileID = legacyResearchUnitsBeforeInsertion.Rows[j].Field<string>(5);
 
                   if (false == string.IsNullOrWhiteSpace(rCName))
@@ -775,7 +781,7 @@ namespace USDA_ARS.ImportLocations
                         oldModeCodeProperty = legacyOldModeCodes.Rows[0].Field<string>(1);
                      }
 
-                     string quickLinks = CleanHtml.CleanUpHtml(legacyLabsBeforeInsertion.Rows[j].Field<string>(5), newModeCodeProperty);
+                     string quickLinks = CleanHtml.CleanUpHtml(legacyLabsBeforeInsertion.Rows[j].Field<string>(5), newModeCodeProperty, MODE_CODE_NEW_LIST);
                      string webtrendsProfileID = legacyLabsBeforeInsertion.Rows[j].Field<string>(6);
 
 
@@ -986,7 +992,7 @@ namespace USDA_ARS.ImportLocations
             jsonSettings.ContractResolver = new LowercaseJsonSerializer.LowercaseContractResolver();
 
             string slideName = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(5);
-            string slideText = CleanHtml.CleanUpHtml(legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(4), modeCode);
+            string slideText = CleanHtml.CleanUpHtml(legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(4), modeCode, MODE_CODE_NEW_LIST);
             string slideAltText = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(3);
             string slideURL = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(2);
             string slideImage = legacyCarouselSlidesBeforeInsertion.Rows[legacyCarouselSlidesRowId].Field<string>(1);
@@ -1020,7 +1026,7 @@ namespace USDA_ARS.ImportLocations
             // if slide file path is not empty, set it
             if (false == string.IsNullOrEmpty(slideFilePath))
             {
-               slideFilePath = CleanHtml.CleanUpHtml(slideFilePath);
+               slideFilePath = CleanHtml.CleanUpHtml(slideFilePath, "", MODE_CODE_NEW_LIST);
 
                properties.Add(new ApiProperty("slideFile", slideFilePath));
                properties.Add(new ApiProperty("slideUrl", ""));
@@ -1029,7 +1035,7 @@ namespace USDA_ARS.ImportLocations
             {
                if (false == string.IsNullOrEmpty(slideURL))
                {
-                  slideURL = CleanHtml.CleanUpHtml(slideURL);
+                  slideURL = CleanHtml.CleanUpHtml(slideURL, "", MODE_CODE_NEW_LIST);
                   Link linkSlide = new Link(slideURL, slideURL, ""); // set the url path
 
                   properties.Add(new ApiProperty("slideUrl", "[" + JsonConvert.SerializeObject(linkSlide, Newtonsoft.Json.Formatting.None, jsonSettings) + "]"));
@@ -1114,8 +1120,8 @@ namespace USDA_ARS.ImportLocations
             string softwareID = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<int>(1).ToString();
             string title = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(2);
             string recipients = legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(3);
-            string shortBlurb = CleanHtml.CleanUpHtml(legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(4), modeCode);
-            string info = CleanHtml.CleanUpHtml(legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(5), modeCode);
+            string shortBlurb = CleanHtml.CleanUpHtml(legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(4), modeCode, MODE_CODE_NEW_LIST);
+            string info = CleanHtml.CleanUpHtml(legacySoftwaresBeforeInsertion.Rows[legacySoftwaresRowId].Field<string>(5), modeCode, MODE_CODE_NEW_LIST);
 
             if (true == string.IsNullOrWhiteSpace(title))
             {
@@ -1255,7 +1261,7 @@ namespace USDA_ARS.ImportLocations
 
                if (false == string.IsNullOrWhiteSpace(url))
                {
-                  url = CleanHtml.CleanUpHtml(url);
+                  url = CleanHtml.CleanUpHtml(url,"", MODE_CODE_NEW_LIST);
                }
 
                Link link = new Link(url, url, ""); // set the url path
@@ -1307,6 +1313,20 @@ namespace USDA_ARS.ImportLocations
             AddLog(" - Success: " + responseBack.Success);
             AddLog(" - Message: " + responseBack.Message);
          }
+      }
+
+
+      static List<ModeCodeNew> GetNewModeCodesAll()
+      {
+         List<ModeCodeNew> modeCodeNewList = new List<ModeCodeNew>();
+
+         var db = new Database("arisPublicWebDbDSN");
+
+         string sql = @"SELECT * FROM NewModecodes";
+
+         modeCodeNewList = db.Query<ModeCodeNew>(sql).ToList();
+
+         return modeCodeNewList;
       }
 
 

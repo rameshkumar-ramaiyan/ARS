@@ -9,9 +9,10 @@ using System.Linq;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
+using Umbraco.Core.Persistence;
 using USDA_ARS.ImportInfoStaff.Models;
 using USDA_ARS.LocationsWebApp.DL;
+using USDA_ARS.Umbraco.Extensions.Models.Aris;
 using USDA_ARS.Umbraco.Extensions.Models.Import;
 
 namespace USDA_ARS.ImportInfoStaff
@@ -28,6 +29,7 @@ namespace USDA_ARS.ImportInfoStaff
       static string INFO_STAFF_FILE_URL = ConfigurationManager.AppSettings.Get("InfoStaff:FileUrl");
 
       static List<ModeCodeLookup> MODE_CODE_LIST = null;
+      static List<ModeCodeNew> MODE_CODE_NEW_LIST = null;
       static List<InfoStaffPathLookup> PATH_LOOKUP_LIST = new List<InfoStaffPathLookup>();
 
       static void Main(string[] args)
@@ -71,6 +73,11 @@ namespace USDA_ARS.ImportInfoStaff
          AddLog("Getting Mode Codes From Umbraco...");
          GenerateModeCodeList(forceCacheUpdate);
          AddLog("Done. Count: " + MODE_CODE_LIST.Count);
+         AddLog("");
+
+         AddLog("Getting New Mode Codes...");
+         MODE_CODE_NEW_LIST = GetNewModeCodesAll();
+         AddLog("Done. Count: " + MODE_CODE_NEW_LIST.Count);
          AddLog("");
 
          PATH_LOOKUP_LIST.Add(new InfoStaffPathLookup() { Path = INFO_STAFF_PATH, UmbracoId = UMBRACO_START_NODE });
@@ -434,10 +441,10 @@ namespace USDA_ARS.ImportInfoStaff
             pageImport.Title = title;
             pageImport.BodyText = bodyText;
             pageImport.OldPath = oldPath;
-            }
-            else
-            {
-                AddLog("** BODY text was not formatted correctly and couldn't be found.");
+         }
+         else
+         {
+            AddLog("** BODY text was not formatted correctly and couldn't be found.");
          }
 
          return pageImport;
@@ -621,7 +628,7 @@ namespace USDA_ARS.ImportInfoStaff
 
       static string UpdateHtml(string bodyText, string oldPath)
       {
-         bodyText = LocationsWebApp.DL.CleanHtml.CleanUpHtml(bodyText);
+         bodyText = CleanHtml.CleanUpHtml(bodyText, null, MODE_CODE_NEW_LIST);
 
          bodyText = bodyText.Replace("http://www.ars.usda.gov", "");
          bodyText = bodyText.Replace("/pandp/people/people.htm?personid=", "/people-locations/person/?person-id=");
@@ -867,14 +874,25 @@ namespace USDA_ARS.ImportInfoStaff
       }
 
 
-      static PageImport GetProductionPage(string title, string url)
+      static PageImport GetProductionPage(string title, string url, bool usePreviewSite = true)
       {
          PageImport page = null;
 
-         string urlAddress = "http://www.ars.usda.gov" + url;
+         string urlAddress = "";
+
+         if (false == usePreviewSite)
+         {
+            urlAddress = "http://www.ars.usda.gov" + url;
+         }
+         else
+         {
+            urlAddress = "http://iapreview.ars.usda.gov" + url;
+         }
 
          try
          {
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlAddress);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 
@@ -917,7 +935,7 @@ namespace USDA_ARS.ImportInfoStaff
                      page = new PageImport();
 
                      page.Title = title;
-                     page.BodyText = CleanHtml.CleanUpHtml(between);
+                     page.BodyText = CleanHtml.CleanUpHtml(between, "", MODE_CODE_NEW_LIST);
                      page.OldPath = url;
                   }
                }
@@ -929,6 +947,20 @@ namespace USDA_ARS.ImportInfoStaff
          }
 
          return page;
+      }
+
+
+      static List<ModeCodeNew> GetNewModeCodesAll()
+      {
+         List<ModeCodeNew> modeCodeNewList = new List<ModeCodeNew>();
+
+         var db = new Database("arisPublicWebDbDSN");
+
+         string sql = @"SELECT * FROM NewModecodes";
+
+         modeCodeNewList = db.Query<ModeCodeNew>(sql).ToList();
+
+         return modeCodeNewList;
       }
 
 

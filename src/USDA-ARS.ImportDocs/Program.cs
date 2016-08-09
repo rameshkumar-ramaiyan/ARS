@@ -356,7 +356,7 @@ namespace USDA_ARS.ImportDocs
 
                string bodyText = node.DataNtext;
 
-               string bodyTextFixed = CleanHtml.CleanUpHtml(bodyText);
+               string bodyTextFixed = CleanHtml.CleanUpHtml(bodyText, null, MODE_CODE_NEW_LIST);
 
                if (bodyText != bodyTextFixed)
                {
@@ -567,7 +567,7 @@ namespace USDA_ARS.ImportDocs
                {
                   int umbracoId = response.ContentList[0].Id;
 
-                  AddLog(" - Page added:[Mode Code: " + modeCode + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title);
+                  AddLog(" - Page added:[Mode Code: " + modeCode + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title, LogFormat.Success);
 
                   if (importPage.SubPages != null && importPage.SubPages.Any())
                   {
@@ -577,7 +577,7 @@ namespace USDA_ARS.ImportDocs
 
                         if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
                         {
-                           AddLog(" --- SubPage added:(" + subpageResponse.ContentList[0].Id + ") " + subPage.Title);
+                           AddLog(" --- SubPage added:(Umbraco Id: " + subpageResponse.ContentList[0].Id + ") " + subPage.Title, LogFormat.Success);
                         }
                         else
                         {
@@ -615,7 +615,7 @@ namespace USDA_ARS.ImportDocs
             {
                int umbracoId = response.ContentList[0].Id;
 
-               AddLog(" - Page added:[Person Id: " + personId + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title);
+               AddLog(" - Page added:[Person Id: " + personId + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title, LogFormat.Success);
 
                if (importPage.SubPages != null && importPage.SubPages.Any())
                {
@@ -625,23 +625,23 @@ namespace USDA_ARS.ImportDocs
 
                      if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
                      {
-                        AddLog(" --- SubPage added:(" + subpageResponse.ContentList[0].Id + ") " + subPage.Title);
+                        AddLog(" --- SubPage added:(" + subpageResponse.ContentList[0].Id + ") " + subPage.Title, LogFormat.Success);
                      }
                      else
                      {
-                        AddLog("!!ERROR SUBPAGE NOT ADDED!");
+                        AddLog("!!ERROR SUBPAGE NOT ADDED!", LogFormat.Error);
                      }
                   }
                }
             }
             else
             {
-               AddLog("!!ERROR SUBPAGE NOT ADDED!");
+               AddLog("!!ERROR SUBPAGE NOT ADDED!", LogFormat.Error);
             }
          }
          else
          {
-            AddLog("!! PERSON CANNOT BE FOUND !! (" + personId + ")");
+            AddLog("!! PERSON CANNOT BE FOUND !! (" + personId + ")", LogFormat.Warning);
          }
       }
 
@@ -706,7 +706,7 @@ namespace USDA_ARS.ImportDocs
                {
                   int umbracoId = response.ContentList[0].Id;
 
-                  AddLog(" - Page added:[Mode Code: " + modeCode + "/" + adHocFolderName + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title);
+                  AddLog(" - Page added:[Mode Code: " + modeCode + "/" + adHocFolderName + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title, LogFormat.Success);
 
                   if (importPage.SubPages != null && importPage.SubPages.Any())
                   {
@@ -716,7 +716,7 @@ namespace USDA_ARS.ImportDocs
 
                         if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
                         {
-                           AddLog(" --- SubPage added:(" + subpageResponse.ContentList[0].Id + ") " + subPage.Title);
+                           AddLog(" --- SubPage added:(" + subpageResponse.ContentList[0].Id + ") " + subPage.Title, LogFormat.Success);
                         }
                         else
                         {
@@ -793,7 +793,7 @@ namespace USDA_ARS.ImportDocs
             {
                int umbracoId = response.ContentList[0].Id;
 
-               AddLog(" - Page added:[Sub Site: " + subsite + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title);
+               AddLog(" - Page added:[Sub Site: " + subsite + "] (Umbraco Id: " + umbracoId + ") " + importPage.Title, LogFormat.Success);
 
                if (importPage.SubPages != null && importPage.SubPages.Any())
                {
@@ -803,7 +803,7 @@ namespace USDA_ARS.ImportDocs
 
                      if (subpageResponse != null && subpageResponse.ContentList != null && subpageResponse.ContentList.Any())
                      {
-                        AddLog(" --- SubPage added:(" + subpageResponse.ContentList[0].Id + ") " + subPage.Title);
+                        AddLog(" --- SubPage added:(" + subpageResponse.ContentList[0].Id + ") " + subPage.Title, LogFormat.Success);
                      }
                      else
                      {
@@ -1000,7 +1000,7 @@ namespace USDA_ARS.ImportDocs
             AddLog(" - Adding keywords...");
          }
 
-         properties.Add(new ApiProperty("pageHeaderScripts", CleanHtml.CleanUpHtml(htmlHeader))); // hide page title
+         properties.Add(new ApiProperty("pageHeaderScripts", CleanHtml.CleanUpHtml(htmlHeader, "", MODE_CODE_NEW_LIST))); // hide page title
          properties.Add(new ApiProperty("keywords", keywords)); // hide page title
 
          if (false == string.IsNullOrEmpty(folderLabel))
@@ -1367,13 +1367,24 @@ namespace USDA_ARS.ImportDocs
       }
 
 
-      static string GetProductionPage(string url)
+      static string GetProductionPage(string url, bool usePreviewSite = true)
       {
          string output = "";
-         string urlAddress = "http://www.ars.usda.gov" + url;
+         string urlAddress = "";
+
+         if (false == usePreviewSite)
+         {
+            urlAddress = "http://www.ars.usda.gov" + url;
+         }
+         else
+         {
+            urlAddress = "http://iapreview.ars.usda.gov" + url;
+         }
 
          try
          {
+            ServicePointManager.ServerCertificateValidationCallback = delegate { return true; };
+
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(urlAddress);
             HttpWebResponse response = (HttpWebResponse)request.GetResponse();
 

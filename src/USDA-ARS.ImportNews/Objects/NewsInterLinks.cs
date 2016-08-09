@@ -25,12 +25,17 @@ namespace USDA_ARS.ImportNews.Objects
 
          if (linkList != null && linkList.Any())
          {
+            Console.WriteLine(" - Umbraco ID: " + umbracoNodeId);
+
             foreach (LinkItem linkItem in linkList)
             {
+               bool errorDetected = false;
+               bool foundInterLink = false;
+
                NewsInterLink interLinkItem = new NewsInterLink();
 
                interLinkItem.Id = Guid.Empty;
-
+               
                interLinkItem.UmbracoNodeId = umbracoNodeId;
                interLinkItem.UmbracoNodeGuid = umbracoNodeGuid;
 
@@ -48,6 +53,8 @@ namespace USDA_ARS.ImportNews.Objects
 
                      if (personId > 0)
                      {
+                        foundInterLink = true;
+
                         interLinkItem.LinkType = "person";
                         interLinkItem.LinkId = personId;
                      }
@@ -80,12 +87,29 @@ namespace USDA_ARS.ImportNews.Objects
 
                      if (false == string.IsNullOrEmpty(modeCode))
                      {
+                        foundInterLink = true;
+
                         modeCode = ModeCodes.ModeCodeNoDashes(modeCode);
+
+                        Console.WriteLine(" - Original Mode Code: " + modeCode);
 
                         modeCode = DoesNodeHaveSingleResearchUnits(modeCode, newModeCodeList);
 
+                        Console.WriteLine(" - Updated  Mode Code: " + modeCode);
+
                         interLinkItem.LinkType = "place";
-                        interLinkItem.LinkId = Convert.ToInt64(modeCode);
+
+                        long modeCodeNumber = 0;
+
+                        if (long.TryParse(modeCode, out modeCodeNumber))
+                        {
+                              interLinkItem.LinkId = modeCodeNumber;
+                        }
+                        else
+                        {
+                           errorDetected = true;
+                           Console.Write("!!! BAD MODE CODE: " + modeCode);
+                        }
                      }
                   }
                   else if (linkItem.Href.IndexOf("/{localLink:") >= 0)
@@ -101,6 +125,8 @@ namespace USDA_ARS.ImportNews.Objects
 
                      if (nodeId > 0)
                      {
+                        foundInterLink = true;
+
                         string modeCode = "";
                         ModeCodeLookup modeCodeLookup = null;
 
@@ -115,10 +141,25 @@ namespace USDA_ARS.ImportNews.Objects
                         {
                            modeCode = ModeCodes.ModeCodeNoDashes(modeCode);
 
+                           Console.WriteLine(" - Original Mode Code: " + modeCode);
+
                            modeCode = DoesNodeHaveSingleResearchUnits(modeCode, newModeCodeList);
 
+                           Console.WriteLine(" - Updated  Mode Code: " + modeCode);
+
                            interLinkItem.LinkType = "place";
-                           interLinkItem.LinkId = Convert.ToInt64(modeCode);
+
+                           long modeCodeNumber = 0;
+
+                           if (long.TryParse(modeCode, out modeCodeNumber))
+                           {
+                              interLinkItem.LinkId = modeCodeNumber;
+                           }
+                           else
+                           {
+                              errorDetected = true;
+                              Console.Write("!!! BAD MODE CODE: " + modeCode);
+                           }
                         }
                      }
                   }
@@ -128,28 +169,51 @@ namespace USDA_ARS.ImportNews.Objects
 
                      ModeCodeLookup node = modeCodeList.Where(p => p.Url.ToLower() == url.ToLower()).FirstOrDefault();
 
-                     if (node != null)
+                     if (node != null && false == string.IsNullOrEmpty(node.ModeCode) && node.ModeCode != "00-00-00-00")
                      {
+                        foundInterLink = true;
+
                         string modeCode = node.ModeCode;
 
                         if (false == string.IsNullOrEmpty(modeCode))
                         {
                            modeCode = ModeCodes.ModeCodeNoDashes(modeCode);
 
+                           Console.WriteLine(" - Original Mode Code: " + modeCode);
+
                            modeCode = DoesNodeHaveSingleResearchUnits(modeCode, newModeCodeList);
 
+                           Console.WriteLine(" - Updated  Mode Code: " + modeCode);
+
                            interLinkItem.LinkType = "place";
-                           interLinkItem.LinkId = Convert.ToInt64(modeCode);
+
+                           long modeCodeNumber = 0;
+
+                           if (long.TryParse(modeCode, out modeCodeNumber))
+                           {
+                              interLinkItem.LinkId = modeCodeNumber;
+                           }
+                           else
+                           {
+                              errorDetected = true;
+                              Console.Write("!!! BAD MODE CODE: " + modeCode);
+                           }
                         }
                      }
                   }
                }
 
-               if (false == string.IsNullOrEmpty(interLinkItem.LinkType))
+               if (true == foundInterLink && false == errorDetected && false == string.IsNullOrEmpty(interLinkItem.LinkType))
                {
                   AddLink(interLinkItem);
 
                   interLinkList.Add(interLinkItem);
+
+                  Console.WriteLine();
+               }
+               else
+               {
+                  //Console.WriteLine(" - No interlinks found.");
                }
             }
          }
@@ -244,7 +308,12 @@ namespace USDA_ARS.ImportNews.Objects
 
             if (newModeCode != null)
             {
-               foundModeCode = newModeCode.ModecodeOld;
+               Console.WriteLine(" - Old Mode Code Found: " + foundModeCode);
+
+               foundModeCode = newModeCode.ModecodeNew;
+
+               Console.WriteLine(" - New Mode Code: " + foundModeCode);
+
                modeCode = foundModeCode;
             }
 
@@ -275,6 +344,7 @@ namespace USDA_ARS.ImportNews.Objects
             }
             catch (Exception ex)
             {
+               Console.WriteLine(" !!! ERROR: " + ex.ToString());
                throw ex;
             }
             finally

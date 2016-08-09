@@ -300,7 +300,7 @@ namespace USDA_ARS.ImportNews
 
                if (linkItemList != null)
                {
-                  AddLog("Found Interlinks...");
+                  AddLog("Possible Interlinks Found...");
                   NewsInterLinks.GenerateInterLinks(node.UmbracoId, node.UmbracoGuid, linkItemList, MODE_CODE_LIST, MODE_CODE_NEW_LIST);
                }
 

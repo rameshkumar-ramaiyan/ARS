@@ -6,12 +6,13 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using USDA_ARS.Umbraco.Extensions.Models.Aris;
 using ZetaHtmlCompressor;
+using Umbraco.Core.Persistence;
 
 namespace USDA_ARS.LocationsWebApp.DL
 {
    public class CleanHtml
    {
-      public static string CleanUpHtml(string bodyText, string modeCode = "", List<ModeCodeNew> modeCodeNewList = null, string currentUrl = null)
+      public static string CleanUpHtml(string bodyText, string modeCode = "", List<ModeCodeNew> modeCodeNewList = null)
       {
          string output = "";
 
@@ -1044,6 +1045,24 @@ namespace USDA_ARS.LocationsWebApp.DL
             bodyText = Regex.Replace(bodyText, @"/SP2UserFiles/ad_hoc/m", "/ARSUserFiles/00000000/m", RegexOptions.IgnoreCase);
             bodyText = Regex.Replace(bodyText, @"/SP2UserFiles/ad_hoc/SANDwitch", "/ARSUserFiles/80400530/SANDwitch", RegexOptions.IgnoreCase);
 
+            // Replace Old Mode Codes
+            if (modeCodeNewList == null || false == modeCodeNewList.Any())
+            {
+               modeCodeNewList = GetNewModeCodesAll();
+            }
+
+            if (modeCodeNewList != null && modeCodeNewList.Any())
+            {
+               foreach (ModeCodeNew modeCodeNewItem in modeCodeNewList)
+               {
+                  if (bodyText.IndexOf("/ARSUserFiles/" + modeCodeNewItem.ModecodeOld + "/") >= 0)
+                  {
+                     bodyText = bodyText.Replace("/ARSUserFiles/" + modeCodeNewItem.ModecodeOld + "/", "/ARSUserFiles/" + modeCodeNewItem.ModecodeNew + "/");
+                  }
+               }
+            }
+
+
             output = htmlCompressor.compress(bodyText);
          }
 
@@ -1100,6 +1119,20 @@ namespace USDA_ARS.LocationsWebApp.DL
          }
 
          return newModeCode;
+      }
+
+
+      public static List<ModeCodeNew> GetNewModeCodesAll()
+      {
+         List<ModeCodeNew> modeCodeNewList = new List<ModeCodeNew>();
+
+         var db = new Database("arisPublicWebDbDSN");
+
+         string sql = @"SELECT * FROM NewModecodes";
+
+         modeCodeNewList = db.Query<ModeCodeNew>(sql).ToList();
+
+         return modeCodeNewList;
       }
    }
 }
