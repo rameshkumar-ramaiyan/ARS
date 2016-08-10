@@ -357,6 +357,7 @@
     <Content Include="StoredProcedures\dbo.uspgetAllDocumentPagesBasedOnCurrentVersionId.sql" />
     <Content Include="StoredProcedures\udfCountOfLabsUnderRC.sql" />
     <Content Include="StoredProcedures\udfCountOfRcsUnderCity.sql" />
+    <Content Include="StoredProcedures\udfDescribeUnit.sql" />
     <Content Include="StoredProcedures\udfGetChildLabModeCodeUnderRC.sql" />
     <Content Include="StoredProcedures\udfGetChildRCModeCodeUnderCity.sql" />
     <Content Include="StoredProcedures\uspgetAllAreasCarouselSlides.sql" />
