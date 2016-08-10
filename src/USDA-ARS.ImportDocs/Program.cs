@@ -876,6 +876,7 @@ namespace USDA_ARS.ImportDocs
          DataTable newDocpagesAfterDecryption1 = new DataTable();
          //3. send to doc pages sp
 
+         newPage.OldDocId = docId;
          newPage.Title = title;
 
          dtAllDocumentIdPagesBasedOnCurrentVersion = GetAllDocumentIdPagesBasedOnCurrentVersion(currentVersion);
@@ -942,6 +943,10 @@ namespace USDA_ARS.ImportDocs
                   newPage.SubPages.Add(new ImportPage() { OldDocId = docId, PageNumber = docpageNum, BodyText = decString.Trim(), DisableTitle = !displayTitle });
                }
             }
+         }
+         else
+         {
+            newPage = null;
          }
 
          return newPage;
