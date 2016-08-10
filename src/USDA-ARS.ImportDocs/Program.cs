@@ -535,23 +535,26 @@ namespace USDA_ARS.ImportDocs
             int subNodeUmbracoId = 0;
             bool updateSubNode = false;
 
-            if (importPage.OldDocType.ToLower() == "research" && importPage.Title.ToLower() == "index")
+            if (importPage.OldDocType != null && importPage.Title != null)
             {
-               AddLog(" - Found Research index page.", LogFormat.Info);
+               if (importPage.OldDocType.ToLower() == "research" && importPage.Title.ToLower() == "index")
+               {
+                  AddLog(" - Found Research index page.", LogFormat.Info);
 
-               subNodeUmbracoId = GetNodeChildSubNode(modeCode, "SitesResearch");
-            }
-            else if (importPage.OldDocType.ToLower() == "careers" && importPage.Title.ToLower() == "index")
-            {
-               AddLog(" - Found Careers index page.", LogFormat.Info);
+                  subNodeUmbracoId = GetNodeChildSubNode(modeCode, "SitesResearch");
+               }
+               else if (importPage.OldDocType.ToLower() == "careers" && importPage.Title.ToLower() == "index")
+               {
+                  AddLog(" - Found Careers index page.", LogFormat.Info);
 
-               subNodeUmbracoId = GetNodeChildSubNode(modeCode, "SitesCareers");
-            }
-            else if (importPage.OldDocType.ToLower() == "news" && importPage.Title.ToLower() == "index")
-            {
-               AddLog(" - Found News index page.", LogFormat.Info);
+                  subNodeUmbracoId = GetNodeChildSubNode(modeCode, "SitesCareers");
+               }
+               else if (importPage.OldDocType.ToLower() == "news" && importPage.Title.ToLower() == "index")
+               {
+                  AddLog(" - Found News index page.", LogFormat.Info);
 
-               subNodeUmbracoId = GetNodeChildSubNode(modeCode, "SitesNews");
+                  subNodeUmbracoId = GetNodeChildSubNode(modeCode, "SitesNews");
+               }
             }
 
             if (subNodeUmbracoId > 0)
@@ -564,6 +567,7 @@ namespace USDA_ARS.ImportDocs
 
             if (false == updateSubNode)
             {
+               AddLog(" - Prepping document...");
                ApiResponse response = AddUmbracoPage(umbracoParentId, importPage.Title, importPage.BodyText, importPage.DisableTitle, importPage.OldDocId, importPage.OldDocType, importPage.HtmlHeader, importPage.Keywords, 1);
 
                if (response != null && response.ContentList != null && response.ContentList.Any())
@@ -969,6 +973,16 @@ namespace USDA_ARS.ImportDocs
          else if (name.Trim().ToLower() == "index")
          {
             name = oldDocType;
+         }
+
+         if (true == string.IsNullOrEmpty(body))
+         {
+            body = "";
+         }
+
+         if (true == string.IsNullOrEmpty(oldUrl))
+         {
+            oldUrl = "";
          }
 
          content.Id = 0;
