@@ -876,6 +876,8 @@ namespace USDA_ARS.ImportDocs
          DataTable newDocpagesAfterDecryption1 = new DataTable();
          //3. send to doc pages sp
 
+         newPage.Title = title;
+
          dtAllDocumentIdPagesBasedOnCurrentVersion = GetAllDocumentIdPagesBasedOnCurrentVersion(currentVersion);
 
          if (dtAllDocumentIdPagesBasedOnCurrentVersion.Rows.Count > 0)
