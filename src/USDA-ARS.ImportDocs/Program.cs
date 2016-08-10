@@ -309,7 +309,7 @@ namespace USDA_ARS.ImportDocs
                      }
                      else
                      {
-                        AddLog("!! Can't add page: " + title);
+                        AddLog("!! Page should not be imported (Doc ID: "+ docId + "): " + title);
                      }
 
                      AddLog("");
