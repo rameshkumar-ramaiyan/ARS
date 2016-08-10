@@ -277,6 +277,7 @@ namespace USDA_ARS.ImportDocs
                         adHocFolderName = dtAllDocumentIdsBasedOnDocTypeWithParam.Rows[i].Field<string>("siteLabel").ToString();
                      }
 
+                     AddLog(" - Doc ID: " + docId);
                      AddLog(" - Generating import page: " + title);
 
                      ImportPage newPage = GenerateImportPage(docId, currentversion, title, doctype, published, originSite_Type, originSite_ID, displayTitle, 
@@ -527,6 +528,8 @@ namespace USDA_ARS.ImportDocs
 
          if (getDocFolder != null)
          {
+            AddLog(" - Found Doc Folder: Umbraco Id: " + getDocFolder.UmbracoDocFolderId);
+
             int umbracoParentId = getDocFolder.UmbracoDocFolderId;
 
             int subNodeUmbracoId = 0;
