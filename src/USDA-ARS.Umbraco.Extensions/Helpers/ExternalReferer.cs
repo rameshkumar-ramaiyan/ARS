@@ -7,21 +7,25 @@ using System.Web;
 
 namespace USDA_ARS.Umbraco.Extensions.Helpers
 {
-    public class ExternalReferer
-    {
-        public static string GetExternalUrl(Uri referer)
-        {
-            string externalUrl = null;
+   public class ExternalReferer
+   {
+      public static string GetExternalUrl(Uri referer)
+      {
+         string externalUrl = null;
 
+         try
+         {
             if (referer != null && false == string.IsNullOrEmpty(referer.AbsoluteUri))
             {
-                if (HttpContext.Current.Request.Url.DnsSafeHost != referer.DnsSafeHost)
-                {
-                    externalUrl = referer.AbsoluteUri;
-                }
+               if (HttpContext.Current.Request.Url.DnsSafeHost != referer.DnsSafeHost)
+               {
+                  externalUrl = referer.AbsoluteUri;
+               }
             }
+         }
+         catch { }
 
-            return externalUrl;
-        }
-    }
+         return externalUrl;
+      }
+   }
 }

@@ -176,9 +176,9 @@ function fileSystemPickerController($scope, $http, $routeParams, $timeout, dialo
                     node: node
                 }
             });
-            $timeout(function () {
-                dialogService.close($rootScope.fileSytemPickerOptionsMenuDialog, null);
-            }, 500);
+            //$timeout(function () {
+            //    dialogService.close($rootScope.fileSytemPickerOptionsMenuDialog, null);
+            //}, 500);
         };
 
         $scope.openCreate = function (node) {
@@ -189,9 +189,9 @@ function fileSystemPickerController($scope, $http, $routeParams, $timeout, dialo
                     node: node
                 }
             });
-            $timeout(function () {
-                dialogService.close($rootScope.fileSytemPickerOptionsMenuDialog, null);
-            }, 500);
+            //$timeout(function () {
+            //    dialogService.close($rootScope.fileSytemPickerOptionsMenuDialog, null);
+            //}, 500);
         };
 
         $scope.openRename = function (node) {
@@ -202,9 +202,9 @@ function fileSystemPickerController($scope, $http, $routeParams, $timeout, dialo
                     node: node
                 }
             });
-            $timeout(function () {
-                dialogService.close($rootScope.fileSytemPickerOptionsMenuDialog, null);
-            }, 500);
+            //$timeout(function () {
+            //    dialogService.close($rootScope.fileSytemPickerOptionsMenuDialog, null);
+            //}, 500);
         };
 
         $scope.openDelete = function (node) {
@@ -215,9 +215,9 @@ function fileSystemPickerController($scope, $http, $routeParams, $timeout, dialo
                     node: node
                 }
             });
-            $timeout(function () {
-                dialogService.close($rootScope.fileSytemPickerOptionsMenuDialog, null);
-            }, 500);
+            //$timeout(function () {
+            //    dialogService.close($rootScope.fileSytemPickerOptionsMenuDialog, null);
+            //}, 500);
         };
 
         function dialogClosedParentRefresh(node) {

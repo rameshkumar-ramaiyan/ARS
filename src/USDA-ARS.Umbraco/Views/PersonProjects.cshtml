@@ -1,0 +1,181 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Utilities
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+   Layout = "_Master.cshtml";
+
+   IPublishedContent currentPage = Model.Content;
+
+   PeopleInfo peopleInfo = null;
+   List<ProjectInfo> personProjectList = null;
+   List<ProjectInfo> personProjectLeaderList = null;
+
+   if (false == string.IsNullOrEmpty(Request.QueryString["person-id"]))
+   {
+      int personId = Convert.ToInt32(Request.QueryString["person-id"]);
+
+      IPublishedContent personSite = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByPersonId(personId);
+
+      if (null == personSite)
+      {
+         peopleInfo = People.GetPerson(personId);
+
+         if (peopleInfo != null)
+         {
+            personProjectList = Projects.GetProjectsByPerson(peopleInfo.EmpId);
+            personProjectLeaderList = Projects.GetNationalProgramLeaderByPerson(personId);
+         }
+      }
+      else
+      {
+         Response.Redirect(personSite.Url);
+      }
+   }
+
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+   <div id="pageContent">
+
+      <script language="javascript">
+<!--
+window.name = 'nps2000';
+var remote = null;
+function rs(n,u,w,h) {
+remote = window.open(u, n, 'width=' + w + ',height=' + h +',refresh=yes,resizable=yes,scrollbars=yes');
+if (remote != null) {
+if (remote.opener == null)
+remote.opener = self;
+window.name = 'nps2000';
+remote.location.href = u;
+}
+}
+//-->
+      </script>
+
+
+      @if (peopleInfo != null)
+      {
+
+         <table width="100%" border="0">
+            <tbody>
+               <tr>
+                  <td valign="top">
+                     <b>
+                        @peopleInfo.FirstName @peopleInfo.MiddleName @peopleInfo.LastName
+
+                        @if (false == string.IsNullOrEmpty(peopleInfo.CommonName))
+                        {
+                           @("(" + peopleInfo.CommonName + ")")
+                        }
+                     </b>
+                     <br />
+
+                     <script language="JavaScript">function DisplayEmail(username, domain) { document.write(username + "&#64;" + domain); }</script>
+
+                     <a href="mailto:@(peopleInfo.Email)?Subject=From ARS website">
+                        @if (peopleInfo.Email != null && peopleInfo.Email.Split('@').Length == 2)
+                        {
+                           <script language="javascript">DisplayEmail('@(peopleInfo.Email.Split('@')[0])', '@(peopleInfo.Email.Split('@')[1])');</script>
+                        }
+                     </a><br />
+
+                     @(peopleInfo.TitleWorking)
+                     <br />
+
+
+                     <p> </p>
+
+
+                     @if (personProjectLeaderList != null && personProjectLeaderList.Any())
+                     {
+                        <p>
+                           <strong>National Program Leader For:</strong>
+                           <br>
+                           <img src="/images/headline_bar.gif">
+                        </p>
+
+                        <ul style="list-style:none;padding-left:0;">
+                           @foreach (ProjectInfo project in personProjectLeaderList)
+                           {
+                              <li>
+                                 <a href="/research/project/?accnNo=@(project.AccountNo)" id="anch_51">@(project.ProjectTitle)</a>
+                                 <br />
+                                 <div style="margin-left:10px;">Accession Number: @(project.AccountNo)</div>
+                                 <img src="/images/content-divider.gif">
+                                 <br>
+                              </li>
+                           }
+                        </ul>
+                     }
+                     else if (personProjectList != null && personProjectList.Any())
+                     {
+                        <table width="368">
+                           <tbody>
+                              <tr>
+                                 <td class="hdrBlackBold"><b>Projects</b></td>
+                              </tr>
+                              <tr>
+                                 <td><img src="/images/headline_bar.gif"></td>
+                              </tr>
+
+                              @foreach (ProjectInfo project in personProjectList)
+                              {
+                                 <tr>
+                                    <td>
+                                       <a href="/research/project/?accnNo=@(project.AccountNo)" class="projectNav" id="anch_53">@(project.ProjectTitle)</a>
+                                       <table border="0">
+                                          <tbody>
+                                             <tr>
+                                                <td></td>
+                                                <td class="bodyTextBlack">
+                                                   @(Projects.ProjectTypeByCode(project.ProjectType))
+
+                                                   (@project.ProjectType)
+                                                </td>
+                                             </tr>
+                                             <tr>
+                                                <td>&nbsp;</td>
+                                                <td class="bodyTextBlack">Accession Number: @(project.AccountNo)</td>
+                                             </tr>
+                                          </tbody>
+                                       </table>
+                                    </td>
+                                 </tr>
+                                 <tr>
+                                    <td><img src="/images/content-divider.gif"></td>
+                                 </tr>
+                              }
+                           </tbody>
+                        </table>
+
+                     }
+
+
+
+
+
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+
+                                          }
+                                          else
+                                          {
+         <strong><em>The person you selected is invalid or no longer available.</em></strong>
+                                          }
+
+   </div>
+
+</div>

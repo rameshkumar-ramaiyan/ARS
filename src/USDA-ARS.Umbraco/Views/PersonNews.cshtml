@@ -1,0 +1,152 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Utilities
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+   Layout = "_Master.cshtml";
+
+   IPublishedContent currentPage = Model.Content;
+
+   PeopleInfo peopleInfo = null;
+   List<IPublishedContent> personNewsList = null;
+
+   if (false == string.IsNullOrEmpty(Request.QueryString["person-id"]))
+   {
+      int personId = Convert.ToInt32(Request.QueryString["person-id"]);
+
+      IPublishedContent personSite = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByPersonId(personId);
+
+      if (null == personSite)
+      {
+         peopleInfo = People.GetPerson(personId);
+
+         if (peopleInfo != null)
+         {
+            personNewsList = NewsInterLinks.GetNewsByPersonId(personId);
+         }
+      }
+      else
+      {
+         Response.Redirect(personSite.Url);
+      }
+   }
+
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+   <div id="pageContent">
+
+      <script language="javascript">
+<!--
+window.name = 'nps2000';
+var remote = null;
+function rs(n,u,w,h) {
+remote = window.open(u, n, 'width=' + w + ',height=' + h +',refresh=yes,resizable=yes,scrollbars=yes');
+if (remote != null) {
+if (remote.opener == null)
+remote.opener = self;
+window.name = 'nps2000';
+remote.location.href = u;
+}
+}
+//-->
+      </script>
+
+
+      @if (peopleInfo != null)
+      {
+
+         <table width="100%" border="0">
+            <tbody>
+               <tr>
+                  <td valign="top">
+                     <b>
+                        @peopleInfo.FirstName @peopleInfo.MiddleName @peopleInfo.LastName
+
+                        @if (false == string.IsNullOrEmpty(peopleInfo.CommonName))
+                        {
+                           @("(" + peopleInfo.CommonName + ")")
+                        }
+                     </b>
+                     <br />
+
+                     <script language="JavaScript">function DisplayEmail(username, domain) { document.write(username + "&#64;" + domain); }</script>
+
+                     <a href="mailto:@(peopleInfo.Email)?Subject=From ARS website">
+                        @if (peopleInfo.Email != null && peopleInfo.Email.Split('@').Length == 2)
+                        {
+                           <script language="javascript">DisplayEmail('@(peopleInfo.Email.Split('@')[0])', '@(peopleInfo.Email.Split('@')[1])');</script>
+                        }
+                     </a><br />
+
+                     @(peopleInfo.TitleWorking)
+                     <br />
+
+
+                     <p> </p>
+
+
+                     <font face="verdana,arial" size="-2" color="#014c3e">
+                        <b>
+                           ARS News Articles
+                           <font face="verdana,arial" size="-2" color="#014c3e">
+                           </font>
+                        </b><font face="verdana,arial" size="-2" color="#014c3e">
+                        </font>
+                        <br>
+
+                        <font face="verdana,arial" size="-2">
+                           <div align="left">
+                              <table>
+                                 <tbody>
+                                    @foreach (IPublishedContent newsItem in personNewsList)
+                                    {
+                                       <tr>
+                                          <td valign="top"><img src="/ARSUserFiles/incme/images/bullet.gif" border="0" alt="item"></td>
+                                          <td valign="top" align="left" background="/ARSUserFiles/incme/images/spacer.gif">
+                                             <font face="verdana,arial" size="-1">
+                                                <a href="@newsItem.Url">@newsItem.Name</a>
+                                             </font>
+                                          </td>
+                                       </tr>
+                                    }
+                                 </tbody>
+                              </table>
+                           </div>
+                        </font>
+
+                     </font>
+
+
+
+
+
+
+
+
+
+
+
+                  </td>
+               </tr>
+            </tbody>
+         </table>
+
+                                          }
+                                          else
+                                          {
+         <strong><em>The person you selected is invalid or no longer available.</em></strong>
+                                          }
+
+   </div>
+
+</div>
