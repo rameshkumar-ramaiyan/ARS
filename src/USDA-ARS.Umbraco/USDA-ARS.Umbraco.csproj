@@ -455,6 +455,7 @@
     <Content Include="JQuery\jquery.cycle.all.min.js" />
     <Content Include="JQuery\jquery.min.js" />
     <Content Include="JQuery\jquery.ui.1.9.2.js" />
+    <Content Include="loaderio-618f66715664693bb152d0fa6d233f3a.txt" />
     <Content Include="umbraco\Actions\delete.aspx" />
     <Content Include="umbraco\Actions\editContent.aspx" />
     <Content Include="umbraco\Actions\preview.aspx" />

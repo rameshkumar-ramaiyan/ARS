@@ -62,6 +62,8 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
                   imagePath += hrefLink;
 
+                  // /ARSUserFiles/oc/graphics/photos/jan05/d004-1.jpg
+
                   imagePath = imagePath.ToLower().Replace("/oc/", "/ARSUserFiles/oc/");
                }
 
