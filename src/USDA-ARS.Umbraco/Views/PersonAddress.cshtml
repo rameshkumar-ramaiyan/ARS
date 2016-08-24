@@ -18,7 +18,7 @@
    {
       int personId = Convert.ToInt32(Request.QueryString["person-id"]);
 
-      IPublishedContent personSite = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByPersonId(personId);
+      personSite = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByPersonId(personId);
 
       peopleInfo = People.GetPerson(personId);
    }
