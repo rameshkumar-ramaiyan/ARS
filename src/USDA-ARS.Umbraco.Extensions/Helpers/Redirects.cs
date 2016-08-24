@@ -166,7 +166,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
                         if (nodeFound != null)
                         {
-                           redirectUrl = badUrl.ToLower().Replace(badUrl.ToLower(), nodeFound.Url);
+                           redirectUrl = badUrl.ToLower().Replace(badUrl.ToLower(), nodeFound.Url + redirectNode.AppendString);
                         }
                      }
                   }
