@@ -173,6 +173,11 @@
                                         <a href="/research/publications/publication/?seqNo115=@(publication.SeqNo115)" class="projectNav" title="Publication" id="anch_79">
                                             @(publication.Title)
                                         </a>
+                                       @if (false == string.IsNullOrWhiteSpace(publication.ReprintUrl))
+                                {
+                                          @Html.Raw("&nbsp;&nbsp;")
+                                          <a href="@publication.ReprintUrl" target="_blank" title="Reprint URL"><img src="/ARSUserFiles/images/reprintURLIcon.gif" alt="Reprint Icon" border="0"></a>
+                                }
                                         <br />
                                         @{
                                             string publicationType = "";

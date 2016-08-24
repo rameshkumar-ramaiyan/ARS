@@ -1,6 +1,7 @@
 ﻿@using Archetype.Extensions
 @using Archetype.Models
 @using Umbraco.Core.Models
+@using USDA_ARS.Umbraco.Extensions.Helpers
 @using USDA_ARS.Umbraco.Extensions.Helpers.Aris
 @using USDA_ARS.Umbraco.Extensions.Models.Aris
 @using RJP.MultiUrlPicker.Models
@@ -20,7 +21,7 @@
         modeCode = Request.QueryString.Get("modeCode");
     }
 
-    bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
+    bodyText = BodyTextTags.ReplaceTags(bodyText, modeCode);
 
     List<ProjectInfo> projectProgramList = Projects.GetProjectsByCollaborations(modeCode);
     List<ProjectInfo> collaboratorList = null;
@@ -28,6 +29,11 @@
     if (projectProgramList != null && projectProgramList.Any())
     {
         collaboratorList = projectProgramList.DistinctBy(p => p.RecipientName).ToList();
+
+        if (collaboratorList != null)
+        {
+            collaboratorList = collaboratorList.OrderBy(p => p.RecipientName).ToList();
+        }
     }
 }
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
@@ -38,7 +44,7 @@
 
     <div id="pageContent">
         <strong>@(currentPage.Name)</strong>
-        @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+        @Html.Raw(bodyText)
 
         @if (collaboratorList != null && collaboratorList.Any())
         {

@@ -15,9 +15,22 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
    {
       public static string ReplaceTags(string text, string modeCode)
       {
-         if (false == string.IsNullOrEmpty(text) && text.IndexOf("{{CONTACT_US_LINKS}}") >= 0)
+         if (false == string.IsNullOrEmpty(text))
          {
-            text = ReplaceTagContactUs(text, modeCode);
+            if (text.IndexOf("{{CONTACT_US_LINKS}}") >= 0)
+            {
+               text = ReplaceTagContactUs(text, modeCode);
+            }
+
+            if (true == text.Contains("[MODE_CODE:NAME]"))
+            {
+               IPublishedContent node = Nodes.GetNodeByModeCode(modeCode);
+
+               if (node != null)
+               {
+                  text = text.Replace("[MODE_CODE:NAME]", node.Name);
+               }
+            }
          }
 
          return text;
