@@ -17,16 +17,7 @@
    {
       int personId = Convert.ToInt32(Request.QueryString["person-id"]);
 
-      IPublishedContent personSite = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByPersonId(personId);
-
-      if (null == personSite)
-      {
-         peopleInfo = People.GetPerson(personId);
-      }
-      else
-      {
-         Response.Redirect(personSite.Url);
-      }
+      peopleInfo = People.GetPerson(personId);
    }
 
 }
@@ -76,7 +67,7 @@ remote.location.href = u;
                      <script language="JavaScript">function DisplayEmail(username, domain) { document.write(username + "&#64;" + domain); }</script>
                      <br>
 
-                     @peopleInfo.TitleWorking<br /> 
+                     @peopleInfo.TitleWorking<br />
 
                      <a href="mailto:@(peopleInfo.Email)?Subject=From ARS website">
                         @if (peopleInfo.Email != null && peopleInfo.Email.Split('@').Length == 2)
@@ -94,7 +85,7 @@ remote.location.href = u;
 
                      <br />
                      @Html.Raw(false == string.IsNullOrEmpty(peopleInfo.RoomNumber) ? "Room " + peopleInfo.RoomNumber + "<br />" : "")
-                     
+
                      @peopleInfo.Address1<br />
                      @Html.Raw(false == string.IsNullOrWhiteSpace(peopleInfo.Address2) ? peopleInfo.Address2 + "<br />" : "")
                      @Html.Raw(false == string.IsNullOrWhiteSpace(peopleInfo.AddressBuilding) ? peopleInfo.AddressBuilding + "<br />" : "")
@@ -113,7 +104,7 @@ remote.location.href = u;
                                           }
                                           else
                                           {
-                                             <strong><em>The person you selected is invalid or no longer available.</em></strong>
+         <strong><em>The person you selected is invalid or no longer available.</em></strong>
                                           }
 
    </div>

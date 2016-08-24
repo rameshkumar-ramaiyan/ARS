@@ -18,20 +18,11 @@
    {
       int personId = Convert.ToInt32(Request.QueryString["person-id"]);
 
-      IPublishedContent personSite = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByPersonId(personId);
+      peopleInfo = People.GetPerson(personId);
 
-      if (null == personSite)
+      if (peopleInfo != null)
       {
-         peopleInfo = People.GetPerson(personId);
-
-         if (peopleInfo != null)
-         {
-            peoplePublicationList = Publications.PublicationsByPerson(personId);
-         }
-      }
-      else
-      {
-         Response.Redirect(personSite.Url);
+         peoplePublicationList = Publications.PublicationsByPerson(personId);
       }
    }
 

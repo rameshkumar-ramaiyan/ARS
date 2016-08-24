@@ -18,22 +18,12 @@
    if (false == string.IsNullOrEmpty(Request.QueryString["person-id"]))
    {
       int personId = Convert.ToInt32(Request.QueryString["person-id"]);
+      peopleInfo = People.GetPerson(personId);
 
-      IPublishedContent personSite = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByPersonId(personId);
-
-      if (null == personSite)
+      if (peopleInfo != null)
       {
-         peopleInfo = People.GetPerson(personId);
-
-         if (peopleInfo != null)
-         {
-            personProjectList = Projects.GetProjectsByPerson(peopleInfo.EmpId);
-            personProjectLeaderList = Projects.GetNationalProgramLeaderByPerson(personId);
-         }
-      }
-      else
-      {
-         Response.Redirect(personSite.Url);
+         personProjectList = Projects.GetProjectsByPerson(peopleInfo.EmpId);
+         personProjectLeaderList = Projects.GetNationalProgramLeaderByPerson(personId);
       }
    }
 
@@ -170,11 +160,11 @@ remote.location.href = u;
             </tbody>
          </table>
 
-                                          }
-                                          else
-                                          {
+      }
+      else
+      {
          <strong><em>The person you selected is invalid or no longer available.</em></strong>
-                                          }
+      }
 
    </div>
 
