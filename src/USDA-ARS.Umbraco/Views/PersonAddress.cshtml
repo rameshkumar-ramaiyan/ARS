@@ -12,10 +12,13 @@
    IPublishedContent currentPage = Model.Content;
 
    PeopleInfo peopleInfo = null;
+   IPublishedContent personSite = currentPage;
 
    if (false == string.IsNullOrEmpty(Request.QueryString["person-id"]))
    {
       int personId = Convert.ToInt32(Request.QueryString["person-id"]);
+
+      IPublishedContent personSite = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByPersonId(personId);
 
       peopleInfo = People.GetPerson(personId);
    }
@@ -26,7 +29,7 @@
 
 <div id="fullPage">
 
-   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", personSite)
 
    <div id="pageContent">
 
