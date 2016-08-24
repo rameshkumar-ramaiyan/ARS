@@ -154,7 +154,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
          {
             List<RedirectToNode> redirectList = GetListOfRedirects();
 
-            if (redirectUrl != null && redirectUrl.Any())
+            if (redirectList != null && redirectList.Any())
             {
                foreach (RedirectToNode redirectNode in redirectList)
                {
