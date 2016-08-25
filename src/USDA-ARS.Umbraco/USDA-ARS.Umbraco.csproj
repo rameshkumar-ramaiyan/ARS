@@ -3083,6 +3083,7 @@
     <Content Include="Views\PersonPublications.cshtml" />
     <Content Include="Views\PersonNews.cshtml" />
     <Content Include="Views\PersonProjects.cshtml" />
+    <Content Include="Views\ServerError.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

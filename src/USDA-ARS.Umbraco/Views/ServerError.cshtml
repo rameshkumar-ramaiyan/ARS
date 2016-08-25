@@ -1,0 +1,68 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using System.Text.RegularExpressions
+@using USDA_ARS.Umbraco.Extensions.Models
+@using USDA_ARS.Umbraco.Extensions.Helpers
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+   Response.StatusCode = 400;
+   Response.Status = "Bad Request";
+
+   Layout = "_Master.cshtml";
+
+   IPublishedContent currentPage = Model.Content;
+
+   bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
+
+   string bodyText = currentPage.GetPropertyValue<string>("bodyText");
+   string modeCode = "";
+
+   bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
+
+   Response.StatusCode = 400;
+   Response.Status = "Bad Request";
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+   <div id="pageContent">
+
+      @if (false == hideHeaderTitle)
+      {
+         <table border="0" width="100%">
+            <tr>
+               <td class="pageHeading">@currentPage.Name</td>
+            </tr>
+            <tr>
+               <td>
+                  <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
+               </td>
+            </tr>
+         </table>
+      }
+
+
+      <!-- display URLs of subpages start -->
+      <!--  display URLs of subpages end -->
+      <!-- document content start -->
+
+      @Html.Raw(bodyText)
+
+      <!-- document content end -->
+
+
+      <br />
+
+
+
+      <p></p>
+
+
+   </div>
+</div>
