@@ -329,6 +329,28 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
                   IContent navFolderNodeCreate = _contentService.CreateContent("Navigations", node, "SiteNavFolder");
                   _contentService.SaveAndPublishWithStatus(navFolderNodeCreate);
                }
+
+               // Check for File System Folder
+               if (node.ContentType.Alias == "PersonSite" && false == string.IsNullOrEmpty(node.GetValue<string>("personLink")))
+               {
+                  string startFolder = ConfigurationManager.AppSettings.Get("Usda:UserFileFolderPath");
+                  string personIdFolder = node.GetValue<string>("personLink").Replace("-", "");
+
+                  int personId = 0;
+
+                  if (true == int.TryParse(personIdFolder, out personId))
+                  {
+                     if (personId > 0)
+                     {
+                        string fullPath = IOHelper.MapPath(startFolder.EnsureStartsWith("~/") + "/" + personIdFolder);
+
+                        if (false == Directory.Exists(fullPath))
+                        {
+                           Directory.CreateDirectory(fullPath);
+                        }
+                     }
+                  }
+               }
             }
          }
       }
