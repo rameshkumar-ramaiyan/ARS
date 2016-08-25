@@ -19,30 +19,31 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
       {
          string redirectUrl = null;
 
-
          if (false == string.IsNullOrEmpty(badUrl))
          {
-            // Magazine
-            redirectUrl = RedirectMagazineUrl(badUrl);
-
-            // Redirect Pages
-            if (true == string.IsNullOrEmpty(redirectUrl))
+            if (false == badUrl.ToLower().StartsWith("/umbraco/"))
             {
-               redirectUrl = RedirectOldPages(badUrl);
-            }
+               // Magazine
+               redirectUrl = RedirectMagazineUrl(badUrl);
 
-            // Redirects In Umbraco
-            if (true == string.IsNullOrEmpty(redirectUrl))
-            {
-               redirectUrl = RedirectPageStoredInUmbraco(badUrl);
-            }
+               // Redirect Pages
+               if (true == string.IsNullOrEmpty(redirectUrl))
+               {
+                  redirectUrl = RedirectOldPages(badUrl);
+               }
 
-            // Redirects Iwith Doc ID
-            if (true == string.IsNullOrEmpty(redirectUrl))
-            {
-               redirectUrl = RedirectWithDocId(badUrl);
-            }
+               // Redirects In Umbraco
+               if (true == string.IsNullOrEmpty(redirectUrl))
+               {
+                  redirectUrl = RedirectPageStoredInUmbraco(badUrl);
+               }
 
+               // Redirects Iwith Doc ID
+               if (true == string.IsNullOrEmpty(redirectUrl))
+               {
+                  redirectUrl = RedirectWithDocId(badUrl);
+               }
+            }
          }
 
 

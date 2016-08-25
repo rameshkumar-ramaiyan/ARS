@@ -18,39 +18,42 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
          List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
 
-         var db = new Database("arisPublicWebDbDSN");
-
-         Sql sql = null;
-
-         if (modeCodeArray != null && modeCodeArray.Count == 4)
+         if (modeCodeArray != null && modeCodeArray.Any())
          {
-            string where = "MODECODE_1 = '" + modeCodeArray[0] + "' AND ";
-            where += "MODECODE_2 = '" + modeCodeArray[1] + "' AND ";
-            where += "MODECODE_3 = '" + modeCodeArray[2] + "' AND ";
-            where += "MODECODE_4 = '" + modeCodeArray[3] + "'";
+            var db = new Database("arisPublicWebDbDSN");
 
-            if (modeCodeArray[0] == "00")
+            Sql sql = null;
+
+            if (modeCodeArray != null && modeCodeArray.Count == 4)
             {
-               where = "";
-               where += "MODECODE_1 = '00'";
-               for (int i = 1; i < 10; i++)
+               string where = "MODECODE_1 = '" + modeCodeArray[0] + "' AND ";
+               where += "MODECODE_2 = '" + modeCodeArray[1] + "' AND ";
+               where += "MODECODE_3 = '" + modeCodeArray[2] + "' AND ";
+               where += "MODECODE_4 = '" + modeCodeArray[3] + "'";
+
+               if (modeCodeArray[0] == "00")
                {
-                  where += " OR MODECODE_1 = '0" + i + "'";
+                  where = "";
+                  where += "MODECODE_1 = '00'";
+                  for (int i = 1; i < 10; i++)
+                  {
+                     where += " OR MODECODE_1 = '0" + i + "'";
+                  }
                }
+
+
+               sql = new Sql()
+                .Select("*")
+                .From("w_people_info")
+                .Where(where);
+
+               peopleList = db.Query<PeopleInfo>(sql).ToList();
             }
 
-
-            sql = new Sql()
-             .Select("*")
-             .From("w_people_info")
-             .Where(where);
-
-            peopleList = db.Query<PeopleInfo>(sql).ToList();
-         }
-
-         if (peopleList != null && peopleList.Count > 0)
-         {
-            peopleList = peopleList.OrderBy(p => p.LastName).ToList();
+            if (peopleList != null && peopleList.Count > 0)
+            {
+               peopleList = peopleList.OrderBy(p => p.LastName).ToList();
+            }
          }
 
          return peopleList;
@@ -63,36 +66,38 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
          List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
 
-         var db = new Database("arisPublicWebDbDSN");
-
-         Sql sql = null;
-
-         if (modeCodeArray != null && modeCodeArray.Count == 4)
+         if (modeCodeArray != null && modeCodeArray.Any())
          {
-            string modeCodeWhere = modeCodeArray[0];
+            var db = new Database("arisPublicWebDbDSN");
 
-            if (modeCodeArray[1] != "00")
+            Sql sql = null;
+
+            if (modeCodeArray != null && modeCodeArray.Count == 4)
             {
-               modeCodeWhere += modeCodeArray[1];
-            }
-            if (modeCodeArray[2] != "00")
-            {
-               modeCodeWhere += modeCodeArray[2];
-            }
-            if (modeCodeArray[3] != "00")
-            {
-               modeCodeWhere += modeCodeArray[3];
-            }
+               string modeCodeWhere = modeCodeArray[0];
+
+               if (modeCodeArray[1] != "00")
+               {
+                  modeCodeWhere += modeCodeArray[1];
+               }
+               if (modeCodeArray[2] != "00")
+               {
+                  modeCodeWhere += modeCodeArray[2];
+               }
+               if (modeCodeArray[3] != "00")
+               {
+                  modeCodeWhere += modeCodeArray[3];
+               }
 
 
-            if (modeCodeArray[0] == "00")
-            {
-               modeCodeWhere = "0";
-            }
+               if (modeCodeArray[0] == "00")
+               {
+                  modeCodeWhere = "0";
+               }
 
-            modeCodeWhere += "%";
+               modeCodeWhere += "%";
 
-            string sqlStr = @"
+               string sqlStr = @"
                 SELECT modecodeconc, PerFName, EMP_ID, P_Emp_Id, PerMName, PerLName,
                          PerCommonName, PersonID, modecode_1, modecode_2, modecode_3, modecode_4, CATEGORY, officialtitle, SERIES_CODE, WorkingTitle, EMail, Imageurl, DeskPhone, DeskAreaCode, DeskExt, DeskBldgAbbr,
                          OfcFax, OfcFaxAreaCode, DeskRoomNum, DeskAddr1, DeskAddr2, DeskCity, DeskState, HomepageURL, DeskZip4, STATUS_CODE, REE_emp_id, DATE_CREATED, USER_CREATED, DATE_LAST_MOD,
@@ -103,93 +108,94 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
 
 
-            //   string sqlStr = @"
+               //   string sqlStr = @"
 
-            //                SELECT	v.mySiteCode,
-            //  v.modecodeconc,
-            //  v.personid, 
-            //  v.perlname, 
-            //  v.perfname, 
-            //  v.percommonname, 
-            //  v.workingtitle,
-            //  v.EMail, 
-            //  v.deskareacode,
-            //  v.DeskPhone,
-            //  v.deskext,			
-            //  r.city,
-            //  r.state_code,
+               //                SELECT	v.mySiteCode,
+               //  v.modecodeconc,
+               //  v.personid, 
+               //  v.perlname, 
+               //  v.perfname, 
+               //  v.percommonname, 
+               //  v.workingtitle,
+               //  v.EMail, 
+               //  v.deskareacode,
+               //  v.DeskPhone,
+               //  v.deskext,			
+               //  r.city,
+               //  r.state_code,
 
-            //  case
-            //   when right(v.modecodeconc, 4) = '0100' 										then r.modecode_2_desc
+               //  case
+               //   when right(v.modecodeconc, 4) = '0100' 										then r.modecode_2_desc
 
-            //   -- turn off sites
-            //   when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 6) = '000000'	then r.modecode_1_desc
-            //   when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 4) = '0000'	then r.modecode_2_desc
-            //   when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 2) = '00'		then r.modecode_3_desc
+               //   -- turn off sites
+               //   when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 6) = '000000'	then r.modecode_1_desc
+               //   when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 4) = '0000'	then r.modecode_2_desc
+               //   when v.mySiteCode <> v.modecodeconc and right(v.modecodeconc, 2) = '00'		then r.modecode_3_desc
 
-            //   when right(v.mySiteCode, 6) = '000000'										then r.modecode_1_desc
-            //   when right(v.mySiteCode, 4) = '0000'										then r.modecode_2_desc
-            //   when right(v.mySiteCode, 2) = '00'											then r.modecode_3_desc
+               //   when right(v.mySiteCode, 6) = '000000'										then r.modecode_1_desc
+               //   when right(v.mySiteCode, 4) = '0000'										then r.modecode_2_desc
+               //   when right(v.mySiteCode, 2) = '00'											then r.modecode_3_desc
 
-            //   else 									 	 									 r.modecode_4_desc
-            //  end 
-            //   as siteLabel,
+               //   else 									 	 									 r.modecode_4_desc
+               //  end 
+               //   as siteLabel,
 
-            //  ( 	
-            //   substring(mySiteCode, 1, 2) + '-' + 
-            //   substring(mySiteCode, 3, 2) + '-' + 
-            //   substring(mySiteCode, 5, 2) + '-' +
-            //   substring(mySiteCode, 7, 2)
-            //  )	as URLModecode
-
-
-            //FROM 	V_PEOPLE_INFO_2_DIRECTORY	v,
-            //  REF_MODECODE				r
-            //WHERE 	1=1
+               //  ( 	
+               //   substring(mySiteCode, 1, 2) + '-' + 
+               //   substring(mySiteCode, 3, 2) + '-' + 
+               //   substring(mySiteCode, 5, 2) + '-' +
+               //   substring(mySiteCode, 7, 2)
+               //  )	as URLModecode
 
 
+               //FROM 	V_PEOPLE_INFO_2_DIRECTORY	v,
+               //  REF_MODECODE				r
+               //WHERE 	1=1
 
-            // and 	(v.modecodeconc like '@MODE_CODE')
 
 
-            //AND 	(
-            //   v.status_code = 'A' 		OR 
-            //   v.status_code IS NULL
-            //  )
-            //and		substring(v.modecodeconc, 1, 2) = r.modecode_1
-            //and		substring(v.modecodeconc, 3, 2) = r.modecode_2
-            //and		substring(v.modecodeconc, 5, 2) = r.modecode_3
-            //and		substring(v.modecodeconc, 7, 2) = r.modecode_4
+               // and 	(v.modecodeconc like '@MODE_CODE')
 
-            //ORDER BY 	v.modecodeconc,
-            //   v.perlname, 
-            //   v.perfname
 
-            //   ";
+               //AND 	(
+               //   v.status_code = 'A' 		OR 
+               //   v.status_code IS NULL
+               //  )
+               //and		substring(v.modecodeconc, 1, 2) = r.modecode_1
+               //and		substring(v.modecodeconc, 3, 2) = r.modecode_2
+               //and		substring(v.modecodeconc, 5, 2) = r.modecode_3
+               //and		substring(v.modecodeconc, 7, 2) = r.modecode_4
 
-            sqlStr = sqlStr.Replace("@MODE_CODE", modeCodeWhere);
+               //ORDER BY 	v.modecodeconc,
+               //   v.perlname, 
+               //   v.perfname
 
-            sql = new Sql(sqlStr);
+               //   ";
 
-            peopleList = db.Query<PeopleByCity>(sql).ToList();
+               sqlStr = sqlStr.Replace("@MODE_CODE", modeCodeWhere);
 
-            if (peopleList != null && peopleList.Any())
-            {
-               List<IPublishedContent> modeCodeList = Nodes.GetNodesListOfModeCodes();
+               sql = new Sql(sqlStr);
 
-               foreach (PeopleByCity peopleByCity in peopleList)
+               peopleList = db.Query<PeopleByCity>(sql).ToList();
+
+               if (peopleList != null && peopleList.Any())
                {
-                  string modeCodeTest = ModeCodes.ModeCodeAddDashes(peopleByCity.ModeCodeConcat);
+                  List<IPublishedContent> modeCodeList = Nodes.GetNodesListOfModeCodes();
 
-                  if (false == string.IsNullOrEmpty(modeCodeTest))
+                  foreach (PeopleByCity peopleByCity in peopleList)
                   {
-                     IPublishedContent foundLocation = modeCodeList.Where(p => false == string.IsNullOrEmpty(p.GetPropertyValue<string>("modeCode")) &&
-                              p.GetPropertyValue<string>("modeCode") == modeCodeTest).FirstOrDefault();
+                     string modeCodeTest = ModeCodes.ModeCodeAddDashes(peopleByCity.ModeCodeConcat);
 
-                     if (foundLocation != null)
+                     if (false == string.IsNullOrEmpty(modeCodeTest))
                      {
-                        peopleByCity.ModeCode = modeCodeTest;
-                        peopleByCity.SiteLabel = foundLocation.Name;
+                        IPublishedContent foundLocation = modeCodeList.Where(p => false == string.IsNullOrEmpty(p.GetPropertyValue<string>("modeCode")) &&
+                                 p.GetPropertyValue<string>("modeCode") == modeCodeTest).FirstOrDefault();
+
+                        if (foundLocation != null)
+                        {
+                           peopleByCity.ModeCode = modeCodeTest;
+                           peopleByCity.SiteLabel = foundLocation.Name;
+                        }
                      }
                   }
                }
@@ -206,16 +212,19 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
          List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
 
-         modeCode = Helpers.ModeCodes.ModeCodeNoDashes(modeCode);
+         if (modeCodeArray != null && modeCodeArray.Any())
+         {
+            modeCode = Helpers.ModeCodes.ModeCodeNoDashes(modeCode);
 
-         var db = new Database("arisPublicWebDbDSN");
-         string sql = @"select modecodeconc, personid, perlname, perfname, permname, percommonname, EMail, DeskPhone, deskareacode, officialtitle, workingtitle
+            var db = new Database("arisPublicWebDbDSN");
+            string sql = @"select modecodeconc, personid, perlname, perfname, permname, percommonname, EMail, DeskPhone, deskareacode, officialtitle, workingtitle
 			                        from V_PEOPLE_INFO_2
 			                        where modecodeconc = @modeCode
 			                        and (status_code = 'a' or status_code is null)
 			                        order by perlname, perfname ";
 
-         peopleList = db.Query<PeopleInfo>(sql, new { modeCode = modeCode }).ToList();
+            peopleList = db.Query<PeopleInfo>(sql, new { modeCode = modeCode }).ToList();
+         }
 
          return peopleList;
       }

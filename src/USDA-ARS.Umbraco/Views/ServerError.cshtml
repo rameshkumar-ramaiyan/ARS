@@ -8,7 +8,6 @@
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
    Response.StatusCode = 400;
-   Response.Status = "Bad Request";
 
    Layout = "_Master.cshtml";
 
@@ -22,7 +21,6 @@
    bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
 
    Response.StatusCode = 400;
-   Response.Status = "Bad Request";
 }
 
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)

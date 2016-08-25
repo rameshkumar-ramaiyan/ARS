@@ -8,14 +8,21 @@ using USDA_ARS.Umbraco.Extensions.Models.Aris;
 
 namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 {
-    public class NationalPrograms
-    {
-        public static NationalProgramLocation GetProgramLocationByModeCode(string modeCode)
-        {
-            modeCode = Helpers.ModeCodes.ModeCodeNoDashes(modeCode);
+   public class NationalPrograms
+   {
+      /// <summary>
+      /// Get the Programion by Mode Code
+      /// </summary>
+      /// <param name="modeCode"></param>
+      /// <returns></returns>
+      public static NationalProgramLocation GetProgramLocationByModeCode(string modeCode)
+      {
+         NationalProgramLocation programLocation = null;
 
-            NationalProgramLocation programLocation = null;
+         modeCode = Helpers.ModeCodes.ModeCodeNoDashes(modeCode);
 
+         if (false == string.IsNullOrWhiteSpace(modeCode))
+         {
             var db = new Database("arisPublicWebDbDSN");
 
             string sql = @"select	modecode_1,
@@ -45,18 +52,19 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 	                AND 	STATUS_CODE = 'a'";
 
             programLocation = db.Query<NationalProgramLocation>(sql, new { modeCode = modeCode }).FirstOrDefault();
+         }
 
-            return programLocation;
-        }
+         return programLocation;
+      }
 
 
-        public static List<NationalProgramLocation> GetProgramsByNpCodeForMap(string npCode)
-        {
-            List<NationalProgramLocation> programLocationList = null;
+      public static List<NationalProgramLocation> GetProgramsByNpCodeForMap(string npCode)
+      {
+         List<NationalProgramLocation> programLocationList = null;
 
-            var db = new Database("arisPublicWebDbDSN");
+         var db = new Database("arisPublicWebDbDSN");
 
-            string sql = @"SELECT 	distinct modecodes.state_code,  
+         string sql = @"SELECT 	distinct modecodes.state_code,  
 				            modecodes.MODECODE_1, 
 				            MODECODES.web_label, 
 				            modecodes.MODECODE_2, 
@@ -84,11 +92,11 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 		            AND 	left(modecodes.MODECODE_1, 2) > 05
 		            ORDER BY modecodes.modecode_1, modecodes.modecode_2";
 
-            programLocationList = db.Query<NationalProgramLocation>(sql, new { npCode = npCode }).ToList();
+         programLocationList = db.Query<NationalProgramLocation>(sql, new { npCode = npCode }).ToList();
 
-            return programLocationList;
-        }
-    }
+         return programLocationList;
+      }
+   }
 
-    
+
 }

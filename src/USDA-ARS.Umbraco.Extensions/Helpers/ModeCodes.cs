@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Umbraco.Core.Logging;
 
@@ -9,13 +10,33 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 {
    public class ModeCodes
    {
+      public static bool ValidateModeCode(string modeCode)
+      {
+         bool isValid = false;
+
+         if (true == Regex.IsMatch(modeCode, @"\d{1,2}[\-]*\d{1,2}[\-]*\d{1,2}[\-]*\d{1,2}"))
+         {
+            isValid = true;
+         }
+
+         return isValid;
+      }
+
+
       public static string ModeCodeNoDashes(string modeCode)
       {
-         modeCode = modeCode.Replace("-", "").Replace("\\", "").Replace("/", "").Replace(" ", "");
-
-         if (modeCode.Length == 8)
+         if (true == ValidateModeCode(modeCode))
          {
-            return modeCode;
+            modeCode = modeCode.Replace("-", "").Replace("\\", "").Replace("/", "").Replace(" ", "");
+
+            if (modeCode.Length == 8)
+            {
+               return modeCode;
+            }
+            else
+            {
+               return null;
+            }
          }
          else
          {
@@ -23,22 +44,28 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
          }
       }
 
-
       public static string ModeCodeAddDashes(string modeCode)
       {
-         if (false == string.IsNullOrEmpty(modeCode) && modeCode.IndexOf("-") >= 0)
+         if (true == ValidateModeCode(modeCode))
          {
-            return modeCode;
-         }
-         else if (modeCode.Length == 8)
-         {
-            string modeCodeOut = modeCode.Substring(0, 2);
+            if (false == string.IsNullOrEmpty(modeCode) && modeCode.IndexOf("-") >= 0)
+            {
+               return modeCode;
+            }
+            else if (modeCode.Length == 8)
+            {
+               string modeCodeOut = modeCode.Substring(0, 2);
 
-            modeCodeOut += "-" + modeCode.Substring(2, 2);
-            modeCodeOut += "-" + modeCode.Substring(4, 2);
-            modeCodeOut += "-" + modeCode.Substring(6, 2);
+               modeCodeOut += "-" + modeCode.Substring(2, 2);
+               modeCodeOut += "-" + modeCode.Substring(4, 2);
+               modeCodeOut += "-" + modeCode.Substring(6, 2);
 
-            return modeCodeOut;
+               return modeCodeOut;
+            }
+            else
+            {
+               return null;
+            }
          }
          else
          {
@@ -93,14 +120,21 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
       public static List<string> ModeCodeArray(string modeCode)
       {
-         if (true == string.IsNullOrWhiteSpace(modeCode))
+         if (true == ValidateModeCode(modeCode))
          {
-            LogHelper.Warn(typeof(ModeCodes), "ModeCodeArray(): Mode Code is empty or invalid.");
+            if (true == string.IsNullOrWhiteSpace(modeCode))
+            {
+               LogHelper.Warn(typeof(ModeCodes), "ModeCodeArray(): Mode Code is empty or invalid.");
+            }
+
+            modeCode = ModeCodeAddDashes(modeCode);
+
+            return modeCode.Split('-').ToList();
          }
-
-         modeCode = ModeCodeAddDashes(modeCode);
-
-         return modeCode.Split('-').ToList();
+         else
+         {
+            return null;
+         }
       }
    }
 }

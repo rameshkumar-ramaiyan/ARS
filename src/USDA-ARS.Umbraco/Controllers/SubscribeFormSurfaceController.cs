@@ -12,74 +12,75 @@ using USDA_ARS.Umbraco.Extensions.Models;
 
 namespace USDA_ARS.Umbraco.Controllers
 {
-    public class SubscribeFormSurfaceController : SurfaceController
-    {
-        // GET: EmailSignup
-        public ActionResult FormArsNews()
-        {
-            EmailSignup emailSignup = new EmailSignup();
+   public class SubscribeFormSurfaceController : SurfaceController
+   {
+      // GET: EmailSignup
+      public ActionResult FormArsNews()
+      {
+         EmailSignup emailSignup = new EmailSignup();
 
-            emailSignup.UmbracoId = UmbracoContext.PageId ?? 0;
+         emailSignup.UmbracoId = UmbracoContext.PageId ?? 0;
 
-            return PartialView("SubscribeFormArsNews", emailSignup);
-        }
+         return PartialView("SubscribeFormArsNews", emailSignup);
+      }
 
-        public ActionResult FormFoodNutrition()
-        {
-            EmailSignup emailSignup = new EmailSignup();
+      public ActionResult FormFoodNutrition()
+      {
+         EmailSignup emailSignup = new EmailSignup();
 
-            emailSignup.UmbracoId = UmbracoContext.PageId ?? 0;
+         emailSignup.UmbracoId = UmbracoContext.PageId ?? 0;
 
-            return PartialView("SubscribeFormFoodNutrition", emailSignup);
-        }
+         return PartialView("SubscribeFormFoodNutrition", emailSignup);
+      }
 
-        public ActionResult FormHealthyAnimals()
-        {
-            EmailSignup emailSignup = new EmailSignup();
+      public ActionResult FormHealthyAnimals()
+      {
+         EmailSignup emailSignup = new EmailSignup();
 
-            emailSignup.ListName = "healthyanimals";
+         emailSignup.ListName = "healthyanimals";
 
-            emailSignup.UmbracoId = UmbracoContext.PageId ?? 0;
+         emailSignup.UmbracoId = UmbracoContext.PageId ?? 0;
 
-            return PartialView("SubscribeFormHealthyAnimals", emailSignup);
-        }
+         return PartialView("SubscribeFormHealthyAnimals", emailSignup);
+      }
 
-        [NotChildAction]
-        [HttpPost]
-        public ActionResult HandleFormSubmit(EmailSignup model)
-        {
-            if (false == ModelState.IsValid)
+      [NotChildAction]
+      [HttpPost]
+      [ValidateAntiForgeryToken]
+      public ActionResult HandleFormSubmit(EmailSignup model)
+      {
+         if (false == ModelState.IsValid)
+         {
+            return CurrentUmbracoPage();
+         }
+         else
+         {
+            IPublishedContent formNode = Umbraco.TypedContent(model.UmbracoId);
+
+            if (formNode != null)
             {
-                return CurrentUmbracoPage();
+               string emailTo = formNode.GetPropertyValue<string>("emailToSubscribe");
+               string emailFrom = model.Email;
+
+               if (model.Action != null && model.Action.ToLower().IndexOf("unsubscribe") >= 0)
+               {
+                  emailTo = formNode.GetPropertyValue<string>("emailToUnsubscribe");
+               }
+
+               emailTo = emailTo.Replace("{{LIST_NAME}}", model.ListName.ToLower());
+
+               // TESTING
+               //emailTo = "john.skufca@axial.agency";
+
+               SubscriptionForm.SendEmail(emailFrom, emailTo, model.Action + " me to " + model.ListName, "\r\n" + model.Action.ToLower() + "\r\n");
+
+               return Redirect("/elists/");
             }
             else
             {
-                IPublishedContent formNode = Umbraco.TypedContent(model.UmbracoId);
-
-                if (formNode != null)
-                {
-                    string emailTo = formNode.GetPropertyValue<string>("emailToSubscribe");
-                    string emailFrom = model.Email;
-
-                    if (model.Action != null && model.Action.ToLower().IndexOf("unsubscribe") >= 0)
-                    {
-                        emailTo = formNode.GetPropertyValue<string>("emailToUnsubscribe");
-                    }
-
-                    emailTo = emailTo.Replace("{{LIST_NAME}}", model.ListName.ToLower());
-
-                    // TESTING
-                    //emailTo = "john.skufca@axial.agency";
-
-                    SubscriptionForm.SendEmail(emailFrom, emailTo, model.Action + " me to " + model.ListName, "\r\n" + model.Action.ToLower() + "\r\n");
-
-                    return Redirect("/elists/");
-                }
-                else
-                {
-                    return CurrentUmbracoPage();
-                }
+               return CurrentUmbracoPage();
             }
-        }
-    }
+         }
+      }
+   }
 }
