@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Core.Logging;
 
 namespace USDA_ARS.Umbraco.Extensions.Helpers
 {
@@ -10,7 +11,16 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
    {
       public static string ModeCodeNoDashes(string modeCode)
       {
-         return modeCode.Replace("-", "").Replace("\\", "").Replace("/", "").Replace(" ", "");
+         modeCode = modeCode.Replace("-", "").Replace("\\", "").Replace("/", "").Replace(" ", "");
+
+         if (modeCode.Length == 8)
+         {
+            return modeCode;
+         }
+         else
+         {
+            return null;
+         }
       }
 
 
@@ -85,7 +95,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
       {
          if (true == string.IsNullOrWhiteSpace(modeCode))
          {
-            throw new Exception("Mode Code is empty or invalid.");
+            LogHelper.Warn(typeof(ModeCodes), "ModeCodeArray(): Mode Code is empty or invalid.");
          }
 
          modeCode = ModeCodeAddDashes(modeCode);
