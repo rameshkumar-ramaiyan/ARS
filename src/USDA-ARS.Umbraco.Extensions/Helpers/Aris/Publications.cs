@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Core;
 using Umbraco.Core.Logging;
 using Umbraco.Core.Persistence;
 using USDA_ARS.Umbraco.Extensions.Models.Aris;
@@ -192,100 +194,43 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
          UsdaPublicationSearch publicationSearch = new UsdaPublicationSearch();
          publicationSearch.Count = 0;
 
+         string cacheKey = "SearchPublications:" + modeCode + ":" + show;
+         int cacheUpdateInMinutes = 60;
+
+         ObjectCache cache = MemoryCache.Default;
+
          List<UsdaPublication> publicationList = null;
 
-         List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
+         publicationList = cache.Get(cacheKey) as List<UsdaPublication>;
 
-         if (filterYear == 0)
+         if (publicationList == null)
          {
-            filterYear = DateTime.Now.Year;
-         }
+            List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
 
-         var db = new Database("arisPublicWebDbDSN");
-
-         Sql sql = null;
-
-         if (modeCodeArray != null && modeCodeArray.Count == 4)
-         {
-            string where = "MODECODE_1 = '" + modeCodeArray[0] + "' AND ";
-
-            if (modeCodeArray[1] != "00")
+            if (filterYear == 0)
             {
-               where += "MODECODE_2 = '" + modeCodeArray[1] + "' AND ";
-            }
-            if (modeCodeArray[2] != "00")
-            {
-               where += "MODECODE_3 = '" + modeCodeArray[2] + "' AND ";
-            }
-            if (modeCodeArray[3] != "00")
-            {
-               where += "MODECODE_4 = '" + modeCodeArray[3] + "' AND ";
+               filterYear = DateTime.Now.Year;
             }
 
-            if (where.EndsWith(" AND "))
+            var db = new Database("arisPublicWebDbDSN");
+
+            Sql sql = null;
+
+            if (modeCodeArray != null && modeCodeArray.Count == 4)
             {
-               where = where.Substring(0, where.LastIndexOf(" AND "));
-            }
+               string where = "MODECODE_1 = '" + modeCodeArray[0] + "' AND ";
 
-            where += " AND LEFT(DATEPART(yyyy,journal_accpt_date), 4) = '" + filterYear + "'";
-
-            if (show == "pubtype")
-            {
-               where += " AND PUB_TYPE_CODE = 'J'";
-            }
-
-            sql = new Sql()
-             .Select("*")
-             .From("gen_public_115s")
-             .Where(where);
-
-            publicationList = db.Query<UsdaPublication>(sql).ToList();
-
-            if (publicationList != null && publicationList.Count > 0)
-            {
-               publicationSearch.Count = publicationList.Count;
-
-               publicationList = publicationList.OrderByDescending(p => p.JournalAcceptDate).ToList();
-
-               if (count > 0 && skip > 0)
+               if (modeCodeArray[1] != "00")
                {
-                  publicationList = publicationList.Skip(skip).Take(count).ToList();
+                  where += "MODECODE_2 = '" + modeCodeArray[1] + "' AND ";
                }
-               else if (count > 0)
+               if (modeCodeArray[2] != "00")
                {
-                  publicationList = publicationList.Take(count).ToList();
+                  where += "MODECODE_3 = '" + modeCodeArray[2] + "' AND ";
                }
-
-               publicationSearch.PublicationList = publicationList;
-            }
-         }
-
-
-
-         List<ModeCodeNew> modeCodeList = Helpers.Aris.ModeCodesNews.GetOldModeCode(modeCode);
-
-         foreach (ModeCodeNew modeCodeItem in modeCodeList)
-         {
-            Sql sql2 = null;
-            List<UsdaPublication> publicationList2 = null;
-
-            List<string> modeCodeArray2 = Helpers.ModeCodes.ModeCodeArray(modeCodeItem.ModecodeOld);
-
-            if (modeCodeArray2 != null && modeCodeArray2.Count == 4)
-            {
-               string where = "MODECODE_1 = '" + modeCodeArray2[0] + "' AND ";
-
-               if (modeCodeArray2[1] != "00")
+               if (modeCodeArray[3] != "00")
                {
-                  where += "MODECODE_2 = '" + modeCodeArray2[1] + "' AND ";
-               }
-               if (modeCodeArray2[2] != "00")
-               {
-                  where += "MODECODE_3 = '" + modeCodeArray2[2] + "' AND ";
-               }
-               if (modeCodeArray2[3] != "00")
-               {
-                  where += "MODECODE_4 = '" + modeCodeArray2[3] + "' AND ";
+                  where += "MODECODE_4 = '" + modeCodeArray[3] + "' AND ";
                }
 
                if (where.EndsWith(" AND "))
@@ -293,34 +238,93 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                   where = where.Substring(0, where.LastIndexOf(" AND "));
                }
 
-               where += " AND LEFT(DATEPART(yyyy,journal_accpt_date), 4) = '" + filterYear + "'";
-
                if (show == "pubtype")
                {
                   where += " AND PUB_TYPE_CODE = 'J'";
                }
 
-               sql2 = new Sql()
+               sql = new Sql()
                 .Select("*")
                 .From("gen_public_115s")
                 .Where(where);
 
-               publicationList2 = db.Query<UsdaPublication>(sql2).ToList();
-
-               if (publicationList == null)
-               {
-                  publicationList = publicationList2;
-               }
-               else
-               {
-                  publicationList.AddRange(publicationList2);
-               }
+               publicationList = db.Query<UsdaPublication>(sql).ToList();
             }
 
+            List<ModeCodeNew> modeCodeList = Helpers.Aris.ModeCodesNews.GetOldModeCode(modeCode);
+
+            foreach (ModeCodeNew modeCodeItem in modeCodeList)
+            {
+               Sql sql2 = null;
+               List<UsdaPublication> publicationList2 = null;
+
+               List<string> modeCodeArray2 = Helpers.ModeCodes.ModeCodeArray(modeCodeItem.ModecodeOld);
+
+               if (modeCodeArray2 != null && modeCodeArray2.Count == 4)
+               {
+                  string where = "MODECODE_1 = '" + modeCodeArray2[0] + "' AND ";
+
+                  if (modeCodeArray2[1] != "00")
+                  {
+                     where += "MODECODE_2 = '" + modeCodeArray2[1] + "' AND ";
+                  }
+                  if (modeCodeArray2[2] != "00")
+                  {
+                     where += "MODECODE_3 = '" + modeCodeArray2[2] + "' AND ";
+                  }
+                  if (modeCodeArray2[3] != "00")
+                  {
+                     where += "MODECODE_4 = '" + modeCodeArray2[3] + "' AND ";
+                  }
+
+                  if (where.EndsWith(" AND "))
+                  {
+                     where = where.Substring(0, where.LastIndexOf(" AND "));
+                  }
+
+                  if (show == "pubtype")
+                  {
+                     where += " AND PUB_TYPE_CODE = 'J'";
+                  }
+
+                  sql2 = new Sql()
+                   .Select("*")
+                   .From("gen_public_115s")
+                   .Where(where);
+
+                  publicationList2 = db.Query<UsdaPublication>(sql2).ToList();
+
+                  if (publicationList == null)
+                  {
+                     publicationList = publicationList2;
+                  }
+                  else
+                  {
+                     publicationList.AddRange(publicationList2);
+                  }
+               }
+
+            }
+
+            CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheUpdateInMinutes) };
+            cache.Add(cacheKey, publicationList, policy);
          }
 
          if (publicationList != null && publicationList.Count > 0)
          {
+            publicationSearch.YearsList = publicationList.DistinctBy(p => p.JournalAcceptDate.Year).Select(p => p.JournalAcceptDate.Year).ToList();
+
+            if (publicationSearch.YearsList != null && publicationSearch.YearsList.Any())
+            {
+               publicationSearch.YearsList = publicationSearch.YearsList.OrderByDescending(p => p).ToList();
+            }
+
+            if (filterYear == 0)
+            {
+               filterYear = DateTime.Now.Year;
+            }
+            publicationList = publicationList.Where(p => p.JournalAcceptDate.Year == filterYear).ToList();
+
             publicationSearch.Count = publicationList.Count;
 
             publicationList = publicationList.OrderByDescending(p => p.JournalAcceptDate).ToList();

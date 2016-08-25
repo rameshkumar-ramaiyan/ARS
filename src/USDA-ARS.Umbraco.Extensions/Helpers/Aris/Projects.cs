@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Caching;
 using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Core.Persistence;
@@ -395,36 +396,50 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
       public static List<ProjectInfo> GetProjectsByCollaborations(string modeCode)
       {
          List<ProjectInfo> projectList = null;
-         List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
 
-         var db = new Database("arisPublicWebDbDSN");
+         string cacheKey = "GetProjectsByCollaborations:" + modeCode;
+         int cacheUpdateInMinutes = 60;
 
-         string sql = @"select	a.ACCN_NO,
-				        p.PRJ_TITLE,
-				        -- remove extra multiple spaces from RECIPIENT_NAME
-				        -- reference: http://codejotter.wordpress.com/2010/03/12/sql-function-to-remove-extra-multiple-spaces-from-string
-				        replace(replace(replace(r.RECIPIENT_NAME,' ','<>'),'><',''),'<>',' ') as RECIPIENT_NAME,
-				        r.CITY_NAME, 
-				        r.STATE_NAME,
-				        r.country_description	
-		        from 	AETS_Agreements a JOIN	REF_ETS_RECIPIENT r ON r.RECIPIENT_CODE = a.RECIPIENT_CODE
-				        JOIN   V_CLEAN_PROJECTS p  ON a.ACCN_NO = p.ACCN_NO
-		        where 	p.modecode_1 = " + modeCodeArray[0];
+         ObjectCache cache = MemoryCache.Default;
 
-         if (modeCodeArray[1] != "00")
+         projectList = cache.Get(cacheKey) as List<ProjectInfo>;
+
+         if (projectList == null)
          {
-            sql += " and p.modecode_2 = " + modeCodeArray[1];
-         }
-         if (modeCodeArray[2] != "00")
-         {
-            sql += " and p.modecode_3 = " + modeCodeArray[2];
-         }
-         if (modeCodeArray[3] != "00")
-         {
-            sql += " and p.modecode_4 = " + modeCodeArray[3];
-         }
+            List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
 
-         projectList = db.Query<ProjectInfo>(sql).ToList();
+            var db = new Database("arisPublicWebDbDSN");
+
+            string sql = @"select	a.ACCN_NO,
+				              p.PRJ_TITLE,
+				              -- remove extra multiple spaces from RECIPIENT_NAME
+				              -- reference: http://codejotter.wordpress.com/2010/03/12/sql-function-to-remove-extra-multiple-spaces-from-string
+				              replace(replace(replace(r.RECIPIENT_NAME,' ','<>'),'><',''),'<>',' ') as RECIPIENT_NAME,
+				              r.CITY_NAME, 
+				              r.STATE_NAME,
+				              r.country_description	
+		              from 	AETS_Agreements a JOIN	REF_ETS_RECIPIENT r ON r.RECIPIENT_CODE = a.RECIPIENT_CODE
+				              JOIN   V_CLEAN_PROJECTS p  ON a.ACCN_NO = p.ACCN_NO
+		              where 	p.modecode_1 = " + modeCodeArray[0];
+
+            if (modeCodeArray[1] != "00")
+            {
+               sql += " and p.modecode_2 = " + modeCodeArray[1];
+            }
+            if (modeCodeArray[2] != "00")
+            {
+               sql += " and p.modecode_3 = " + modeCodeArray[2];
+            }
+            if (modeCodeArray[3] != "00")
+            {
+               sql += " and p.modecode_4 = " + modeCodeArray[3];
+            }
+
+            projectList = db.Query<ProjectInfo>(sql).ToList();
+
+            CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheUpdateInMinutes) };
+            cache.Add(cacheKey, projectList, policy);
+         }
 
          return projectList;
       }
