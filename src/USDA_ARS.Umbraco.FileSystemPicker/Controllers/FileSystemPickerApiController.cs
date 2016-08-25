@@ -23,297 +23,301 @@ using Umbraco.Web.WebApi;
 //test
 namespace USDA_ARS.Umbraco.FileSystemPicker.Controllers
 {
-    [PluginController("FileSystemPicker")]
-    public class FileSystemPickerApiController : UmbracoAuthorizedJsonController
-    {
-        public object GetStartFolderName(string currentNodeId, string startFolderNamePropertyAlias, string removeCharactersPropertyAlias)
-        {
-            var startFolderName = String.Empty;
-            var contentService = Services.ContentService;
+   [PluginController("FileSystemPicker")]
+   public class FileSystemPickerApiController : UmbracoAuthorizedJsonController
+   {
+      public object GetStartFolderName(string currentNodeId, string startFolderNamePropertyAlias, string removeCharactersPropertyAlias)
+      {
+         var startFolderName = String.Empty;
+         var contentService = Services.ContentService;
 
-            int id = 0;
-            if (Int32.TryParse(currentNodeId, out id))
+         int id = 0;
+         if (Int32.TryParse(currentNodeId, out id))
+         {
+            var node = contentService.GetById(id);
+            if (node != null)
             {
-                var node = contentService.GetById(id);
-                if (node != null)
-                {
-                    if (false == string.IsNullOrEmpty(startFolderNamePropertyAlias))
-                    {
-                        while (true == string.IsNullOrEmpty(startFolderName) && node != null && node.Level > 0)
-                        {
-                            if (node.HasProperty(startFolderNamePropertyAlias) && false == string.IsNullOrEmpty(node.GetValue<string>(startFolderNamePropertyAlias)))
-                            {
-                                startFolderName = node.GetValue<string>(startFolderNamePropertyAlias);
-                            }
-                            else
-                            {
-                                node = contentService.GetById(node.ParentId);
-                            }
-                        }
+               if (false == string.IsNullOrEmpty(startFolderNamePropertyAlias))
+               {
+                  while (true == string.IsNullOrEmpty(startFolderName) && node != null && node.Level > 0)
+                  {
+                     if (node.HasProperty(startFolderNamePropertyAlias) && false == string.IsNullOrEmpty(node.GetValue<string>(startFolderNamePropertyAlias)))
+                     {
+                        startFolderName = node.GetValue<string>(startFolderNamePropertyAlias);
+                     }
+                     else
+                     {
+                        node = contentService.GetById(node.ParentId);
+                     }
+                  }
 
-                        if (false == string.IsNullOrWhiteSpace(startFolderName) && false == string.IsNullOrWhiteSpace(removeCharactersPropertyAlias))
-                        {
-                            startFolderName = Regex.Replace(startFolderName, removeCharactersPropertyAlias, "");
-                        }
-                    }
-                }
+                  if (false == string.IsNullOrWhiteSpace(startFolderName) && false == string.IsNullOrWhiteSpace(removeCharactersPropertyAlias))
+                  {
+                     startFolderName = Regex.Replace(startFolderName, removeCharactersPropertyAlias, "");
+                  }
+                  else
+                  {
+                     throw new Exception("Start Folder is Empty. You must have a valid start folder to access files.");
+                  }
+               }
             }
-            return new { folderName = startFolderName };
-        }
+         }
+         return new { folderName = startFolderName };
+      }
 
-        public IEnumerable<DirectoryInfo> GetFolders(string folder, string[] filter)
-        {
-            var path = IOHelper.MapPath(folder.TrimStart(new char[] { '~', '/' }).EnsureStartsWith("~/"));
+      public IEnumerable<DirectoryInfo> GetFolders(string folder, string[] filter)
+      {
+         var path = IOHelper.MapPath(folder.TrimStart(new char[] { '~', '/' }).EnsureStartsWith("~/"));
 
-            return new DirectoryInfo(path).GetDirectories("*");
-        }
+         return new DirectoryInfo(path).GetDirectories("*");
+      }
 
-        public IEnumerable<FileInfo> GetFiles(string folder, string[] filter)
-        {
-            var path = IOHelper.MapPath("~/" + folder.TrimStart('~', '/'));
+      public IEnumerable<FileInfo> GetFiles(string folder, string[] filter)
+      {
+         var path = IOHelper.MapPath("~/" + folder.TrimStart('~', '/'));
 
-            var files = default(IEnumerable<FileInfo>);
+         var files = default(IEnumerable<FileInfo>);
 
-            if (Directory.Exists(path))
+         if (Directory.Exists(path))
+         {
+            files = new DirectoryInfo(path).GetFiles();
+
+            if (filter != null && filter[0] != ".")
             {
-                files = new DirectoryInfo(path).GetFiles();
-
-                if (filter != null && filter[0] != ".")
-                {
-                    files = files.Where(f => filter.Contains(f.Extension, StringComparer.OrdinalIgnoreCase));
-                }
+               files = files.Where(f => filter.Contains(f.Extension, StringComparer.OrdinalIgnoreCase));
             }
+         }
 
-            return files;
-        }
+         return files;
+      }
 
-        public HttpResponseMessage PostCreateFolder(string folderPath)
-        {
-            var path = IOHelper.MapPath(folderPath.EnsureStartsWith("~/"));
-            var dirInfo = Directory.CreateDirectory(path);
+      public HttpResponseMessage PostCreateFolder(string folderPath)
+      {
+         var path = IOHelper.MapPath(folderPath.EnsureStartsWith("~/"));
+         var dirInfo = Directory.CreateDirectory(path);
 
-            return Request.CreateResponse(HttpStatusCode.OK, dirInfo);
-        }
+         return Request.CreateResponse(HttpStatusCode.OK, dirInfo);
+      }
 
-        public async Task<HttpResponseMessage> PostAddFile()
-        {
-            if (Request.Content.IsMimeMultipartContent() == false)
+      public async Task<HttpResponseMessage> PostAddFile()
+      {
+         if (Request.Content.IsMimeMultipartContent() == false)
+         {
+            throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
+         }
+
+         var root = IOHelper.MapPath("~/App_Data/TEMP/FileUploads");
+         //ensure it exists
+         Directory.CreateDirectory(root);
+         var provider = new MultipartFormDataStreamProvider(root);
+
+         var result = await Request.Content.ReadAsMultipartAsync(provider);
+
+         //must have a file
+         if (result.FileData.Count == 0)
+         {
+            return Request.CreateResponse(HttpStatusCode.NotFound);
+         }
+
+         //get the string json from the request
+         var parentDir = IOHelper.MapPath(result.FormData["currentFolder"].ToString());
+         if (Directory.Exists(parentDir) == false)
+         {
+            return Request.CreateValidationErrorResponse("The request was not formatted correctly, the currentFolder is not a valid path");
+         }
+
+         var tempFiles = new PostedFiles();
+
+         //get the files
+         foreach (var file in result.FileData)
+         {
+            var fileName = file.Headers.ContentDisposition.FileName.Trim(new[] { '\"' });
+            var ext = fileName.Substring(fileName.LastIndexOf('.') + 1).ToLower();
+
+            if (UmbracoConfig.For.UmbracoSettings().Content.DisallowedUploadFiles.Contains(ext) == false)
             {
-                throw new HttpResponseException(HttpStatusCode.UnsupportedMediaType);
-            }
+               if (fileName.StartsWith("\"") && fileName.EndsWith("\""))
+               {
+                  fileName = fileName.Trim('"');
+               }
+               if (fileName.Contains(@"/") || fileName.Contains(@"\"))
+               {
+                  fileName = Path.GetFileName(fileName);
+               }
 
-            var root = IOHelper.MapPath("~/App_Data/TEMP/FileUploads");
-            //ensure it exists
-            Directory.CreateDirectory(root);
-            var provider = new MultipartFormDataStreamProvider(root);
+               try
+               {
+                  File.Move(file.LocalFileName, Path.Combine(parentDir, fileName));
 
-            var result = await Request.Content.ReadAsMultipartAsync(provider);
-
-            //must have a file
-            if (result.FileData.Count == 0)
-            {
-                return Request.CreateResponse(HttpStatusCode.NotFound);
-            }
-
-            //get the string json from the request
-            var parentDir = IOHelper.MapPath(result.FormData["currentFolder"].ToString());
-            if (Directory.Exists(parentDir) == false)
-            {
-                return Request.CreateValidationErrorResponse("The request was not formatted correctly, the currentFolder is not a valid path");
-            }
-
-            var tempFiles = new PostedFiles();
-
-            //get the files
-            foreach (var file in result.FileData)
-            {
-                var fileName = file.Headers.ContentDisposition.FileName.Trim(new[] { '\"' });
-                var ext = fileName.Substring(fileName.LastIndexOf('.') + 1).ToLower();
-
-                if (UmbracoConfig.For.UmbracoSettings().Content.DisallowedUploadFiles.Contains(ext) == false)
-                {
-                    if (fileName.StartsWith("\"") && fileName.EndsWith("\""))
-                    {
-                        fileName = fileName.Trim('"');
-                    }
-                    if (fileName.Contains(@"/") || fileName.Contains(@"\"))
-                    {
-                        fileName = Path.GetFileName(fileName);
-                    }
-
-                    try
-                    {
-                        File.Move(file.LocalFileName, Path.Combine(parentDir, fileName));
-
-                        tempFiles.UploadedFiles.Add(new ContentItemFile
-                        {
-                            FileName = fileName,
-                            PropertyAlias = Constants.Conventions.Media.File,
-                            TempFilePath = file.LocalFileName
-                        });
-                    }
-                    catch (Exception ex)
-                    {
-                        LogHelper.Error(typeof(FileSystemPickerApiController), ex.Message, ex);
-                        AddCancelMessage(tempFiles,
-                            message: Services.TextService.Localize("speechBubbles/operationCancelledText", System.Globalization.CultureInfo.CurrentCulture, null) + " -- " + fileName,
-                            localizeMessage: false);
-                    }
-                }
-                else
-                {
-                    tempFiles.Notifications.Add(new Notification(
-                        Services.TextService.Localize("speechBubbles/operationFailedHeader", System.Globalization.CultureInfo.CurrentCulture, null),
-                        "Cannot upload file " + file.Headers.ContentDisposition.FileName + ", it is not an approved file type",
-                        SpeechBubbleIcon.Warning));
-                }
-            }
-
-            //Different response if this is a 'blueimp' request
-            if (Request.GetQueryNameValuePairs().Any(x => x.Key == "origin"))
-            {
-                var origin = Request.GetQueryNameValuePairs().First(x => x.Key == "origin");
-                if (origin.Value == "blueimp")
-                {
-                    return Request.CreateResponse(HttpStatusCode.OK,
-                        tempFiles,
-                        //Don't output the angular xsrf stuff, blue imp doesn't like that
-                        new JsonMediaTypeFormatter());
-                }
-            }
-
-            return Request.CreateResponse(HttpStatusCode.OK, tempFiles);
-        }
-
-        public HttpResponseMessage PostRename(string path, string name)
-        {
-            path = IOHelper.MapPath("~/" + path.TrimStart('~', '/'));
-            if (File.Exists(path))
-            {
-                var file = new FileInfo(path);
-                file.MoveTo(String.Format("{0}\\{1}{2}", file.Directory.FullName, name, file.Extension));
-                return Request.CreateResponse(HttpStatusCode.OK, file);
+                  tempFiles.UploadedFiles.Add(new ContentItemFile
+                  {
+                     FileName = fileName,
+                     PropertyAlias = Constants.Conventions.Media.File,
+                     TempFilePath = file.LocalFileName
+                  });
+               }
+               catch (Exception ex)
+               {
+                  LogHelper.Error(typeof(FileSystemPickerApiController), ex.Message, ex);
+                  AddCancelMessage(tempFiles,
+                      message: Services.TextService.Localize("speechBubbles/operationCancelledText", System.Globalization.CultureInfo.CurrentCulture, null) + " -- " + fileName,
+                      localizeMessage: false);
+               }
             }
             else
             {
-                var dir = new DirectoryInfo(path);
-                dir.MoveTo(String.Format("{0}\\{1}", dir.Parent.FullName, name));
-                return Request.CreateResponse(HttpStatusCode.OK, dir);
+               tempFiles.Notifications.Add(new Notification(
+                   Services.TextService.Localize("speechBubbles/operationFailedHeader", System.Globalization.CultureInfo.CurrentCulture, null),
+                   "Cannot upload file " + file.Headers.ContentDisposition.FileName + ", it is not an approved file type",
+                   SpeechBubbleIcon.Warning));
             }
+         }
 
-        }
-
-        public HttpResponseMessage PostDelete(string path)
-        {
-            path = IOHelper.MapPath("~/" + path.TrimStart('~', '/'));
-            if (File.Exists(path))
+         //Different response if this is a 'blueimp' request
+         if (Request.GetQueryNameValuePairs().Any(x => x.Key == "origin"))
+         {
+            var origin = Request.GetQueryNameValuePairs().First(x => x.Key == "origin");
+            if (origin.Value == "blueimp")
             {
-                var file = new FileInfo(path);
-                file.Delete();
+               return Request.CreateResponse(HttpStatusCode.OK,
+                   tempFiles,
+                   //Don't output the angular xsrf stuff, blue imp doesn't like that
+                   new JsonMediaTypeFormatter());
             }
-            else
+         }
+
+         return Request.CreateResponse(HttpStatusCode.OK, tempFiles);
+      }
+
+      public HttpResponseMessage PostRename(string path, string name)
+      {
+         path = IOHelper.MapPath("~/" + path.TrimStart('~', '/'));
+         if (File.Exists(path))
+         {
+            var file = new FileInfo(path);
+            file.MoveTo(String.Format("{0}\\{1}{2}", file.Directory.FullName, name, file.Extension));
+            return Request.CreateResponse(HttpStatusCode.OK, file);
+         }
+         else
+         {
+            var dir = new DirectoryInfo(path);
+            dir.MoveTo(String.Format("{0}\\{1}", dir.Parent.FullName, name));
+            return Request.CreateResponse(HttpStatusCode.OK, dir);
+         }
+
+      }
+
+      public HttpResponseMessage PostDelete(string path)
+      {
+         path = IOHelper.MapPath("~/" + path.TrimStart('~', '/'));
+         if (File.Exists(path))
+         {
+            var file = new FileInfo(path);
+            file.Delete();
+         }
+         else
+         {
+            var dir = new DirectoryInfo(path);
+            if (dir.GetFiles().Count() == 0)
             {
-                var dir = new DirectoryInfo(path);
-                if (dir.GetFiles().Count() == 0)
-                {
-                    dir.Delete();
-                }
+               dir.Delete();
             }
-            return Request.CreateResponse(HttpStatusCode.OK);
-        }
+         }
+         return Request.CreateResponse(HttpStatusCode.OK);
+      }
 
-        public Dictionary<string, string> GetCommonConfig(string currentNodeId)
-        {
-            var config = new Dictionary<string, string>();
+      public Dictionary<string, string> GetCommonConfig(string currentNodeId)
+      {
+         var config = new Dictionary<string, string>();
 
-            var contentService = Services.ContentService;
+         var contentService = Services.ContentService;
 
-            var startFolder = System.Configuration.ConfigurationManager.AppSettings["USDA_ARS:FileSystemPicker:startFolder"]; ;
-            var startFolderNamePropertyAliasArray = System.Configuration.ConfigurationManager.AppSettings["USDA_ARS:FileSystemPicker:startFolderNamePropertyAlias"];
-            var startFolderNamePropertyAlias = "";
-            var removeCharactersPropertyAlias = System.Configuration.ConfigurationManager.AppSettings["USDA_ARS:FileSystemPicker:removeCharactersPropertyAlias"];
+         var startFolder = System.Configuration.ConfigurationManager.AppSettings["USDA_ARS:FileSystemPicker:startFolder"]; ;
+         var startFolderNamePropertyAliasArray = System.Configuration.ConfigurationManager.AppSettings["USDA_ARS:FileSystemPicker:startFolderNamePropertyAlias"];
+         var startFolderNamePropertyAlias = "";
+         var removeCharactersPropertyAlias = System.Configuration.ConfigurationManager.AppSettings["USDA_ARS:FileSystemPicker:removeCharactersPropertyAlias"];
 
-            int id = 0;
-            if (Int32.TryParse(currentNodeId, out id))
+         int id = 0;
+         if (Int32.TryParse(currentNodeId, out id))
+         {
+            var node = contentService.GetById(id);
+            if (node != null)
             {
-                var node = contentService.GetById(id);
-                if (node != null)
-                {
-                    string foundProperty = "";
-                    List<string> propertyAliasArray = startFolderNamePropertyAliasArray.Split(',').ToList();
+               string foundProperty = "";
+               List<string> propertyAliasArray = startFolderNamePropertyAliasArray.Split(',').ToList();
 
-                    // Check current node
-                    if (propertyAliasArray != null && propertyAliasArray.Count > 0)
-                    {
-                        foreach (string propertyAlias in propertyAliasArray)
+               // Check current node
+               if (propertyAliasArray != null && propertyAliasArray.Count > 0)
+               {
+                  foreach (string propertyAlias in propertyAliasArray)
+                  {
+                     if (node.HasProperty(propertyAlias) && false == string.IsNullOrEmpty(node.GetValue<string>(propertyAlias)))
+                     {
+                        foundProperty = propertyAlias;
+                     }
+                  }
+
+                  // If property
+                  if (true == string.IsNullOrWhiteSpace(foundProperty))
+                  {
+                     while (true == string.IsNullOrWhiteSpace(foundProperty) && node.Level > 0 && node != null)
+                     {
+                        node = contentService.GetById(node.ParentId);
+
+                        if (node != null)
                         {
-                            if (node.HasProperty(propertyAlias) && false == string.IsNullOrEmpty(node.GetValue<string>(propertyAlias)))
-                            {
-                                foundProperty = propertyAlias;
-                            }
+                           foreach (string propertyAlias in propertyAliasArray)
+                           {
+                              if (true == string.IsNullOrWhiteSpace(foundProperty) && node.HasProperty(propertyAlias) && false == string.IsNullOrEmpty(node.GetValue<string>(propertyAlias)))
+                              {
+                                 foundProperty = propertyAlias;
+                              }
+                           }
                         }
+                     }
+                  }
+               }
 
-                        // If property
-                        if (true == string.IsNullOrWhiteSpace(foundProperty))
-                        {
-                            while (true == string.IsNullOrWhiteSpace(foundProperty) && node.Level > 0 && node != null)
-                            {
-                                node = contentService.GetById(node.ParentId);
-
-                                if (node != null)
-                                {
-                                    foreach (string propertyAlias in propertyAliasArray)
-                                    {
-                                        if (true == string.IsNullOrWhiteSpace(foundProperty) && node.HasProperty(propertyAlias) && false == string.IsNullOrEmpty(node.GetValue<string>(propertyAlias)))
-                                        {
-                                            foundProperty = propertyAlias;
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-
-                    if (false == string.IsNullOrWhiteSpace(foundProperty))
-                    {
-                        startFolderNamePropertyAlias = foundProperty;
-                    }
-                }
+               if (false == string.IsNullOrWhiteSpace(foundProperty))
+               {
+                  startFolderNamePropertyAlias = foundProperty;
+               }
             }
+         }
 
-            config.Add("startFolder", startFolder);
-            config.Add("startFolderNamePropertyAlias", startFolderNamePropertyAlias);
-            config.Add("removeCharactersPropertyAlias", removeCharactersPropertyAlias);
+         config.Add("startFolder", startFolder);
+         config.Add("startFolderNamePropertyAlias", startFolderNamePropertyAlias);
+         config.Add("removeCharactersPropertyAlias", removeCharactersPropertyAlias);
 
-            return config;
-        }
+         return config;
+      }
 
-        protected void AddCancelMessage(INotificationModel display,
-            string header = "speechBubbles/operationCancelledHeader",
-            string message = "speechBubbles/operationCancelledText",
-            bool localizeHeader = true,
-            bool localizeMessage = true)
-        {
-            display.AddWarningNotification(
-                localizeHeader ? Services.TextService.Localize(header, System.Globalization.CultureInfo.CurrentCulture, null) : header,
-                localizeMessage ? Services.TextService.Localize(message, System.Globalization.CultureInfo.CurrentCulture, null) : message);
-        }
-    }
+      protected void AddCancelMessage(INotificationModel display,
+          string header = "speechBubbles/operationCancelledHeader",
+          string message = "speechBubbles/operationCancelledText",
+          bool localizeHeader = true,
+          bool localizeMessage = true)
+      {
+         display.AddWarningNotification(
+             localizeHeader ? Services.TextService.Localize(header, System.Globalization.CultureInfo.CurrentCulture, null) : header,
+             localizeMessage ? Services.TextService.Localize(message, System.Globalization.CultureInfo.CurrentCulture, null) : message);
+      }
+   }
 
 
-    /// <summary>
-    /// This is used for the response of PostAddFile so that we can analyze the response in a filter and remove the 
-    /// temporary files that were created.
-    /// </summary>
-    public class PostedFiles : IHaveUploadedFiles, INotificationModel
-    {
-        public PostedFiles()
-        {
-            UploadedFiles = new List<ContentItemFile>();
-            Notifications = new List<Notification>();
-        }
-        public List<ContentItemFile> UploadedFiles { get; private set; }
+   /// <summary>
+   /// This is used for the response of PostAddFile so that we can analyze the response in a filter and remove the 
+   /// temporary files that were created.
+   /// </summary>
+   public class PostedFiles : IHaveUploadedFiles, INotificationModel
+   {
+      public PostedFiles()
+      {
+         UploadedFiles = new List<ContentItemFile>();
+         Notifications = new List<Notification>();
+      }
+      public List<ContentItemFile> UploadedFiles { get; private set; }
 
-        public List<Notification> Notifications { get; private set; }
-    }
+      public List<Notification> Notifications { get; private set; }
+   }
 }
