@@ -46,7 +46,6 @@ namespace USDA_ARS.Umbraco.Controllers
 
       [NotChildAction]
       [HttpPost]
-      [ValidateAntiForgeryToken]
       public ActionResult HandleFormSubmit(EmailSignup model)
       {
          if (false == ModelState.IsValid)

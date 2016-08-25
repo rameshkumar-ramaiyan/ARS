@@ -55,7 +55,6 @@ namespace USDA_ARS.Umbraco.Controllers
       /// <returns></returns>
       [NotChildAction]
       [HttpPost]
-      [ValidateAntiForgeryToken]
       public ActionResult HandleFormSubmit(DownloadRequest model)
       {
          // Check recaptcha

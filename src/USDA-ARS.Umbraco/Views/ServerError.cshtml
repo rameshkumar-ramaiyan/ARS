@@ -7,8 +7,6 @@
 @using USDA_ARS.Umbraco.Extensions.Helpers
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
-   Response.StatusCode = 400;
-
    Layout = "_Master.cshtml";
 
    IPublishedContent currentPage = Model.Content;
@@ -19,8 +17,6 @@
    string modeCode = "";
 
    bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
-
-   Response.StatusCode = 400;
 }
 
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
