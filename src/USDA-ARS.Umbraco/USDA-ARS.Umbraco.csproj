@@ -17,7 +17,7 @@
     <RootNamespace>USDA_ARS.Umbraco</RootNamespace>
     <AssemblyName>USDA-ARS.Umbraco</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -3162,7 +3162,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>54900</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:54900/</IISUrl>
+          <IISUrl>http://usdaars.local</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>
