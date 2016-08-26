@@ -1,0 +1,324 @@
+﻿@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@using USDA_ARS.Umbraco.Extensions.Helpers
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@model IPublishedContent
+@{
+   IPublishedContent currentNode = Model;
+   string modeCode = Model.GetPropertyValue<string>("modeCode");
+   Location currentLocation = null;
+   PeopleInfo mainPerson = null;
+
+   if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
+   {
+      modeCode = Request.QueryString.Get("modeCode");
+
+      currentLocation = Locations.GetLocationObjectByModeCode(modeCode);
+   }
+
+   List<PeopleInfo> peopleFullList = null;
+
+   if (currentLocation != null)
+   {
+      peopleFullList = People.GetPeopleByNationalProgram(modeCode);
+
+      mainPerson = People.GetPersonByEmployeeId(currentLocation.RlEmpId);
+   }
+   else
+   {
+      Response.Redirect("/people-locations/");
+   }
+}
+
+
+<table border="0">
+   <tbody>
+      <tr>
+         <td valign="top">
+            <!-- modecode description -->
+            <strong>
+               @(Locations.GetLocationNameByModeCode(modeCode))
+            </strong>
+
+            <!-- address and mission statement begin -->
+            <!-- _locBlurb start -->
+
+            <font size="2">
+
+               <table border="0" cellpadding="0" cellspacing="0" width="100%" summary="This table displays information about this location">
+                  <tbody>
+                     <tr>
+                        <td>
+                           <a href="/people-locations/person?person-id=@(mainPerson.PersonId)" id="anch_51">
+                              @(mainPerson.LastName), @(mainPerson.FirstName)
+
+                              @if (false == string.IsNullOrEmpty(mainPerson.CommonName))
+                              {
+                                 @Html.Raw(" - <em>" + mainPerson.CommonName + "</em>")
+                              }
+                           </a><br />
+                           @(mainPerson.TitleWorking)<br />
+
+                           <a href="mailto:@(mainPerson.Email)?Subject=From ARS website" target="_blank" id="anch_52">@(mainPerson.Email)</a>
+                           <br />
+
+                           @(currentLocation.RsPhone)<br />
+                           @(currentLocation.RsAddress1)<br />
+                           @(currentLocation.RsAddress2)<br />
+                           @(currentLocation.RsCity) @(currentLocation.RsStateCode) @(currentLocation.RsPostalCode)
+                           <p>
+                              <!-- MapQuest info here.  query_string= modecode=@(modeCode)-->
+                           </p><p>
+
+
+                              <strong>Mission:</strong><br />
+                              @(currentLocation.MissionStatement)
+
+                           </p><p></p>
+
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>
+
+               <!-- _locBlurb end -->
+               <!-- address and mission statement end -->
+            </font>
+         </td>
+
+         <td valign="top">
+            <!-- Admin Office hyperlinks begin -->
+            <!-- begin org tree-->
+         </td>
+         <td valign="top" width="188">
+
+
+            <table border="0" cellspacing="0" cellpadding="0">
+               <tbody>
+
+                  @{
+                     Location rootOffice = Locations.GetLocationObjectByModeCode("01000000");
+                     Location 
+
+                     if (rootOffice != null)
+                     {
+                        string modeCodeWithDashes = ModeCodes.ModeCodeAddDashes(rootOffice.ModeCodeConcat);
+
+                        <tr>
+                           <td valign="top" colspan="4" width="188">
+                              <font face="arial" size="-2">
+                                 @if (rootOffice.ModeCodeConcat == modeCode)
+                                 {
+                                    @Locations.GetLocationNameByModeCode(rootOffice.ModeCodeConcat)
+                                 }
+                                 else
+                                 {
+                                    <a href="@(currentNode.Url + "?modeCode=" + modeCodeWithDashes)" class="projectNav">
+                                       @Locations.GetLocationNameByModeCode(rootOffice.ModeCodeConcat)
+                                    </a>
+                                 }
+
+                                 <br />
+                              </font>
+                           </td>
+                        </tr>
+                     }
+
+
+
+                     int currentLevel = 
+                  }
+
+
+
+
+
+
+                  <tr>
+                     <td>&nbsp;</td>
+                     <td valign="top" colspan="3" width="188">
+
+
+                        <font face="arial" size="-2">
+
+                           <a href="/pandp/locations/locations.htm?modecode=01-01-00-00" class="projectNav" id="anch_48">
+                              Office of the Administrator
+                           </a><br>
+                        </font>
+                     </td>
+                  </tr>
+
+
+
+                  <tr>
+                     <td>&nbsp;</td>
+                     <td>&nbsp;</td>
+                     <td valign="top" colspan="2" width="188">
+
+
+                        <font face="arial" size="-2">
+                           Outreach, Diversity, and Equal Opportunity <br>
+                        </font>
+                     </td>
+                  </tr>
+
+               </tbody>
+            </table>
+
+
+
+
+
+
+
+
+
+
+            <table border="0" cellspacing="0" cellpadding="0">
+               <tbody>
+                  <tr>
+
+                     <td valign="top" colspan="4" width="188">
+
+
+                        <font face="arial" size="-2">
+
+                           <a href="/pandp/locations/locations.htm?modecode=01-00-00-00" class="projectNav" id="anch_46">
+                              Administrator and Immediate Staffs
+                           </a><br>
+                        </font>
+                     </td>
+                  </tr>
+
+
+
+                  <tr>
+                     <td>&nbsp;</td>
+                     <td valign="top" colspan="3" width="188">
+
+
+                        <font face="arial" size="-2">
+
+                           <a href="/pandp/locations/locations.htm?modecode=01-01-00-00" class="projectNav" id="anch_47">
+                              Office of Administrator
+                           </a><br>
+                        </font>
+                     </td>
+                  </tr>
+
+
+
+                  <tr>
+                     <td>&nbsp;</td>
+                     <td>&nbsp;</td>
+                     <td valign="top" colspan="2" width="188">
+
+
+                        <font face="arial" size="-2">
+                           Administrator's Immediate Office <br>
+                        </font>
+                     </td>
+                  </tr>
+
+               </tbody>
+            </table>
+
+
+
+
+
+
+            <table width="188" border="0">
+               <tbody>
+                  <tr>
+                     <td>
+                        <table border="0" cellpadding="4"></table>
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
+
+         </td>
+         <!-- end org tree-->
+         <!-- National Programs hyperlinks end -->
+
+      </tr>
+   </tbody>
+</table>
+
+<table width="100%" border="0" cellspacing="0" cellpadding="0" summary="This table displays location and people info">
+   <tbody>
+      <tr>
+         <td valign="top">
+            <!-- modecode description, address, and mission statement -->
+
+
+
+
+            <table border="0" cellspacing="0" cellpadding="0">
+               <tbody>
+                  <tr>
+                     <td>
+
+                        <!-- People list begin -->
+                        <!-- _locStaff start -->
+
+
+
+                        <script language="JavaScript">function DisplayEmail(username, domain) { document.write(username + "&#64;" + domain); }</script>
+                        <table cellspacing="0" cellpadding="3" border="0">
+                           <tbody>
+                              <tr>
+                                 <td><strong>People:</strong></td>
+                              </tr>
+                           </tbody>
+                        </table>
+                        <table width="100%" cellspacing="0" cellpadding="3" border="0">
+
+                           <tbody>
+                              @if (peopleFullList != null && peopleFullList.Any())
+                              {
+                                 peopleFullList = peopleFullList.OrderBy(p => p.LastName).ThenBy(p => p.FirstName).ToList();
+
+                                 foreach (PeopleInfo person in peopleFullList)
+                                 {
+                                    <tr>
+                                       <td valign="top">
+                                          <a href="/people-locations/person?person-id=@(person.PersonId)" class="listItems" id="anch_44">
+                                             @(person.LastName),
+                                             @(person.FirstName)
+                                             @Html.Raw(false == string.IsNullOrWhiteSpace(person.CommonName) ? " <em>" + person.CommonName + "</em>" : "")
+                                          </a>
+                                          <br />
+                                          @USDA_ARS.Umbraco.Extensions.Utilities.Strings.FormatPhoneNumber(person.PhoneAreaCode + person.Phone)
+                                          @(false == string.IsNullOrEmpty(person.PhoneExt) ? " ext. " + person.PhoneExt : "")
+                                          <br />
+                                          @if (person.Email != null && person.Email.Split('@').Length == 2)
+                                          {
+                                             <script language="javascript">DisplayEmail('@(person.Email.Split('@')[0])', '@(person.Email.Split('@')[1])');</script>
+                                          }
+                                          <br />
+                                          <font size="-2">@(person.TitleWorking)</font>
+                                       </td>
+                                    </tr>
+                                    <tr>
+                                       <td><img src="/images/content-divider.gif"></td>
+                                    </tr>
+                                 }
+                              }
+                           </tbody>
+                        </table>
+
+                        <!-- _locStaff end -->
+                        <!-- People list end -->
+
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
+         </td>
+      </tr>
+   </tbody>
+</table>

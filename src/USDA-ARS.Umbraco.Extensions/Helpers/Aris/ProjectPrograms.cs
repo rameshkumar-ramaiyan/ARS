@@ -15,11 +15,13 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
          List<Models.Aris.ProjectProgram> projectProgramList = null;
          List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
 
-         var db = new Database("arisPublicWebDbDSN");
+         if (modeCodeArray != null && modeCodeArray.Any())
+         {
+            var db = new Database("arisPublicWebDbDSN");
 
-         string sql = "";
+            string sql = "";
 
-         sql += @"
+            sql += @"
             select
                     A4NP.NP_CODE, 
 			        RNP.short_desc, 
@@ -31,29 +33,29 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
             and P.accn_no = A4NP.accn_no
             and P.status_code = 'a'";
 
-         sql += " and modecode_1 = " + modeCodeArray[0];
+            sql += " and modecode_1 = " + modeCodeArray[0];
 
-         if (modeCodeArray[1] != "00")
-         {
-            sql += " and modecode_2 = " + modeCodeArray[1];
-         }
-         if (modeCodeArray[2] != "00")
-         {
-            sql += " and modecode_3 = " + modeCodeArray[2];
-         }
-         if (modeCodeArray[3] != "00")
-         {
-            sql += " and modecode_4 = " + modeCodeArray[3];
-         }
+            if (modeCodeArray[1] != "00")
+            {
+               sql += " and modecode_2 = " + modeCodeArray[1];
+            }
+            if (modeCodeArray[2] != "00")
+            {
+               sql += " and modecode_3 = " + modeCodeArray[2];
+            }
+            if (modeCodeArray[3] != "00")
+            {
+               sql += " and modecode_4 = " + modeCodeArray[3];
+            }
 
-         sql += " and p.prj_type <> 'J'";
+            sql += " and p.prj_type <> 'J'";
 
-         if (true == appropriatedOnly)
-         {
-            sql += " and p.prj_type = 'd'";
-         }
+            if (true == appropriatedOnly)
+            {
+               sql += " and p.prj_type = 'd'";
+            }
 
-         sql += @" order by    A4NP.NP_CODE,
+            sql += @" order by    A4NP.NP_CODE,
 	                    (case when p.prj_type = 'D' then 1
 	                          else 2
                         end),
@@ -63,7 +65,8 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                 ";
 
 
-         projectProgramList = db.Query<Models.Aris.ProjectProgram>(sql).ToList();
+            projectProgramList = db.Query<Models.Aris.ProjectProgram>(sql).ToList();
+         }
 
          return projectProgramList;
       }

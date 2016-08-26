@@ -316,6 +316,7 @@
     <Compile Include="Controller\HelpInfoController.cs" />
     <Compile Include="Controller\DataImporterController.cs" />
     <Compile Include="Helpers\Aris\DownloadRequest.cs" />
+    <Compile Include="Helpers\Aris\Locations.cs" />
     <Compile Include="Helpers\Aris\NewsInterLinks.cs" />
     <Compile Include="Helpers\Aris\ModeCodesNew.cs" />
     <Compile Include="Helpers\Aris\NationalPrograms.cs" />
@@ -344,6 +345,7 @@
     <Compile Include="Models\Aris\NewsInterLink.cs" />
     <Compile Include="Models\Aris\ModeCodeNew.cs" />
     <Compile Include="Models\Aris\NationalProgramLocation.cs" />
+    <Compile Include="Models\Aris\Location.cs" />
     <Compile Include="Models\Aris\PeopleByCity.cs" />
     <Compile Include="Models\Aris\PeopleInfo.cs" />
     <Compile Include="Models\Aris\ProjectAnnualReportYear.cs" />

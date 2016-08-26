@@ -17,7 +17,7 @@
     <RootNamespace>USDA_ARS.Umbraco</RootNamespace>
     <AssemblyName>USDA-ARS.Umbraco</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <UseIISExpress>false</UseIISExpress>
+    <UseIISExpress>true</UseIISExpress>
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
@@ -3084,6 +3084,8 @@
     <Content Include="Views\PersonNews.cshtml" />
     <Content Include="Views\PersonProjects.cshtml" />
     <Content Include="Views\ServerError.cshtml" />
+    <Content Include="Views\Partials\Modules\PeopleListByOffice.cshtml" />
+    <Content Include="Views\PeopleLocationsOffices.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>
@@ -3163,7 +3165,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>54900</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://usdaars.local</IISUrl>
+          <IISUrl>http://localhost:54900/</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

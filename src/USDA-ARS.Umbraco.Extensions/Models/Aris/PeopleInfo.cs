@@ -19,7 +19,7 @@ namespace USDA_ARS.Umbraco.Extensions.Models.Aris
       public int ModeCode2 { get; set; }
       [Column("modecode_3")]
       public int ModeCode3 { get; set; }
-      [Column("modecodeE_4")]
+      [Column("modecode_4")]
       public int ModeCode4 { get; set; }
 
       [Column("perfname")]

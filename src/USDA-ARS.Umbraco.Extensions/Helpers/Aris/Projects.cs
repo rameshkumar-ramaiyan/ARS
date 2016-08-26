@@ -398,7 +398,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
          List<ProjectInfo> projectList = null;
 
          string cacheKey = "GetProjectsByCollaborations:" + modeCode;
-         int cacheUpdateInMinutes = 60;
+         int cacheUpdateInMinutes = 720;
 
          ObjectCache cache = MemoryCache.Default;
 

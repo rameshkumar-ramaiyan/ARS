@@ -1,0 +1,24 @@
+﻿@using Archetype.Extensions
+@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@inherits Umbraco.Web.Mvc.UmbracoTemplatePage
+@{
+    Layout = "_Master.cshtml";
+
+    IPublishedContent currentPage = Model.Content;
+}
+
+@Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
+
+<div id="fullPage">
+
+   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+
+   <div id="pageContent">
+
+      @Html.Partial("~/Views/Partials/Modules/PeopleListByOffice.cshtml", currentPage)
+
+   </div>
+</div>

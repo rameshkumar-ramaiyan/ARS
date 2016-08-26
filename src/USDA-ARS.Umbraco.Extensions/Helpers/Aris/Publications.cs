@@ -195,7 +195,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
          publicationSearch.Count = 0;
 
          string cacheKey = "SearchPublications:" + modeCode + ":" + show;
-         int cacheUpdateInMinutes = 60;
+         int cacheUpdateInMinutes = 720;
 
          ObjectCache cache = MemoryCache.Default;
 
