@@ -5,12 +5,6 @@
 @{
    Layout = null;
 
-   // Make sure the URL is well formed
-   if (false == Uri.IsWellFormedUriString(Request.RawUrl, UriKind.RelativeOrAbsolute))
-   {
-      Response.Redirect("/there-was-a-problem/");
-   }
-
    IPublishedContent currentPage = Model.Content;
    IPublishedContent siteSettings = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.SiteSettings();
    IPublishedContent rootNode = currentPage.AncestorOrSelf(1);
