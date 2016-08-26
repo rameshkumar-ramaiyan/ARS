@@ -201,7 +201,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
          List<UsdaPublication> publicationList = null;
 
-         //publicationList = cache.Get(cacheKey) as List<UsdaPublication>;
+         publicationList = cache.Get(cacheKey) as List<UsdaPublication>;
 
          if (publicationList == null)
          {
@@ -306,8 +306,8 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             }
 
-            //CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheUpdateInMinutes) };
-            //cache.Add(cacheKey, publicationList, policy);
+            CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheUpdateInMinutes) };
+            cache.Add(cacheKey, publicationList, policy);
          }
 
          if (publicationList != null && publicationList.Count > 0)

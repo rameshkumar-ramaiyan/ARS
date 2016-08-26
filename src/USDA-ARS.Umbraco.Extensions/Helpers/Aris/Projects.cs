@@ -402,7 +402,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
          ObjectCache cache = MemoryCache.Default;
 
-         //projectList = cache.Get(cacheKey) as List<ProjectInfo>;
+         projectList = cache.Get(cacheKey) as List<ProjectInfo>;
 
          if (projectList == null)
          {
@@ -437,8 +437,8 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             projectList = db.Query<ProjectInfo>(sql).ToList();
 
-            //CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheUpdateInMinutes) };
-            //cache.Add(cacheKey, projectList, policy);
+            CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheUpdateInMinutes) };
+            cache.Add(cacheKey, projectList, policy);
          }
 
          return projectList;
