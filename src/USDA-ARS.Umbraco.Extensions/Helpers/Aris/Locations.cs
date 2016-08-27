@@ -147,11 +147,11 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             if (modeCodeArray[1] == "00")
             {
-               locationList = locationListAll.Where(p => p.ModeCode1 == modeCodeArray[0] && p.ModeCode2 != "00").ToList();
+               locationList = locationListAll.Where(p => p.ModeCode1 == modeCodeArray[0] && p.ModeCode2 != "00" && p.ModeCode3 == "00" && p.ModeCode4 == "00").ToList();
             }
             else if (modeCodeArray[2] == "00")
             {
-               locationList = locationListAll.Where(p => p.ModeCode1 == modeCodeArray[0] && p.ModeCode2 == modeCodeArray[1] && p.ModeCode3 != "00").ToList();
+               locationList = locationListAll.Where(p => p.ModeCode1 == modeCodeArray[0] && p.ModeCode2 == modeCodeArray[1] && p.ModeCode3 != "00" && p.ModeCode4 == "00").ToList();
             }
             else if (modeCodeArray[3] == "00")
             {
@@ -181,6 +181,13 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
             locationList = new List<Location>();
 
             List<Location> locationListAll = GetAllLocations();
+
+            Location currentLocation = GetLocationObjectByModeCode(modeCode);
+            if (currentLocation != null)
+            {
+               currentLocation.Level = 5;
+               locationList.Add(currentLocation);
+            }
 
             if (modeCodeArray[3] != "00")
             {

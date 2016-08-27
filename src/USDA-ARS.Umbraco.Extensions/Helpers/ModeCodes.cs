@@ -14,9 +14,12 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
       {
          bool isValid = false;
 
-         if (true == Regex.IsMatch(modeCode, @"\d{1,2}[\-]*\d{1,2}[\-]*\d{1,2}[\-]*\d{1,2}"))
+         if (false == string.IsNullOrWhiteSpace(modeCode))
          {
-            isValid = true;
+            if (true == Regex.IsMatch(modeCode, @"\d{1,2}[\-]*\d{1,2}[\-]*\d{1,2}[\-]*\d{1,2}"))
+            {
+               isValid = true;
+            }
          }
 
          return isValid;

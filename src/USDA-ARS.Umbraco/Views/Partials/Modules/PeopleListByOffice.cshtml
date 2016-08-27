@@ -15,6 +15,8 @@
    {
       modeCode = Request.QueryString.Get("modeCode");
 
+      modeCode = ModeCodes.ModeCodeAddDashes(modeCode);
+
       currentLocation = Locations.GetLocationObjectByModeCode(modeCode);
    }
 
@@ -30,16 +32,34 @@
    {
       Response.Redirect("/people-locations/");
    }
+
+
+   int colSpan = 4;
+   int emptyCols = 0;
+   string currentLocationName = Locations.GetLocationNameByModeCode(modeCode);
+
+   Location rootOffice = Locations.GetLocationObjectByModeCode("01000000");
+
+   //Get Ancestor Locations
+   List<Location> locationAncestorList = Locations.GetAncestorLocationsList(modeCode);
+
+   if (locationAncestorList != null && locationAncestorList.Any())
+   {
+      locationAncestorList = locationAncestorList.Where(p => p.Level > 1).ToList();
+   }
+
+   // Get Child Locations
+   List<Location> locationChildList = Locations.GetChildLocationsList(modeCode);
 }
 
 
 <table border="0">
    <tbody>
       <tr>
-         <td valign="top">
+         <td valign="top" style="width: 500px;">
             <!-- modecode description -->
             <strong>
-               @(Locations.GetLocationNameByModeCode(modeCode))
+               @(currentLocationName)
             </strong>
 
             <!-- address and mission statement begin -->
@@ -51,6 +71,8 @@
                   <tbody>
                      <tr>
                         <td>
+                           @if (mainPerson != null)
+                           {
                            <a href="/people-locations/person?person-id=@(mainPerson.PersonId)" id="anch_51">
                               @(mainPerson.LastName), @(mainPerson.FirstName)
 
@@ -63,6 +85,7 @@
 
                            <a href="mailto:@(mainPerson.Email)?Subject=From ARS website" target="_blank" id="anch_52">@(mainPerson.Email)</a>
                            <br />
+                           }
 
                            @(currentLocation.RsPhone)<br />
                            @(currentLocation.RsAddress1)<br />
@@ -72,10 +95,11 @@
                               <!-- MapQuest info here.  query_string= modecode=@(modeCode)-->
                            </p><p>
 
-
+                           @if (false == string.IsNullOrWhiteSpace(currentLocation.MissionStatement))
+                           {
                               <strong>Mission:</strong><br />
                               @(currentLocation.MissionStatement)
-
+                           }
                            </p><p></p>
 
                         </td>
@@ -94,181 +118,102 @@
          </td>
          <td valign="top" width="188">
 
-
             <table border="0" cellspacing="0" cellpadding="0">
                <tbody>
 
-                  @{
-                     Location rootOffice = Locations.GetLocationObjectByModeCode("01000000");
+                  @if (rootOffice != null)
+                  {
+                     string modeCodeWithDashes = ModeCodes.ModeCodeAddDashes(rootOffice.ModeCodeConcat);
 
-                     if (rootOffice != null)
+                     <tr>
+                        <td valign="top" colspan="4" width="188">
+                           <font face="arial" size="-2">
+                              @if (modeCodeWithDashes == modeCode)
+                              {
+                                 @Locations.GetLocationNameByModeCode(rootOffice.ModeCodeConcat)
+                              }
+                              else
+                              {
+                                 <a href="@(currentNode.Url + "?modeCode=" + modeCodeWithDashes)" class="projectNav">
+                                    @Locations.GetLocationNameByModeCode(rootOffice.ModeCodeConcat)
+                                 </a>
+                              }
+                              <br />
+                           </font>
+                        </td>
+                     </tr>
+                  }
+
+                  @if (locationAncestorList != null && locationAncestorList.Any())
+                  {
+                     foreach (Location locationItem in locationAncestorList)
                      {
-                        string modeCodeWithDashes = ModeCodes.ModeCodeAddDashes(rootOffice.ModeCodeConcat);
+                        colSpan--;
+                        emptyCols++;
+
+                        string modeCodeWithDashes = ModeCodes.ModeCodeAddDashes(locationItem.ModeCodeConcat);
 
                         <tr>
-                           <td valign="top" colspan="4" width="188">
+                           @for (int i = 1; i <= emptyCols; i++)
+                           {
+                              <td>&nbsp;</td>
+                           }
+                           <td valign="top" colspan="@(colSpan)" width="188">
                               <font face="arial" size="-2">
-                                 @if (rootOffice.ModeCodeConcat == modeCode)
+                                 @if (modeCodeWithDashes == modeCode)
                                  {
-                                    @Locations.GetLocationNameByModeCode(rootOffice.ModeCodeConcat)
+                                    @Locations.GetLocationNameByModeCode(locationItem.ModeCodeConcat)
                                  }
                                  else
                                  {
                                     <a href="@(currentNode.Url + "?modeCode=" + modeCodeWithDashes)" class="projectNav">
-                                       @Locations.GetLocationNameByModeCode(rootOffice.ModeCodeConcat)
+                                       @Locations.GetLocationNameByModeCode(locationItem.ModeCodeConcat)
                                     </a>
                                  }
-
                                  <br />
                               </font>
                            </td>
                         </tr>
                      }
-
-                     int colSpan = 4;
-                     int emptyCols = 0;
-
-                     List<Location> locationAncestorList = Locations.GetAncestorLocationsList(modeCode);
-
-                     if (locationAncestorList != null && locationAncestorList.Any())
-                     {
-                        locationAncestorList = locationAncestorList.Where(p => p.Level > 1).ToList();
-                     }
-
-                     // Get Ancestor List
-                     if (locationAncestorList != null && locationAncestorList.Any())
-                     {
-                        foreach (Location locationItem in locationAncestorList)
-                        {
-                           colSpan--;
-                           emptyCols++;
-
-                           string modeCodeWithDashes = ModeCodes.ModeCodeAddDashes(rootOffice.ModeCodeConcat);
-
-                           <tr>
-                              @for (int i = 1; i >= emptyCols; i++)
-                              {
-                                 <td>&nbsp;</td>
-                              }
-                              <td valign="top" colspan="@(colSpan)" width="188">
-                                 <font face="arial" size="-2">
-                                    <a href="@(currentNode.Url + "?modeCode=" + modeCodeWithDashes)" class="projectNav">
-                                       @Locations.GetLocationNameByModeCode(locationItem.ModeCodeConcat)
-                                    </a><br>
-                                 </font>
-                              </td>
-                           </tr>
-                        }
-                     }
-
-
-                     // Get
-
                   }
 
-
-
-
-
-
-
-
-
-
-                  <tr>
-                     <td>&nbsp;</td>
-                     <td>&nbsp;</td>
-                     <td valign="top" colspan="2" width="188">
-
-
-                        <font face="arial" size="-2">
-                           Outreach, Diversity, and Equal Opportunity <br>
-                        </font>
-                     </td>
-                  </tr>
-
                </tbody>
             </table>
 
+            @if (locationChildList != null && locationChildList.Any())
+            {
+               <table width="188" border="0">
+                  <tbody>
+                     <tr>
+                        <td>
+                           <table border="0" cellpadding="4">
+                              <tbody>
+
+                                 @foreach (Location locationItem in locationChildList)
+                                 {
+                                    string modeCodeWithDashes = ModeCodes.ModeCodeAddDashes(locationItem.ModeCodeConcat);
+                                    <tr>
+                                       <td><a href="@(currentNode.Url + "?modeCode=" + modeCodeWithDashes)" class="projectNav">@Locations.GetLocationNameByModeCode(locationItem.ModeCodeConcat)</a></td>
+                                    </tr>
+                                 }
+
+                              </tbody>
+                           </table>
+                        </td>
+                     </tr>
+                  </tbody>
+               </table>
+            }
 
 
 
-
-
-
-
-
-
-            <table border="0" cellspacing="0" cellpadding="0">
-               <tbody>
-                  <tr>
-
-                     <td valign="top" colspan="4" width="188">
-
-
-                        <font face="arial" size="-2">
-
-                           <a href="/pandp/locations/locations.htm?modecode=01-00-00-00" class="projectNav" id="anch_46">
-                              Administrator and Immediate Staffs
-                           </a><br>
-                        </font>
-                     </td>
-                  </tr>
-
-
-
-                  <tr>
-                     <td>&nbsp;</td>
-                     <td valign="top" colspan="3" width="188">
-
-
-                        <font face="arial" size="-2">
-
-                           <a href="/pandp/locations/locations.htm?modecode=01-01-00-00" class="projectNav" id="anch_47">
-                              Office of Administrator
-                           </a><br>
-                        </font>
-                     </td>
-                  </tr>
-
-
-
-                  <tr>
-                     <td>&nbsp;</td>
-                     <td>&nbsp;</td>
-                     <td valign="top" colspan="2" width="188">
-
-
-                        <font face="arial" size="-2">
-                           Administrator's Immediate Office <br>
-                        </font>
-                     </td>
-                  </tr>
-
-               </tbody>
-            </table>
-
-
-
-
-
-
-            <table width="188" border="0">
-               <tbody>
-                  <tr>
-                     <td>
-                        <table border="0" cellpadding="4"></table>
-                     </td>
-                  </tr>
-               </tbody>
-            </table>
 
          </td>
          <!-- end org tree-->
          <!-- National Programs hyperlinks end -->
-
       </tr>
    </tbody>
+
 </table>
 
 <table width="100%" border="0" cellspacing="0" cellpadding="0" summary="This table displays location and people info">

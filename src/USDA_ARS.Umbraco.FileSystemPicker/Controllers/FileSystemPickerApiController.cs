@@ -55,10 +55,6 @@ namespace USDA_ARS.Umbraco.FileSystemPicker.Controllers
                   {
                      startFolderName = Regex.Replace(startFolderName, removeCharactersPropertyAlias, "");
                   }
-                  else
-                  {
-                     throw new Exception("Start Folder is Empty. You must have a valid start folder to access files.");
-                  }
                }
             }
          }
@@ -69,7 +65,14 @@ namespace USDA_ARS.Umbraco.FileSystemPicker.Controllers
       {
          var path = IOHelper.MapPath(folder.TrimStart(new char[] { '~', '/' }).EnsureStartsWith("~/"));
 
-         return new DirectoryInfo(path).GetDirectories("*");
+         if (Directory.Exists(path))
+         {
+            return new DirectoryInfo(path).GetDirectories("*");
+         }
+         else
+         {
+            throw new Exception("The folder path: " + path + " does not exists on the server.");
+         }
       }
 
       public IEnumerable<FileInfo> GetFiles(string folder, string[] filter)
