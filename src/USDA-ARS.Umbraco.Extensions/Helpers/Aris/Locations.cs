@@ -185,7 +185,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
             Location currentLocation = GetLocationObjectByModeCode(modeCode);
             if (currentLocation != null)
             {
-               currentLocation.Level = 5;
+               currentLocation.Level = LocationLevel(currentLocation);
                locationList.Add(currentLocation);
             }
 

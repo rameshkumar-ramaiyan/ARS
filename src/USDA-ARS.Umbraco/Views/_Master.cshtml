@@ -64,7 +64,7 @@
 
    string navPrefix = "";
 
-   if (rootNode.DocumentTypeAlias != "Homepage")
+   if (rootNode.DocumentTypeAlias == "Area" || rootNode.DocumentTypeAlias == "Area" || false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
    {
       navPrefix = "ARS ";
    }

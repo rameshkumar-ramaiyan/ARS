@@ -103,7 +103,7 @@
                foundModeCode = parentNode.GetPropertyValue<string>("modeCode");
             }
 
-            nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.Name, "http://localhost/people-locations/people-list/?modeCode=" + foundModeCode, breadcrumb.Level));
+            nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.Name, "/people-locations/people-list/?modeCode=" + foundModeCode, breadcrumb.Level));
          }
          else
          {
