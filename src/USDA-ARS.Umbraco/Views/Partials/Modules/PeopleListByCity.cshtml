@@ -17,22 +17,28 @@
       {
          modeCode = Request.QueryString.Get("modeCode");
 
-         List<string> modeCodeArray = USDA_ARS.Umbraco.Extensions.Helpers.ModeCodes.ModeCodeArray(modeCode);
+         modeCode = ModeCodes.ModeCodeAddDashes(modeCode);
 
-         modeCodeCityShort = modeCodeArray[0] + "-" + modeCodeArray[1];
-         modeCodeCity = modeCodeCityShort + "-00-00";
+         List<string> modeCodeArray = ModeCodes.ModeCodeArray(modeCode);
 
-         currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCodeCity, false);
+         if (modeCodeArray != null && modeCodeArray.Any())
+         {
+            modeCodeCityShort = modeCodeArray[0] + "-" + modeCodeArray[1];
+            modeCodeCity = modeCodeCityShort + "-00-00";
+
+            currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCodeCity, false);
+         }
       }
 
 
       List<PeopleByCity> peopleFullList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByCity(modeCodeCity);
-
-      peopleFullList = peopleFullList.Where(p => false == string.IsNullOrEmpty(p.ModeCodeConcat)).ToList();
+      List<PeopleByCity> siteLabelList = null;
 
       // Fix people with mode codes ending in 01
       if (peopleFullList != null && peopleFullList.Any())
       {
+         peopleFullList = peopleFullList.Where(p => false == string.IsNullOrEmpty(p.ModeCodeConcat)).ToList();
+
          foreach (PeopleByCity personItem in peopleFullList)
          {
             if (personItem.ModeCodeConcat.EndsWith("01"))
@@ -41,37 +47,39 @@
                personItem.ModeCode = ModeCodes.ModeCodeAddDashes(personItem.ModeCodeConcat);
             }
          }
-      }
 
-      List<PeopleByCity> siteLabelList = peopleFullList.DistinctBy(p => p.ModeCodeConcat).ToList();
+         siteLabelList = peopleFullList.DistinctBy(p => p.ModeCodeConcat).ToList();
 
-      if (siteLabelList != null && siteLabelList.Any())
-      {
-         siteLabelList = siteLabelList.OrderBy(p => p.ModeCodeConcat).ToList();
-
-         int i = 0;
-         foreach (PeopleByCity peopleByCity in siteLabelList)
+         if (siteLabelList != null && siteLabelList.Any())
          {
-            if (incValue == -1 && peopleByCity.ModeCode == modeCode)
-            {
-               incValue = i;
-            }
+            siteLabelList = siteLabelList.OrderBy(p => p.ModeCodeConcat).ToList();
 
-            i++;
+            int i = 0;
+            foreach (PeopleByCity peopleByCity in siteLabelList)
+            {
+               if (incValue == -1 && peopleByCity.ModeCode == modeCode)
+               {
+                  incValue = i;
+               }
+
+               i++;
+            }
+         }
+
+         if (incValue >= 0)
+         {
+            javascriptInsert += @"
+                 // Open the panel by modecode
+        ";
+            javascriptInsert += "$('#accordion').accordion('activate', " + incValue + ");\r\n";
+
+            javascriptInsert += @"         // auto scroll to a div
+        $('html, body').animate({";
+            javascriptInsert += " scrollTop: $('#" + modeCode.Replace("-", "") + "').offset().top}, 2000);";
          }
       }
 
-      if (incValue >= 0)
-      {
-         javascriptInsert += @"
-                 // Open the panel by modecode
-        ";
-         javascriptInsert += "$('#accordion').accordion('activate', " + incValue + ");\r\n";
 
-         javascriptInsert += @"         // auto scroll to a div
-        $('html, body').animate({";
-         javascriptInsert += " scrollTop: $('#" + modeCode.Replace("-", "") + "').offset().top}, 2000);";
-      }
    }
    <!-- jQuery accordion -->
    <script>
