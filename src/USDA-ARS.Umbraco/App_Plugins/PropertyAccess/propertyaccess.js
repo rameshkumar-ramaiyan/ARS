@@ -41,6 +41,13 @@
                                             $(this).addClass("hidden-button")
                                         });
                                         break;
+                                   case 'linktofile':
+                                      // Hide link to file buttons
+                                      var linktofileButtons = $('a').filter(function (index) { return $(this).text() === "Link to file"; })
+                                      linktofileButtons.each(function () {
+                                         $(this).addClass("hidden-button")
+                                      });
+                                      break;
                                     case 'actions':
                                         // Hide actions button
                                         var actionsButton = $(".umb-panel-header div[class*='umb-btn-toolbar'] a:has(localize[key='general_actions'])");

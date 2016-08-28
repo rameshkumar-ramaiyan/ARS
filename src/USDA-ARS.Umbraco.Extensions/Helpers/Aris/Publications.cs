@@ -194,18 +194,22 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
          UsdaPublicationSearch publicationSearch = new UsdaPublicationSearch();
          publicationSearch.Count = 0;
 
+         modeCode = ModeCodes.ModeCodeAddDashes(modeCode);
+
          List<string> modeCodeArray = ModeCodes.ModeCodeArray(modeCode);
 
          if (modeCodeArray != null && modeCodeArray.Count == 4)
          {
             string cacheKey = "SearchPublications:" + modeCode + ":" + show;
             int cacheUpdateInMinutes = 720;
-
             ObjectCache cache = MemoryCache.Default;
 
             List<UsdaPublication> publicationList = null;
 
-            publicationList = cache.Get(cacheKey) as List<UsdaPublication>;
+            if (modeCode.EndsWith("00-00"))
+            {
+               publicationList = cache.Get(cacheKey) as List<UsdaPublication>;
+            }
 
             if (publicationList == null)
             {
@@ -308,8 +312,11 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
                }
 
-               CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheUpdateInMinutes) };
-               cache.Add(cacheKey, publicationList, policy);
+               if (modeCode.EndsWith("00-00"))
+               {
+                  CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheUpdateInMinutes) };
+                  cache.Add(cacheKey, publicationList, policy);
+               }
             }
 
             if (publicationList != null && publicationList.Count > 0)

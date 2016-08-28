@@ -15,42 +15,62 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
       {
          List<UsdaProject> projectList = null;
 
+         modeCode = ModeCodes.ModeCodeAddDashes(modeCode);
+
          List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
-
-         var db = new Database("arisPublicWebDbDSN");
-
-         Sql sql = null;
 
          if (modeCodeArray != null && modeCodeArray.Count == 4)
          {
-            string where = "MODECODE_1 = '" + modeCodeArray[0] + "' AND ";
+            string cacheKey = "ListProjects:" + modeCode;
+            int cacheUpdateInMinutes = 720;
+            ObjectCache cache = MemoryCache.Default;
 
-            if (modeCodeArray[1] != "00")
+            if (modeCode.EndsWith("00-00"))
             {
-               where += "MODECODE_2 = '" + modeCodeArray[1] + "' AND ";
-            }
-            if (modeCodeArray[2] != "00")
-            {
-               where += "MODECODE_3 = '" + modeCodeArray[2] + "' AND ";
-            }
-            if (modeCodeArray[3] != "00")
-            {
-               where += "MODECODE_4 = '" + modeCodeArray[3] + "' AND ";
+               projectList = cache.Get(cacheKey) as List<UsdaProject>;
             }
 
-            if (where.EndsWith(" AND "))
+            if (projectList == null)
             {
-               where = where.Substring(0, where.LastIndexOf(" AND "));
+               var db = new Database("arisPublicWebDbDSN");
+
+               Sql sql = null;
+
+               string where = "MODECODE_1 = '" + modeCodeArray[0] + "' AND ";
+
+               if (modeCodeArray[1] != "00")
+               {
+                  where += "MODECODE_2 = '" + modeCodeArray[1] + "' AND ";
+               }
+               if (modeCodeArray[2] != "00")
+               {
+                  where += "MODECODE_3 = '" + modeCodeArray[2] + "' AND ";
+               }
+               if (modeCodeArray[3] != "00")
+               {
+                  where += "MODECODE_4 = '" + modeCodeArray[3] + "' AND ";
+               }
+
+               if (where.EndsWith(" AND "))
+               {
+                  where = where.Substring(0, where.LastIndexOf(" AND "));
+               }
+
+               where += " AND status_code = 'a' AND prj_type = 'd'";
+
+               sql = new Sql()
+                .Select("*")
+                .From("V_CLEAN_PROJECTS")
+                .Where(where);
+
+               projectList = db.Query<UsdaProject>(sql).ToList();
+
+               if (modeCode.EndsWith("00-00"))
+               {
+                  CacheItemPolicy policy = new CacheItemPolicy { AbsoluteExpiration = DateTimeOffset.Now.AddMinutes(cacheUpdateInMinutes) };
+                  cache.Add(cacheKey, projectList, policy);
+               }
             }
-
-            where += " AND status_code = 'a' AND prj_type = 'd'";
-
-            sql = new Sql()
-             .Select("*")
-             .From("V_CLEAN_PROJECTS")
-             .Where(where);
-
-            projectList = db.Query<UsdaProject>(sql).ToList();
          }
 
          if (projectList != null && projectList.Count > 0)
@@ -71,6 +91,11 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
       public static List<UsdaProject> SearchProjects(string query, string type)
       {
          List<UsdaProject> projectList = null;
+
+         if (false == string.IsNullOrWhiteSpace(query))
+         {
+            query = query.Replace("'", "");
+         }
 
          var db = new Database("arisPublicWebDbDSN");
 

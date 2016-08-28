@@ -7,6 +7,7 @@ using Umbraco.Web;
 using Umbraco.Core.Models;
 using Umbraco.Core.Persistence;
 using USDA_ARS.Umbraco.Extensions.Models.Aris;
+using System.Text.RegularExpressions;
 
 namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 {
@@ -303,36 +304,42 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
       {
          List<string> alphaList = new List<string>();
 
-         var db = new Database("arisPublicWebDbDSN");
-
-         Sql sql = null;
-         string where = "";
-
-         alpha = alpha.Trim();
-
          if (false == string.IsNullOrWhiteSpace(alpha))
          {
-            if (alpha.Length == 2)
+            if (Regex.IsMatch(alpha, @"^[a-zA-Z]{1,2}$"))
             {
-               alpha = alpha.Substring(0, 1);
+               var db = new Database("arisPublicWebDbDSN");
+
+               Sql sql = null;
+               string where = "";
+
+               alpha = alpha.Trim();
+
+               if (false == string.IsNullOrWhiteSpace(alpha))
+               {
+                  if (alpha.Length == 2)
+                  {
+                     alpha = alpha.Substring(0, 1);
+                  }
+
+                  where += "perlname LIKE '" + alpha + "%'";
+                  where += " AND (status_code = 'a' OR status_code IS NULL)";
+
+                  sql = new Sql()
+                   .Select("DISTINCT '" + alpha.ToUpper() + "' + SUBSTRING(perlname, 2, 1) as chars")
+                   .From("w_people_info")
+                   .Where(where);
+
+                  alphaList = db.Query<string>(sql).ToList();
+               }
+
+               if (alphaList != null && alphaList.Count > 0)
+               {
+                  alphaList = alphaList.Where(p => p.Trim().Length >= 2).ToList();
+
+                  alphaList = alphaList.OrderBy(p => p).ToList();
+               }
             }
-
-            where += "perlname LIKE '" + alpha + "%'";
-            where += " AND (status_code = 'a' OR status_code IS NULL)";
-
-            sql = new Sql()
-             .Select("DISTINCT '" + alpha.ToUpper() + "' + SUBSTRING(perlname, 2, 1) as chars")
-             .From("w_people_info")
-             .Where(where);
-
-            alphaList = db.Query<string>(sql).ToList();
-         }
-
-         if (alphaList != null && alphaList.Count > 0)
-         {
-            alphaList = alphaList.Where(p => p.Trim().Length >= 2).ToList();
-
-            alphaList = alphaList.OrderBy(p => p).ToList();
          }
 
          return alphaList;
