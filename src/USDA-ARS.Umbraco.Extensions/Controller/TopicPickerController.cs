@@ -160,9 +160,21 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
          if (true == restrictToCurrentNode)
          {
-            node = node.Ancestors().Where(p => p.IsDocumentType("ResearchUnit") || p.IsDocumentType("Area") || p.IsDocumentType("Homepage") || 
-                        p.IsDocumentType("NationalProgram") || p.IsDocumentType("Subsite")).FirstOrDefault();
+            if (node.DocumentTypeAlias == "ResearchUnit" || 
+                  node.DocumentTypeAlias == "Area" || 
+                  node.DocumentTypeAlias == "Homepage" || 
+                  node.DocumentTypeAlias == "NationalProgram" || 
+                  node.DocumentTypeAlias == "Subsite" || 
+                  node.DocumentTypeAlias == "PersonSite")
+            {
+               nodesList.Add(node);
+            }
+
+            node = node.Ancestors().Where(p => p.IsDocumentType("ResearchUnit") || p.IsDocumentType("Area") || p.IsDocumentType("Homepage") ||
+                     p.IsDocumentType("NationalProgram") || p.IsDocumentType("Subsite") || p.IsDocumentType("PersonSite")).FirstOrDefault();
             nodesList.Add(node);
+
+
          }
          else
          {
