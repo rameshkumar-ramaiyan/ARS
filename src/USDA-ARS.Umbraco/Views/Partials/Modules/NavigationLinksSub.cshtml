@@ -14,6 +14,7 @@
    IPublishedContent breadcrumb = currentPage;
    string modeCode = Request.QueryString["modeCode"];
    string accnNo = Request.QueryString["accnNo"];
+   string npCode = Request.QueryString["npCode"];
    string seqNo115 = Request.QueryString["seqNo115"];
    string personId = Request.QueryString["person-id"];
 
@@ -114,6 +115,7 @@
       breadcrumb = breadcrumb.Parent;
    }
 
+   // National Program Bread Crumbs
    if (currentPage.DocumentTypeAlias == "NationalProgramGroup" || currentPage.DocumentTypeAlias == "NationalProgram")
    {
       IPublishedContent nationalProgramsPage = Nodes.NationProgramsPage();
@@ -121,6 +123,16 @@
       if (nationalProgramsPage != null)
       {
          nodeBreadcrumbList.Add(new NodeBreadcrumb(nationalProgramsPage.GetPropertyValue<string>("breadcrumbLabel", nationalProgramsPage.Name), nationalProgramsPage.Url, 0));
+      }
+   }
+   else if (currentPage.DocumentTypeAlias == "ProjectReportsByProgram")
+   {
+      IPublishedContent nationalProgramsPage = Nodes.GetNodeByNpCode(npCode);
+
+      if (nationalProgramsPage != null)
+      {
+         nodeBreadcrumbList.Add(new NodeBreadcrumb(nationalProgramsPage.Parent.GetPropertyValue<string>("breadcrumbLabel", nationalProgramsPage.Parent.Name), nationalProgramsPage.Parent.Url, 0));
+         nodeBreadcrumbList.Add(new NodeBreadcrumb(nationalProgramsPage.GetPropertyValue<string>("breadcrumbLabel", nationalProgramsPage.Name), nationalProgramsPage.Url, 1));
       }
    }
 

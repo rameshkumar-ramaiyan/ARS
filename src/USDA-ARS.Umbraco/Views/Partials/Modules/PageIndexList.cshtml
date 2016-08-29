@@ -1,0 +1,74 @@
+﻿@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions
+@using USDA_ARS.Umbraco.Extensions.Models
+@using Newtonsoft.Json
+@model IPublishedContent
+@{
+   bool hidePageIndexList = false;
+
+   IPublishedContent parentPage = Model;
+   IEnumerable<IPublishedContent> childPages = null;
+   string indexTitle = "";
+   int page = 2;
+
+   if (parentPage != null)
+   {
+      if (parentPage != null && parentPage.Parent != null && (parentPage.Parent.DocumentTypeAlias == "SiteStandardWebpage" || parentPage.Parent.DocumentTypeAlias == "StandardWebpage"))
+      {
+         parentPage = parentPage.Parent;
+      }
+
+      if (parentPage.HasProperty("hidePageIndexList") && parentPage.HasValue("hidePageIndexList"))
+      {
+         hidePageIndexList = parentPage.GetPropertyValue<bool>("hidePageIndexList");
+      }
+
+      if (false == hidePageIndexList)
+      {
+         indexTitle = "1 - " + parentPage.GetPropertyValue<string>("navigationTitle", parentPage.Name); ;
+
+         childPages = parentPage.Children.Where(p => p.DocumentTypeAlias == "SiteStandardWebpage" || p.DocumentTypeAlias == "SiteStandardWebpage");
+      }
+   }
+}
+@if (false == hidePageIndexList && childPages != null && childPages.Any())
+{
+   <table cellpadding="2" cellspacing="0" border="0">
+      <tbody>
+         <tr>
+            <td class="bodyTextBlackSmall">
+               @if (parentPage == Model)
+            {
+                  <span>@indexTitle</span>
+               }
+               else
+               {
+                  <a class="projectNav" href="@(parentPage.Url)">@(indexTitle)</a>
+               }
+               <br />
+
+
+               @foreach (IPublishedContent childItem in childPages)
+            {
+               string title = childItem.GetPropertyValue<string>("navigationTitle", childItem.Name);
+
+               if (childItem.Id == Model.Id)
+               {
+                     <span>@(page) - @(title)</span>
+                  }
+                  else
+                  {
+                     <a class="projectNav" href="@(childItem.Url)">@(page) - @(title)</a>
+                  }
+                  <br />
+                  page++;
+               }
+            </td>
+         </tr>
+      </tbody>
+   </table>
+
+   <img src="/images/content-divider.gif" />
+}

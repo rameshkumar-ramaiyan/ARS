@@ -4,23 +4,26 @@
 @using RJP.MultiUrlPicker.Models
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
-    Layout = "_Master.cshtml";
+   Layout = "_Master.cshtml";
 
-    IPublishedContent currentPage = Model.Content;
+   IPublishedContent currentPage = Model.Content;
 
-    bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
+   bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
 
-    string bodyText = currentPage.GetPropertyValue<string>("bodyText");
-    string modeCode = "";
+   string bodyText = currentPage.GetPropertyValue<string>("bodyText");
+   string modeCode = "";
+   
 
-    if (Request.QueryString["modeCode"] != null)
-    {
-        modeCode = Request.QueryString.Get("modeCode");
-    }
+   if (Request.QueryString["modeCode"] != null)
+   {
+      modeCode = Request.QueryString.Get("modeCode");
+   }
 
-    bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
+   
 
-    if (currentPage.Url.StartsWith("/oc/"))
+   bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
+
+   if (currentPage.Url.StartsWith("/oc/"))
    {
       bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.Modify300DpiDownload(currentPage, bodyText);
    }
@@ -30,40 +33,41 @@
 
 <div id="fullPage">
 
-    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
 
-    <div id="pageContent">
+   <div id="pageContent">
 
-        @if (false == hideHeaderTitle)
-        {
-            <table border="0" width="100%">
-                <tr>
-                    <td class="pageHeading">@currentPage.Name</td>
-                </tr>
-                <tr>
-                    <td>
-                        <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
-                    </td>
-                </tr>
-            </table>
-        }
-
-
-        <!-- display URLs of subpages start -->
-        <!--  display URLs of subpages end -->
-        <!-- document content start -->
-
-        @Html.Raw(bodyText)
-
-        <!-- document content end -->
+      @if (false == hideHeaderTitle)
+      {
+         <table border="0" width="100%">
+            <tr>
+               <td class="pageHeading">@currentPage.Name</td>
+            </tr>
+            <tr>
+               <td>
+                  <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
+               </td>
+            </tr>
+         </table>
+      }
 
 
-        <br />
+      <!-- display URLs of subpages start -->
+      @Html.Partial("~/Views/Partials/Modules/PageIndexList.cshtml", currentPage)
+      <!--  display URLs of subpages end -->
 
+      <!-- document content start -->
 
+      @Html.Raw(bodyText)
 
-        <p></p>
+      <!-- document content end -->
 
+      <br />
 
-    </div>
+      <p></p>
+
+      <!-- display Paging of subpages start -->
+      @Html.Partial("~/Views/Partials/Modules/PageIndexPaging.cshtml", currentPage)
+      <!--  display Paging of subpages end -->
+   </div>
 </div>

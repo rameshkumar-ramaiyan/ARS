@@ -1,0 +1,96 @@
+﻿@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions
+@using USDA_ARS.Umbraco.Extensions.Models
+@using Newtonsoft.Json
+@model IPublishedContent
+@{
+   bool hidePageIndexList = false;
+
+   IPublishedContent parentPage = Model;
+   List<IPublishedContent> pageList = new List<IPublishedContent>();
+   IPublishedContent prevNode = null;
+   IPublishedContent nextNode = null;
+
+   if (parentPage != null)
+   {
+      // Check if current page is actually a sub page and not a parent page/node
+      if (parentPage != null && parentPage.Parent != null && (parentPage.Parent.DocumentTypeAlias == "SiteStandardWebpage" || parentPage.Parent.DocumentTypeAlias == "StandardWebpage"))
+      {
+         parentPage = parentPage.Parent;
+      }
+
+      if (parentPage.HasProperty("hidePageIndexList") && parentPage.HasValue("hidePageIndexList"))
+      {
+         hidePageIndexList = parentPage.GetPropertyValue<bool>("hidePageIndexList");
+      }
+
+      if (false == hidePageIndexList)
+      {
+
+         pageList.Add(parentPage);
+
+         // Get all sub pages for the node
+         pageList.AddRange(parentPage.Children.Where(p => p.DocumentTypeAlias == "SiteStandardWebpage" || p.DocumentTypeAlias == "SiteStandardWebpage").ToList());
+
+         // Set Prev & Next nodes
+         if (pageList.Count > 1)
+         {
+            for (int i = 0; i < pageList.Count(); i++)
+            {
+               if (pageList[i].Id == Model.Id && prevNode == null && nextNode == null)
+               {
+                  if (i > 0)
+                  {
+                     prevNode = pageList[i - 1];
+                  }
+                  if (i < (pageList.Count - 1))
+                  {
+                     nextNode = pageList[i + 1];
+                  }
+
+                  break;
+               }
+            }
+         }
+
+      }
+   }
+}
+@if (false == hidePageIndexList && pageList != null && pageList.Count > 1)
+{
+   <table width="100%" border="0">
+      <tbody>
+         <tr>
+            <td>
+               <font face="arial,helvetica" size="-1" color="Navy">
+                  @if (prevNode != null && Model.Id != prevNode.Id)
+                  {
+                     <a href="@(prevNode.Url)" style="padding-right: 20px;">&lt;&lt; Previous</a>
+                  }
+
+                  @for (int i = 0; i < pageList.Count(); i++)
+                  {
+                     IPublishedContent childItem = pageList[i];
+
+                     if (childItem.Id == Model.Id)
+                     {
+                        <span style="padding-right: 20px;">[@(i + 1)]</span>
+                     }
+                     else
+                     {
+                        <a href="@(pageList[i].Url)" style="padding-right: 20px;">@(i + 1)</a>
+                     }
+                  }
+
+                  @if (nextNode != null && Model.Id != nextNode.Id)
+                  {
+                     <a href="@(nextNode.Url)" style="padding-right: 20px;">Next &gt;&gt;</a>
+                  }
+               </font>
+            </td>
+         </tr>
+      </tbody>
+   </table>
+}

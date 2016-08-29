@@ -716,112 +716,113 @@ angular.module('umbraco.directives')
                 }
             };
 
-            //merge options
+           //merge options
             scope.blueimpOptions = angular.extend(defaultOptions, scope.options);
 
-            function loadChildren(node) {
-
+            function loadChildren(id) {
+               mediaResource.getChildren(id)
+                   .then(function (data) {
+                      scope.images = data.items;
+                   });
             }
 
             function checkComplete(e, data) {
-                scope.$apply(function () {
-                    //remove the amount of files complete
-                    //NOTE: function is here instead of in the loop otherwise jshint blows up
-                    function findFile(file) { return file === data.files[i]; }
-                    for (var i = 0; i < data.files.length; i++) {
-                        var found = _.find(scope.files, findFile);
-                        found.completed = true;
-                    }
+               scope.$apply(function () {
+                  //remove the amount of files complete
+                  //NOTE: function is here instead of in the loop otherwise jshint blows up
+                  function findFile(file) { return file === data.files[i]; }
+                  for (var i = 0; i < data.files.length; i++) {
+                     var found = _.find(scope.files, findFile);
+                     found.completed = true;
+                  }
 
-                    //Show notifications!!!!
-                    if (data.result && data.result.notifications && angular.isArray(data.result.notifications)) {
-                        for (var n = 0; n < data.result.notifications.length; n++) {
-                            notificationsService.showNotification(data.result.notifications[n]);
-                        }
-                    }
+                  //Show notifications!!!!
+                  if (data.result && data.result.notifications && angular.isArray(data.result.notifications)) {
+                     for (var n = 0; n < data.result.notifications.length; n++) {
+                        notificationsService.showNotification(data.result.notifications[n]);
+                     }
+                  }
 
-                    //when none are left resync everything
-                    var remaining = _.filter(scope.files, function (file) { return file.completed !== true; });
-                    if (remaining.length === 0) {
+                  //when none are left resync everything
+                  var remaining = _.filter(scope.files, function (file) { return file.completed !== true; });
+                  if (remaining.length === 0) {
 
-                        scope.progress = 100;
+                     scope.progress = 100;
 
-                        //just the ui transition isn't too abrupt, just wait a little here
-                        $timeout(function () {
-                            scope.progress = 0;
-                            scope.files = [];
-                            scope.uploading = false;
+                     //just the ui transition isn't too abrupt, just wait a little here
+                     $timeout(function () {
+                        scope.progress = 0;
+                        scope.files = [];
+                        scope.uploading = false;
 
-                            loadChildren(scope.node);
+                        loadChildren(scope.nodeId);
 
-                            data.node = scope.node;
-
-                            //call the callback
-                            scope.onUploadComplete.apply(this, [data]);
+                        //call the callback
+                        scope.onUploadComplete.apply(this, [data]);
 
 
-                        }, 200);
+                     }, 500);
 
 
-                    }
-                });
+                  }
+               });
             }
 
-            //when one is finished
+           //when one is finished
             scope.$on('fileuploaddone', function (e, data) {
-                checkComplete(e, data);
+               checkComplete(e, data);
             });
 
-            //This handler gives us access to the file 'preview', this is the only handler that makes this available for whatever reason
-            // so we'll use this to also perform the adding of files to our collection
+           //This handler gives us access to the file 'preview', this is the only handler that makes this available for whatever reason
+           // so we'll use this to also perform the adding of files to our collection
             scope.$on('fileuploadprocessalways', function (e, data) {
-                scope.$apply(function () {
-                    scope.uploading = true;
-                    scope.files.push(data.files[data.index]);
-                });
+               scope.$apply(function () {
+                  scope.uploading = true;
+                  scope.files.push(data.files[data.index]);
+               });
             });
 
-            //This is a bit of a hack to check for server errors, currently if there's a non
-            //known server error we will tell them to check the logs, otherwise we'll specifically 
-            //check for the file size error which can only be done with dodgy string checking
+           //This is a bit of a hack to check for server errors, currently if there's a non
+           //known server error we will tell them to check the logs, otherwise we'll specifically 
+           //check for the file size error which can only be done with dodgy string checking
             scope.$on('fileuploadfail', function (e, data) {
-                if (data.jqXHR.status === 500 && data.jqXHR.responseText.indexOf('Maximum request length exceeded') >= 0) {
-                    notificationsService.error(data.errorThrown, 'The uploaded file was too large, check with your site administrator to adjust the maximum size allowed');
+               if (data.jqXHR.status === 500 && data.jqXHR.responseText.indexOf("Maximum request length exceeded") >= 0) {
+                  notificationsService.error(data.errorThrown, "The uploaded file was too large, check with your site administrator to adjust the maximum size allowed");
 
-                }
-                else {
-                    notificationsService.error(data.errorThrown, data.jqXHR.statusText);
-                }
+               }
+               else {
+                  notificationsService.error(data.errorThrown, data.jqXHR.statusText);
+               }
 
-                checkComplete(e, data);
+               checkComplete(e, data);
             });
 
-            //This executes prior to the whole processing which we can use to get the UI going faster,
-            //this also gives us the start callback to invoke to kick of the whole thing
+           //This executes prior to the whole processing which we can use to get the UI going faster,
+           //this also gives us the start callback to invoke to kick of the whole thing
             scope.$on('fileuploadadd', function (e, data) {
-                scope.$apply(function () {
-                    scope.uploading = true;
-                });
+               scope.$apply(function () {
+                  scope.uploading = true;
+               });
             });
 
-            // All these sit-ups are to add dropzone area and make sure it gets removed if dragging is aborted! 
+           // All these sit-ups are to add dropzone area and make sure it gets removed if dragging is aborted! 
             scope.$on('fileuploaddragover', function (e, data) {
-                if (!scope.dragClearTimeout) {
-                    scope.$apply(function () {
-                        scope.dropping = true;
-                    });
-                }
-                else {
-                    $timeout.cancel(scope.dragClearTimeout);
-                }
-                scope.dragClearTimeout = $timeout(function () {
-                    scope.dropping = null;
-                    scope.dragClearTimeout = null;
-                }, 300);
+               if (!scope.dragClearTimeout) {
+                  scope.$apply(function () {
+                     scope.dropping = true;
+                  });
+               }
+               else {
+                  $timeout.cancel(scope.dragClearTimeout);
+               }
+               scope.dragClearTimeout = $timeout(function () {
+                  scope.dropping = null;
+                  scope.dragClearTimeout = null;
+               }, 300);
             });
 
-            //init load
-            loadChildren(scope.node);
+           //init load
+            loadChildren(scope.nodeId);
 
         }
     };
