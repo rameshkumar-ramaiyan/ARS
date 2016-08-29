@@ -109,9 +109,17 @@ remote.location.href = u;
                            }
                            else
                            {
-                              <em>Location not available</em>
-                           }
+                              Location location = Locations.GetLocationObjectByModeCode(modeCode);
 
+                              if (location != null)
+                              {
+                                 <a href="/people-locations/people-list-offices/?modeCode=@(modeCode)">@Locations.GetLocationNameByModeCode(modeCode)</a>
+                              }
+                              else
+                              {
+                                 <em>Location not available</em>
+                              }
+                           }
                         }
 
                      </font>
@@ -134,11 +142,11 @@ remote.location.href = u;
                      <br />
 
                      Fax: @(Strings.FormatPhoneNumber(peopleInfo.FaxAreaCode + peopleInfo.Fax))<br />
+                     @Html.Raw(false == string.IsNullOrEmpty(peopleInfo.RoomNumber) ? "Room " + peopleInfo.RoomNumber + "<br />" : "")
 
                      <br />
-                     @Html.Raw(false == string.IsNullOrEmpty(peopleInfo.RoomNumber) ? "Room " + peopleInfo.RoomNumber + "<br />" : "")
-                     
-                     @peopleInfo.Address1<br />
+
+                     @Html.Raw(false == string.IsNullOrWhiteSpace(peopleInfo.Address1) ? peopleInfo.Address1 + "<br />" : "")
                      @Html.Raw(false == string.IsNullOrWhiteSpace(peopleInfo.Address2) ? peopleInfo.Address2 + "<br />" : "")
                      @Html.Raw(false == string.IsNullOrWhiteSpace(peopleInfo.AddressBuilding) ? peopleInfo.AddressBuilding + "<br />" : "")
 
