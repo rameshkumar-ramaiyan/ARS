@@ -745,6 +745,41 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
       }
 
 
+      public static List<CityState> GetLocationsByProject(string npCode, string projectStatus = "A")
+      {
+         List<CityState> cityStateList = null;
+
+         var db = new Database("arisPublicWebDbDSN");
+
+         string sql = @"SELECT	DISTINCT MODECODES.city, 
+		                  MODECODES.state_code, 
+		                  (MODECODES.city + ',' + ' ' + MODECODES.state_code) AS location 
+                  FROM		
+		                  w_clean_projects_all	PROJECTS,			
+		                  v_locations				MODECODES
+			
+                  WHERE 	PROJECTS.ACCN_NO in 
+					                  (
+						                  select	distinct accn_NO
+						                  from	A416_national_program
+						                  where 	NP_code = @npCode
+					                  )
+	                  AND		projects.STATUS_CODE = @projectStatus
+	                  AND		projects.MODECODE_1 = modecodes.MODECODE_1
+	                  AND		projects.MODECODE_2 = modecodes.MODECODE_2
+	                  AND		projects.MODECODE_3 = modecodes.MODECODE_3
+	                  AND		projects.MODECODE_4 = modecodes.MODECODE_4
+	                  AND		projects.MODECODE_2 <> '01'
+	                  AND		MODECODES.STATUS_CODE = 'a'
+	                  AND		left(modecodes.MODECODE_1, 2) > 05
+                  ORDER BY location";
+
+         cityStateList = db.Query<CityState>(sql, new { npCode = npCode, projectStatus = projectStatus }).ToList();
+
+         return cityStateList;
+      }
+
+
       public static string ProjectTypeByCode(string code)
       {
          if (code == "A")
