@@ -388,6 +388,22 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
       }
 
 
+      public static IPublishedContent GetNodeByModeCodeSubFolder(string modeCode, string subFolderDocType, bool useCache = true)
+      {
+         IPublishedContent modeCodeNode = null;
+         IPublishedContent node = null;
+
+         modeCodeNode = GetNodeByModeCode(modeCode, useCache);
+
+         if (modeCodeNode != null)
+         {
+            node = modeCodeNode.Children.Where(p => p.DocumentTypeAlias == subFolderDocType).FirstOrDefault();
+         }
+
+         return node;
+      }
+
+
       public static IPublishedContent GetNavNodeIdByGuid(string guid)
       {
          IPublishedContent node = null;
