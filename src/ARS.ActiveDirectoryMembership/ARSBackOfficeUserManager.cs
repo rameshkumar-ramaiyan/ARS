@@ -17,16 +17,17 @@ namespace ARS.ActiveDirectoryMembership
          Task<BackOfficeUserPasswordCheckerResult> result = null;
          bool useActiveDirectlyOnly = false;
 
-         if (ConfigurationManager.AppSettings["ADSetting:UserActiveDirectoryOnly"] != null && ConfigurationManager.AppSettings.Get("ADSetting:UserActiveDirectoryOnly") == "true")
+         if (ConfigurationManager.AppSettings["ADSetting:UserActiveDirectoryOnly"] != null && ConfigurationManager.AppSettings.Get("ADSetting:UserActiveDirectoryOnly").ToLower() == "true")
          {
             useActiveDirectlyOnly = true;
          }
 
          if (true == useActiveDirectlyOnly)
          {
-            result = LdapAuth(user.UserName, password)
-                   ? Task.FromResult(BackOfficeUserPasswordCheckerResult.ValidCredentials)
-                   : Task.FromResult(BackOfficeUserPasswordCheckerResult.ValidCredentials);
+            if (true == LdapAuth(user.UserName, password))
+            {
+               result = Task.FromResult(BackOfficeUserPasswordCheckerResult.ValidCredentials);
+            }
          }
          else
          {
