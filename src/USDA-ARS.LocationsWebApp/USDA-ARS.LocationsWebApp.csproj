@@ -360,11 +360,15 @@
     <Content Include="StoredProcedures\udfDescribeUnit.sql" />
     <Content Include="StoredProcedures\udfGetChildLabModeCodeUnderRC.sql" />
     <Content Include="StoredProcedures\udfGetChildRCModeCodeUnderCity.sql" />
+    <Content Include="StoredProcedures\udfgetDecryptedPagesBasedOnPageNumber.sql" />
     <Content Include="StoredProcedures\uspgetAllAreasCarouselSlides.sql" />
     <Content Include="StoredProcedures\uspgetAllAreasPopularTopics.sql" />
     <Content Include="StoredProcedures\uspgetAllCarouselSlidesBasedOnModeCode.sql" />
+    <Content Include="StoredProcedures\uspgetAllDistinctDocIdsWithMultiplePages.sql" />
+    <Content Include="StoredProcedures\uspgetAllDocsAndContentWithSearchString.sql" />
     <Content Include="StoredProcedures\uspgetAllDocumentIdsBasedOnPersonId.sql" />
     <Content Include="StoredProcedures\uspgetAllDocumentPagesBasedOnCurrentVersionId.sql" />
+    <Content Include="StoredProcedures\uspgetAllDocumentsBasedOnRandomDocIds.sql" />
     <Content Include="StoredProcedures\uspgetAllLabsPopularTopics.sql" />
     <Content Include="StoredProcedures\uspgetAllOldModeCodesBasedOnNewModeCodes.sql" />
     <Content Include="StoredProcedures\uspgetAllJobLocationIdsBasedOnCityName.sql" />
