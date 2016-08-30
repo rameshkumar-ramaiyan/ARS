@@ -315,6 +315,7 @@
     <Compile Include="Controller\DownloadRequestController.cs" />
     <Compile Include="Controller\HelpInfoController.cs" />
     <Compile Include="Controller\DataImporterController.cs" />
+    <Compile Include="Helpers\Aris\CityState.cs" />
     <Compile Include="Helpers\Aris\DownloadRequest.cs" />
     <Compile Include="Helpers\Aris\Locations.cs" />
     <Compile Include="Helpers\Aris\NewsInterLinks.cs" />
@@ -367,6 +368,7 @@
     <Compile Include="Models\BlogItem.cs" />
     <Compile Include="Models\Aris\RefModeCode.cs" />
     <Compile Include="Models\CaptchaResponse.cs" />
+    <Compile Include="Models\FormProjectFilter.cs" />
     <Compile Include="Models\EmailSignup.cs" />
     <Compile Include="Models\Import\ApiContent.cs" />
     <Compile Include="Models\Import\ApiProperty.cs" />

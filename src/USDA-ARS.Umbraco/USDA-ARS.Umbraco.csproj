@@ -3087,6 +3087,7 @@
     <Content Include="Views\PeopleLocationsOffices.cshtml" />
     <Content Include="Views\Partials\Modules\PageIndexList.cshtml" />
     <Content Include="Views\Partials\Modules\PageIndexPaging.cshtml" />
+    <Content Include="Views\ProjectListByProgram.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

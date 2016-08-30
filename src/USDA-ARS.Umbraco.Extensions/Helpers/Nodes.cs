@@ -320,7 +320,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
                            if (false == oldUrl.EndsWith("/") && false == oldUrl.ToLower().EndsWith(".htm") && false == oldUrl.ToLower().EndsWith(".html"))
                            {
-                              redirectList.Add(new RedirectItem { OldUrl = oldUrl.Trim().ToLower() +"/", UmbracoId = oldUrlItem.UmbracoId });
+                              redirectList.Add(new RedirectItem { OldUrl = oldUrl.Trim().ToLower() + "/", UmbracoId = oldUrlItem.UmbracoId });
                            }
                         }
                      }
@@ -361,28 +361,52 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
          IPublishedContent node = null;
          modeCode = Helpers.ModeCodes.ModeCodeAddDashes(modeCode);
 
-         if (true == useCache)
+         if (false == string.IsNullOrEmpty(modeCode))
          {
-            List<IPublishedContent> nodeList = GetNodesListOfModeCodes();
+            if (true == useCache)
+            {
+               List<IPublishedContent> nodeList = GetNodesListOfModeCodes();
 
-            node = nodeList.Where(p => p.GetPropertyValue<string>("modeCode") == modeCode).FirstOrDefault();
-         }
-         else
-         {
-            var db = new Database("umbracoDbDSN");
+               node = nodeList.Where(p => p.GetPropertyValue<string>("modeCode") == modeCode).FirstOrDefault();
 
-            string sql = @"SELECT contentNodeId FROM cmsPropertyData WHERE propertytypeid IN (SELECT id FROM cmsPropertyType WHERE Alias = 'modeCode')
+               // Check old Mode Code
+               if (node == null)
+               {
+                  node = nodeList.Where(p => false == string.IsNullOrWhiteSpace(p.GetPropertyValue<string>("oldModeCodes")) &&
+                        p.GetPropertyValue<string>("oldModeCodes").Contains(modeCode)).FirstOrDefault();
+               }
+            }
+            else
+            {
+               var db = new Database("umbracoDbDSN");
+
+               string sql = @"SELECT contentNodeId FROM cmsPropertyData WHERE propertytypeid IN (SELECT id FROM cmsPropertyType WHERE Alias = 'modeCode')
                             AND NOT dataNvarchar IS NULL AND dataNvarchar = @modeCode AND versionId IN
                             (SELECT versionId FROM cmsDocument WHERE published = 1)";
 
-            string contentNodeId = db.Query<string>(sql, new { modeCode = modeCode }).FirstOrDefault();
+               string contentNodeId = db.Query<string>(sql, new { modeCode = modeCode }).FirstOrDefault();
 
-            if (false == string.IsNullOrEmpty(contentNodeId))
-            {
-               node = UmbHelper.TypedContent(Convert.ToInt32(contentNodeId));
+               if (false == string.IsNullOrEmpty(contentNodeId))
+               {
+                  node = UmbHelper.TypedContent(Convert.ToInt32(contentNodeId));
+               }
+
+               // Check old Mode Code
+               if (node == null)
+               {
+                  sql = @"SELECT contentNodeId FROM cmsPropertyData WHERE propertytypeid IN (SELECT id FROM cmsPropertyType WHERE Alias = 'oldModeCodes')
+                            AND NOT dataNvarchar IS NULL AND dataNvarchar = '%' + @modeCode + '%' AND versionId IN
+                            (SELECT versionId FROM cmsDocument WHERE published = 1)";
+
+                  contentNodeId = db.Query<string>(sql, new { modeCode = modeCode }).FirstOrDefault();
+
+                  if (false == string.IsNullOrEmpty(contentNodeId))
+                  {
+                     node = UmbHelper.TypedContent(Convert.ToInt32(contentNodeId));
+                  }
+               }
             }
          }
-
 
          return node;
       }
