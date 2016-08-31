@@ -95,73 +95,13 @@
                                  <td width="1000" align="left">
                                     <select id="filterName" name="filterName" class="cfSelect " multiple="multiple" size="4">
                                        <option value="blank">All People</option>
-                                       <option value="60">Ahuja, Jaspreet</option>
-                                       <option value="34942">Allen, Lindsay</option>
-                                       <option value="132">Anand, Jaswinder</option>
-                                       <option value="236">Baer, David</option>
-                                       <option value="569">Bowman, Shanthy</option>
-                                       <option value="639">Britz, Steven</option>
-                                       <option value="773">Burri, Betty</option>
-                                       <option value="775">Burrin, Douglas</option>
-                                       <option value="37646">Byrdwell, W Craig</option>
-                                       <option value="40138">Cao, Jay</option>
-                                       <option value="947">Chandler, Laurence</option>
-                                       <option value="36087">Chen, Pei</option>
-                                       <option value="45799">Claycombe, Kate</option>
-                                       <option value="31990">Combs, Gerald</option>
-                                       <option value="21984">Dawson, Harry</option>
-                                       <option value="49934">Garcia, Rolando</option>
-                                       <option value="21224">Giovannoni, James</option>
-                                       <option value="2014">Glahn, Raymond</option>
-                                       <option value="2178">Grusak, Michael</option>
-                                       <option value="2331">Harnly, James</option>
-                                       <option value="2390">Hawkes, Chris</option>
-                                       <option value="2403">Haytowitz, David</option>
-                                       <option value="46504">Hoy, M Katherine</option>
-                                       <option value="2635">Huang, Liping</option>
-                                       <option value="32982">Hwang, Daniel</option>
-                                       <option value="43596">Jahns, Lisa</option>
-                                       <option value="2966">Keim, Nancy</option>
-                                       <option value="2974">Kelley, Darshan</option>
-                                       <option value="36443">Klurfeld, David</option>
-                                       <option value="3082">Kochian, Leon</option>
-                                       <option value="3180">Lacomb, Randy</option>
-                                       <option value="40255">Laugero, Kevin</option>
-                                       <option value="31945">Li, Li</option>
-                                       <option value="36787">Luthria, Devanand</option>
-                                       <option value="46154">Martin, Carrie</option>
-                                       <option value="514">Montville, Janice</option>
-                                       <option value="3986">Moshfegh, Alanna</option>
-                                       <option value="4051">Nakata, Paul</option>
-                                       <option value="37206">Newman, John</option>
-                                       <option value="4152">Novotny, Janet</option>
-                                       <option value="4289">Park, Jae</option>
-                                       <option value="33275">Parnell, Laurence</option>
-                                       <option value="4351">Pehrsson, Pamela</option>
-                                       <option value="43906">Picklo, Matthew</option>
-                                       <option value="39686">Pineros, Miguel</option>
-                                       <option value="44863">Raatz, Susan</option>
-                                       <option value="30778">Rhodes, Donna</option>
-                                       <option value="47244">Roemmich, James</option>
-                                       <option value="47617">Roseland, Janet</option>
-                                       <option value="43787">Rumpler, William</option>
-                                       <option value="5050">Sebastian, Rhonda</option>
-                                       <option value="5149">Shukitt-Hale, Barbara</option>
-                                       <option value="5244">Smith, Allen</option>
-                                       <option value="5303">Solano-Aguilar, Gloria</option>
-                                       <option value="10062">Steinfeldt, Lois</option>
-                                       <option value="5405">Stephensen, Charles</option>
-                                       <option value="5513">Swietlik, Dariusz</option>
-                                       <option value="33245">Thannhauser, Theodore</option>
-                                       <option value="39279">Thompson, Deborah</option>
-                                       <option value="4225">Upchurch, Dan</option>
-                                       <option value="5759">Urban, Joseph</option>
-                                       <option value="5779">Van Loan, Marta</option>
-                                       <option value="5900">Wang, Thomas</option>
-                                       <option value="41193">Yan, Lin</option>
-                                       <option value="36352">Yang, Yong</option>
-                                       <option value="12326">Zeng, Huawei</option>
-                                       <option value="34944">Zunino, Susan</option>
+                                       @if (peopleListByProject != null && peopleListByProject.Any())
+                                       {
+                                          foreach (PeopleInfo personItem in peopleListByProject)
+                                          {
+                                             <option value="@(personItem.PersonId)">@(personItem.LastName), @(personItem.FirstName)</option>
+                                          }
+                                       }
                                     </select>
                                  </td>
                               </tr>

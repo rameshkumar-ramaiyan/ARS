@@ -74,13 +74,18 @@
          }
          else if (breadcrumb.DocumentTypeAlias == "Publication" && false == string.IsNullOrWhiteSpace(seqNo115))
          {
-            UsdaPublication publication = Publications.GetPublicationById(Convert.ToInt32(seqNo115));
+            int intSeqNo115 = 0;
 
-            if (publication != null)
+            if (int.TryParse(seqNo115, out intSeqNo115))
             {
-               modeCode = ModeCodes.ModeCodeIntsToString(publication.ModeCode1, publication.ModeCode2, publication.ModeCode3, publication.ModeCode4);
+               UsdaPublication publication = Publications.GetPublicationById(intSeqNo115);
 
-               nodeBreadcrumbList.Add(new NodeBreadcrumb("Publication #" + seqNo115, breadcrumb.Url + "?seqNo115=" + seqNo115, breadcrumb.Level));
+               if (publication != null)
+               {
+                  modeCode = ModeCodes.ModeCodeIntsToString(publication.ModeCode1, publication.ModeCode2, publication.ModeCode3, publication.ModeCode4);
+
+                  nodeBreadcrumbList.Add(new NodeBreadcrumb("Publication #" + seqNo115, breadcrumb.Url + "?seqNo115=" + seqNo115, breadcrumb.Level));
+               }
             }
          }
          else if (breadcrumb.DocumentTypeAlias == "StandardWebpage" && false == string.IsNullOrWhiteSpace(modeCode))

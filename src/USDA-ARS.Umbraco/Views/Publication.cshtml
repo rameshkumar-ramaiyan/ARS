@@ -40,10 +40,6 @@
       }
    }
 
-   if (publication == null)
-   {
-      Response.Redirect("/");
-   }
 }
 
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
@@ -191,6 +187,11 @@
             </tbody>
          </table>
       }
+      else
+      {
+         <em>Cannot find publication.</em>
+      }
+
    </div>
 
 </div>
