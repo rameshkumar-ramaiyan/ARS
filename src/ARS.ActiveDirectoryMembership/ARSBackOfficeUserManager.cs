@@ -28,6 +28,10 @@ namespace ARS.ActiveDirectoryMembership
             {
                result = Task.FromResult(BackOfficeUserPasswordCheckerResult.ValidCredentials);
             }
+            else
+            {
+               result = Task.FromResult(BackOfficeUserPasswordCheckerResult.InvalidCredentials);
+            }
          }
          else
          {
