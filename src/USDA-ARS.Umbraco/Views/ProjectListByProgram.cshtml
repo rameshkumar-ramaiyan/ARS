@@ -2,253 +2,275 @@
 @using Archetype.Models
 @using Umbraco.Core.Models
 @using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@using USDA_ARS.Umbraco.Extensions.Models
 @using USDA_ARS.Umbraco.Extensions.Models.Aris
 @using RJP.MultiUrlPicker.Models
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
-    Layout = "_Master.cshtml";
+   Layout = "_Master.cshtml";
 
-    string npCode = null;
-    string sort = null;
-    IPublishedContent currentPage = Model.Content;
-    IPublishedContent programNode = null;
+   string npCode = null;
+   string sort = null;
+   IPublishedContent currentPage = Model.Content;
+   IPublishedContent programNode = null;
+   string projectStatus = "A";
 
-    if (Request.QueryString["npCode"] != null)
-    {
-        npCode = Request.QueryString.Get("npCode");
+   // NP CODE
+   if (Request.QueryString["npCode"] != null)
+   {
+      npCode = Request.QueryString.Get("npCode");
 
-        programNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByNpCode(npCode);
-    }
-    if (Request.QueryString["sort"] != null)
-    {
-        sort = Request.QueryString.Get("sort");
-    }
+      programNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByNpCode(npCode);
+   }
+   else
+   {
+      Response.Redirect("/research/programs");
+   }
+   if (Request.QueryString["sort"] != null)
+   {
+      sort = Request.QueryString.Get("sort");
+   }
 
-    List<ProjectInfo> projectProgramList = Projects.GetProjectAnnualReportList(npCode, sort);
-    List<ProjectInfo> projectProgramListDistinct = projectProgramList.DistinctBy(p => p.AccountNo).ToList();
+   // PROJECT STATUS
+   if (false == string.IsNullOrEmpty(Request.QueryString["projectStatus"]))
+   {
+      projectStatus = Request.QueryString.Get("projectStatus");
+
+      if (projectStatus.Length != 1)
+      {
+         projectStatus = "A";
+      }
+   }
+
+   List<ProjectStatusOption> projectStatusList = FormProjectFilter.GetProjectStatusList();
+
+   List<PeopleInfo> peopleListByProject = FormProjectFilter.GetPeopleByProject(npCode, projectStatus);
+   List<ProjectInfo> projectProgramList = Projects.GetProjectAnnualReportList(npCode, sort);
+   List<ProjectInfo> projectProgramListDistinct = projectProgramList.DistinctBy(p => p.AccountNo).ToList();
 
 }
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
 
 <div id="fullPage">
 
-    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", programNode)
+   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", programNode)
 
-    <div id="pageContent">
+   <div id="pageContent">
 
-       <div class="cfform">
-          <form id="filterForm" action="?projectlist=true&amp;np_code=107&amp;filter=yes" method="post" class="cfHaloSkin" name="filterForm">
-             <table border="0" cellpadding="2" cellspacing="0" width="100%" class="vertical">
-                <tbody>
-                   <tr>
-                      <td colspan="2">
-                         <table border="0" cellpadding="2" cellspacing="0" width="100%" class="vertical">
-                            <tbody>
-                               <tr>
-                                  <td colspan="2" class="cfHeaderTitle">Filter Project List</td>
-                               </tr>
-                               <tr>
-                                  <td colspan="2">
-                                     <table border="0" cellspacing="0" cellpadding="0" class="horizontal">
-                                        <tbody>
-                                           <tr class="cfElementRow">
-                                              <td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Project Status</td>
-                                              <td>
-                                                 <input type="radio" id="filterProjectStatus1" name="filterProjectStatus" class="cfRadio " onclick="redirectCheck('A');" checked="checked" value="A">
-                                                 <label for="filterProjectStatus1">Active</label>
-                                                 <input type="radio" id="filterProjectStatus2" name="filterProjectStatus" class="cfRadio " onclick="redirectCheck('E');" value="E">
-                                                 <label for="filterProjectStatus2">Terminated</label>
-                                                 <input type="radio" id="filterProjectStatus3" name="filterProjectStatus" class="cfRadio " onclick="redirectCheck('X');" value="X">
-                                                 <label for="filterProjectStatus3">Expired</label>
-                                              </td>
-                                           </tr>
-                                        </tbody>
-                                     </table>
-                                  </td>
-                               </tr>
-                               <tr class="cfElementRow">
-                                  <td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
-                                     <label for="filterName">Name</label>
-                                  </td>
-                                  <td width="1000" align="left">
-                                     <select id="filterName" name="filterName" class="cfSelect " multiple="multiple" size="4">
-                                        <option value="blank">All People</option>
-                                        <option value="60">Ahuja, Jaspreet</option>
-                                        <option value="34942">Allen, Lindsay</option>
-                                        <option value="132">Anand, Jaswinder</option>
-                                        <option value="236">Baer, David</option>
-                                        <option value="569">Bowman, Shanthy</option>
-                                        <option value="639">Britz, Steven</option>
-                                        <option value="773">Burri, Betty</option>
-                                        <option value="775">Burrin, Douglas</option>
-                                        <option value="37646">Byrdwell, W Craig</option>
-                                        <option value="40138">Cao, Jay</option>
-                                        <option value="947">Chandler, Laurence</option>
-                                        <option value="36087">Chen, Pei</option>
-                                        <option value="45799">Claycombe, Kate</option>
-                                        <option value="31990">Combs, Gerald</option>
-                                        <option value="21984">Dawson, Harry</option>
-                                        <option value="49934">Garcia, Rolando</option>
-                                        <option value="21224">Giovannoni, James</option>
-                                        <option value="2014">Glahn, Raymond</option>
-                                        <option value="2178">Grusak, Michael</option>
-                                        <option value="2331">Harnly, James</option>
-                                        <option value="2390">Hawkes, Chris</option>
-                                        <option value="2403">Haytowitz, David</option>
-                                        <option value="46504">Hoy, M Katherine</option>
-                                        <option value="2635">Huang, Liping</option>
-                                        <option value="32982">Hwang, Daniel</option>
-                                        <option value="43596">Jahns, Lisa</option>
-                                        <option value="2966">Keim, Nancy</option>
-                                        <option value="2974">Kelley, Darshan</option>
-                                        <option value="36443">Klurfeld, David</option>
-                                        <option value="3082">Kochian, Leon</option>
-                                        <option value="3180">Lacomb, Randy</option>
-                                        <option value="40255">Laugero, Kevin</option>
-                                        <option value="31945">Li, Li</option>
-                                        <option value="36787">Luthria, Devanand</option>
-                                        <option value="46154">Martin, Carrie</option>
-                                        <option value="514">Montville, Janice</option>
-                                        <option value="3986">Moshfegh, Alanna</option>
-                                        <option value="4051">Nakata, Paul</option>
-                                        <option value="37206">Newman, John</option>
-                                        <option value="4152">Novotny, Janet</option>
-                                        <option value="4289">Park, Jae</option>
-                                        <option value="33275">Parnell, Laurence</option>
-                                        <option value="4351">Pehrsson, Pamela</option>
-                                        <option value="43906">Picklo, Matthew</option>
-                                        <option value="39686">Pineros, Miguel</option>
-                                        <option value="44863">Raatz, Susan</option>
-                                        <option value="30778">Rhodes, Donna</option>
-                                        <option value="47244">Roemmich, James</option>
-                                        <option value="47617">Roseland, Janet</option>
-                                        <option value="43787">Rumpler, William</option>
-                                        <option value="5050">Sebastian, Rhonda</option>
-                                        <option value="5149">Shukitt-Hale, Barbara</option>
-                                        <option value="5244">Smith, Allen</option>
-                                        <option value="5303">Solano-Aguilar, Gloria</option>
-                                        <option value="10062">Steinfeldt, Lois</option>
-                                        <option value="5405">Stephensen, Charles</option>
-                                        <option value="5513">Swietlik, Dariusz</option>
-                                        <option value="33245">Thannhauser, Theodore</option>
-                                        <option value="39279">Thompson, Deborah</option>
-                                        <option value="4225">Upchurch, Dan</option>
-                                        <option value="5759">Urban, Joseph</option>
-                                        <option value="5779">Van Loan, Marta</option>
-                                        <option value="5900">Wang, Thomas</option>
-                                        <option value="41193">Yan, Lin</option>
-                                        <option value="36352">Yang, Yong</option>
-                                        <option value="12326">Zeng, Huawei</option>
-                                        <option value="34944">Zunino, Susan</option>
-                                     </select>
-                                  </td>
-                               </tr>
-                               <tr class="cfElementRow">
-                                  <td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
-                                     <label for="filterProjectType">Project Type</label>
-                                  </td>
-                                  <td width="1000" align="left">
-                                     <select id="filterProjectType" name="filterProjectType" class="cfSelect ">
-                                        <option value="blank">All Project Types</option>
-                                        <option value="D">Appropriated</option>
-                                        <option value="C">Contract</option>
-                                        <option value="A">General Cooperative Agreement</option>
-                                        <option value="G">Grant</option>
-                                        <option value="M">Memorandum of Understanding</option>
-                                        <option value="N">Nonfunded Cooperative Agreement</option>
-                                        <option value="X">Other</option>
-                                        <option value="R">Reimbursable</option>
-                                        <option value="S">Specific Cooperative Agreement</option>
-                                        <option value="T">Trust</option>
-                                     </select>
-                                  </td>
-                               </tr>
-                               <tr class="cfElementRow">
-                                  <td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
-                                     <label for="filterLocation">Location</label>
-                                  </td>
-                                  <td width="1000" align="left">
-                                     <select id="filterLocation" name="filterLocation" class="cfSelect ">
-                                        <option value="blank">All Locations</option>
-                                        <option value="Beltsville, MD">Beltsville, MD</option>
-                                        <option value="Boston, MA">Boston, MA</option>
-                                        <option value="Davis, CA">Davis, CA</option>
-                                        <option value="Grand Forks, ND">Grand Forks, ND</option>
-                                        <option value="Houston, TX">Houston, TX</option>
-                                        <option value="Ithaca, NY">Ithaca, NY</option>
-                                        <option value="Little Rock, AR">Little Rock, AR</option>
-                                     </select>
-                                  </td>
-                               </tr>
-                               <tr>
-                                  <td>
-                                     <br>
-                                  </td>
-                               </tr>
-                            </tbody>
-                         </table>
-                      </td>
-                   </tr>
-                   <tr>
-                      <td colspan="2">
-                         <table border="0" cellspacing="0" cellpadding="0" class="horizontal">
-                            <tbody>
-                               <tr class="cfElementRow">
-                                  <td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Show all projects</td>
-                                  <td>
-                                     <input type="radio" id="showAllProjects1" name="showAllProjects" class="cfRadio " value="Yes">
-                                     <label for="showAllProjects1">Yes</label>
-                                     <input type="radio" id="showAllProjects2" name="showAllProjects" class="cfRadio " checked="checked" value="No">
-                                     <label for="showAllProjects2">No</label>
-                                  </td>
-                               </tr>
-                            </tbody>
-                         </table>
-                      </td>
-                   </tr>
-                   <tr>
-                      <td colspan="2">
-                         <table border="0" cellspacing="0" cellpadding="0" class="horizontal">
-                            <tbody>
-                               <tr class="cfElementRow">
-                                  <td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Sort By</td>
-                                  <td>
-                                     <input type="radio" id="sortBy1" name="sortBy" class="cfRadio " checked="checked" value="">
-                                     <label for="sortBy1">Location</label>
-                                     <input type="radio" id="sortBy2" name="sortBy" class="cfRadio " value="Project Type">
-                                     <label for="sortBy2">Project Type</label>
-                                  </td>
-                               </tr>
-                            </tbody>
-                         </table>
-                      </td>
-                   </tr>
-                   <tr>
-                      <td colspan="2">
-                         <table border="0" cellspacing="0" cellpadding="0" class="horizontal">
-                            <tbody>
-                               <tr class="cfElementRow">
-                                  <td>
-                                     <input id="submitFilter" name="submitFilter" class="cfButton " value="Filter" type="submit" style="margin-left:120px;">
-                                  </td>
-                                  <td>
-                                     <input id="resetProjectList" name="resetProjectList" class="cfButton " type="reset" value="Reset">
-                                  </td>
-                               </tr>
-                            </tbody>
-                         </table>
-                      </td>
-                   </tr>
-                   <tr>
-                      <td>
-                         <br>
-                      </td>
-                   </tr>
-                </tbody>
-             </table>
-          </form>
-       </div>
+      <div class="cfform">
+         <form id="filterForm" action="?projectlist=true&amp;np_code=107&amp;filter=yes" method="post" class="cfHaloSkin" name="filterForm">
+            <input id="npCode" name="npCode" value="@(npCode)" />
+            <input id="filter" name="filter" value="yes" />
+            <table border="0" cellpadding="2" cellspacing="0" width="100%" class="vertical">
+               <tbody>
+                  <tr>
+                     <td colspan="2">
+                        <table border="0" cellpadding="2" cellspacing="0" width="100%" class="vertical">
+                           <tbody>
+                              <tr>
+                                 <td colspan="2" class="cfHeaderTitle">Filter Project List</td>
+                              </tr>
+                              <tr>
+                                 <td colspan="2">
+                                    <table border="0" cellspacing="0" cellpadding="0" class="horizontal">
+                                       <tbody>
+                                          <tr class="cfElementRow">
+                                             <td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Project Status</td>
+                                             <td>
+                                                @foreach (ProjectStatusOption projectStatusItem in projectStatusList)
+                                                {
+                                                   <input type="radio" id="projectStatus@(projectStatusItem.Value)" name="projectStatus" class="cfRadio " onclick="redirectCheck('@(projectStatusItem.Value)');" @(projectStatus == projectStatusItem.Value ? "checked=\"checked\"" : "") value="@(projectStatusItem.Value)">
+                                                <label for="projectStatus@(projectStatusItem.Value)">@(projectStatusItem.Text)</label>
+                                                }
+                                             </td>
+                                          </tr>
+                                       </tbody>
+                                    </table>
+                                 </td>
+                              </tr>
+                              <tr class="cfElementRow">
+                                 <td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
+                                    <label for="filterName">Name</label>
+                                 </td>
+                                 <td width="1000" align="left">
+                                    <select id="filterName" name="filterName" class="cfSelect " multiple="multiple" size="4">
+                                       <option value="blank">All People</option>
+                                       <option value="60">Ahuja, Jaspreet</option>
+                                       <option value="34942">Allen, Lindsay</option>
+                                       <option value="132">Anand, Jaswinder</option>
+                                       <option value="236">Baer, David</option>
+                                       <option value="569">Bowman, Shanthy</option>
+                                       <option value="639">Britz, Steven</option>
+                                       <option value="773">Burri, Betty</option>
+                                       <option value="775">Burrin, Douglas</option>
+                                       <option value="37646">Byrdwell, W Craig</option>
+                                       <option value="40138">Cao, Jay</option>
+                                       <option value="947">Chandler, Laurence</option>
+                                       <option value="36087">Chen, Pei</option>
+                                       <option value="45799">Claycombe, Kate</option>
+                                       <option value="31990">Combs, Gerald</option>
+                                       <option value="21984">Dawson, Harry</option>
+                                       <option value="49934">Garcia, Rolando</option>
+                                       <option value="21224">Giovannoni, James</option>
+                                       <option value="2014">Glahn, Raymond</option>
+                                       <option value="2178">Grusak, Michael</option>
+                                       <option value="2331">Harnly, James</option>
+                                       <option value="2390">Hawkes, Chris</option>
+                                       <option value="2403">Haytowitz, David</option>
+                                       <option value="46504">Hoy, M Katherine</option>
+                                       <option value="2635">Huang, Liping</option>
+                                       <option value="32982">Hwang, Daniel</option>
+                                       <option value="43596">Jahns, Lisa</option>
+                                       <option value="2966">Keim, Nancy</option>
+                                       <option value="2974">Kelley, Darshan</option>
+                                       <option value="36443">Klurfeld, David</option>
+                                       <option value="3082">Kochian, Leon</option>
+                                       <option value="3180">Lacomb, Randy</option>
+                                       <option value="40255">Laugero, Kevin</option>
+                                       <option value="31945">Li, Li</option>
+                                       <option value="36787">Luthria, Devanand</option>
+                                       <option value="46154">Martin, Carrie</option>
+                                       <option value="514">Montville, Janice</option>
+                                       <option value="3986">Moshfegh, Alanna</option>
+                                       <option value="4051">Nakata, Paul</option>
+                                       <option value="37206">Newman, John</option>
+                                       <option value="4152">Novotny, Janet</option>
+                                       <option value="4289">Park, Jae</option>
+                                       <option value="33275">Parnell, Laurence</option>
+                                       <option value="4351">Pehrsson, Pamela</option>
+                                       <option value="43906">Picklo, Matthew</option>
+                                       <option value="39686">Pineros, Miguel</option>
+                                       <option value="44863">Raatz, Susan</option>
+                                       <option value="30778">Rhodes, Donna</option>
+                                       <option value="47244">Roemmich, James</option>
+                                       <option value="47617">Roseland, Janet</option>
+                                       <option value="43787">Rumpler, William</option>
+                                       <option value="5050">Sebastian, Rhonda</option>
+                                       <option value="5149">Shukitt-Hale, Barbara</option>
+                                       <option value="5244">Smith, Allen</option>
+                                       <option value="5303">Solano-Aguilar, Gloria</option>
+                                       <option value="10062">Steinfeldt, Lois</option>
+                                       <option value="5405">Stephensen, Charles</option>
+                                       <option value="5513">Swietlik, Dariusz</option>
+                                       <option value="33245">Thannhauser, Theodore</option>
+                                       <option value="39279">Thompson, Deborah</option>
+                                       <option value="4225">Upchurch, Dan</option>
+                                       <option value="5759">Urban, Joseph</option>
+                                       <option value="5779">Van Loan, Marta</option>
+                                       <option value="5900">Wang, Thomas</option>
+                                       <option value="41193">Yan, Lin</option>
+                                       <option value="36352">Yang, Yong</option>
+                                       <option value="12326">Zeng, Huawei</option>
+                                       <option value="34944">Zunino, Susan</option>
+                                    </select>
+                                 </td>
+                              </tr>
+                              <tr class="cfElementRow">
+                                 <td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
+                                    <label for="filterProjectType">Project Type</label>
+                                 </td>
+                                 <td width="1000" align="left">
+                                    <select id="filterProjectType" name="filterProjectType" class="cfSelect ">
+                                       <option value="blank">All Project Types</option>
+                                       <option value="D">Appropriated</option>
+                                       <option value="C">Contract</option>
+                                       <option value="A">General Cooperative Agreement</option>
+                                       <option value="G">Grant</option>
+                                       <option value="M">Memorandum of Understanding</option>
+                                       <option value="N">Nonfunded Cooperative Agreement</option>
+                                       <option value="X">Other</option>
+                                       <option value="R">Reimbursable</option>
+                                       <option value="S">Specific Cooperative Agreement</option>
+                                       <option value="T">Trust</option>
+                                    </select>
+                                 </td>
+                              </tr>
+                              <tr class="cfElementRow">
+                                 <td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
+                                    <label for="filterLocation">Location</label>
+                                 </td>
+                                 <td width="1000" align="left">
+                                    <select id="filterLocation" name="filterLocation" class="cfSelect ">
+                                       <option value="blank">All Locations</option>
+                                       <option value="Beltsville, MD">Beltsville, MD</option>
+                                       <option value="Boston, MA">Boston, MA</option>
+                                       <option value="Davis, CA">Davis, CA</option>
+                                       <option value="Grand Forks, ND">Grand Forks, ND</option>
+                                       <option value="Houston, TX">Houston, TX</option>
+                                       <option value="Ithaca, NY">Ithaca, NY</option>
+                                       <option value="Little Rock, AR">Little Rock, AR</option>
+                                    </select>
+                                 </td>
+                              </tr>
+                              <tr>
+                                 <td>
+                                    <br>
+                                 </td>
+                              </tr>
+                           </tbody>
+                        </table>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td colspan="2">
+                        <table border="0" cellspacing="0" cellpadding="0" class="horizontal">
+                           <tbody>
+                              <tr class="cfElementRow">
+                                 <td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Show all projects</td>
+                                 <td>
+                                    <input type="radio" id="showAllProjects1" name="showAllProjects" class="cfRadio " value="Yes">
+                                    <label for="showAllProjects1">Yes</label>
+                                    <input type="radio" id="showAllProjects2" name="showAllProjects" class="cfRadio " checked="checked" value="No">
+                                    <label for="showAllProjects2">No</label>
+                                 </td>
+                              </tr>
+                           </tbody>
+                        </table>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td colspan="2">
+                        <table border="0" cellspacing="0" cellpadding="0" class="horizontal">
+                           <tbody>
+                              <tr class="cfElementRow">
+                                 <td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Sort By</td>
+                                 <td>
+                                    <input type="radio" id="sortBy1" name="sortBy" class="cfRadio " checked="checked" value="">
+                                    <label for="sortBy1">Location</label>
+                                    <input type="radio" id="sortBy2" name="sortBy" class="cfRadio " value="Project Type">
+                                    <label for="sortBy2">Project Type</label>
+                                 </td>
+                              </tr>
+                           </tbody>
+                        </table>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td colspan="2">
+                        <table border="0" cellspacing="0" cellpadding="0" class="horizontal">
+                           <tbody>
+                              <tr class="cfElementRow">
+                                 <td>
+                                    <input id="submitFilter" name="submitFilter" class="cfButton " value="Filter" type="submit" style="margin-left:120px;">
+                                 </td>
+                                 <td>
+                                    <input id="resetProjectList" name="resetProjectList" class="cfButton " type="reset" value="Reset">
+                                 </td>
+                              </tr>
+                           </tbody>
+                        </table>
+                     </td>
+                  </tr>
+                  <tr>
+                     <td>
+                        <br>
+                     </td>
+                  </tr>
+               </tbody>
+            </table>
+         </form>
+      </div>
 
 
-    </div>
+   </div>
 </div>
