@@ -8,37 +8,42 @@
 @using USDA_ARS.Umbraco.Extensions.Utilities
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
-    Layout = "_Master.cshtml";
+   Layout = "_Master.cshtml";
 
-    IPublishedContent currentPage = Model.Content;
-    UsdaPublication publication = null;
-    ProjectInfo projectInfo = null;
-    IPublishedContent location = null;
+   IPublishedContent currentPage = Model.Content;
+   UsdaPublication publication = null;
+   ProjectInfo projectInfo = null;
+   IPublishedContent location = null;
 
-    List<PeopleInfo> peopleList = null;
+   List<PeopleInfo> peopleList = null;
 
-    string seqNo115 = Request.QueryString["seqNo115"];
+   string seqNo115 = Request.QueryString["seqNo115"];
 
-    if (false == string.IsNullOrWhiteSpace(seqNo115))
-    {
-        publication = Publications.GetPublicationById(Convert.ToInt32(seqNo115));
+   if (false == string.IsNullOrWhiteSpace(seqNo115))
+   {
+      int intSeqNo115 = 0;
 
-        peopleList = People.GetPeopleByPublication(Convert.ToInt32(seqNo115));
+      if (int.TryParse(seqNo115, out intSeqNo115))
+      {
+         publication = Publications.GetPublicationById(intSeqNo115);
 
-        if (publication != null)
-        {
+         peopleList = People.GetPeopleByPublication(intSeqNo115);
+
+         if (publication != null)
+         {
             projectInfo = Projects.GetProjectInfo(publication.AccountNo);
 
             string modeCode = ModeCodes.ModeCodeIntsToString(publication.ModeCode1, publication.ModeCode2, publication.ModeCode3, publication.ModeCode4);
 
-            location = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode, false);
-        }
-    }
+            location = Nodes.GetNodeByModeCode(modeCode, false);
+         }
+      }
+   }
 
-    if (publication == null)
-    {
-        Response.Redirect("/");
-    }
+   if (publication == null)
+   {
+      Response.Redirect("/");
+   }
 }
 
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
@@ -49,7 +54,7 @@
 
    <div id="pageContent">
       @if (publication != null)
-       {
+      {
          <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-1">
             @if (projectInfo != null)
             {
@@ -63,13 +68,13 @@
                   <strong>
                      Location:
                      @if (location != null)
-                        {
+                     {
                         <a href="@location.Url">@location.Name</a>
-                        }
-                        else
-                        {
+                     }
+                     else
+                     {
                         <em>Location not imported yet.</em>
-                        }
+                     }
                   </strong>
                </p>
             }
@@ -83,41 +88,41 @@
 
 
          @if (peopleList != null && peopleList.Count > 0)
-        {
+         {
             <font face="verdana,arial" size="-1" color="#000000"><b>  Author  </b></font><br><font face="verdana,arial" size="-1">
                <div align="left">
 
                   <table cellspacing="0" cellpadding="3">
                      <tbody>
                         @foreach (PeopleInfo person in peopleList)
-                            {
+                        {
                            <tr>
                               <td valign="top"><img src="/ARSUserFiles/incme/images/bullet.gif" border="0" alt="item"></td>
                               <td valign="top" align="left" background="/ARSUserFiles/incme/images/spacer.gif">
                                  <font face="verdana,arial" size="-1">
                                     @if (false == string.IsNullOrEmpty(person.PersonId))
-                                            {
+                                    {
                                        <a href="/people-locations/person?person-id=@(person.PersonId)" id="anch_57">
                                           @(Strings.UppercaseFirst(person.LastName)), @(Strings.UppercaseFirst(person.FirstName))
                                           @Html.Raw(false == string.IsNullOrEmpty(person.CommonName) ? " - <em>" + Strings.UppercaseFirst(person.CommonName) + "</em>" : "")
                                        </a>
-                                            }
-                                            else
-                                            {
+                                    }
+                                    else
+                                    {
                                        @(Strings.UppercaseFirst(person.LastName) + ", " + Strings.UppercaseFirst(person.FirstName))
                                        @Html.Raw(false == string.IsNullOrEmpty(person.CommonName) ? " - <em>" + Strings.UppercaseFirst(person.CommonName) + "</em>" : "")
-                                            }
+                                    }
                                  </font>
                               </td>
                            </tr>
-                            }
+                        }
                      </tbody>
                   </table>
 
                </div>
             </font>
             <p></p>
-        }
+         }
 
          <table width="100%" border="0" cellspacing="2" cellpadding="0">
             <tbody>
@@ -156,9 +161,9 @@
                            <!-- Edited Aug. 15, 2007 JCP to increase manuscript title comparison from 50 to 60 characters -->
 
                            @if (false == string.IsNullOrWhiteSpace(publication.ReprintUrl))
-                                {
+                           {
                               <b>Publication URL:</b> <a href="@publication.ReprintUrl" target="_blank" id="anch_59">@publication.ReprintUrl</a><br />
-                                }
+                           }
 
                            <b>Citation:</b> @(publication.Citation)
                            <p></p>
@@ -185,7 +190,7 @@
                </tr>
             </tbody>
          </table>
-        }
+      }
    </div>
 
 </div>
