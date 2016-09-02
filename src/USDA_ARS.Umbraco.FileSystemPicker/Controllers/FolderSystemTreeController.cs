@@ -10,6 +10,7 @@ using System.IO;
 using System.Web;
 using USDA_ARS.Umbraco.FileSystemPicker.Controllers;
 using System;
+using Umbraco.Core.Logging;
 
 namespace Umbraco.FileSystemPicker.Controllers
 {
@@ -86,27 +87,47 @@ namespace Umbraco.FileSystemPicker.Controllers
 
       private TreeNodeCollection AddFolders(string parent, FormDataCollection queryStrings)
       {
-         var pickerApiController = new FileSystemPickerApiController();
+         FileSystemPickerApiController pickerApiController = new FileSystemPickerApiController();
 
-         var filter = queryStrings.Get("filter").Split(',').Select(a => a.Trim().EnsureStartsWith(".")).ToArray();
+         string[] filter = queryStrings.Get("filter").Split(',').Select(a => a.Trim().EnsureStartsWith(".")).ToArray();
 
-         var treeNodeCollection = new TreeNodeCollection();
+         TreeNodeCollection treeNodeCollection = new TreeNodeCollection();
 
-         var startFolderName = queryStrings.Get("startfolder");
+         string startFolderName = queryStrings.Get("startfolder");
 
-         var startFolderPath = startFolderName.TrimStart(new char[] { '~', '/' }).EnsureStartsWith("~/");
+         string startFolderPath = startFolderName.TrimStart(new char[] { '~', '/' }).EnsureStartsWith("~/");
 
-         
+         LogHelper.Info(typeof(FolderSystemTreeController), "startFolderName: " + startFolderName);
+         LogHelper.Info(typeof(FolderSystemTreeController), "startFolderPath: " + startFolderPath);
 
          IEnumerable<DirectoryInfo> directoryList = pickerApiController.GetFolders(parent, filter);
          List<TreeNode> treeNodeList = new List<TreeNode>();
 
          if (directoryList != null && directoryList.Any())
          {
+            LogHelper.Info(typeof(FolderSystemTreeController), "directoryList: " + directoryList.Count());
+
             foreach (DirectoryInfo dirInfo in directoryList)
             {
                string treeId = String.Format("{0}{1}", startFolderName, dirInfo.FullName.Replace(IOHelper.MapPath(startFolderPath), "").Replace("\\", "/"));
-               bool hasChildren = dirInfo.EnumerateDirectories().Any() || pickerApiController.GetFiles(dirInfo.FullName.Replace(IOHelper.MapPath("~"), "").Replace("\\", "/"), filter).Any();
+
+               LogHelper.Info(typeof(FolderSystemTreeController), "treeId: " + treeId);
+
+               bool hasChildren = false;
+
+               if (filter != null && filter.Length > 0)
+               {
+                  hasChildren = filter[0] == "." ?
+                           dirInfo.EnumerateDirectories().Any() || pickerApiController.GetFiles(dirInfo.FullName.Replace(IOHelper.MapPath("~"), "").Replace("\\", "/"), filter).Any() :
+                           pickerApiController.GetFiles(dirInfo.FullName.Replace(IOHelper.MapPath("~"), "").Replace("\\", "/"), filter).Any();
+               }
+               else
+               {
+                  hasChildren = pickerApiController.GetFiles(dirInfo.FullName.Replace(IOHelper.MapPath("~"), "").Replace("\\", "/"), filter).Any();
+               }
+
+               LogHelper.Info(typeof(FolderSystemTreeController), "hasChildren: " + hasChildren);
+
                string dirName = dirInfo.Name;
 
                treeNodeList.Add(CreateTreeNode(treeId, parent, queryStrings, dirName, "icon-folder", hasChildren));
