@@ -255,7 +255,7 @@ function fileSystemPickerOptionsMenuController($rootScope, $scope, $timeout, $lo
          } else {
             try {
                if (node.icon === 'icon-folder') {
-                  node.refresh();
+                  $timeout(function () { node.refresh(); }, 700);
                }
                else if (node.icon === 'icon-document') {
                   node.parent().refresh();
@@ -270,7 +270,7 @@ function fileSystemPickerOptionsMenuController($rootScope, $scope, $timeout, $lo
 angular.module('umbraco').controller('Umbraco.FileSystemPickerOptionsMenuController', fileSystemPickerOptionsMenuController);
 
 
-function fileSystemPickerUploadDialogController($rootScope, $scope, $log, dialogService) {
+function fileSystemPickerUploadDialogController($rootScope, $scope, $log, dialogService, treeService) {
 
    $scope.onUploadComplete = function (data) {
       //$log.debug('Upload Complete: ', data);        

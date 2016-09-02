@@ -13,102 +13,110 @@ using System;
 
 namespace Umbraco.FileSystemPicker.Controllers
 {
-    [Tree("dummy", "fileSystemTree", "File System")]
-    [PluginController("FileSystemPicker")]
-    public class FolderSystemTreeController : TreeController
-    {
-        protected override TreeNodeCollection GetTreeNodes(string id, FormDataCollection queryStrings)
-        {
-            if (!string.IsNullOrWhiteSpace(queryStrings.Get("startfolder")))
+   [Tree("dummy", "fileSystemTree", "File System")]
+   [PluginController("FileSystemPicker")]
+   public class FolderSystemTreeController : TreeController
+   {
+      protected override TreeNodeCollection GetTreeNodes(string id, FormDataCollection queryStrings)
+      {
+         if (!string.IsNullOrWhiteSpace(queryStrings.Get("startfolder")))
+         {
+            TreeNodeCollection tempTree = new TreeNodeCollection();
+
+            var root = id == "-1" ? queryStrings.Get("startfolder") : id;
+            if (id == "-1")
             {
-                TreeNodeCollection tempTree = new TreeNodeCollection();
-
-                var root = id == "-1" ? queryStrings.Get("startfolder") : id;
-                if (id == "-1")
-                {
-                    var path = IOHelper.MapPath("~/" + root.TrimStart('~', '/'));
-                    var rootName = new DirectoryInfo(path).Name;
-                    var rootNode = CreateTreeNode(root, "-1", queryStrings, rootName, "icon-folder", true);
-                    tempTree.Add(rootNode);
-                }
-                else
-                {
-                    root = root.EnsureStartsWith("/");
-                    tempTree.AddRange(AddFolders(root, queryStrings));
-                    tempTree.AddRange(AddFiles(root, queryStrings));
-                }                
-                return tempTree;
+               var path = IOHelper.MapPath("~/" + root.TrimStart('~', '/'));
+               var rootName = new DirectoryInfo(path).Name;
+               var rootNode = CreateTreeNode(root, "-1", queryStrings, rootName, "icon-folder", true);
+               tempTree.Add(rootNode);
             }
-
-            return AddFolders(id == "-1" ? "" : id, queryStrings);
-        }
-
-        protected override MenuItemCollection GetMenuForNode(string id, FormDataCollection queryStrings)
-        {
-            var menu = new MenuItemCollection();
-
-            menu.Items.Add(new MenuItem("create", "Create"));
-
-            return menu;
-        }
-
-        private TreeNodeCollection AddFiles(string folder, FormDataCollection queryStrings)
-        {
-            var pickerApiController = new FileSystemPickerApiController();
-            //var str = queryStrings.Get("startfolder");
-
-            if (string.IsNullOrWhiteSpace(folder))
-                return null;
-
-            var filter = queryStrings.Get("filter").Split(',').Select(a => a.Trim().EnsureStartsWith(".")).ToArray();
-
-
-            var path = IOHelper.MapPath(folder);
-
-            string startFolder = queryStrings.Get("startfolder");
-
-            var rootPath = IOHelper.MapPath(startFolder.EnsureStartsWith("/"));
-            var treeNodeCollection = new TreeNodeCollection();
-
-            foreach (FileInfo fileInfo in pickerApiController.GetFiles(folder, filter))
+            else
             {
-                string nodeTitle = fileInfo.Name;
-                //string filePath = file.FullName.Replace(rootPath, "").Replace("\\", "/");
-                string filePath = string.Format("{0}/{1}", folder, fileInfo.Name);
-
-                TreeNode treeNode = CreateTreeNode(filePath, folder, queryStrings, nodeTitle, "icon-document", false);
-
-                treeNodeCollection.Add(treeNode);
+               root = root.EnsureStartsWith("/");
+               tempTree.AddRange(AddFolders(root, queryStrings));
+               tempTree.AddRange(AddFiles(root, queryStrings));
             }
+            return tempTree;
+         }
 
-            return treeNodeCollection;
-        }
+         return AddFolders(id == "-1" ? "" : id, queryStrings);
+      }
 
-        private TreeNodeCollection AddFolders(string parent, FormDataCollection queryStrings)
-        {
-            var pickerApiController = new FileSystemPickerApiController();
+      protected override MenuItemCollection GetMenuForNode(string id, FormDataCollection queryStrings)
+      {
+         var menu = new MenuItemCollection();
 
-            var filter = queryStrings.Get("filter").Split(',').Select(a => a.Trim().EnsureStartsWith(".")).ToArray();
+         menu.Items.Add(new MenuItem("create", "Create"));
 
-            var treeNodeCollection = new TreeNodeCollection();
+         return menu;
+      }
 
-            var startFolderName = queryStrings.Get("startfolder");
+      private TreeNodeCollection AddFiles(string folder, FormDataCollection queryStrings)
+      {
+         var pickerApiController = new FileSystemPickerApiController();
+         //var str = queryStrings.Get("startfolder");
 
-            var startFolderPath = startFolderName.TrimStart(new char[] { '~', '/' }).EnsureStartsWith("~/");
+         if (string.IsNullOrWhiteSpace(folder))
+            return null;
 
-            IEnumerable <TreeNode> treeNodeList = pickerApiController.GetFolders(parent, filter)
-                .Select(dir => CreateTreeNode(String.Format("{0}{1}", startFolderName, dir.FullName.Replace(IOHelper.MapPath(startFolderPath), "").Replace("\\", "/")),
-                    parent, queryStrings, dir.Name,
-                    "icon-folder", true));
+         var filter = queryStrings.Get("filter").Split(',').Select(a => a.Trim().EnsureStartsWith(".")).ToArray();
 
-            //filter[0] == "." ?
-            //            dir.EnumerateDirectories().Any() || pickerApiController.GetFiles(dir.FullName.Replace(IOHelper.MapPath("~"), "").Replace("\\", "/"), filter).Any() :
-            //            pickerApiController.GetFiles(dir.FullName.Replace(IOHelper.MapPath("~"), "").Replace("\\", "/"), filter).Any())
 
-            treeNodeCollection.AddRange(treeNodeList);
-            
+         var path = IOHelper.MapPath(folder);
 
-            return treeNodeCollection;
-        }
-    }
+         string startFolder = queryStrings.Get("startfolder");
+
+         var rootPath = IOHelper.MapPath(startFolder.EnsureStartsWith("/"));
+         var treeNodeCollection = new TreeNodeCollection();
+
+         foreach (FileInfo fileInfo in pickerApiController.GetFiles(folder, filter))
+         {
+            string nodeTitle = fileInfo.Name;
+            //string filePath = file.FullName.Replace(rootPath, "").Replace("\\", "/");
+            string filePath = string.Format("{0}/{1}", folder, fileInfo.Name);
+
+            TreeNode treeNode = CreateTreeNode(filePath, folder, queryStrings, nodeTitle, "icon-document", false);
+
+            treeNodeCollection.Add(treeNode);
+         }
+
+         return treeNodeCollection;
+      }
+
+      private TreeNodeCollection AddFolders(string parent, FormDataCollection queryStrings)
+      {
+         var pickerApiController = new FileSystemPickerApiController();
+
+         var filter = queryStrings.Get("filter").Split(',').Select(a => a.Trim().EnsureStartsWith(".")).ToArray();
+
+         var treeNodeCollection = new TreeNodeCollection();
+
+         var startFolderName = queryStrings.Get("startfolder");
+
+         var startFolderPath = startFolderName.TrimStart(new char[] { '~', '/' }).EnsureStartsWith("~/");
+
+         
+
+         IEnumerable<DirectoryInfo> directoryList = pickerApiController.GetFolders(parent, filter);
+         List<TreeNode> treeNodeList = new List<TreeNode>();
+
+         if (directoryList != null && directoryList.Any())
+         {
+            foreach (DirectoryInfo dirInfo in directoryList)
+            {
+               string treeId = String.Format("{0}{1}", startFolderName, dirInfo.FullName.Replace(IOHelper.MapPath(startFolderPath), "").Replace("\\", "/"));
+               bool hasChildren = dirInfo.EnumerateDirectories().Any() || pickerApiController.GetFiles(dirInfo.FullName.Replace(IOHelper.MapPath("~"), "").Replace("\\", "/"), filter).Any();
+               string dirName = dirInfo.Name;
+
+               treeNodeList.Add(CreateTreeNode(treeId, parent, queryStrings, dirName, "icon-folder", hasChildren));
+            }
+         }
+
+         treeNodeCollection.AddRange(treeNodeList);
+
+
+         return treeNodeCollection;
+      }
+   }
 }
