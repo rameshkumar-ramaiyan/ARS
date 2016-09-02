@@ -150,7 +150,14 @@ namespace USDA_ARS.Umbraco.FileSystemPicker.Controllers
 
                try
                {
-                  File.Move(file.LocalFileName, Path.Combine(parentDir, fileName));
+                  string destPath = Path.Combine(parentDir, fileName);
+
+                  if (File.Exists(destPath))
+                  {
+                     File.Delete(destPath);
+                  }
+
+                  File.Move(file.LocalFileName, destPath);
 
                   tempFiles.UploadedFiles.Add(new ContentItemFile
                   {
