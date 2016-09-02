@@ -32,11 +32,6 @@ namespace USDA_ARS.SiteDescendantsAudit.Controllers
             if (children != null)
             {
                records = GetDescendantAuditRecords(parent.Id, aliases);
-
-               if (records != null && records.Count > 30)
-               {
-                  records = null;
-               }
             }
          }
          return records;
@@ -74,7 +69,10 @@ namespace USDA_ARS.SiteDescendantsAudit.Controllers
 
             if (child != null && aliases.Contains(child.ContentType.Alias))
             {
-               records = GetDescendantAuditRecords(child.Id, aliases, records);
+               if (records != null && records.Count < 100)
+               {
+                  records = GetDescendantAuditRecords(child.Id, aliases, records);
+               }
             }
          }
 
