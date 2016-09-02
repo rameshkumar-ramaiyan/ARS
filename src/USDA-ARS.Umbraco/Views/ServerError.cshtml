@@ -11,6 +11,8 @@
 
    IPublishedContent currentPage = Model.Content;
 
+   Logs.AddErrorUrlToLog(Request.Url);
+
    bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
 
    string bodyText = currentPage.GetPropertyValue<string>("bodyText");

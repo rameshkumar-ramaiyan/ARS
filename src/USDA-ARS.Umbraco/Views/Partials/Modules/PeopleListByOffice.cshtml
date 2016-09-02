@@ -21,29 +21,24 @@
    }
 
    List<PeopleInfo> peopleFullList = null;
+   int colSpan = 4;
+   int emptyCols = 0;
+   string currentLocationName = Locations.GetLocationNameByModeCode(modeCode);
+   List<Location> locationAncestorList = null;
+   List<Location> locationChildList = null;
 
    if (currentLocation != null)
    {
       mainPerson = People.GetPersonByEmployeeId(currentLocation.RlEmpId);
       peopleFullList = People.GetPeopleByNationalProgram(modeCode);
+
+      //Get Ancestor Locations
+      locationAncestorList = Locations.GetAncestorLocationsList(modeCode);
+
+      // Get Child Locations
+      locationChildList = Locations.GetChildLocationsList(modeCode);
    }
-   else
-   {
-      Response.Redirect("/people-locations/");
-   }
 
-
-   int colSpan = 4;
-   int emptyCols = 0;
-   string currentLocationName = Locations.GetLocationNameByModeCode(modeCode);
-
-   Location rootOffice = Locations.GetLocationObjectByModeCode("01000000");
-
-   //Get Ancestor Locations
-   List<Location> locationAncestorList = Locations.GetAncestorLocationsList(modeCode);
-
-   // Get Child Locations
-   List<Location> locationChildList = Locations.GetChildLocationsList(modeCode);
 }
 
 
@@ -71,9 +66,9 @@
                                  @(mainPerson.LastName), @(mainPerson.FirstName)
 
                                  @if (false == string.IsNullOrEmpty(mainPerson.CommonName))
-                              {
+                                 {
                                     @Html.Raw(" - <em>" + mainPerson.CommonName + "</em>")
-                              }
+                                 }
                               </a><br />
                               @(mainPerson.TitleWorking)<br />
 
@@ -81,7 +76,7 @@
                               <br />
                            }
 
-                           if (currentLocation != null)
+                           @if (currentLocation != null)
                            {
                               @(currentLocation.RsPhone)<br />
                               @(currentLocation.RsAddress1)<br />
@@ -92,12 +87,18 @@
                               </p><p>
 
                                  @if (false == string.IsNullOrWhiteSpace(currentLocation.MissionStatement))
-                              {
+                                 {
                                     <strong>Mission:</strong><br />
                                     @(currentLocation.MissionStatement)
-                              }
+                                 }
+
+                              </p>
                            }
-                           </p><p></p>
+                           else
+                           {
+                              <em>Invalid location.</em>
+                           }
+                           <p></p>
 
                         </td>
                      </tr>
@@ -123,33 +124,33 @@
                      foreach (Location locationItem in locationAncestorList)
                      {
                         if (colSpan > 1)
-                  {
-                        colSpan--;
-                        emptyCols++;
-                  }
+                        {
+                           colSpan--;
+                           emptyCols++;
+                        }
                         string modeCodeWithDashes = ModeCodes.ModeCodeAddDashes(locationItem.ModeCodeConcat);
 
-                     <tr>
-                        @for (int i = 1; i <= emptyCols; i++)
+                        <tr>
+                           @for (int i = 1; i <= emptyCols; i++)
                            {
-                           <td>&nbsp;</td>
+                              <td>&nbsp;</td>
                            }
-                        <td valign="top" colspan="@(colSpan)" width="188">
-                           <font face="arial" size="-2">
-                              @if (modeCodeWithDashes == modeCode)
+                           <td valign="top" colspan="@(colSpan)" width="188">
+                              <font face="arial" size="-2">
+                                 @if (modeCodeWithDashes == modeCode)
                                  {
-                                 @Locations.GetLocationNameByModeCode(locationItem.ModeCodeConcat)
+                                    @Locations.GetLocationNameByModeCode(locationItem.ModeCodeConcat)
                                  }
                                  else
                                  {
-                                 <a href="@(currentNode.Url + "?modeCode=" + modeCodeWithDashes)" class="projectNav">
-                                    @Locations.GetLocationNameByModeCode(locationItem.ModeCodeConcat)
-                                 </a>
+                                    <a href="@(currentNode.Url + "?modeCode=" + modeCodeWithDashes)" class="projectNav">
+                                       @Locations.GetLocationNameByModeCode(locationItem.ModeCodeConcat)
+                                    </a>
                                  }
-                              <br />
-                           </font>
-                        </td>
-                     </tr>
+                                 <br />
+                              </font>
+                           </td>
+                        </tr>
                      }
                   }
 
@@ -209,49 +210,49 @@
                         <!-- People list begin -->
                         <!-- _locStaff start -->
                         @if (peopleFullList != null && peopleFullList.Any())
-                              {
-                                 peopleFullList = peopleFullList.OrderBy(p => p.LastName).ThenBy(p => p.FirstName).ToList();
+                        {
+                           peopleFullList = peopleFullList.OrderBy(p => p.LastName).ThenBy(p => p.FirstName).ToList();
 
 
                            <script language="JavaScript">function DisplayEmail(username, domain) { document.write(username + "&#64;" + domain); }</script>
-                           <table cellspacing="0" cellpadding="3" border="0">
-                              <tbody>
-                                 <tr>
-                                    <td><strong>People:</strong></td>
-                                 </tr>
-                              </tbody>
-                           </table>
-                           <table width="100%" cellspacing="0" cellpadding="3" border="0">
-                              <tbody>
+                                                <table cellspacing="0" cellpadding="3" border="0">
+                                                   <tbody>
+                                                      <tr>
+                                                         <td><strong>People:</strong></td>
+                                                      </tr>
+                                                   </tbody>
+                                                </table>
+                                                <table width="100%" cellspacing="0" cellpadding="3" border="0">
+                                                   <tbody>
 
-                                 @foreach (PeopleInfo person in peopleFullList)
-                                 {
-                                    <tr>
-                                       <td valign="top">
-                                          <a href="/people-locations/person?person-id=@(person.PersonId)" class="listItems" id="anch_44">
-                                             @(person.LastName),
-                                             @(person.FirstName)
-                                             @Html.Raw(false == string.IsNullOrWhiteSpace(person.CommonName) ? " <em>" + person.CommonName + "</em>" : "")
-                                          </a>
-                                          <br />
-                                          @USDA_ARS.Umbraco.Extensions.Utilities.Strings.FormatPhoneNumber(person.PhoneAreaCode + person.Phone)
-                                          @(false == string.IsNullOrEmpty(person.PhoneExt) ? " ext. " + person.PhoneExt : "")
-                                          <br />
-                                          @if (person.Email != null && person.Email.Split('@').Length == 2)
-                                          {
-                                             <script language="javascript">DisplayEmail('@(person.Email.Split('@')[0])', '@(person.Email.Split('@')[1])');</script>
-                                          }
-                                          <br />
-                                          <font size="-2">@(person.TitleWorking)</font>
-                                       </td>
-                                    </tr>
-                                    <tr>
-                                       <td><img src="/images/content-divider.gif"></td>
-                                    </tr>
-                                 }
+                                                      @foreach (PeopleInfo person in peopleFullList)
+                                                      {
+                                                         <tr>
+                                                            <td valign="top">
+                                                               <a href="/people-locations/person?person-id=@(person.PersonId)" class="listItems" id="anch_44">
+                                                                  @(person.LastName),
+                                                                  @(person.FirstName)
+                                                                  @Html.Raw(false == string.IsNullOrWhiteSpace(person.CommonName) ? " <em>" + person.CommonName + "</em>" : "")
+                                                               </a>
+                                                               <br />
+                                                               @USDA_ARS.Umbraco.Extensions.Utilities.Strings.FormatPhoneNumber(person.PhoneAreaCode + person.Phone)
+                                                               @(false == string.IsNullOrEmpty(person.PhoneExt) ? " ext. " + person.PhoneExt : "")
+                                                               <br />
+                                                               @if (person.Email != null && person.Email.Split('@').Length == 2)
+                                                               {
+                                                                  <script language="javascript">DisplayEmail('@(person.Email.Split('@')[0])', '@(person.Email.Split('@')[1])');</script>
+                                                               }
+                                                               <br />
+                                                               <font size="-2">@(person.TitleWorking)</font>
+                                                            </td>
+                                                         </tr>
+                                                         <tr>
+                                                            <td><img src="/images/content-divider.gif"></td>
+                                                         </tr>
+                                                      }
 
-                              </tbody>
-                           </table>
+                                                   </tbody>
+                                                </table>
 
                         <!-- _locStaff end -->
                         <!-- People list end -->

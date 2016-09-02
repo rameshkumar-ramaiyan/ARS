@@ -19,26 +19,30 @@
 
    if (false == string.IsNullOrEmpty(Request.QueryString["person-id"]))
    {
-      int personId = Convert.ToInt32(Request.QueryString["person-id"]);
+      int personId = 0;
+      IPublishedContent personSite = null;
 
-      IPublishedContent personSite = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByPersonId(personId);
-
-      if (null == personSite)
+      if (int.TryParse(Request.QueryString["person-id"], out personId))
       {
-         peopleInfo = People.GetPerson(personId);
+         personSite = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByPersonId(personId);
 
-         if (peopleInfo != null)
+         if (null == personSite)
          {
-            peoplePublicationList = Publications.PublicationsByPerson(personId);
+            peopleInfo = People.GetPerson(personId);
 
-            personProjectList = Projects.GetProjectsByPerson(peopleInfo.EmpId);
-            personProjectLeaderList = Projects.GetNationalProgramLeaderByPerson(personId);
-            personNewsList = NewsInterLinks.GetNewsByPersonId(personId);
+            if (peopleInfo != null)
+            {
+               peoplePublicationList = Publications.PublicationsByPerson(personId);
+
+               personProjectList = Projects.GetProjectsByPerson(peopleInfo.EmpId);
+               personProjectLeaderList = Projects.GetNationalProgramLeaderByPerson(personId);
+               personNewsList = NewsInterLinks.GetNewsByPersonId(personId);
+            }
          }
-      }
-      else
-      {
-         Response.Redirect(personSite.Url);
+         else
+         {
+            Response.Redirect(personSite.Url);
+         }
       }
    }
 

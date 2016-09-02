@@ -41,20 +41,25 @@
          {
             if (false == string.IsNullOrWhiteSpace(personId))
             {
-               PeopleInfo peopleInfo = People.GetPerson(Convert.ToInt32(personId));
+               int intPersonId = -1;
 
-               if (peopleInfo != null)
+               if (int.TryParse(personId, out intPersonId))
                {
-                  modeCode = peopleInfo.ModeCode1 + "-" + peopleInfo.ModeCode2.ToString("00") + "-" + peopleInfo.ModeCode3.ToString("00") + "-" + peopleInfo.ModeCode4.ToString("00");
+                  PeopleInfo peopleInfo = People.GetPerson(intPersonId);
 
-                  string personName = peopleInfo.FirstName + " " + peopleInfo.LastName;
-
-                  if (false == string.IsNullOrEmpty(peopleInfo.CommonName))
+                  if (peopleInfo != null)
                   {
-                     personName += " (" + peopleInfo.CommonName + ")";
-                  }
+                     modeCode = peopleInfo.ModeCode1 + "-" + peopleInfo.ModeCode2.ToString("00") + "-" + peopleInfo.ModeCode3.ToString("00") + "-" + peopleInfo.ModeCode4.ToString("00");
 
-                  nodeBreadcrumbList.Add(new NodeBreadcrumb(personName, "/people-locations/person?person-id=" + personId, breadcrumb.Level + 5));
+                     string personName = peopleInfo.FirstName + " " + peopleInfo.LastName;
+
+                     if (false == string.IsNullOrEmpty(peopleInfo.CommonName))
+                     {
+                        personName += " (" + peopleInfo.CommonName + ")";
+                     }
+
+                     nodeBreadcrumbList.Add(new NodeBreadcrumb(personName, "/people-locations/person?person-id=" + personId, breadcrumb.Level + 5));
+                  }
                }
             }
          }
