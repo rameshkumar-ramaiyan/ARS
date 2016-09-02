@@ -47,7 +47,8 @@
     @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
 
     <div id="pageContent">
-
+       @if (nationalProgramGroup != null)
+       {
         <img src="/ARSUserFiles/incme/images/spacer.GIF" alt="" border="0" width="1" height="20">
 
 
@@ -96,6 +97,10 @@
         }
 
         <br /><br />
-
+       }
+       else
+       {
+         <em>Invalid National Program.</em>
+       }
     </div>
 </div>
