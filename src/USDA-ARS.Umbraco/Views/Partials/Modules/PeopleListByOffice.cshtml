@@ -81,18 +81,21 @@
                               <br />
                            }
 
-                           @(currentLocation.RsPhone)<br />
-                           @(currentLocation.RsAddress1)<br />
-                           @(currentLocation.RsAddress2)<br />
-                           @(currentLocation.RsCity) @(currentLocation.RsStateCode) @(currentLocation.RsPostalCode)
-                           <p>
-                              <!-- MapQuest info here.  query_string= modecode=@(modeCode)-->
-                           </p><p>
-
-                              @if (false == string.IsNullOrWhiteSpace(currentLocation.MissionStatement))
+                           if (currentLocation != null)
                            {
-                                 <strong>Mission:</strong><br />
-                                 @(currentLocation.MissionStatement)
+                              @(currentLocation.RsPhone)<br />
+                              @(currentLocation.RsAddress1)<br />
+                              @(currentLocation.RsAddress2)<br />
+                              @(currentLocation.RsCity) @(currentLocation.RsStateCode) @(currentLocation.RsPostalCode)
+                              <p>
+                                 <!-- MapQuest info here.  query_string= modecode=@(modeCode)-->
+                              </p><p>
+
+                                 @if (false == string.IsNullOrWhiteSpace(currentLocation.MissionStatement))
+                              {
+                                    <strong>Mission:</strong><br />
+                                    @(currentLocation.MissionStatement)
+                              }
                            }
                            </p><p></p>
 

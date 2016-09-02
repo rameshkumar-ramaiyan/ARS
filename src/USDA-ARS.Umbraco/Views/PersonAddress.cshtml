@@ -20,6 +20,11 @@
 
       personSite = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByPersonId(personId);
 
+      if (personSite == null)
+      {
+         personSite = currentPage;
+      }
+
       peopleInfo = People.GetPerson(personId);
    }
 
