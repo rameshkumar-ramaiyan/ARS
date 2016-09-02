@@ -32,6 +32,11 @@ namespace USDA_ARS.SiteDescendantsAudit.Controllers
             if (children != null)
             {
                records = GetDescendantAuditRecords(parent.Id, aliases);
+
+               if (records != null && records.Count > 30)
+               {
+                  records = null;
+               }
             }
          }
          return records;
