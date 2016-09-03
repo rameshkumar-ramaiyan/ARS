@@ -117,12 +117,17 @@ namespace Umbraco.FileSystemPicker.Controllers
 
                if (filter != null && filter.Length > 0)
                {
+                  LogHelper.Info(typeof(FolderSystemTreeController), "hasChildren1");
+                  LogHelper.Info(typeof(FolderSystemTreeController), "filter[0]: " + filter[0]);
+
                   hasChildren = filter[0] == "." ?
                            dirInfo.EnumerateDirectories().Any() || pickerApiController.GetFiles(dirInfo.FullName.Replace(IOHelper.MapPath("~"), "").Replace("\\", "/"), filter).Any() :
                            pickerApiController.GetFiles(dirInfo.FullName.Replace(IOHelper.MapPath("~"), "").Replace("\\", "/"), filter).Any();
                }
                else
                {
+                  LogHelper.Info(typeof(FolderSystemTreeController), "hasChildren2");
+
                   hasChildren = pickerApiController.GetFiles(dirInfo.FullName.Replace(IOHelper.MapPath("~"), "").Replace("\\", "/"), filter).Any();
                }
 
