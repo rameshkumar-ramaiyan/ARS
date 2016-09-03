@@ -120,9 +120,18 @@ namespace Umbraco.FileSystemPicker.Controllers
                   LogHelper.Info(typeof(FolderSystemTreeController), "hasChildren1");
                   LogHelper.Info(typeof(FolderSystemTreeController), "filter[0]: " + filter[0]);
 
-                  hasChildren = filter[0] == "." ?
-                           dirInfo.EnumerateDirectories().Any() || pickerApiController.GetFiles(dirInfo.FullName.Replace(IOHelper.MapPath("~"), "").Replace("\\", "/"), filter).Any() :
-                           pickerApiController.GetFiles(dirInfo.FullName.Replace(IOHelper.MapPath("~"), "").Replace("\\", "/"), filter).Any();
+                  if (filter[0] == ".")
+                  {
+                     LogHelper.Info(typeof(FolderSystemTreeController), "Path: " + dirInfo.FullName.Replace(IOHelper.MapPath("~"), "").Replace("\\", "/"));
+                     LogHelper.Info(typeof(FolderSystemTreeController), "dirInfo.EnumerateDirectories().Any(): " + dirInfo.EnumerateDirectories().Any());
+
+                     hasChildren = dirInfo.EnumerateDirectories().Any() || 
+                              pickerApiController.GetFiles(dirInfo.FullName.Replace(IOHelper.MapPath("~"), "").Replace("\\", "/"), filter).Any();
+                  }
+                  else
+                  {
+                     hasChildren = pickerApiController.GetFiles(dirInfo.FullName.Replace(IOHelper.MapPath("~"), "").Replace("\\", "/"), filter).Any();
+                  }
                }
                else
                {
