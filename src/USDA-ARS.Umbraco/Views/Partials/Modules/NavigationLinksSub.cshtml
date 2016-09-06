@@ -22,7 +22,7 @@
 
    while (breadcrumb.Level >= 2)
    {
-      if (breadcrumb.Level == 2 && breadcrumb.DocumentTypeAlias == "Research")
+      if (breadcrumb.Level == 2 && breadcrumb.DocumentTypeAlias == "Research" && false == string.IsNullOrEmpty(modeCode))
       {
          IPublishedContent programsAndProjects = Nodes.ProgramsAndProjects();
 
@@ -63,7 +63,10 @@
                }
             }
          }
-
+         else if (breadcrumb.DocumentTypeAlias == "PeopleLocations" && false == string.IsNullOrEmpty(modeCode))
+         {
+            nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.GetPropertyValue<string>("breadcrumbLabel", breadcrumb.Name), breadcrumb.Url + "/people-list/?modeCode="+ modeCode, breadcrumb.Level));
+         }
          else if (breadcrumb.DocumentTypeAlias == "Project" && false == string.IsNullOrWhiteSpace(accnNo))
          {
             ProjectInfo projectInfo = Projects.GetProjectInfo(Convert.ToInt32(accnNo));

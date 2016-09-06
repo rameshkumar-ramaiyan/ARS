@@ -170,7 +170,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
             message.From = new MailAddress(emailTemplate.GetPropertyValue<string>("emailFrom"));
 
-            foreach (string emailToItem in emailTo.Split(','))
+            foreach (string emailToItem in emailTo.Split(new Char[] { ',', ';' }))
             {
                message.To.Add(new MailAddress(emailToItem.Trim()));
             }
