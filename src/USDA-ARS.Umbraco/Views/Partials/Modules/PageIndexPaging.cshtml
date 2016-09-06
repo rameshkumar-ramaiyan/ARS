@@ -21,9 +21,16 @@
          parentPage = parentPage.Parent;
       }
 
-      if (parentPage.HasProperty("hidePageIndexList") && parentPage.HasValue("hidePageIndexList"))
+      if (parentPage.DocumentTypeAlias == "SiteStandardWebpage" || parentPage.DocumentTypeAlias == "StandardWebpage")
       {
-         hidePageIndexList = parentPage.GetPropertyValue<bool>("hidePageIndexList");
+         if (parentPage.HasProperty("hidePageIndexList") && parentPage.HasValue("hidePageIndexList"))
+         {
+            hidePageIndexList = parentPage.GetPropertyValue<bool>("hidePageIndexList");
+         }
+      }
+      else
+      {
+         hidePageIndexList = true;
       }
 
       if (false == hidePageIndexList)
