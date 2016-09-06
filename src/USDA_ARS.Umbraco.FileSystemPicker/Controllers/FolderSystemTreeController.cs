@@ -114,6 +114,8 @@ namespace Umbraco.FileSystemPicker.Controllers
                   {
                      string filePath = dirInfo.FullName.Replace(IOHelper.MapPath(startFolderPath), "").Replace("\\", "/");
 
+                     filePath = startFolderPath + filePath;
+
                      IEnumerable<FileInfo> fileInfoList = pickerApiController.GetFiles(filePath, filter);
 
                      hasChildren = dirInfo.EnumerateDirectories().Any() ||
