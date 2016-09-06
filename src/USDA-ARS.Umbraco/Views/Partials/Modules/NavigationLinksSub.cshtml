@@ -38,7 +38,7 @@
       else
       {
          if (breadcrumb.DocumentTypeAlias == "Person" || (breadcrumb.DocumentTypeAlias == "StandardWebpage" && 
-               (breadcrumb.GetTemplateAlias() == "PersonAddress" || breadcrumb.GetTemplateAlias() == "PersonPublications") || breadcrumb.GetTemplateAlias() == "PersonProjects"))
+               (breadcrumb.GetTemplateAlias() == "PersonAddress" || breadcrumb.GetTemplateAlias() == "PersonPublications" || breadcrumb.GetTemplateAlias() == "PersonProjects" || breadcrumb.GetTemplateAlias() == "PersonNews")))
          {
             if (false == string.IsNullOrWhiteSpace(personId))
             {
