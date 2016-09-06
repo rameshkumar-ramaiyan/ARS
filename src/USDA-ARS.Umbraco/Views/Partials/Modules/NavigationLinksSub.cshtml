@@ -37,7 +37,8 @@
       }
       else
       {
-         if (breadcrumb.DocumentTypeAlias == "Person" || (breadcrumb.DocumentTypeAlias == "StandardWebpage" && (breadcrumb.GetTemplateAlias() == "PersonAddress" || breadcrumb.GetTemplateAlias() == "PersonPublications")))
+         if (breadcrumb.DocumentTypeAlias == "Person" || (breadcrumb.DocumentTypeAlias == "StandardWebpage" && 
+               (breadcrumb.GetTemplateAlias() == "PersonAddress" || breadcrumb.GetTemplateAlias() == "PersonPublications") || breadcrumb.GetTemplateAlias() == "PersonProjects"))
          {
             if (false == string.IsNullOrWhiteSpace(personId))
             {
