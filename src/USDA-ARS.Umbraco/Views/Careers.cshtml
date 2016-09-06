@@ -5,36 +5,42 @@
 @using System.Text.RegularExpressions
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
-    Layout = "_Master.cshtml";
+   Layout = "_Master.cshtml";
 
-    IPublishedContent currentPage = Model.Content;
+   IPublishedContent currentPage = Model.Content;
+   int careersArsInfoNodeId = 8031;
 
-    string modeCode = "";
-    string careersText = currentPage.GetPropertyValue<string>("bodyText"); ;
-    string careersBelow = currentPage.GetPropertyValue<string>("bodyTextBelow");
-    string usajobUrl = currentPage.GetPropertyValue<string>("usajobUrl", "#badUrl");
-    string usajobUrlList = "";
+   string modeCode = "";
+   string careersText = currentPage.GetPropertyValue<string>("bodyText"); ;
+   string careersBelow = currentPage.GetPropertyValue<string>("bodyTextBelow");
+   string usajobUrl = currentPage.GetPropertyValue<string>("usajobUrl", "#badUrl");
+   string usajobUrlList = "";
 
-    if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
-    {
-        modeCode = Request.QueryString.Get("modeCode");
+   if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
+   {
+      modeCode = Request.QueryString.Get("modeCode");
 
-        IPublishedContent siteNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode, false);
+      IPublishedContent siteNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode, false);
 
-        if (siteNode != null)
-        {
-            IPublishedContent careersNode = siteNode.Children.Where(n => n.IsDocumentType("SitesCareers")).FirstOrDefault();
+      if (siteNode != null)
+      {
+         IPublishedContent careersNode = siteNode.Children.Where(n => n.IsDocumentType("SitesCareers")).FirstOrDefault();
 
-            if (careersNode != null)
-            {
-                Response.Redirect(careersNode.Url);
-            }
-        }
-    }
-    else
-    {
-        Response.Redirect("/careers-at-ars-info/");
-    }
+         if (careersNode != null)
+         {
+            Response.Redirect(careersNode.Url);
+         }
+      }
+   }
+   else
+   {
+      IPublishedContent careersArsInfo = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeById(careersArsInfoNodeId);
+
+      if (careersArsInfo != null)
+      {
+         Response.Redirect(careersArsInfo.Url);
+      }
+   }
 
 }
 
