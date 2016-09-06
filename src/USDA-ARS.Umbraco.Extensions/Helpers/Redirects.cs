@@ -188,7 +188,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
          redirectList.Add(new RedirectToNode() { OldUrl = "/pandp/locations/locations.htm?modecode=", UmbracoId = 200481, AppendString = "?modeCode=" });
          redirectList.Add(new RedirectToNode() { OldUrl = "/pandp/people/people.htm?personid=", UmbracoId = 6992, AppendString = "?person-id=" });
          redirectList.Add(new RedirectToNode() { OldUrl = "/services/TTBrowse.htm?stp_code=", UmbracoId = 8101, AppendString = "?stpCode=" });
-         redirectList.Add(new RedirectToNode() { OldUrl = "/research/publications/publications.htm?seq_no_115=", UmbracoId = 9114, AppendString = "?sqlNo115=" });
+         redirectList.Add(new RedirectToNode() { OldUrl = "/research/publications/publications.htm?seq_no_115=", UmbracoId = 9114, AppendString = "?seqNo115=" });
          redirectList.Add(new RedirectToNode() { OldUrl = "/research/projects_programs.htm?modecode=", UmbracoId = 8089, AppendString = "?modeCode=" });
          redirectList.Add(new RedirectToNode() { OldUrl = "/research/programs/programs.htm?projectlist=true&NP_CODE=", UmbracoId = 000, AppendString = "?" });
          redirectList.Add(new RedirectToNode() { OldUrl = "/pandp/people/address.htm?personid=", UmbracoId = 200341, AppendString = "?person-id=" });
