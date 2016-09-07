@@ -510,6 +510,8 @@ angular.module('umbraco.directives')
             if (node.name.match(/\.(gif|jpg|jpeg|tiff|png)$/i)) {
                icon.hide();
                var thumbnailPath = '/umbraco/backoffice/FileSystemPicker/FileSystemThumbnailApi/GetThumbnail?width=150&amp;imagePath=' + node.id;
+               thumbnailPath += '&amp;cb=' + (new Date()).getTime();
+
                element.find('a:first').append($('<img src="' + thumbnailPath + '" /><p>' + node.name + '</p>'));
             } else {
                element.find('a:first').text(node.name);

@@ -110,28 +110,20 @@ namespace Umbraco.FileSystemPicker.Controllers
 
                if (filter != null && filter.Length > 0)
                {
-                  if (filter[0] == ".")
-                  {
-                     string filePath = dirInfo.FullName.Replace(IOHelper.MapPath(startFolderPath), "").Replace("\\", "/");
-
-                     filePath = startFolderPath + filePath;
-
-                     IEnumerable<FileInfo> fileInfoList = pickerApiController.GetFiles(filePath, filter);
-
-                     hasChildren = dirInfo.EnumerateDirectories().Any() ||
-                              (fileInfoList != null && fileInfoList.Any());
-                  }
-                  else
-                  {
-                     string filePath = dirInfo.FullName.Replace(IOHelper.MapPath("~"), "").Replace("\\", "/");
-
-                     hasChildren = pickerApiController.GetFiles(filePath, filter).Any();
-                  }
+                  // All is good...
                }
                else
                {
-                  hasChildren = pickerApiController.GetFiles(dirInfo.FullName.Replace(IOHelper.MapPath("~"), "").Replace("\\", "/"), filter).Any();
+                  filter = new string[1] { "." };
                }
+
+               string filePath = dirInfo.FullName.Replace(IOHelper.MapPath(startFolderPath), "").Replace("\\", "/");
+
+               filePath = startFolderPath + filePath;
+
+               IEnumerable<FileInfo> fileInfoList = pickerApiController.GetFiles(filePath, filter);
+
+               hasChildren = dirInfo.EnumerateDirectories().Any() || (fileInfoList != null && fileInfoList.Any());
                string dirName = dirInfo.Name;
 
                treeNodeList.Add(CreateTreeNode(treeId, parent, queryStrings, dirName, "icon-folder", hasChildren));
@@ -140,8 +132,8 @@ namespace Umbraco.FileSystemPicker.Controllers
 
          treeNodeCollection.AddRange(treeNodeList);
 
-
          return treeNodeCollection;
       }
+
    }
 }
