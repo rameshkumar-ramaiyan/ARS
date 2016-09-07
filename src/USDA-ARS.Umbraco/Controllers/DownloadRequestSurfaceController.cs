@@ -29,8 +29,9 @@ namespace USDA_ARS.Umbraco.Controllers
          }
          else
          {
-            downloadRequest.ModeCode = "00-00-00-00";
+            downloadRequest.ModeCode = null;
          }
+
          if (false == string.IsNullOrWhiteSpace(Request.QueryString["softwareid"]))
          {
             downloadRequest.SoftwareId = Request.QueryString.Get("softwareId");
@@ -38,7 +39,18 @@ namespace USDA_ARS.Umbraco.Controllers
 
          if (false == string.IsNullOrEmpty(downloadRequest.SoftwareId))
          {
-            return PartialView("DownloadRequest", downloadRequest);
+            IPublishedContent modeCodeNode = Software.GetNodeById(downloadRequest.SoftwareId);
+
+            if (modeCodeNode != null)
+            {
+               downloadRequest.ModeCode = modeCodeNode.GetPropertyValue<string>("modeCode");
+
+               return PartialView("DownloadRequest", downloadRequest);
+            }
+            else
+            {
+               return Redirect("/services/software/");
+            }
          }
          else
          {

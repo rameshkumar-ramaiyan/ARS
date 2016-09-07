@@ -35,6 +35,28 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
       }
 
 
+      public static IPublishedContent GetNodeById(string id)
+      {
+         IPublishedContent modeCodeNode = null;
+         IPublishedContent softwareItem = null;
+         List<IPublishedContent> softwareList = new List<IPublishedContent>();
+
+         softwareList = GetSoftwareNodes();
+
+         if (softwareList != null && softwareList.Any())
+         {
+            softwareItem = softwareList.Where(p => p.GetPropertyValue<string>("softwareId") == id).FirstOrDefault();
+
+            if (softwareItem != null)
+            {
+               modeCodeNode = softwareItem.Parent.Parent;
+            }
+         }
+
+         return modeCodeNode;
+      }
+
+
       public static int GetLastSoftwareId()
       {
          int softwareId = 0;
