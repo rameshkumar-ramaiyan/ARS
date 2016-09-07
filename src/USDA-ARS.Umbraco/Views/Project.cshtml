@@ -22,10 +22,6 @@
 
     bodyText = BodyTextTags.ReplaceTags(bodyText, "");
 
-    List<ProjectTeam> projectTeamList = Projects.GetProjectTeam(Convert.ToInt32(accnNo));
-    List<string> projectAnnualReportYearList = Projects.GetProjectAnnualReportYears(Convert.ToInt32(accnNo));
-    bool hasProjectPublication = Projects.HasProjectPublication(Convert.ToInt32(accnNo));
-    List<ProjectProgram> relatedtProgramList = ProjectPrograms.GetRelatedPrograms(Convert.ToInt32(accnNo));
     ProjectInfo projectInfo = Projects.GetProjectInfo(Convert.ToInt32(accnNo));
 
     IPublishedContent projectLocation = null;
@@ -59,93 +55,9 @@
 
 <div id="fullPage">
 
-    <div id="relatedTopics">
-        <h1 class="related_topics">Related Topics</h1>
-
-        <!--LT:navid:42758-->
-        <!--RT:navid:0-->
-
-        <ul>
-            <h2 class="related_topics">
-                Project Team
-            </h2>
-
-            @if (projectTeamList != null && projectTeamList.Count > 0)
-            {
-                foreach (ProjectTeam teamMember in projectTeamList)
-                {
-                    string fullName = teamMember.LastName + ", " + teamMember.FirstName;
-                    if (false == string.IsNullOrEmpty(teamMember.CommonName))
-                    {
-                        fullName += " - <i>" + teamMember.CommonName + "</i>";
-                    }
-                    if (teamMember.PrimeIndicator == "P")
-                    {
-                        fullName = "<b>" + fullName + "</b>";
-                    }
-
-                    <li>
-                        <a href="/people-locations/person/?person-id=@(teamMember.PersonId)" title="@(USDA_ARS.Umbraco.Extensions.Utilities.Strings.RemoveHtmlTags(fullName))" id="anch_48">
-                            @Html.Raw(fullName)
-                        </a>
-                    </li>
-                }
-            }
-
-            <h2 class="related_topics">
-                Project Annual Reports
-            </h2>
-
-            @if (projectAnnualReportYearList != null && projectAnnualReportYearList.Count > 0)
-            {
-                foreach (string year in projectAnnualReportYearList)
-                {
-                    <li>
-                        <a href="@(currentPage.Url +"?accnNo=" + accnNo + "&fy=" + year)" title="@year" id="anch_53">
-                            @year
-                        </a>
-                    </li>
-                }
-            }
-
-            @if (true == hasProjectPublication)
-            {
-                <h2 class="related_topics">
-                    Project Publications
-                </h2>
-                <li>
-                    <a href="@(currentPage.Url +"?accnNo=" + accnNo + "&showpubs=true")" title="Publications" id="anch_56">
-                        Publications
-                    </a>
-                </li>
-            }
-
-            @if (relatedtProgramList != null && relatedtProgramList.Count > 0)
-            {
-                <h2 class="related_topics">
-                    Related National Programs
-                </h2>
-
-                foreach (ProjectProgram relatedProgram in relatedtProgramList)
-                {
-                    <li>
-                        <a href="/research/programs/program?npCode=@(relatedProgram.NpCode)" title="@(relatedProgram.ShortDescription) (@(relatedProgram.NpCode))" id="anch_57">
-                            @(relatedProgram.ShortDescription) (@(relatedProgram.NpCode))
-                        </a>
-                    </li>
-                }
-            }
-
-        </ul>
-
-
-    </div>
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", projectLocation)
 
     <div id="pageContent">
-
-
-
-
 
         <script language="javascript">
 	<!--

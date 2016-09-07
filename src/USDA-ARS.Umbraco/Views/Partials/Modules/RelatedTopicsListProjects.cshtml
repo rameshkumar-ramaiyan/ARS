@@ -1,0 +1,104 @@
+﻿@using Archetype.Models
+@using Umbraco.Core.Models
+@using RJP.MultiUrlPicker.Models
+@using USDA_ARS.Umbraco.Extensions.Helpers
+@using USDA_ARS.Umbraco.Extensions.Models
+@using USDA_ARS.Umbraco.Extensions.Helpers
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@using Newtonsoft.Json
+@model IPublishedContent
+@{
+   IPublishedContent currentPage = Model;
+
+   string accnNo = "";
+
+   accnNo = Request.QueryString["accnNo"];
+
+   int intAccnNo = -1;
+
+   List<ProjectTeam> projectTeamList = null;
+   List<string> projectAnnualReportYearList = null;
+   bool hasProjectPublication = false;
+   List<ProjectProgram> relatedtProgramList = null;
+
+   if (false == string.IsNullOrWhiteSpace(accnNo) && int.TryParse(accnNo, out intAccnNo))
+   {
+      projectTeamList = Projects.GetProjectTeam(Convert.ToInt32(accnNo));
+      projectAnnualReportYearList = Projects.GetProjectAnnualReportYears(Convert.ToInt32(accnNo));
+      hasProjectPublication = Projects.HasProjectPublication(Convert.ToInt32(accnNo));
+      relatedtProgramList = ProjectPrograms.GetRelatedPrograms(Convert.ToInt32(accnNo));
+   }
+
+}
+
+
+<h2 class="related_topics">
+   Project Team
+</h2>
+
+@if (projectTeamList != null && projectTeamList.Count > 0)
+{
+   foreach (ProjectTeam teamMember in projectTeamList)
+   {
+      string fullName = teamMember.LastName + ", " + teamMember.FirstName;
+      if (false == string.IsNullOrEmpty(teamMember.CommonName))
+      {
+         fullName += " - <i>" + teamMember.CommonName + "</i>";
+      }
+      if (teamMember.PrimeIndicator == "P")
+      {
+         fullName = "<b>" + fullName + "</b>";
+      }
+
+      <li>
+         <a href="/people-locations/person/?person-id=@(teamMember.PersonId)" title="@(USDA_ARS.Umbraco.Extensions.Utilities.Strings.RemoveHtmlTags(fullName))" id="anch_48">
+            @Html.Raw(fullName)
+         </a>
+      </li>
+   }
+}
+
+<h2 class="related_topics">
+   Project Annual Reports
+</h2>
+
+@if (projectAnnualReportYearList != null && projectAnnualReportYearList.Count > 0)
+{
+   foreach (string year in projectAnnualReportYearList)
+   {
+      <li>
+         <a href="@(currentPage.Url +"?accnNo=" + accnNo + "&fy=" + year)" title="@year" id="anch_53">
+            @year
+         </a>
+      </li>
+   }
+}
+
+@if (true == hasProjectPublication)
+{
+   <h2 class="related_topics">
+      Project Publications
+   </h2>
+               <li>
+                  <a href="@(currentPage.Url +"?accnNo=" + accnNo + "&showpubs=true")" title="Publications" id="anch_56">
+                     Publications
+                  </a>
+               </li>
+}
+
+@if (relatedtProgramList != null && relatedtProgramList.Count > 0)
+{
+   <h2 class="related_topics">
+      Related National Programs
+   </h2>
+
+   foreach (ProjectProgram relatedProgram in relatedtProgramList)
+   {
+      <li>
+         <a href="/research/programs/program?npCode=@(relatedProgram.NpCode)" title="@(relatedProgram.ShortDescription) (@(relatedProgram.NpCode))" id="anch_57">
+            @(relatedProgram.ShortDescription) (@(relatedProgram.NpCode))
+         </a>
+      </li>
+   }
+}
