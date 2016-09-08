@@ -44,21 +44,23 @@
 
 <div id="fullPage">
 
-    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+			@Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
 
-    <div id="pageContent">
-       @if (nationalProgramGroup != null)
+			<div id="pageContent">
+						@if (nationalProgramGroup != null)
        {
-        <img src="/ARSUserFiles/incme/images/spacer.GIF" alt="" border="0" width="1" height="20">
+									<img src="/ARSUserFiles/incme/images/spacer.GIF" alt="" border="0" width="1" height="20">
 
 
-        <b>@(nationalProgramGroup.Name)</b>
-        (<a href="@(nationalProgramGroup.Url)" id="anch_60">National Program @npCode</a>)
-        in @state
+									<b>@(nationalProgramGroup.Name)</b>
 
-        <hr size="1" color="Navy" noshade="">
+									@(Html.Raw("("))<a href="@(nationalProgramGroup.Url)">National Program @npCode</a>@(Html.Raw(")"))
 
-        @if (projectLocationList != null)
+									<span>in @state</span>
+
+									<hr size="1" color="Navy" noshade="" />
+
+									if (projectLocationList != null)
             {
                 foreach (ProjectInfo locationInfo in projectLocationList)
                 {
@@ -66,41 +68,41 @@
 
                     if (locationNode != null)
                     {
-                    <a href="@(locationNode.Url)" id="anch_61"><b>@(locationNode.Name)</b></a>
+																					<a href="@(locationNode.Url)" id="anch_61"><b>@(locationNode.Name)</b></a>
                     }
                     else
                     {
-                        <em><b>National Program Not Found</b></em>
+																					<em><b>National Program Not Found</b></em>
                     }
 
 
                 List<ProjectInfo> filteredProjectList = projectList.Where(p => p.ModeCode == locationInfo.ModeCode).ToList();
                 {
-                    <div>
-                        @if (filteredProjectList != null && filteredProjectList.Any())
-                        {
-                            <ul>
-                                @foreach (ProjectInfo project in filteredProjectList)
-                                {
-                                    <li><a href="/research/project/?accnNo=@(project.AccountNo)" id="anch_62">@(project.ProjectTitle)</a></li>
-                                }
-                            </ul>
-                        }
-                    </div>
-                    <br />
+															<div>
+																		@if (filteredProjectList != null && filteredProjectList.Any())
+																														{
+																					<ul>
+																								@foreach (ProjectInfo project in filteredProjectList)
+																																						{
+																											<li><a href="/research/project/?accnNo=@(project.AccountNo)" id="anch_62">@(project.ProjectTitle)</a></li>
+																																						}
+																					</ul>
+																														}
+															</div>
+															<br />
                 }
             }
         }
         else
         {
-            <em><b>No Projects Found</b></em>
+									<em><b>No Projects Found</b></em>
         }
 
-        <br /><br />
+									<br /><br />
        }
        else
        {
-         <em>Invalid National Program.</em>
+									<em>Invalid National Program.</em>
        }
-    </div>
+			</div>
 </div>

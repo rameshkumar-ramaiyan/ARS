@@ -392,16 +392,13 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             if (peopleInfo != null)
             {
+               string empId = peopleInfo.EmpId;
+
                var db = new Database("arisPublicWebDbDSN");
 
-               Sql sql = null;
+               string sql = "SELECT * FROM V_PERSON_115S WHERE EMP_ID = @empId";
 
-               sql = new Sql()
-                .Select("*")
-                .From("V_PERSON_115S")
-                .Where("EMP_ID = '" + peopleInfo.EmpId + "'");
-
-               peoplePublicationsList = db.Query<PeoplePublication>(sql).ToList();
+               peoplePublicationsList = db.Query<PeoplePublication>(sql, new { empId = empId }).ToList();
 
                if (peoplePublicationsList != null)
                {

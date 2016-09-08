@@ -168,18 +168,13 @@ namespace USDA_ARS.Umbraco.FileSystemPicker.Controllers
                }
                catch (Exception ex)
                {
-                  LogHelper.Error(typeof(FileSystemPickerApiController), ex.Message, ex);
-                  AddCancelMessage(tempFiles,
-                      message: Services.TextService.Localize("speechBubbles/operationCancelledText", System.Globalization.CultureInfo.CurrentCulture, null) + " -- " + fileName,
-                      localizeMessage: false);
+                  return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Error: " + ex.Message);
                }
             }
             else
             {
-               tempFiles.Notifications.Add(new Notification(
-                   Services.TextService.Localize("speechBubbles/operationFailedHeader", System.Globalization.CultureInfo.CurrentCulture, null),
-                   "Cannot upload file " + file.Headers.ContentDisposition.FileName + ", it is not an approved file type",
-                   SpeechBubbleIcon.Warning));
+               //return Request.CreateErrorResponse(HttpStatusCode.MethodNotAllowed, "Invalid file for uploading.");
+               return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "Invalid file for uploading: " + fileName);
             }
          }
 

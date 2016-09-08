@@ -792,7 +792,19 @@ angular.module('umbraco.directives')
 
             }
             else {
-               notificationsService.error(data.errorThrown, data.jqXHR.statusText);
+
+               if (data.jqXHR.responseText) {
+                  var message = data.jqXHR.responseText;
+                  //)]}',
+                  //{"Message":"Invalid file for uploading."}
+                  message = message.replace('"Message":', '');
+                  message = message.replace(/[\)\]\}\{\"\',\r\n]/g, '');
+
+                  notificationsService.error("There was a problem", message);
+               }
+               else {
+                  notificationsService.error(data.errorThrown, data.jqXHR.statusText);
+               }
             }
 
             checkComplete(e, data);
