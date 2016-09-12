@@ -4,94 +4,115 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
 using Umbraco.Core.Persistence;
 using Umbraco.Web;
 
 namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 {
-    public class DownloadRequests
-    {
-        public static List<Models.Aris.DownloadRequest> GetDownloadRequests(Guid softwareId)
-        {
-            List<Models.Aris.DownloadRequest> downloadList = new List<Models.Aris.DownloadRequest>();
+			public class DownloadRequests
+			{
+						public static List<Models.Aris.DownloadRequest> GetDownloadRequests(string softwareId)
+						{
+									List<Models.Aris.DownloadRequest> downloadList = new List<Models.Aris.DownloadRequest>();
 
-            var db = new Database("arisPublicWebDbDSN");
+									var db = new Database("arisPublicWebDbDSN");
 
-            Sql sql = null;
+									string sql = "SELECT * FROM DownloadRequests WHERE SoftwareId = @softwareId";
 
-            string where = "SoftwareId = '" + softwareId.ToString() + "'";
+									downloadList = db.Query<Models.Aris.DownloadRequest>(sql, new { softwareId = softwareId }).ToList();
 
-            sql = new Sql()
-             .Select("*")
-             .From("DownloadRequests")
-             .Where(where);
-
-            downloadList = db.Query<Models.Aris.DownloadRequest>(sql).ToList();
-
-            return downloadList;
-        }
+									return downloadList;
+						}
 
 
-        public static Models.NodeDownloadRequests GetDownloadRequestsByNode(IPublishedContent node)
-        {
-            Models.NodeDownloadRequests nodeDownloadRequests = new Models.NodeDownloadRequests();
+						public static Models.NodeDownloadRequests GetDownloadRequestsByNode(IPublishedContent node)
+						{
+									Models.NodeDownloadRequests nodeDownloadRequests = new Models.NodeDownloadRequests();
 
-            var db = new Database("arisPublicWebDbDSN");
+									nodeDownloadRequests.NodeDownloadRequestsList = new List<Models.NodeDownloadRequestsList>();
 
-            ArchetypeModel softwareList = node.GetPropertyValue<ArchetypeModel>("software");
+									var db = new Database("arisPublicWebDbDSN");
 
-            if (softwareList != null & softwareList.Any())
-            {
-                nodeDownloadRequests.NodeDownloadRequestsList = new List<Models.NodeDownloadRequestsList>();
+									Models.NodeDownloadRequestsList nodeDownloadList = new Models.NodeDownloadRequestsList();
 
-                foreach (var softwareItem in softwareList)
-                {
-                    Models.NodeDownloadRequestsList nodeDownloadList = new Models.NodeDownloadRequestsList();
+									nodeDownloadList.SoftwareTitle = node.Name;
 
-                    if (softwareItem.HasValue("title"))
-                    {
-                        nodeDownloadList.SoftwareTitle = softwareItem.GetValue<string>("title");
-                    }
+									List<Models.Aris.DownloadRequest> downloadList = new List<Models.Aris.DownloadRequest>();
 
-                    List<Models.Aris.DownloadRequest> downloadList = new List<Models.Aris.DownloadRequest>();
+									downloadList = GetDownloadRequests(node.GetPropertyValue<string>("softwareID"));
 
-                    downloadList = GetDownloadRequests(softwareItem.Id);
+									if (downloadList != null && downloadList.Any())
+									{
+												downloadList = downloadList.OrderByDescending(p => p.TimeStamp).ToList();
 
-                    if (downloadList != null && downloadList.Any())
-                    {
-                        downloadList = downloadList.OrderByDescending(p => p.TimeStamp).ToList();
+												nodeDownloadList.DownloadRequestList = downloadList;
+									}
 
-                        nodeDownloadList.DownloadRequestList = downloadList;
-                    }
-
-                    nodeDownloadRequests.NodeDownloadRequestsList.Add(nodeDownloadList);
-                }
-                
-            }
-
-            return nodeDownloadRequests;
-        }
+									nodeDownloadRequests.NodeDownloadRequestsList.Add(nodeDownloadList);
 
 
-        public static bool SaveDownloadRequest(Models.Aris.DownloadRequest downloadRequest)
-        {
-            bool success = false;
+									return nodeDownloadRequests;
+						}
 
-            var db = new Database("arisPublicWebDbDSN");
 
-            if (downloadRequest.Id == 0)
-            {
-                db.Insert(downloadRequest);
-            }
-            else
-            {
-                db.Save(downloadRequest);
-            }
+						public static bool SaveDownloadRequest(Models.Aris.DownloadRequest downloadRequest)
+						{
+									bool success = true;
 
-            
+									try
+									{
+												var db = new Database("arisPublicWebDbDSN");
 
-            return success;
-        }
-    }
+												if (downloadRequest.Id == 0)
+												{
+															db.Insert(downloadRequest);
+												}
+												else
+												{
+															db.Save(downloadRequest);
+												}
+									}
+									catch (Exception ex)
+									{
+												success = false;
+
+												LogHelper.Error(typeof(DownloadRequests), "Error saving download request", ex);
+									}
+
+
+									return success;
+						}
+
+
+						public static bool ClearDownloadRequest(string softwareId)
+						{
+									bool success = false;
+
+									try
+									{
+												List<Models.Aris.DownloadRequest> downloadList = GetDownloadRequests(softwareId);
+
+
+												var db = new Database("arisPublicWebDbDSN");
+
+												if (downloadList != null && downloadList.Any())
+												{
+															foreach (Models.Aris.DownloadRequest download in downloadList)
+															{
+																		db.Delete(download);
+															}
+												}
+									}
+									catch (Exception ex)
+									{
+												success = false;
+
+												LogHelper.Error(typeof(DownloadRequests), "Error clearing download requests", ex);
+									}
+
+									return success;
+						}
+			}
 }

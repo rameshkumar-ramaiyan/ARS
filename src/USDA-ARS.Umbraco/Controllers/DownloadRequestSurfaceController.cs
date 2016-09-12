@@ -120,7 +120,15 @@ namespace USDA_ARS.Umbraco.Controllers
                downloadToSave.State = model.State;
                downloadToSave.Country = model.Country;
                downloadToSave.Reference = model.Reference;
-               downloadToSave.HttpReferer = Request.UrlReferrer.AbsoluteUri;
+
+															if (Session["externalReferer"] != null && Session["externalReferer"].ToString().Length > 0)
+															{
+																		downloadToSave.HttpReferer = Session["externalReferer"].ToString();
+															}
+															else
+															{
+																		downloadToSave.HttpReferer = Request.UrlReferrer.AbsoluteUri;
+															}
 
                Extensions.Helpers.Aris.DownloadRequests.SaveDownloadRequest(downloadToSave);
 
