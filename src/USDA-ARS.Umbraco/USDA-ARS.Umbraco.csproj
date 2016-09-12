@@ -455,6 +455,7 @@
     <Content Include="JQuery\jquery.cycle.all.min.js" />
     <Content Include="JQuery\jquery.min.js" />
     <Content Include="JQuery\jquery.ui.1.9.2.js" />
+    <Content Include="there-was-a-problem.html" />
     <Content Include="umbraco\Actions\delete.aspx" />
     <Content Include="umbraco\Actions\editContent.aspx" />
     <Content Include="umbraco\Actions\preview.aspx" />
@@ -2991,6 +2992,7 @@
     <Content Include="Config\BaseRestExtensions.config" />
     <Content Include="Config\applications.config" />
     <Content Include="Config\404handlers.config" />
+    <Content Include="App_Offline.htm.off" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
     <Content Include="Views\StandardWebpage.cshtml" />

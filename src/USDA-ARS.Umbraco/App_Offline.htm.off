@@ -1,0 +1,327 @@
+﻿
+
+<!DOCTYPE HTML>
+
+<HEAD>
+			<title>Website Unavailable : USDA ARS</title>
+
+			<meta http-equiv='Content-Type:text/html; charset=UTF-8' />
+			<meta http-equiv="X-UA-Compatible" content="IE=8" />			<!-- disable IE compatibility view -->
+
+			<link href="/css/layout.css" rel="stylesheet" type="text/css" />
+			<link href="/css/ARSbranding.css" rel="stylesheet" type="text/css" />
+			<link href="/css/ie8-and-down.css" rel="stylesheet" type="text/css" />
+
+</HEAD>
+
+<body>
+
+
+			<div id="pageComplete">
+
+						<!-- ARS Header start -->
+						<div id="masthead">
+									<a class="section508" name="masthead">
+												Page Banner
+									</a>
+
+									<div id="identity">
+												<a href="http://www.usda.gov">
+															<img src="/images/redesign/USDA-Logo.png" alt="USDA Logo and link" class="USDAlogo">
+												</a>
+
+												<div class="agencyName">
+															<p style="font-style:Helvetica; font-size:16px; font-weight: bold;">United States Department of Agriculture</p>
+															<p style="font-style:Helvetica; font-size:14px; font-weight: bold;">Agricultural Research Service</p>
+												</div>
+												<div class="deptName clearfloat"></div>
+									</div>
+
+									<div id="agencyMenu">
+												<div aria-labelledby="navigation_top" role="navigation" id="agencyNav">
+															<ul>
+																		<li><a title="ARS Home" href="/"><b>ARS Home</b></a></li>
+																		<li>|</li>
+																		<li><a title="About ARS" href="/about-ars/"><b>About ARS</b></a></li>
+																		<li>|</li>
+																		<li><a title="Contact Us" href="/contact-us/?modeCode=00-00-00-00"><b>Contact Us</b></a></li>
+															</ul>
+
+												</div>
+
+												<div id="agencySearch">
+															<!-- ************ BEGIN Search Box ************ -->
+															<!-- Google Mini -->
+															<!-- USA Search -->
+															<form method="get" action="https://search.usa.gov/search?sort=rel" id="search_form">
+																		<table width="250" cellspacing="2" cellpadding="2" class="justright">
+																					<tr>
+																								<td class="justright">
+																											<input name="utf8" type="hidden" value="&#x2713;" />
+																											<input name="affiliate" id="affiliate" type="hidden" value="agriculturalresearchservicears" />
+
+																											<label class="displayNone" for="searchThis">Search for This</label>
+																											<input name="query" id="query" type="text" value="" style="color:#000000" />
+																								</td>
+																								<td width="20" class="justleft">
+																											<input name="btnG" type="image" value="Go!" alt="Submit Form" src="/images/redesign/search.png">
+																								</td>
+																					</tr>
+																		</table>
+															</form>
+												</div>
+									</div>
+
+
+									<!-- Tabs -->
+									<div id="MenuNavigation">
+												<div id="mainNav">
+															<ul id="nav">
+
+																		<!--[if lt IE 9]>
+																						<li class="level1 IEonly">
+																										<img src="/images/redesign/leftTab.png" alt="spacer">
+																						</li>
+																		<![endif]-->
+
+																		<li class="level1">
+																					<a id="firstTab" href="#" class="level1">Research</a>
+																					<div>
+																								<ul>
+																											<li><a href="/research/">Research Home</a></li>
+																											<li><a href="/research/programs/">National Programs</a></li>
+																											<li><a href="/research/projects/">Research Projects</a></li>
+																											<li><a href="/research/publications/find-a-publication/">Scientific Manuscripts</a></li>
+																											<li><a href="/office-of-international-research-programs/">International Programs</a></li>
+																											<li><a href="/trending-research-topics/">Trending Research Topics</a></li>
+																											<li><a href="/research/software/">Scientific Software/Models</a></li>
+																											<li><a href="/office-of-technology-transfer/">Scientific Collaborations</a></li>
+																											<li><a href="/research/datasets/">Databases and Datasets</a></li>
+																								</ul>
+																					</div>
+																		</li>
+																		<li class="level1">
+																					<a href="#" class="level1">People &amp; Locations</a>
+																					<div>
+																								<ul>
+																											<li><a href="/people-locations/find-a-person/">Find a person</a></li>
+																											<li><a href="/people-locations/find-a-location/">Find a location</a></li>
+																											<li><a href="/#bottomContent">Find an office at headquarters</a></li>
+																											<li><a href="/people-locations/organizational-chart/">Organizational chart</a></li>
+																											<li><a href="/news-events/administrators-council/">Administrators Council</a></li>
+																								</ul>
+																					</div>
+																		</li>
+																		<li class="level1">
+																					<a href="#" class="level1">Newsroom</a>
+																					<div>
+																								<ul>
+																											<li><a href="/news-events/">News Home</a></li>
+																											<li><a href="/news-events/latest-news/">Latest News</a></li>
+																											<li><a href="https://agresearchmag.ars.usda.gov/">Magazine</a></li>
+																											<li><a href="/oc/images/image-gallery/">Photos</a></li>
+																											<li><a href="/news-events/e-mail-news-lists/">Subscription Lists</a></li>
+																											<li><a href="/news-events/briefing-room/">Briefing Room</a></li>
+																											<li><a href="/oc/podcasts/index/">Podcasts</a></li>
+																											<li><a href="/news-events/events/">Events</a></li>
+																											<li><a href="/oc/press-room/">Press Room</a></li>
+																											<li><a href="/oc/video/index/">Videos</a></li>
+																								</ul>
+																					</div>
+																		</li>
+																		<li class="level1">
+																					<a style="border-right: 0px;" id="lastTab" href="#" class="level1">Careers</a>
+																					<div>
+																								<ul>
+																											<li><a href="http://www.usajobs.gov/JobSearch/Search/GetResults?OrganizationID=AG03">ARS Vacancies at USAJOBS</a></li>
+																											<li><a href="/careers/careers-at-ars-info/">Careers at ARS Info</a></li>
+																											<li><a href="https://www.usajobs.gov/Search?Keyword=USDA+ARS+postdoctoral">Post Doctoral Positions</a></li>
+																								</ul>
+																					</div>
+																		</li>
+
+
+																		<!--[if lt IE 9]>
+																						<li class="level1 IEonly">
+																										<img src="/images/redesign/rightTab.png" alt="spacer">
+																						</li>
+																		<![endif]-->
+															</ul>
+												</div>
+
+												<div id="siteNav">
+															<ul>
+																		<li><a title="Site Map" href="/site-map/"><b>Site Map</b></a></li>
+																		<li>|</li>
+																		<li><a title="A-Z Index" href="/a-z-index/"><b>A-Z Index</b></a></li>
+																		<li>|</li>
+																		<li><a title="Help" href="/help/"><b>Help</b></a></li>
+															</ul>
+
+
+												</div>
+									</div>
+						</div>
+						<!-- ARS Header end -->
+
+
+
+
+
+
+						<div id="navigationLinks">
+									<div id="breadcrumb">
+												You are here:
+
+												<a href="/">ARS Home</a>
+
+												/ There was a problem...
+
+									</div>
+
+									<div id="navigationStayConnected">
+
+
+
+												<a href="http://twitter.com/usda_ars">
+															<img src="/images/redesign/twitter.png" title="USDA ARS Twitter" alt="USDA ARS Twitter" />
+												</a>
+												<a href="/news-events/e-mail-news-lists/">
+															<img src="/images/redesign/maillist.png" title="Email Lists" alt="Email Lists" />
+												</a>
+												<a href="/oc/podcasts/index/">
+															<img src="/images/redesign/podcast.png" title="ARS Podcasts" alt="ARS Podcasts" />
+												</a>
+												<a href="/news-events/rss-feeds/">
+															<img src="/images/redesign/rss.png" title="ARS RSS Feeds" alt="ARS RSS Feeds" />
+												</a>
+												<!-- AddThis Button BEGIN -->
+												<a onmouseover="addthis_open(this, '', '[URL]', '[TITLE]')" onmouseout="addthis_close()" onclick="addthis_sendto()">
+															<img vspace="0" hspace="4" border="0" src="/images/redesign/addthis.png" alt="Bookmark This Page">
+
+
+															<script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js#pubid=arsociowb"></script>
+												</a>
+												<!-- AddThis Button END -->                    <a href="https://agresearchmag.ars.usda.gov">
+															<img src="/images/redesign/armag.png" title="Agriculture Research Magazine" alt="Agriculture Research Magazine" />
+												</a>
+
+									</div>
+
+									<div style="clear:both;">
+												<hr />
+									</div>
+
+						</div>
+
+
+						<div id="fullPage">
+
+
+
+									<!--[if lt IE 9]>
+													<div class="IErounded-sidetop"
+																		style="display:block; height:20px; width:250px; position:relative; left:25px; top:5px;">
+																	<img src="/images/redesign/rounded-sidetop.png" alt="spacing">
+													</div>
+													<style>#relatedTopics {margin-top:-10px !important; z-index:300 !important;}</style>
+									<![endif]-->
+									<div id="relatedTopics">
+												<h1 class="related_topics">Related Topics</h1>
+												<ul></ul>
+									</div>
+									<!--[if lt IE 9]>
+													<div class="IErounded-sidebot"
+																					style="display:block; height:20px; width:250px; position:relative; left:25px; top:-12px;">
+																	<img src="/images/redesign/rounded-sidebottom.png" alt="spacing">
+													</div>
+									<![endif]-->
+
+
+
+
+
+									<div id="pageContent">
+
+												<table border="0" width="100%">
+															<tr>
+																		<td class="pageHeading">Website Unavailable</td>
+															</tr>
+															<tr>
+																		<td>
+																					<img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
+																		</td>
+															</tr>
+												</table>
+
+
+												<!-- display URLs of subpages start -->
+												<!--  display URLs of subpages end -->
+												<!-- document content start -->
+
+												<p><span>The website is currently undergoing maintenance and unavailable at this time. Please check back later.</span></p>
+
+												<!-- document content end -->
+
+
+												<br />
+
+
+
+												<p></p>
+
+
+									</div>
+						</div>
+
+
+
+
+
+
+						<!-- footer table -->
+						<div id="lastModifiedContent">
+									Last Modified: 8/25/2016
+						</div>
+
+
+						<div class="clearfloat" id="footerContent" style="width:940px">
+									<a class="section508" name="footer">Footer Content</a>
+
+									<!-- Begin Footer content text -->
+									<div id="footer_content_text">
+												<br>
+												<a href="/">ARS Home</a>
+												|                      <a href="http://www.usda.gov/">USDA.gov</a>
+												|                      <a href="/site-map/">Site Map</a>
+												|                      <a href="/statements-and-disclaimers/">Statements and Disclaimers</a>
+												|                      <a href="http://www.usda.gov/wps/portal/usda/usdahome?navid=PLAIN_WRITING">Plain Writing</a>
+
+
+												<br>
+												<a href="/research/freedom-of-information-act-and-privacy-act-reference-guide/">FOIA</a>
+												|                      <a href="/statement-and-disclaimers/#access">Accessibility Statement</a>
+												|                      <a href="/statement-and-disclaimers/#Privacy">Privacy Policy</a>
+												|                      <a href="/statement-and-disclaimers/#nondiscrim">Nondiscrimination Statement</a>
+												|                      <a href="/docs/quality-of-information/">Quality of Information</a>
+												|                      <a href="http://www.usa.gov" target="_blank">USA.gov</a>
+												|                      <a href="http://www.whitehouse.gov" target="_blank">White House</a>
+
+
+
+									</div>
+									<!-- End Footer content text -->
+
+									<a class="section508" href="top">Back to Top of Page</a>
+						</div>
+
+
+						<!--[if lt IE 9]>
+										<img class="IErounded" src="/images/redesign/rounded-bottomBLK.png" alt="spacer">
+						<![endif]-->
+			</div>	<!-- pageComplete -->
+			<!-- Custom Page Footers Scripts -->
+
+
+</body>
+                                    </html>
