@@ -7,210 +7,211 @@
 @using RJP.MultiUrlPicker.Models
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
-   Layout = "_Master.cshtml";
+			Layout = "_Master.cshtml";
 
-   string npCode = null;
-   string sort = null;
-   IPublishedContent currentPage = Model.Content;
-   IPublishedContent programNode = null;
-   string projectStatus = "A";
+			string npCode = null;
+			string sort = null;
+			IPublishedContent currentPage = Model.Content;
+			IPublishedContent programNode = null;
+			string projectStatus = "A";
 
-   // NP CODE
-   if (Request.QueryString["npCode"] != null)
-   {
-      npCode = Request.QueryString.Get("npCode");
+			// NP CODE
+			if (Request.QueryString["npCode"] != null)
+			{
+						npCode = Request.QueryString.Get("npCode");
 
-      programNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByNpCode(npCode);
-   }
-   else
-   {
-      Response.Redirect("/research/programs");
-   }
-   if (Request.QueryString["sort"] != null)
-   {
-      sort = Request.QueryString.Get("sort");
-   }
+						programNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByNpCode(npCode);
+			}
+			else
+			{
+						Response.Redirect("/research/programs");
+			}
+			if (Request.QueryString["sort"] != null)
+			{
+						sort = Request.QueryString.Get("sort");
+			}
 
-   // PROJECT STATUS
-   if (false == string.IsNullOrEmpty(Request.QueryString["projectStatus"]))
-   {
-      projectStatus = Request.QueryString.Get("projectStatus");
+			// PROJECT STATUS
+			if (false == string.IsNullOrEmpty(Request.QueryString["projectStatus"]))
+			{
+						projectStatus = Request.QueryString.Get("projectStatus");
 
-      if (projectStatus.Length != 1)
-      {
-         projectStatus = "A";
-      }
-   }
+						if (projectStatus.Length != 1)
+						{
+									projectStatus = "A";
+						}
+			}
 
-   List<ProjectStatusOption> projectStatusList = FormProjectFilter.GetProjectStatusList();
+			List<ProjectStatusOption> projectStatusList = FormProjectFilter.GetProjectStatusList();
 
-   List<PeopleInfo> peopleListByProject = FormProjectFilter.GetPeopleByProject(npCode, projectStatus);
-   List<ProjectInfo> projectProgramList = Projects.GetProjectAnnualReportList(npCode, sort);
-   List<ProjectInfo> projectProgramListDistinct = projectProgramList.DistinctBy(p => p.AccountNo).ToList();
-
+			List<PeopleInfo> peopleListByProject = FormProjectFilter.GetPeopleByProject(npCode, projectStatus);
+			List<CityState> locationListByProject = FormProjectFilter.GetLocationsByProject(npCode, projectStatus);
 }
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
 
 <div id="fullPage">
 
-   @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", programNode)
+			@Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", programNode)
 
-   <div id="pageContent">
+			<div id="pageContent">
 
-      <div class="cfform">
-         <form id="filterForm" action="?projectlist=true&amp;np_code=107&amp;filter=yes" method="post" class="cfHaloSkin" name="filterForm">
-            <input id="npCode" name="npCode" value="@(npCode)" />
-            <input id="filter" name="filter" value="yes" />
-            <table border="0" cellpadding="2" cellspacing="0" width="100%" class="vertical">
-               <tbody>
-                  <tr>
-                     <td colspan="2">
-                        <table border="0" cellpadding="2" cellspacing="0" width="100%" class="vertical">
-                           <tbody>
-                              <tr>
-                                 <td colspan="2" class="cfHeaderTitle">Filter Project List</td>
-                              </tr>
-                              <tr>
-                                 <td colspan="2">
-                                    <table border="0" cellspacing="0" cellpadding="0" class="horizontal">
-                                       <tbody>
-                                          <tr class="cfElementRow">
-                                             <td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Project Status</td>
-                                             <td>
-                                                @foreach (ProjectStatusOption projectStatusItem in projectStatusList)
-                                                {
-                                                   <input type="radio" id="projectStatus@(projectStatusItem.Value)" name="projectStatus" class="cfRadio " onclick="redirectCheck('@(projectStatusItem.Value)');" @(projectStatus == projectStatusItem.Value ? "checked=\"checked\"" : "") value="@(projectStatusItem.Value)">
-                                                <label for="projectStatus@(projectStatusItem.Value)">@(projectStatusItem.Text)</label>
-                                                }
-                                             </td>
-                                          </tr>
-                                       </tbody>
-                                    </table>
-                                 </td>
-                              </tr>
-                              <tr class="cfElementRow">
-                                 <td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
-                                    <label for="filterName">Name</label>
-                                 </td>
-                                 <td width="1000" align="left">
-                                    <select id="filterName" name="filterName" class="cfSelect " multiple="multiple" size="4">
-                                       <option value="blank">All People</option>
-                                       @if (peopleListByProject != null && peopleListByProject.Any())
-                                       {
-                                          foreach (PeopleInfo personItem in peopleListByProject)
-                                          {
-                                             <option value="@(personItem.PersonId)">@(personItem.LastName), @(personItem.FirstName)</option>
-                                          }
-                                       }
-                                    </select>
-                                 </td>
-                              </tr>
-                              <tr class="cfElementRow">
-                                 <td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
-                                    <label for="filterProjectType">Project Type</label>
-                                 </td>
-                                 <td width="1000" align="left">
-                                    <select id="filterProjectType" name="filterProjectType" class="cfSelect ">
-                                       <option value="blank">All Project Types</option>
-                                       <option value="D">Appropriated</option>
-                                       <option value="C">Contract</option>
-                                       <option value="A">General Cooperative Agreement</option>
-                                       <option value="G">Grant</option>
-                                       <option value="M">Memorandum of Understanding</option>
-                                       <option value="N">Nonfunded Cooperative Agreement</option>
-                                       <option value="X">Other</option>
-                                       <option value="R">Reimbursable</option>
-                                       <option value="S">Specific Cooperative Agreement</option>
-                                       <option value="T">Trust</option>
-                                    </select>
-                                 </td>
-                              </tr>
-                              <tr class="cfElementRow">
-                                 <td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
-                                    <label for="filterLocation">Location</label>
-                                 </td>
-                                 <td width="1000" align="left">
-                                    <select id="filterLocation" name="filterLocation" class="cfSelect ">
-                                       <option value="blank">All Locations</option>
-                                       <option value="Beltsville, MD">Beltsville, MD</option>
-                                       <option value="Boston, MA">Boston, MA</option>
-                                       <option value="Davis, CA">Davis, CA</option>
-                                       <option value="Grand Forks, ND">Grand Forks, ND</option>
-                                       <option value="Houston, TX">Houston, TX</option>
-                                       <option value="Ithaca, NY">Ithaca, NY</option>
-                                       <option value="Little Rock, AR">Little Rock, AR</option>
-                                    </select>
-                                 </td>
-                              </tr>
-                              <tr>
-                                 <td>
-                                    <br>
-                                 </td>
-                              </tr>
-                           </tbody>
-                        </table>
-                     </td>
-                  </tr>
-                  <tr>
-                     <td colspan="2">
-                        <table border="0" cellspacing="0" cellpadding="0" class="horizontal">
-                           <tbody>
-                              <tr class="cfElementRow">
-                                 <td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Show all projects</td>
-                                 <td>
-                                    <input type="radio" id="showAllProjects1" name="showAllProjects" class="cfRadio " value="Yes">
-                                    <label for="showAllProjects1">Yes</label>
-                                    <input type="radio" id="showAllProjects2" name="showAllProjects" class="cfRadio " checked="checked" value="No">
-                                    <label for="showAllProjects2">No</label>
-                                 </td>
-                              </tr>
-                           </tbody>
-                        </table>
-                     </td>
-                  </tr>
-                  <tr>
-                     <td colspan="2">
-                        <table border="0" cellspacing="0" cellpadding="0" class="horizontal">
-                           <tbody>
-                              <tr class="cfElementRow">
-                                 <td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Sort By</td>
-                                 <td>
-                                    <input type="radio" id="sortBy1" name="sortBy" class="cfRadio " checked="checked" value="">
-                                    <label for="sortBy1">Location</label>
-                                    <input type="radio" id="sortBy2" name="sortBy" class="cfRadio " value="Project Type">
-                                    <label for="sortBy2">Project Type</label>
-                                 </td>
-                              </tr>
-                           </tbody>
-                        </table>
-                     </td>
-                  </tr>
-                  <tr>
-                     <td colspan="2">
-                        <table border="0" cellspacing="0" cellpadding="0" class="horizontal">
-                           <tbody>
-                              <tr class="cfElementRow">
-                                 <td>
-                                    <input id="submitFilter" name="submitFilter" class="cfButton " value="Filter" type="submit" style="margin-left:120px;">
-                                 </td>
-                                 <td>
-                                    <input id="resetProjectList" name="resetProjectList" class="cfButton " type="reset" value="Reset">
-                                 </td>
-                              </tr>
-                           </tbody>
-                        </table>
-                     </td>
-                  </tr>
-                  <tr>
-                     <td>
-                        <br>
-                     </td>
-                  </tr>
-               </tbody>
-            </table>
-         </form>
-      </div>
+						<div class="cfform">
+									<form id="filterForm" action="?projectlist=true&amp;np_code=107&amp;filter=yes" method="post" class="cfHaloSkin" name="filterForm">
+												<input id="npCode" name="npCode" value="@(npCode)" />
+												<input id="filter" name="filter" value="yes" />
+												<table border="0" cellpadding="2" cellspacing="0" width="100%" class="vertical">
+															<tbody>
+																		<tr>
+																					<td colspan="2">
+																								<table border="0" cellpadding="2" cellspacing="0" width="100%" class="vertical">
+																											<tbody>
+																														<tr>
+																																	<td colspan="2" class="cfHeaderTitle">Filter Project List</td>
+																														</tr>
+																														<tr>
+																																	<td colspan="2">
+																																				<table border="0" cellspacing="0" cellpadding="0" class="horizontal">
+																																							<tbody>
+																																										<tr class="cfElementRow">
+																																													<td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Project Status</td>
+																																													<td>
+																																																@if (projectStatusList != null)
+																																																			foreach (ProjectStatusOption projectStatusItem in projectStatusList)
+																																																			{
+																																																						<input type="radio" id="projectStatus@(projectStatusItem.Value)" name="projectStatus" class="cfRadio " onclick="redirectCheck('@(projectStatusItem.Value)');" @(projectStatus == projectStatusItem.Value ? "checked=\"checked\"" : "") value="@(projectStatusItem.Value)">
+																																																						<label for="projectStatus@(projectStatusItem.Value)">@(projectStatusItem.Text)</label>
+}
+
+																																													</td>
+																																										</tr>
+																																							</tbody>
+																																				</table>
+																																	</td>
+																														</tr>
+																														<tr class="cfElementRow">
+																																	<td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
+																																				<label for="filterName">Name</label>
+																																	</td>
+																																	<td width="1000" align="left">
+																																				<select id="filterName" name="filterName" class="cfSelect " multiple="multiple" size="4">
+																																							<option value="blank">All People</option>
+																																							@if (peopleListByProject != null && peopleListByProject.Any())
+																																							{
+																																										foreach (PeopleInfo personItem in peopleListByProject)
+																																										{
+																																													<option value="@(personItem.PersonId)">@(personItem.LastName), @(personItem.FirstName)</option>
+}
+																																							}
+																																				</select>
+																																	</td>
+																														</tr>
+																														<tr class="cfElementRow">
+																																	<td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
+																																				<label for="filterProjectType">Project Type</label>
+																																	</td>
+																																	<td width="1000" align="left">
+																																				<select id="filterProjectType" name="filterProjectType" class="cfSelect ">
+																																							<option value="">All Project Types</option>
+																																							<option value="D">Appropriated</option>
+																																							<option value="C">Contract</option>
+																																							<option value="A">General Cooperative Agreement</option>
+																																							<option value="G">Grant</option>
+																																							<option value="M">Memorandum of Understanding</option>
+																																							<option value="N">Nonfunded Cooperative Agreement</option>
+																																							<option value="X">Other</option>
+																																							<option value="R">Reimbursable</option>
+																																							<option value="S">Specific Cooperative Agreement</option>
+																																							<option value="T">Trust</option>
+																																				</select>
+																																	</td>
+																														</tr>
+																														<tr class="cfElementRow">
+																																	<td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
+																																				<label for="filterLocation">Location</label>
+																																	</td>
+																																	<td width="1000" align="left">
+																																				<select id="filterLocation" name="filterLocation" class="cfSelect ">
+																																							<option value="">All Locations</option>
+																																							@if (locationListByProject != null && locationListByProject.Any())
+																																							{
+																																										foreach (CityState location in locationListByProject)
+																																										{
+																																													string locationStr = location.City + ", " + location.StateCode;
+																																													<option value="@(locationStr)">@(locationStr)</option>
+																																										}
+																																							}
+																																				</select>
+																																	</td>
+																														</tr>
+																														<tr>
+																																	<td>
+																																				<br>
+																																	</td>
+																														</tr>
+																											</tbody>
+																								</table>
+																					</td>
+																		</tr>
+																		<tr>
+																					<td colspan="2">
+																								<table border="0" cellspacing="0" cellpadding="0" class="horizontal">
+																											<tbody>
+																														<tr class="cfElementRow">
+																																	<td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Show all projects</td>
+																																	<td>
+																																				<input type="radio" id="showAllProjects1" name="showAllProjects" class="cfRadio " value="Yes">
+																																				<label for="showAllProjects1">Yes</label>
+																																				<input type="radio" id="showAllProjects2" name="showAllProjects" class="cfRadio " checked="checked" value="No">
+																																				<label for="showAllProjects2">No</label>
+																																	</td>
+																														</tr>
+																											</tbody>
+																								</table>
+																					</td>
+																		</tr>
+																		<tr>
+																					<td colspan="2">
+																								<table border="0" cellspacing="0" cellpadding="0" class="horizontal">
+																											<tbody>
+																														<tr class="cfElementRow">
+																																	<td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Sort By</td>
+																																	<td>
+																																				<input type="radio" id="sortBy1" name="sortBy" class="cfRadio " checked="checked" value="">
+																																				<label for="sortBy1">Location</label>
+																																				<input type="radio" id="sortBy2" name="sortBy" class="cfRadio " value="Project Type">
+																																				<label for="sortBy2">Project Type</label>
+																																	</td>
+																														</tr>
+																											</tbody>
+																								</table>
+																					</td>
+																		</tr>
+																		<tr>
+																					<td colspan="2">
+																								<table border="0" cellspacing="0" cellpadding="0" class="horizontal">
+																											<tbody>
+																														<tr class="cfElementRow">
+																																	<td>
+																																				<input id="submitFilter" name="submitFilter" class="cfButton " value="Filter" type="submit" style="margin-left:120px;">
+																																	</td>
+																																	<td>
+																																				<input id="resetProjectList" name="resetProjectList" class="cfButton " type="reset" value="Reset">
+																																	</td>
+																														</tr>
+																											</tbody>
+																								</table>
+																					</td>
+																		</tr>
+																		<tr>
+																					<td>
+																								<br>
+																					</td>
+																		</tr>
+															</tbody>
+												</table>
+									</form>
+						</div>
 
 
-   </div>
+			</div>
 </div>
