@@ -41,17 +41,19 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
 									List<Models.Aris.DownloadRequest> downloadList = new List<Models.Aris.DownloadRequest>();
 
-									downloadList = GetDownloadRequests(node.GetPropertyValue<string>("softwareID"));
-
-									if (downloadList != null && downloadList.Any())
+									if (node.HasProperty("softwareID") && node.HasValue("softwareID"))
 									{
-												downloadList = downloadList.OrderByDescending(p => p.TimeStamp).ToList();
+												downloadList = GetDownloadRequests(node.GetPropertyValue<string>("softwareID"));
 
-												nodeDownloadList.DownloadRequestList = downloadList;
+												if (downloadList != null && downloadList.Any())
+												{
+															downloadList = downloadList.OrderByDescending(p => p.TimeStamp).ToList();
+
+															nodeDownloadList.DownloadRequestList = downloadList;
+												}
+
+												nodeDownloadRequests.NodeDownloadRequestsList.Add(nodeDownloadList);
 									}
-
-									nodeDownloadRequests.NodeDownloadRequestsList.Add(nodeDownloadList);
-
 
 									return nodeDownloadRequests;
 						}
