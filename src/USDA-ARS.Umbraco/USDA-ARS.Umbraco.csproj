@@ -447,6 +447,7 @@
     <Content Include="css\ARSbranding.css" />
     <Content Include="css\ie8-and-down.css" />
     <Content Include="css\layout.css" />
+    <Content Include="css\lightgray_style.css" />
     <Content Include="css\rte.css" />
     <Content Include="css\umbraco-css.css" />
     <Content Include="default.aspx" />
@@ -3090,6 +3091,8 @@
     <Content Include="Views\Partials\Modules\PageIndexList.cshtml" />
     <Content Include="Views\Partials\Modules\PageIndexPaging.cshtml" />
     <Content Include="Views\ProjectListByProgram.cshtml" />
+    <Content Include="Views\Partials\SubscribeToArsJobs.cshtml" />
+    <Content Include="Views\SubscribeArsJobs.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -44,7 +44,16 @@ namespace USDA_ARS.Umbraco.Controllers
          return PartialView("SubscribeFormHealthyAnimals", emailSignup);
       }
 
-      [NotChildAction]
+						public ActionResult FormArsJobs()
+						{
+									EmailSignup emailSignup = new EmailSignup();
+
+									emailSignup.UmbracoId = UmbracoContext.PageId ?? 0;
+
+									return PartialView("SubscribeToArsJobs", emailSignup);
+						}
+
+						[NotChildAction]
       [HttpPost]
       public ActionResult HandleFormSubmit(EmailSignup model)
       {
