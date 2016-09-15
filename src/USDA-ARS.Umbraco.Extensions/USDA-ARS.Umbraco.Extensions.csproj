@@ -319,7 +319,7 @@
     <Compile Include="Helpers\Aris\DownloadRequest.cs" />
     <Compile Include="Helpers\Aris\Locations.cs" />
     <Compile Include="Helpers\Aris\NewsInterLinks.cs" />
-    <Compile Include="Helpers\Aris\ModeCodesNew.cs" />
+    <Compile Include="Helpers\Aris\ModeCodesNews.cs" />
     <Compile Include="Helpers\Aris\NationalPrograms.cs" />
     <Compile Include="Helpers\Aris\People.cs" />
     <Compile Include="Helpers\Aris\ProjectPrograms.cs" />

@@ -505,15 +505,20 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
       {
          IPublishedContent node = null;
 
-         foreach (IPublishedContent root in UmbHelper.TypedContentAtRoot())
-         {
-            if (node == null)
-            {
-               node = root.Descendants().FirstOrDefault(n => n.GetPropertyValue<string>("npCode") == npCode);
-            }
-         }
+									var db = new Database("umbracoDbDSN");
 
-         return node;
+									string sql = @"SELECT * FROM cmsPropertyData WHERE propertytypeid IN (SELECT id FROM cmsPropertyType WHERE Alias = 'npCode')
+                            AND NOT dataNvarchar IS NULL AND dataNvarchar = @npCode AND versionId IN
+                            (SELECT versionId FROM cmsDocument WHERE published = 1)";
+
+									UmbracoPropertyData propertyData = db.Query<UmbracoPropertyData>(sql, new { npCode = npCode }).FirstOrDefault();
+
+									if (propertyData != null)
+									{
+												node = UmbHelper.TypedContent(Convert.ToInt32(propertyData.UmbracoId));
+									}
+
+									return node;
       }
 
 
