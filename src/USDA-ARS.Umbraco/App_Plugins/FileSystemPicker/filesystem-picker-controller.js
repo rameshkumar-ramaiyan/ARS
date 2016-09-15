@@ -39,9 +39,11 @@ function fileSystemPickerController($scope, $http, $routeParams, $timeout, dialo
       if ($scope.model.config.startFolderNamePropertyAlias) {
          alias = $scope.model.config.startFolderNamePropertyAlias;
       }
-      if (alias == null || alias == '') {
-         alert('Start Folder is Empty. You must have a valid start folder to access files.');
-         return;
+      if (startFolder.length <= 'ARSUserFiles'.length) {
+      			if (alias == null || alias == '') {
+      						alert('Start Folder is Empty. You must have a valid start folder to access files.');
+      						return;
+      			}
       }
 
       if ($scope.model.config.removeCharactersPropertyAlias) {
