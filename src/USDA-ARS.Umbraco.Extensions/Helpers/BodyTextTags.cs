@@ -13,7 +13,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 {
    public class BodyTextTags
    {
-      public static string ReplaceTags(string text, string modeCode)
+      public static string ReplaceTags(string text, string modeCode, string htmlCode = null)
       {
          if (false == string.IsNullOrEmpty(text))
          {
@@ -31,7 +31,15 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                   text = text.Replace("[MODE_CODE:NAME]", node.Name);
                }
             }
-         }
+
+												if (true == text.Contains("{{HTML-CODE}}"))
+												{
+															if (false == string.IsNullOrWhiteSpace(htmlCode))
+															{
+																		text = text.Replace("{{HTML-CODE}}", htmlCode);
+															}
+												}
+									}
 
          return text;
       }

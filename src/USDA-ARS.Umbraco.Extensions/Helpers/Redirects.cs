@@ -22,7 +22,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
 									if (false == string.IsNullOrEmpty(badUrl))
 									{
-												if (false == badUrl.ToLower().StartsWith("/umbraco/"))
+												if (false == badUrl.ToLower().StartsWith("/umbraco/") && false == badUrl.ToLower().StartsWith("/__browserLink/"))
 												{
 															// Magazine
 															redirectUrl = RedirectMagazineUrl(badUrl);

@@ -12,16 +12,24 @@
 
    string bodyText = currentPage.GetPropertyValue<string>("bodyText");
    string modeCode = "";
-   
+
 
    if (Request.QueryString["modeCode"] != null)
    {
       modeCode = Request.QueryString.Get("modeCode");
    }
 
-   
+   string htmlCode = null;
 
-   bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
+			if (currentPage.HasProperty("htmlCode"))
+			{
+						if (currentPage.HasValue("htmlCode"))
+						{
+									htmlCode = currentPage.GetPropertyValue<string>("htmlCode");
+						}
+			}
+
+   bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode, htmlCode);
 
    if (currentPage.Url.StartsWith("/oc/"))
    {
