@@ -50,7 +50,16 @@
       }
    }
 
-   string modeCode = currentPage.GetPropertyValue<string>("modeCode", true);
+   string modeCode = "";
+
+			if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
+			{
+						modeCode = Request.QueryString.Get("modeCode");
+			}
+			else
+			{
+						currentPage.GetPropertyValue<string>("modeCode", true);
+			}
 
    string pageHeaderScripts = currentPage.GetPropertyValue<string>("pageHeaderScripts");
    string pageFooterScripts = currentPage.GetPropertyValue<string>("pageFooterScripts");
