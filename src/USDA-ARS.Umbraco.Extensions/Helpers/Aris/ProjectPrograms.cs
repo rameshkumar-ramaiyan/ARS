@@ -94,6 +94,71 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
          return projectProgramList;
       }
 
+						public static List<ProjectProgram> GetProjectProgramsByNpCode(string npCode, string projectStatus, List<int> personIdList = null, string projectType = "", string location = "N", string orderBy = "L")
+						{
+									List<ProjectProgram> projectProgramList = null;
+
+									var db = new Database("arisPublicWebDbDSN");
+
+									string sql = @"SELECT 	projects.accn_no, projects.prj_title, projects.PRJ_TYPE prj_type, 
+																				modecodes.Web_Label,city, rtrim(state_CODE) stateabbr, perfname, perlname, 
+																				(city + ',' + ' ' + state_code) AS location
+																		FROM 									
+																				w_people_info			v_people_info,				
+																				v_locations 			MODECODES, 
+																				A416_NATIONAL_PROGRAM 	A4NP,
+						
+																				W_PERSON_PROJECTS_ALL	V_PERSON_PROJECTS,
+								
+																				W_CLEAN_PROJECTS_ALL	PROJECTS
+					
+																		WHERE 	NP_CODE = @npCode
+																		AND		projects.status_code = @projectStatus						
+																		AND 	A4NP.ACCN_NO = PROJECTS.ACCN_NO
+																		AND 	projects.MODECODE_1 = modecodes.MODECODE_1
+																		AND 	projects.MODECODE_2 = modecodes.MODECODE_2
+																		AND 	projects.MODECODE_3 = modecodes.MODECODE_3
+																		AND 	projects.MODECODE_4 = modecodes.MODECODE_4
+																		AND 	projects.MODECODE_2 <> '01'
+																		AND 	MODECODES.STATUS_CODE = 'a'
+																		AND 	left(modecodes.MODECODE_1, 2) > 05
+																		AND 	projects.accn_no = v_person_projects.accn_no
+																		AND 	v_person_projects.emp_id = v_people_info.emp_id 
+																		AND 	v_person_projects.emp_id IS NOT NULL
+																		AND 	v_people_info.status_code = 'A'
+			
+																		AND		(PRJ_TYPE <> 'J')";
+
+									if (personIdList != null && personIdList.Any())
+									{
+												sql += " AND v_people_info.personid IN ("+ string.Join(",", personIdList) +")\r\n";
+         }
+
+									if (false == string.IsNullOrWhiteSpace(projectType))
+									{
+												sql += " AND projects.prj_type = @projectType \r\n";
+									}
+
+									if (false == string.IsNullOrWhiteSpace(location))
+									{
+												sql += " AND (city + ',' + ' ' + state_code) = @location \r\n";
+									}
+
+									if (false == string.IsNullOrWhiteSpace(orderBy) && orderBy == "P")
+									{
+												sql += " ORDER BY projects.prj_type, modecodes.modecode_1, modecodes.modecode_2, modecodes.modecode_3, modecodes.modecode_4  \r\n";
+									}
+									else
+									{
+												sql += " ORDER BY modecodes.modecode_1, modecodes.modecode_2,modecodes.modecode_3, modecodes.modecode_4, projects.prj_type, projects.accn_no \r\n";
+									}
+
+
+									projectProgramList = db.Query<ProjectProgram>(sql, new { npCode = npCode, projectStatus = projectStatus, projectType = projectType, location = location }).ToList();
+
+									return projectProgramList;
+						}
+
       public static List<ProjectProgram> GetRelatedPrograms(int accountNo)
       {
          List<Models.Aris.ProjectProgram> projectProgramList = null;
