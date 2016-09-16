@@ -48,6 +48,8 @@ namespace USDA_ARS.Umbraco.Controllers
 						{
 									EmailSignup emailSignup = new EmailSignup();
 
+									emailSignup.ListName = "arsjobs";
+
 									emailSignup.UmbracoId = UmbracoContext.PageId ?? 0;
 
 									return PartialView("SubscribeToArsJobs", emailSignup);

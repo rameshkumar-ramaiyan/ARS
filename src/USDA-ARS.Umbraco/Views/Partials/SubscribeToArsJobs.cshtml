@@ -20,6 +20,7 @@
 																		@Html.RadioButton("Action", "Unsubscribe") <strong>Unsubscribe</strong>
 															</p>
 															<p>
+																		@Html.HiddenFor(p => p.ListName)
 																		@Html.HiddenFor(p => p.UmbracoId)
 																		<input type="submit" value="Submit">
 															</p>
