@@ -540,9 +540,11 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
          List<ProjectSubject> projectSubjectList = null;
          List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
 
-         var db = new Database("arisPublicWebDbDSN");
+									if (modeCode != null && modeCode.Length == 4)
+									{
+												var db = new Database("arisPublicWebDbDSN");
 
-         string sql = @"SELECT	soi_code, long_desc
+												string sql = @"SELECT	soi_code, long_desc
 			        FROM	ref_soi
 			        WHERE	soi_code IN 
 						        (
@@ -552,25 +554,26 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 									        a417_subject_of_investigation 	soi 
 							        WHERE	a4m.accn_no  = soi.accn_no";
 
-         sql += " and a4m.modecode_1 = " + modeCodeArray[0];
+												sql += " and a4m.modecode_1 = " + modeCodeArray[0];
 
-         if (modeCodeArray[1] != "00")
-         {
-            sql += " and a4m.modecode_2 = " + modeCodeArray[1];
-         }
-         if (modeCodeArray[2] != "00")
-         {
-            sql += " and a4m.modecode_3 = " + modeCodeArray[2];
-         }
-         if (modeCodeArray[3] != "00")
-         {
-            sql += " and a4m.modecode_4 = " + modeCodeArray[3];
-         }
+												if (modeCodeArray[1] != "00")
+												{
+															sql += " and a4m.modecode_2 = " + modeCodeArray[1];
+												}
+												if (modeCodeArray[2] != "00")
+												{
+															sql += " and a4m.modecode_3 = " + modeCodeArray[2];
+												}
+												if (modeCodeArray[3] != "00")
+												{
+															sql += " and a4m.modecode_4 = " + modeCodeArray[3];
+												}
 
-         sql += @"			        )
+												sql += @"			        )
 			        ORDER BY long_desc";
 
-         projectSubjectList = db.Query<ProjectSubject>(sql).ToList();
+												projectSubjectList = db.Query<ProjectSubject>(sql).ToList();
+									}
 
          return projectSubjectList;
       }

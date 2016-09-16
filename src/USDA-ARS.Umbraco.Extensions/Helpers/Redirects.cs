@@ -5,6 +5,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Umbraco.Core;
+using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
 using Umbraco.Core.Services;
 using USDA_ARS.Umbraco.Extensions.Models;
@@ -83,37 +84,46 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 															string month = badUrlArray[index].Substring(0, 3);
 															string year = badUrlArray[index].Substring(3, 2);
 
-															if (Convert.ToInt32(year) <= 99 && Convert.ToInt32(year) >= 50)
+															int yearInt = 0;
+
+															if (int.TryParse(year, out yearInt))
 															{
-																		year = "19" + year;
+																		if (yearInt <= 99 && yearInt >= 50)
+																		{
+																					year = "19" + year;
+																		}
+																		else
+																		{
+																					year = "20" + year;
+																		}
+
+																		agMagUrl += year + "/";
+																		agMagUrl += month + "/";
+																		index++;
+
+																		string endUrl = badUrlArray[index].Replace(".htm", "");
+
+																		if (false == string.IsNullOrEmpty(endUrl) && false == endUrl.ToLower().EndsWith(".pdf"))
+																		{
+																					if (endUrl.Length >= 4)
+																					{
+																								endUrl = endUrl.Substring(0, endUrl.Length - 4);
+																					}
+																		}
+
+																		agMagUrl += endUrl;
+
+																		if (endUrl.ToLower().EndsWith(".pdf"))
+																		{
+																					agMagUrl = agMagUrl.Replace("https://agresearchmag.ars.usda.gov/", "https://agresearchmag.ars.usda.gov/ar/archive/");
+																		}
+
+																		redirectUrl = agMagUrl;
 															}
 															else
 															{
-																		year = "20" + year;
+																		LogHelper.Warn(typeof(Redirects), "Invalid format for Mag Redirect. URL: " + badUrl);
 															}
-
-															agMagUrl += year + "/";
-															agMagUrl += month + "/";
-															index++;
-															string endUrl = badUrlArray[index].Replace(".htm", "");
-
-															if (false == string.IsNullOrEmpty(endUrl) && false == endUrl.ToLower().EndsWith(".pdf"))
-															{
-																		if (endUrl.Length >= 4)
-																		{
-																					endUrl = endUrl.Substring(0, endUrl.Length - 4);
-																		}
-															}
-
-															agMagUrl += endUrl;
-
-															if (endUrl.ToLower().EndsWith(".pdf"))
-															{
-																		agMagUrl = agMagUrl.Replace("https://agresearchmag.ars.usda.gov/", "https://agresearchmag.ars.usda.gov/ar/archive/");
-															}
-
-
-															redirectUrl = agMagUrl;
 												}
 									}
 
@@ -229,6 +239,8 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 									redirectList.Add(new RedirectToNode() { OldUrl = "/pandp/people/news.htm?personid=", UmbracoId = 200348, AppendString = "?person-id=" });
 									redirectList.Add(new RedirectToNode() { OldUrl = "/pandp/people/projects.htm?personid=", UmbracoId = 200349, AppendString = "?person-id=" });
 									redirectList.Add(new RedirectToNode() { OldUrl = "/pandp/people/publications.htm?personid=", UmbracoId = 200350, AppendString = "?person-id=" });
+
+									//redirectList.Add(new RedirectToNode() { OldUrl = "/research/programs/programs.htm?projectlist=true&np_code=", UmbracoId = xxx, AppendString = "?npCode=" });
 
 
 
