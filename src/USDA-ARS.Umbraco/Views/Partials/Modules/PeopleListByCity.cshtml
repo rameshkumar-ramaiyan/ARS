@@ -2,226 +2,240 @@
 @using Umbraco.Core.Models
 @using RJP.MultiUrlPicker.Models
 @using USDA_ARS.Umbraco.Extensions.Helpers
-   @using USDA_ARS.Umbraco.Extensions.Models.Aris
-   @model IPublishedContent
-   @{
-      IPublishedContent currentNode = Model;
-      string modeCode = Model.GetPropertyValue<string>("modeCode");
-      string modeCodeCity = modeCode;
-      string modeCodeCityShort = "";
-      string javascriptInsert = "";
-      int incValue = -1;
+@using USDA_ARS.Umbraco.Extensions.Helpers.Aris
+@using USDA_ARS.Umbraco.Extensions.Models.Aris
+@model IPublishedContent
+@{
+			IPublishedContent currentNode = Model;
+			string modeCode = Model.GetPropertyValue<string>("modeCode");
+			string modeCodeCity = modeCode;
+			string modeCodeCityShort = "";
+			string javascriptInsert = "";
+			int incValue = -1;
 
 
-      if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
-      {
-         modeCode = Request.QueryString.Get("modeCode");
+			if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
+			{
+						modeCode = Request.QueryString.Get("modeCode");
 
-         modeCode = ModeCodes.ModeCodeAddDashes(modeCode);
+						modeCode = ModeCodes.ModeCodeAddDashes(modeCode);
 
-         List<string> modeCodeArray = ModeCodes.ModeCodeArray(modeCode);
+						List<string> modeCodeArray = ModeCodes.ModeCodeArray(modeCode);
 
-         if (modeCodeArray != null && modeCodeArray.Any())
-         {
-            modeCodeCityShort = modeCodeArray[0] + "-" + modeCodeArray[1];
-            modeCodeCity = modeCodeCityShort + "-00-00";
+						if (modeCodeArray != null && modeCodeArray.Any())
+						{
+									modeCodeCityShort = modeCodeArray[0] + "-" + modeCodeArray[1];
+									modeCodeCity = modeCodeCityShort + "-00-00";
 
-            currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCodeCity, false);
-         }
-      }
+									currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCodeCity, false);
+						}
+			}
 
 
-      List<PeopleByCity> peopleFullList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByCity(modeCodeCity);
-      List<PeopleByCity> siteLabelList = null;
+			List<PeopleByCity> peopleFullList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByCity(modeCodeCity);
+			List<PeopleByCity> siteLabelList = null;
 
-      // Fix people with mode codes ending in 01
-      if (peopleFullList != null && peopleFullList.Any())
-      {
-         peopleFullList = peopleFullList.Where(p => false == string.IsNullOrEmpty(p.ModeCodeConcat)).ToList();
+			// Fix people with mode codes ending in 01
+			if (peopleFullList != null && peopleFullList.Any())
+			{
+						peopleFullList = peopleFullList.Where(p => false == string.IsNullOrEmpty(p.ModeCodeConcat)).ToList();
 
-         foreach (PeopleByCity personItem in peopleFullList)
-         {
-            if (personItem.ModeCodeConcat.EndsWith("01"))
-            {
-               personItem.ModeCodeConcat = personItem.ModeCodeConcat.Substring(0, 6) + "00";
-               personItem.ModeCode = ModeCodes.ModeCodeAddDashes(personItem.ModeCodeConcat);
-            }
-         }
+						foreach (PeopleByCity personItem in peopleFullList)
+						{
+									if (personItem.ModeCodeConcat.EndsWith("01"))
+									{
+												personItem.ModeCodeConcat = personItem.ModeCodeConcat.Substring(0, 6) + "00";
+												personItem.ModeCode = ModeCodes.ModeCodeAddDashes(personItem.ModeCodeConcat);
+									}
+						}
 
-         siteLabelList = peopleFullList.DistinctBy(p => p.ModeCodeConcat).ToList();
+						siteLabelList = peopleFullList.DistinctBy(p => p.ModeCodeConcat).ToList();
 
-         if (siteLabelList != null && siteLabelList.Any())
-         {
-            siteLabelList = siteLabelList.OrderBy(p => p.ModeCodeConcat).ToList();
+						if (siteLabelList != null && siteLabelList.Any())
+						{
+									siteLabelList = siteLabelList.OrderBy(p => p.ModeCodeConcat).ToList();
 
-            int i = 0;
-            foreach (PeopleByCity peopleByCity in siteLabelList)
-            {
-               if (incValue == -1 && peopleByCity.ModeCode == modeCode)
-               {
-                  incValue = i;
-               }
+									int i = 0;
+									foreach (PeopleByCity peopleByCity in siteLabelList)
+									{
+												if (incValue == -1 && peopleByCity.ModeCode == modeCode)
+												{
+															incValue = i;
+												}
 
-               i++;
-            }
-         }
+												i++;
+									}
+						}
 
-         if (incValue >= 0)
-         {
-            javascriptInsert += @"
+						if (incValue >= 0)
+						{
+									javascriptInsert += @"
                  // Open the panel by modecode
         ";
-            javascriptInsert += "$('#accordion').accordion('activate', " + incValue + ");\r\n";
+									javascriptInsert += "$('#accordion').accordion('activate', " + incValue + ");\r\n";
 
-            javascriptInsert += @"         // auto scroll to a div
+									javascriptInsert += @"         // auto scroll to a div
         $('html, body').animate({";
-            javascriptInsert += " scrollTop: $('#" + modeCode.Replace("-", "") + "').offset().top}, 2000);";
-         }
-      }
+									javascriptInsert += " scrollTop: $('#" + modeCode.Replace("-", "") + "').offset().top}, 2000);";
+						}
+			}
 
 
-   }
-   <!-- jQuery accordion -->
-   <script>
-      $(document).ready(function () {
-         $("#accordion")
-             .accordion({
-                header: "h4",
-                active: false,
-                collapsible: true,
-                icons: {
-                   // Icon for collapsed headers
-                   header: "ui-icon-plus",
+}
+<!-- jQuery accordion -->
+<script>
+			$(document).ready(function () {
+						$("#accordion")
+										.accordion({
+													header: "h4",
+													active: false,
+													collapsible: true,
+													icons: {
+																// Icon for collapsed headers
+																header: "ui-icon-plus",
 
-                   // Icon for active header
-                   activeHeader: "ui-icon-minus"
-                },
-                heightStyle: "content"
-             });
+																// Icon for active header
+																activeHeader: "ui-icon-minus"
+													},
+													heightStyle: "content"
+										});
 
-         // Expand/Collapse all
-         $('.expand').click(function () {
-            $('.ui-widget-content').show();
-         });
-         $('.collapse').click(function () {
-            $('.ui-widget-content').hide();
-         });
-
-
-         @Html.Raw(javascriptInsert)
-
-         /*
-         $('.toggle').click(function() {
-             $('.ui-widget-content').toggle();
-             $(this).text($(this).text() == '[Collapse All]' ? '[Expand All]' : '[Collapse All]');
-         });
-         */
-
-      });
-   </script>
+						// Expand/Collapse all
+						$('.expand').click(function () {
+									$('.ui-widget-content').show();
+						});
+						$('.collapse').click(function () {
+									$('.ui-widget-content').hide();
+						});
 
 
-   <div id="CityPeopleListing">
+						@Html.Raw(javascriptInsert)
+
+						/*
+						$('.toggle').click(function() {
+										$('.ui-widget-content').toggle();
+										$(this).text($(this).text() == '[Collapse All]' ? '[Expand All]' : '[Collapse All]');
+						});
+						*/
+
+			});
+</script>
 
 
-      @if (currentNode != null)
-      {
-         <b>
-            People and Locations at
-            @currentNode.Name
-         </b>
-         <br /><br />
+<div id="CityPeopleListing">
+
+
+			@if (currentNode != null)
+			{
+						<b>
+									People and Locations at
+									@currentNode.Name
+						</b>
+																		<br /><br />
 
 
     <!-- Expand/Collapse All -->
-         <div style="margin-left:450px;">
-            <a href="#" class="expand">[Expand All]</a> |
-            <a href="#" class="collapse">[Collapse All]</a>
-         </div>
+																		<div style="margin-left:450px;">
+																					<a href="#" class="expand">[Expand All]</a> |
+																					<a href="#" class="collapse">[Collapse All]</a>
+																		</div>
 
 
-         <div id="accordion" style="width:600px">
+																		<div id="accordion" style="width:600px">
 
-            @if (siteLabelList != null && siteLabelList.Any())
-            {
-               foreach (PeopleByCity siteLabel in siteLabelList)
-               {
-                  IPublishedContent siteNode = null;
+																					@if (siteLabelList != null && siteLabelList.Any())
+																					{
+																								foreach (PeopleByCity siteLabel in siteLabelList)
+																								{
+																											IPublishedContent siteNode = null;
 
-                  if (false == string.IsNullOrEmpty(siteLabel.ModeCode))
-                  {
-                     siteNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(siteLabel.ModeCode, false);
-                     siteLabel.SiteLabel = siteNode.Name;
-                  }
+																											if (false == string.IsNullOrEmpty(siteLabel.ModeCode))
+																											{
+																														siteNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(siteLabel.ModeCode, false);
+																														if (siteNode != null)
+																														{
+																																	siteLabel.SiteLabel = siteNode.Name;
+																														}
+																											}
 
-                  List<PeopleByCity> peopleList = peopleFullList.Where(p => p.ModeCodeConcat == siteLabel.ModeCodeConcat).ToList();
+																											if (true == string.IsNullOrEmpty(siteLabel.SiteLabel))
+																											{
+																														Location location = Locations.GetLocationObjectByModeCode(siteLabel.ModeCode);
 
-                  if (peopleList != null && peopleList.Any() && peopleList[0].ModeCodeConcat != null &&
-                           peopleList[0].ModeCodeConcat.Length > 3 &&
-                           (peopleList[0].ModeCodeConcat.Substring(4, 2) == "02"))
-                  {
-                     //peopleList = peopleList.OrderBy()
-                     siteLabel.SiteLabel = "Location Support Staff";
-                  }
+																														if (location != null)
+																														{
+																																	siteLabel.SiteLabel = Locations.GetLocationNameByModeCode(modeCode);
+																														}
+																											}
+
+																											List<PeopleByCity> peopleList = peopleFullList.Where(p => p.ModeCodeConcat == siteLabel.ModeCodeConcat).ToList();
+
+																											if (peopleList != null && peopleList.Any() && peopleList[0].ModeCodeConcat != null &&
+																																				peopleList[0].ModeCodeConcat.Length > 3 &&
+																																				(peopleList[0].ModeCodeConcat.Substring(6, 2) == "02"))
+																											{
+																														//peopleList = peopleList.OrderBy()
+																														siteLabel.SiteLabel = "Location Support Staff";
+																											}
 
 
-                  if (peopleList != null && peopleList.Count > 0)
-                  {
-                     peopleList = peopleList.OrderBy(p => p.LastName).ThenBy(p => p.FirstName).ToList();
+																											if (peopleList != null && peopleList.Count > 0)
+																											{
+																														peopleList = peopleList.OrderBy(p => p.LastName).ThenBy(p => p.FirstName).ToList();
 
-                     int peopleCount = peopleList.Count;
+																														int peopleCount = peopleList.Count;
 
-                     <h4 id="@(siteLabel.ModeCodeConcat)">
-                        @(siteLabel.SiteLabel)
+																														<h4 id="@(siteLabel.ModeCodeConcat)">
+																																	@(siteLabel.SiteLabel)
 
-                        @("(" + peopleCount + " " + (peopleCount == 1 ? "person" : "people") + ")")
-                     </h4>
+																																	@("(" + peopleCount + " " + (peopleCount == 1 ? "person" : "people") + ")")
+																														</h4>
 
-                     <div>
-                        @if (siteNode != null)
-                        {
-                           <p>
-                              <b>Home Page:</b>
-                              <a href="@(siteNode.Url)" title="@(siteNode.Name) home page" id="anch_55">
-                                 @(siteNode.Name)
-                              </a>
-                           </p>
-                        }
-                        <p>
-                           <ul>
-                              @if (peopleList != null && peopleList.Any())
-                              {
-                                 foreach (PeopleByCity person in peopleList)
-                                 {
-                                    <li>
-                                       <a href="/people-locations/person?person-id=@(person.PersonId)" class="listItems">
-                                          @(person.LastName),
-                                          @(person.FirstName)
-                                          @Html.Raw(false == string.IsNullOrWhiteSpace(person.CommonName) ? " - <em>" + person.CommonName + "</em>" : "")
-                                       </a>
-                                       <br>
-                                       @(USDA_ARS.Umbraco.Extensions.Utilities.Strings.FormatPhoneNumber(person.PhoneAreaCode + person.Phone))
+																																				<div>
+																																							@if (siteNode != null)
+																																							{
+																																										<p>
+																																													<b>Home Page:</b>
+																																													<a href="@(siteNode.Url)" title="@(siteNode.Name) home page" id="anch_55">
+																																																@(siteNode.Name)
+																																													</a>
+																																										</p>
+}
+																																							<p>
+																																										<ul>
+																																													@if (peopleList != null && peopleList.Any())
+																																													{
+																																																foreach (PeopleByCity person in peopleList)
+																																																{
+																																																			<li>
+																																																						<a href="/people-locations/person?person-id=@(person.PersonId)" class="listItems">
+																																																									@(person.LastName),
+																																																									@(person.FirstName)
+																																																									@Html.Raw(false == string.IsNullOrWhiteSpace(person.CommonName) ? " - <em>" + person.CommonName + "</em>" : "")
+																																																						</a>
+																																																						<br>
+																																																						@(USDA_ARS.Umbraco.Extensions.Utilities.Strings.FormatPhoneNumber(person.PhoneAreaCode + person.Phone))
 
-                                       @(false == string.IsNullOrEmpty(person.PhoneExt) ? " ext." + person.PhoneExt : "")
+																																																						@(false == string.IsNullOrEmpty(person.PhoneExt) ? " ext." + person.PhoneExt : "")
 
-                                       <br /> @(person.Email) <br /> @(person.TitleWorking)
-                                       <br />
-                                       <br />
-                                    </li>
-                                 }
-                              }
-                           </ul>
-                        </p>
-                     </div>
-                  }
-               }
-            }
+																																																						<br /> @(person.Email) <br /> @(person.TitleWorking)
+																																																						<br />
+																																																						<br />
+																																																			</li>
+}
+																																													}
+																																										</ul>
+																																							</p>
+																																				</div>
+}
+																								}
+																					}
 
-         </div>
-      }
-      else
+																		</div>
+			}
+			else
 
-      {
-         <em>Location not found</em>
-      }
-   </div>
+			{
+						<em>Location not found</em>
+			}
+</div>
