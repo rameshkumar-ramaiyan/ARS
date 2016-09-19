@@ -58,7 +58,7 @@
 			}
 			else
 			{
-						currentPage.GetPropertyValue<string>("modeCode", true);
+						modeCode = currentPage.GetPropertyValue<string>("modeCode", true);
 			}
 
    string pageHeaderScripts = currentPage.GetPropertyValue<string>("pageHeaderScripts");
@@ -97,116 +97,121 @@
 <!DOCTYPE HTML>
 
 <HEAD>
-   <title>@htmlTitlePageName @htmlTitleSiteName</title>
+			<title>@htmlTitlePageName @htmlTitleSiteName</title>
 
-   <meta http-equiv='Content-Type:text/html; charset=UTF-8' />
-   <meta http-equiv="X-UA-Compatible" content="IE=8" />			<!-- disable IE compatibility view -->
+			<meta http-equiv='Content-Type:text/html; charset=UTF-8' />
+			<meta http-equiv="X-UA-Compatible" content="IE=8" />			<!-- disable IE compatibility view -->
 
-   <link href="/css/layout.css" rel="stylesheet" type="text/css" />
-   <link href="/css/ARSbranding.css" rel="stylesheet" type="text/css" />
-   <link href="/css/ie8-and-down.css" rel="stylesheet" type="text/css" />
+			<link href="/css/layout.css" rel="stylesheet" type="text/css" />
+			<link href="/css/ARSbranding.css" rel="stylesheet" type="text/css" />
+			<link href="/css/ie8-and-down.css" rel="stylesheet" type="text/css" />
 
-   @*<script id="_fed_an_ua_tag" src="/incme/handf/Universal-Federated-Analytics-Min.js?agency=USDA&subagency=ARS"></script>*@
+			@*<script id="_fed_an_ua_tag" src="/incme/handf/Universal-Federated-Analytics-Min.js?agency=USDA&subagency=ARS"></script>*@
 
-   <!-- include jQuery library -->
+			<!-- include jQuery library -->
 
-   <script src="/jQuery/jquery.min.js"></script>
-   <script src="/jQuery/jquery.cycle.all.min.js"></script>
-   <script src="/jQuery/jquery.corner.js"></script>			<!-- Corner Plugin -->
+			<script src="/jQuery/jquery.min.js"></script>
+			<script src="/jQuery/jquery.cycle.all.min.js"></script>
+			<script src="/jQuery/jquery.corner.js"></script>			<!-- Corner Plugin -->
 
-   <link rel="stylesheet" href="//code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
+			<link rel="stylesheet" href="//code.jquery.com/ui/1.9.2/themes/base/jquery-ui.css" />
 
-   <script src="//code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
+			<script src="//code.jquery.com/ui/1.9.2/jquery-ui.js"></script>
 
-   <!-- jQuery validation -->
-   <script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
+			<!-- jQuery validation -->
+			<script src="//ajax.aspnetcdn.com/ajax/jquery.validate/1.9/jquery.validate.min.js"></script>
 
-   <!-- for the tabs in the middle section in the home page -->
-   <script type="text/javascript">
-      function displaySelected(field) {
-         var DetailObj_Latest = document.getElementById("AgencyNewsDetail_Latest");
-         var DetailObj_Topic = document.getElementById("AgencyNewsDetail_Topic");
-         var DetailObj_Blog = document.getElementById("AgencyNewsDetail_Blog");
+			<!-- for the tabs in the middle section in the home page -->
+			<script type="text/javascript">
+						function displaySelected(field) {
+									var DetailObj_Latest = document.getElementById("AgencyNewsDetail_Latest");
+									var DetailObj_Topic = document.getElementById("AgencyNewsDetail_Topic");
+									var DetailObj_Blog = document.getElementById("AgencyNewsDetail_Blog");
 
-         var TopObj_Latest = document.getElementById("AgencyNewsTop_Latest");
-         var TopObj_Topic = document.getElementById("AgencyNewsTop_Topic");
-         var TopObj_Blog = document.getElementById("AgencyNewsTop_Blog");
+									var TopObj_Latest = document.getElementById("AgencyNewsTop_Latest");
+									var TopObj_Topic = document.getElementById("AgencyNewsTop_Topic");
+									var TopObj_Blog = document.getElementById("AgencyNewsTop_Blog");
 
-         if (DetailObj_Latest != null)
-            DetailObj_Latest.style.visibility = "hidden";
-         if (DetailObj_Topic != null)
-            DetailObj_Topic.style.visibility = "hidden";
-         if (DetailObj_Blog != null)
-            DetailObj_Blog.style.visibility = "hidden";
+									if (DetailObj_Latest != null)
+												DetailObj_Latest.style.visibility = "hidden";
+									if (DetailObj_Topic != null)
+												DetailObj_Topic.style.visibility = "hidden";
+									if (DetailObj_Blog != null)
+												DetailObj_Blog.style.visibility = "hidden";
 
-         if (TopObj_Latest != null)
-            TopObj_Latest.className = "toplink";
-         if (TopObj_Topic != null)
-            TopObj_Topic.className = "toplink";
-         if (TopObj_Blog != null)
-            TopObj_Blog.className = "toplink";
+									if (TopObj_Latest != null)
+												TopObj_Latest.className = "toplink";
+									if (TopObj_Topic != null)
+												TopObj_Topic.className = "toplink";
+									if (TopObj_Blog != null)
+												TopObj_Blog.className = "toplink";
 
-         if (field == "") {
-            field = "Latest";
-         }
-         var selectedObj_Top = document.getElementById("AgencyNewsTop_" + field);
-         var selectedObj_Detail = document.getElementById("AgencyNewsDetail_" + field);
+									if (field == "") {
+												field = "Latest";
+									}
+									var selectedObj_Top = document.getElementById("AgencyNewsTop_" + field);
+									var selectedObj_Detail = document.getElementById("AgencyNewsDetail_" + field);
 
-         if (selectedObj_Top != null)
-            selectedObj_Top.className = "selectedTab";
-         if (selectedObj_Detail != null)
-            selectedObj_Detail.style.visibility = "visible";
-      }
-   </script>
+									if (selectedObj_Top != null)
+												selectedObj_Top.className = "selectedTab";
+									if (selectedObj_Detail != null)
+												selectedObj_Detail.style.visibility = "visible";
+						}
+			</script>
 
 
 
-   <script type="text/javascript">
-      $(function () {
-         $("#tabs").tabs()
+			<script type="text/javascript">
+						$(function () {
+									$("#tabs").tabs()
     .tabs('select', 1)					// activate second tab
     .removeClass('ui-widget-content');	// change the white background to teal
 
-         $("#middleTabs").tabs();
+									$("#middleTabs").tabs();
 
-         // Popular Topic Links Menu
+									// Popular Topic Links Menu
 
-         $("#popularLinksMoreMenu").menu({
-            position: {
-               my: "right top",
-               at: "right bottom"
-            }
-         });
-      });
-   </script>
+									$("#popularLinksMoreMenu").menu({
+												position: {
+															my: "right top",
+															at: "right bottom"
+												}
+									});
+						});
+			</script>
 
-   <style>
-    .ui-menu {
-       width: auto;
-    }
+			<style>
+				.ui-menu {
+							width: auto;
+				}
 
-    .ui-widget-content {
-       border: none;
-       bgColorHoever: #FFFFFF;
-    }
-    /* remove the border */
-   </style>
-   <meta name='bbsect' content='Main'>
-   <meta name='modestem' content='00a00b00c00d'>
-   <meta name='modestem1' content='00a'>
-   <meta name='modestem2' content='00b'>
-   <meta name='modestem3' content='00c'>
-   <meta name='modestem4' content='00d'>
-   <meta name='site_code' content='@modeCode'>
+				.ui-widget-content {
+							border: none;
+							bgColorHoever: #FFFFFF;
+				}
+				/* remove the border */
+			</style>
+			<meta name='bbsect' content='Main'>
+			<meta name='modestem' content='00a00b00c00d'>
+			<meta name='modestem1' content='00a'>
+			<meta name='modestem2' content='00b'>
+			<meta name='modestem3' content='00c'>
+			<meta name='modestem4' content='00d'>
+			<meta name='site_code' content='@modeCode'>
 
-   @Html.Raw(pageHeaderScriptFiles)
-   @Html.Raw(pageHeaderScripts)
+			@if (false == string.IsNullOrWhiteSpace(modeCode))
+			{
+						<meta name="WT.ModeCode" content="@modeCode">
+			}
+
+			@Html.Raw(pageHeaderScriptFiles)
+			@Html.Raw(pageHeaderScripts)
 </HEAD>
 
 <body onload="displaySelected('Latest');">
 
 
-   <div id="pageComplete">
+			<div id="pageComplete">
 
 
 
@@ -215,33 +220,33 @@
 
 
 
-      <!-- ARS Header start -->
-      <div id="masthead">
-         <a class="section508" name="masthead">
-            Page Banner
-         </a>
+						<!-- ARS Header start -->
+						<div id="masthead">
+									<a class="section508" name="masthead">
+												Page Banner
+									</a>
 
-         <div id="identity">
-            <a href="http://www.usda.gov">
-               <img src="/images/redesign/USDA-Logo.png" alt="USDA Logo and link" class="USDAlogo">
-            </a>
+									<div id="identity">
+												<a href="http://www.usda.gov">
+															<img src="/images/redesign/USDA-Logo.png" alt="USDA Logo and link" class="USDAlogo">
+												</a>
 
-            <div class="agencyName">
-               @Html.Raw(siteTitle)
-            </div>
-            <div class="deptName clearfloat"></div>
-         </div>
+												<div class="agencyName">
+															@Html.Raw(siteTitle)
+												</div>
+												<div class="deptName clearfloat"></div>
+									</div>
 
-         <div id="agencyMenu">
-            <div aria-labelledby="navigation_top" role="navigation" id="agencyNav">
-               @{
+									<div id="agencyMenu">
+												<div aria-labelledby="navigation_top" role="navigation" id="agencyNav">
+															@{
                   // Second Navigation
                   int secondMenuCount = 0;
 
                   if (secondNavigation.Any())
                   {
-                     <ul>
-                        @foreach (var item in secondNavigation)
+																		<ul>
+																					@foreach (var item in secondNavigation)
                         {
                            string modeCodeQS = "";
 
@@ -252,53 +257,53 @@
 
                            if (secondMenuCount > 0)
                            {
-                              <li>|</li>
+																								<li>|</li>
                            }
-                           <li><a title="@item.Name" href="@(item.Url + modeCodeQS)" target="@item.Target"><b>@item.Name</b></a></li>
+																								<li><a title="@item.Name" href="@(item.Url + modeCodeQS)" target="@item.Target"><b>@item.Name</b></a></li>
 
                            secondMenuCount++;
                         }
-                     </ul>
+																		</ul>
                   }
-               }
-            </div>
+															}
+												</div>
 
-            <div id="agencySearch">
-               <!-- ************ BEGIN Search Box ************ -->
-               <!-- Google Mini -->
-               <!-- USA Search -->
-               <form method="get" action="https://search.usa.gov/search?sort=rel" id="search_form">
-                  <table width="250" cellspacing="2" cellpadding="2" class="justright">
-                     <tr>
-                        <td class="justright">
-                           <input name="utf8" type="hidden" value="&#x2713;" />
-                           <input name="affiliate" id="affiliate" type="hidden" value="agriculturalresearchservicears" />
+												<div id="agencySearch">
+															<!-- ************ BEGIN Search Box ************ -->
+															<!-- Google Mini -->
+															<!-- USA Search -->
+															<form method="get" action="https://search.usa.gov/search?sort=rel" id="search_form">
+																		<table width="250" cellspacing="2" cellpadding="2" class="justright">
+																					<tr>
+																								<td class="justright">
+																											<input name="utf8" type="hidden" value="&#x2713;" />
+																											<input name="affiliate" id="affiliate" type="hidden" value="agriculturalresearchservicears" />
 
-                           <label class="displayNone" for="searchThis">Search for This</label>
-                           <input name="query" id="query" type="text" value="" style="color:#000000" />
-                        </td>
-                        <td width="20" class="justleft">
-                           <input name="btnG" type="image" value="Go!" alt="Submit Form" src="/images/redesign/search.png">
-                        </td>
-                     </tr>
-                  </table>
-               </form>
-            </div>
-         </div>
+																											<label class="displayNone" for="searchThis">Search for This</label>
+																											<input name="query" id="query" type="text" value="" style="color:#000000" />
+																								</td>
+																								<td width="20" class="justleft">
+																											<input name="btnG" type="image" value="Go!" alt="Submit Form" src="/images/redesign/search.png">
+																								</td>
+																					</tr>
+																		</table>
+															</form>
+												</div>
+									</div>
 
 
-         <!-- Tabs -->
-         <div id="MenuNavigation">
-            <div id="mainNav">
-               <ul id="nav">
+									<!-- Tabs -->
+									<div id="MenuNavigation">
+												<div id="mainNav">
+															<ul id="nav">
 
-                  <!--[if lt IE 9]>
-                      <li class="level1 IEonly">
-                          <img src="/images/redesign/leftTab.png" alt="spacer">
-                      </li>
-                  <![endif]-->
+																		<!--[if lt IE 9]>
+																						<li class="level1 IEonly">
+																										<img src="/images/redesign/leftTab.png" alt="spacer">
+																						</li>
+																		<![endif]-->
 
-                  @{
+																		@{
                      int mainNavCount = 0;
                      foreach (IPublishedContent navItem in mainNavList)
                      {
@@ -313,11 +318,11 @@
                            linkAttr = " style=\"border-right: 0px;\" id=\"lastTab\"";
                         }
 
-                        <li class="level1">
-                           <a @Html.Raw(linkAttr) href="#" class="level1">@(navPrefix + navItem.Name)</a>
-                           <div>
-                              <ul>
-                                 @foreach (IPublishedContent subItem in navItem.Children)
+																					<li class="level1">
+																								<a @Html.Raw(linkAttr) href="#" class="level1">@(navPrefix + navItem.Name)</a>
+																								<div>
+																											<ul>
+																														@foreach (IPublishedContent subItem in navItem.Children)
                                  {
                                     string urlLink = "#";
                                     string urlTarget = "";
@@ -333,178 +338,179 @@
                                           urlTarget = navLink.Target;
                                        }
 
-                                       <li><a href="@urlLink" target="@urlTarget">@(subItem.Name)</a></li>
+																																	<li><a href="@urlLink" target="@urlTarget">@(subItem.Name)</a></li>
                                     }
                                     else
                                     {
-                                       <li><a href="#">@(subItem.Name)</a></li>
+																																	<li><a href="#">@(subItem.Name)</a></li>
                                     }
                                  }
-                              </ul>
-                           </div>
-                        </li>
+																											</ul>
+																								</div>
+																					</li>
 
                         mainNavCount++;
                      }
-                  }
+																		}
 
-                  <!--[if lt IE 9]>
-                      <li class="level1 IEonly">
-                          <img src="/images/redesign/rightTab.png" alt="spacer">
-                      </li>
-                  <![endif]-->
-               </ul>
-            </div>
+																		<!--[if lt IE 9]>
+																						<li class="level1 IEonly">
+																										<img src="/images/redesign/rightTab.png" alt="spacer">
+																						</li>
+																		<![endif]-->
+															</ul>
+												</div>
 
-            <div id="siteNav">
-               @{
+												<div id="siteNav">
+															@{
                   // Third Navigation
                   int thirdMenuCount = 0;
 
                   if (thirdNavigation.Any())
                   {
-                     <ul>
-                        @foreach (var item in thirdNavigation)
+																		<ul>
+																					@foreach (var item in thirdNavigation)
                         {
                            if (thirdMenuCount > 0)
                            {
-                              <li>|</li>
+																								<li>|</li>
                            }
-                           <li><a title="@item.Name" href="@item.Url" target="@item.Target"><b>@item.Name</b></a></li>
+																								<li><a title="@item.Name" href="@item.Url" target="@item.Target"><b>@item.Name</b></a></li>
 
                            thirdMenuCount++;
                         }
-                     </ul>
+																		</ul>
                   }
-               }
+															}
 
-            </div>
-         </div>
-      </div>
-      <!-- ARS Header end -->
-
-
-      @RenderBody()
+												</div>
+									</div>
+						</div>
+						<!-- ARS Header end -->
 
 
-      @*<!-- START OF SmartSource Data Collector TAG -->
-         <!-- Copyright (c) 1996-2014 Webtrends Inc.  All rights reserved. -->
-         <!-- Version: 9.4.0 -->
-         <!-- Tag Builder Version: 4.1  -->
-         <!-- Created: 10/21/2014 6:53:23 PM -->
-         <script src="/incme/handf/WebTrends9.js" type="text/javascript"></script>
-         <!-- ----------------------------------------------------------------------------------- -->
-         <!-- Warning: The two script blocks below must remain inline. Moving them to an external -->
-         <!-- JavaScript include file can cause serious problems with cross-domain tracking.      -->
-         <!-- ----------------------------------------------------------------------------------- -->
-         <script type="text/javascript">
-             //<![CDATA[
-             var _tag = new WebTrends();
-             _tag.dcsGetId();
-             //]]>
-         </script>
-         <script type="text/javascript">
-             //<![CDATA[
-             _tag.dcsCustom = function () {
-                 // Add custom parameters here.
-                 //_tag.DCSext.param_name=param_value;
-             }
-             _tag.dcsCollect();
-             //]]>
-         </script>
-         <noscript>
-             <div><img alt="DCSIMG" id="DCSIMG" width="1" height="1" src="http://wt-sdc2.arsnet.usda.gov/dcsh0juhninp53gudlhz4e9z4_5z4d/njs.gif?dcsuri=/nojavascript&amp;WT.js=No&amp;WT.tv=9.4.0&amp;dcssip=www.ars.usda.gov" /></div>
-         </noscript>
-         <!-- END OF SmartSource Data Collector TAG -->
-         <script type="text/javascript">
-
-             var _gaq = _gaq || [];
-             _gaq.push(['_setAccount', 'UA-27627304-6']);
-             _gaq.push(['_setDomainName', 'usda.gov']);
-             _gaq.push(['_setAllowLinker', true]);
-             _gaq.push(['_trackPageview']);
-
-             _gaq.push(['b._setAccount', 'UA-27627304-1']);
-             _gaq.push(['b._setDomainName', 'usda.gov']);
-             _gaq.push(['b._setAllowLinker', true]);
-             _gaq.push(['b._trackPageview']);
-
-             (function () {
-                 var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
-                 ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
-                 var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
-             })();
-
-         </script>*@
+						@RenderBody()
 
 
+						<!-- WebTrends 9 -->
+						<!-- START OF SmartSource Data Collector TAG -->
+						<!-- Copyright (c) 1996-2014 Webtrends Inc.  All rights reserved. -->
+						<!-- Version: 9.4.0 -->
+						<!-- Tag Builder Version: 4.1  -->
+						<!-- Created: 10/21/2014 6:53:23 PM -->
+						<script src="/ARSUserFiles/Utility/WebTrends/WebTrends9.js" type="text/javascript"></script>
+						<!-- ----------------------------------------------------------------------------------- -->
+						<!-- Warning: The two script blocks below must remain inline. Moving them to an external -->
+						<!-- JavaScript include file can cause serious problems with cross-domain tracking.      -->
+						<!-- ----------------------------------------------------------------------------------- -->
+						<script type="text/javascript">
+									//<![CDATA[
+									var _tag = new WebTrends();
+									_tag.dcsGetId();
+									//]]>
+						</script>
+						<script type="text/javascript">
+									//<![CDATA[
+									_tag.dcsCustom = function () {
+												// Add custom parameters here.
+												//_tag.DCSext.param_name=param_value;
+									}
+									_tag.dcsCollect();
+									//]]>
+						</script>
+						<noscript>
+									<div><img alt="DCSIMG" id="DCSIMG" width="1" height="1" src="https://wt-sdc2.arsnet.usda.gov/dcsh0juhninp53gudlhz4e9z4_5z4d/njs.gif?dcsuri=/nojavascript&amp;WT.js=No&amp;WT.tv=9.4.0&amp;dcssip=www.ars.usda.gov" /></div>
+						</noscript>
+						<!-- END OF SmartSource Data Collector TAG -->
 
-      <!-- footer table -->
-      @if (currentPage.DocumentTypeAlias != "Homepage" && currentPage.DocumentTypeAlias != "Area" && currentPage.DocumentTypeAlias != "ResearchUnit")
+						<script type="text/javascript">
+
+									var _gaq = _gaq || [];
+									_gaq.push(['_setAccount', 'UA-27627304-6']);
+									_gaq.push(['_setDomainName', 'usda.gov']);
+									_gaq.push(['_setAllowLinker', true]);
+									_gaq.push(['_trackPageview']);
+
+									_gaq.push(['b._setAccount', 'UA-27627304-1']);
+									_gaq.push(['b._setDomainName', 'usda.gov']);
+									_gaq.push(['b._setAllowLinker', true]);
+									_gaq.push(['b._trackPageview']);
+
+									(function () {
+												var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+												ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+												var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+									})();
+
+						</script>
+
+
+						<!-- footer table -->
+						@if (currentPage.DocumentTypeAlias != "Homepage" && currentPage.DocumentTypeAlias != "Area" && currentPage.DocumentTypeAlias != "ResearchUnit")
          {
-         <div id="lastModifiedContent">
-            @Html.Raw("Last Modified:") @(currentPage.UpdateDate.ToShortDateString())
-         </div>
+									<div id="lastModifiedContent">
+												@Html.Raw("Last Modified:") @(currentPage.UpdateDate.ToShortDateString())
+									</div>
       }
 
 
-      <div class="clearfloat" id="footerContent" style="width:940px">
-         <a class="section508" name="footer">Footer Content</a>
+						<div class="clearfloat" id="footerContent" style="width:940px">
+									<a class="section508" name="footer">Footer Content</a>
 
-         <!-- Begin Footer content text -->
-         <div id="footer_content_text">
-            <br>
-            @{
+									<!-- Begin Footer content text -->
+									<div id="footer_content_text">
+												<br>
+												@{
                int footerOneCount = 0;
 
                if (footerNavigationLineOne.Any())
                {
                   foreach (var item in footerNavigationLineOne)
                   {
-                     <a href="@item.Url" target="@item.Target">@item.Name</a>
+															<a href="@item.Url" target="@item.Target">@item.Name</a>
                      if (footerOneCount < footerNavigationLineOne.Count() - 1)
                      {
-                        @Html.Raw(" | ");
+															@Html.Raw(" | ");
                      }
 
                      footerOneCount++;
                   }
                }
-            }
+												}
 
-            <br>
-            @{
+												<br>
+												@{
                int footerTwoCount = 0;
 
                if (footerNavigationLineTwo.Any())
                {
                   foreach (var item in footerNavigationLineTwo)
                   {
-                     <a href="@item.Url" target="@item.Target">@item.Name</a>
+															<a href="@item.Url" target="@item.Target">@item.Name</a>
                      if (footerTwoCount < footerNavigationLineTwo.Count() - 1)
                      {
-                        @Html.Raw(" | ");
+															@Html.Raw(" | ");
                      }
 
                      footerTwoCount++;
                   }
                }
-            }
+												}
 
 
-         </div>
-         <!-- End Footer content text -->
+									</div>
+									<!-- End Footer content text -->
 
-         <a class="section508" href="top">Back to Top of Page</a>
-      </div>
+									<a class="section508" href="top">Back to Top of Page</a>
+						</div>
 
 
-      <!--[if lt IE 9]>
-          <img class="IErounded" src="/images/redesign/rounded-bottomBLK.png" alt="spacer">
-      <![endif]-->
-   </div>	<!-- pageComplete -->
+						<!--[if lt IE 9]>
+										<img class="IErounded" src="/images/redesign/rounded-bottomBLK.png" alt="spacer">
+						<![endif]-->
+			</div>	<!-- pageComplete -->
 
-   @Html.Raw(pageFooterScriptFiles)
-   @Html.Raw(pageFooterScripts)
+			@Html.Raw(pageFooterScriptFiles)
+			@Html.Raw(pageFooterScripts)
 </body>
                                     </html>
