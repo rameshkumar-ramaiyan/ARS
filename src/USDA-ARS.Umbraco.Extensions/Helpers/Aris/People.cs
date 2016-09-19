@@ -288,7 +288,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 
             sql = "SELECT * FROM v_people_info WHERE " + where;
 
-            peopleList = db.Query<PeopleInfo>(sql, new { lname = lname, fname = fname, title = title, phoneText = phone, email = email, city = city, state = state }).ToList();
+            peopleList = db.Query<PeopleInfo>(sql, new { lname = lname, fname = fname, title = title, phone = phone, email = email, city = city, state = state }).ToList();
          }
 
          if (peopleList != null && peopleList.Count > 0)
