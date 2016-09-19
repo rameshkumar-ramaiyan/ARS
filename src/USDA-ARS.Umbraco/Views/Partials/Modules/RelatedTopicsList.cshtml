@@ -6,81 +6,90 @@
 @using Newtonsoft.Json
 @model IPublishedContent
 @{
-   string modeCode = "";
+			string modeCode = "";
 
-   modeCode = Model.GetPropertyValue<string>("modeCode");
+			modeCode = Model.GetPropertyValue<string>("modeCode");
 
-   IPublishedContent rootPage = Model.AncestorOrSelf(1);
+			IPublishedContent rootPage = Model.AncestorOrSelf(1);
 
-   if (false == string.IsNullOrEmpty(Request.QueryString["modeCode"]))
-   {
-      modeCode = Request.QueryString.Get("modeCode");
-   }
-   if (true == string.IsNullOrEmpty(modeCode))
-   {
-      modeCode = rootPage.GetPropertyValue<string>("modeCode");
-   }
+			if (false == string.IsNullOrEmpty(Request.QueryString["modeCode"]))
+			{
+						modeCode = Request.QueryString.Get("modeCode");
+			}
+			if (true == string.IsNullOrEmpty(modeCode))
+			{
+						IPublishedContent parentNode = Model.Ancestors().Where(p => p.DocumentTypeAlias == "ResearchUnit" || p.DocumentTypeAlias == "Area").FirstOrDefault();
 
-   ArchetypeModel currentRelatedTopics = null;
+						if (parentNode != null)
+						{
+									modeCode = parentNode.GetPropertyValue<string>("modeCode");
+						}
+						else
+						{
+									modeCode = rootPage.GetPropertyValue<string>("modeCode");
+						}
+			}
 
-   if (Model.Parent != null && Model.Parent.DocumentTypeAlias == "NationalProgramFolderContainer")
-   {
-      currentRelatedTopics = Model.Parent.Parent.GetPropertyValue<ArchetypeModel>("leftNavPicker");
-   }
+			ArchetypeModel currentRelatedTopics = null;
 
-   // Check for Research/Careers/News/People Page
-   if (currentRelatedTopics == null && false == string.IsNullOrWhiteSpace(modeCode))
-   {
-      if (Model.Parent != null && Model.AncestorOrSelf(2).DocumentTypeAlias == "Research")
-      {
-         IPublishedContent researchNode = Nodes.GetNodeByModeCodeSubFolder(modeCode, "SitesResearch");
+			if (Model.Parent != null && Model.Parent.DocumentTypeAlias == "NationalProgramFolderContainer")
+			{
+						currentRelatedTopics = Model.Parent.Parent.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+			}
 
-         if (researchNode != null)
-         {
-            currentRelatedTopics = researchNode.GetPropertyValue<ArchetypeModel>("leftNavPicker");
-         }
-      }
-      else if (Model.Parent != null && Model.AncestorOrSelf(2).DocumentTypeAlias == "Careers")
-      {
-         IPublishedContent careersNode = Nodes.GetNodeByModeCodeSubFolder(modeCode, "SitesCareers");
+			// Check for Research/Careers/News/People Page
+			if (currentRelatedTopics == null && false == string.IsNullOrWhiteSpace(modeCode))
+			{
+						if (Model.Parent != null && Model.AncestorOrSelf(2).DocumentTypeAlias == "Research")
+						{
+									IPublishedContent researchNode = Nodes.GetNodeByModeCodeSubFolder(modeCode, "SitesResearch");
 
-         if (careersNode != null)
-         {
-            currentRelatedTopics = careersNode.GetPropertyValue<ArchetypeModel>("leftNavPicker");
-         }
-      }
-      else if (Model.Parent != null && Model.AncestorOrSelf(2).DocumentTypeAlias == "NewsHome")
-      {
-         IPublishedContent newsNode = Nodes.GetNodeByModeCodeSubFolder(modeCode, "SitesNews");
+									if (researchNode != null)
+									{
+												currentRelatedTopics = researchNode.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+									}
+						}
+						else if (Model.Parent != null && Model.AncestorOrSelf(2).DocumentTypeAlias == "Careers")
+						{
+									IPublishedContent careersNode = Nodes.GetNodeByModeCodeSubFolder(modeCode, "SitesCareers");
 
-         if (newsNode != null)
-         {
-            currentRelatedTopics = newsNode.GetPropertyValue<ArchetypeModel>("leftNavPicker");
-         }
-      }
-      else if (Model.Parent != null && Model.AncestorOrSelf(2).DocumentTypeAlias == "PeopleLocations")
-      {
-         IPublishedContent peopleNode = Nodes.GetNodeByModeCodeSubFolder(modeCode, "PeopleFolder");
+									if (careersNode != null)
+									{
+												currentRelatedTopics = careersNode.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+									}
+						}
+						else if (Model.Parent != null && Model.AncestorOrSelf(2).DocumentTypeAlias == "NewsHome")
+						{
+									IPublishedContent newsNode = Nodes.GetNodeByModeCodeSubFolder(modeCode, "SitesNews");
 
-         if (peopleNode != null)
-         {
-            currentRelatedTopics = peopleNode.GetPropertyValue<ArchetypeModel>("leftNavPicker");
-         }
-      }
-   }
+									if (newsNode != null)
+									{
+												currentRelatedTopics = newsNode.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+									}
+						}
+						else if (Model.Parent != null && Model.AncestorOrSelf(2).DocumentTypeAlias == "PeopleLocations")
+						{
+									IPublishedContent peopleNode = Nodes.GetNodeByModeCodeSubFolder(modeCode, "PeopleFolder");
 
-   if (currentRelatedTopics == null)
-   {
-      currentRelatedTopics = Model.GetPropertyValue<ArchetypeModel>("leftNavPicker");
-   }
+									if (peopleNode != null)
+									{
+												currentRelatedTopics = peopleNode.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+									}
+						}
+			}
+
+			if (currentRelatedTopics == null)
+			{
+						currentRelatedTopics = Model.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+			}
 
 
-   List<IPublishedContent> siteRelatedTopicsTop = null;
-   List<IPublishedContent> siteRelatedTopicsBottom = null;
+			List<IPublishedContent> siteRelatedTopicsTop = null;
+			List<IPublishedContent> siteRelatedTopicsBottom = null;
 
-   Topics.GetSiteGlobalNav(Model, ref siteRelatedTopicsTop, ref siteRelatedTopicsBottom);
+			Topics.GetSiteGlobalNav(Model, ref siteRelatedTopicsTop, ref siteRelatedTopicsBottom);
 
-   bool foundExternalLink = false;
+			bool foundExternalLink = false;
 }
 
 <!--[if lt IE 9]>
