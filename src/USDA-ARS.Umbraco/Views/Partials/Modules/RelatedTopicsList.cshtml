@@ -174,82 +174,93 @@
 
 @functions
 {
-   string OutputTopic(ArchetypeFieldsetModel item, string modeCode, ref bool foundExternalLink)
-   {
-      string html = null;
+			string OutputTopic(ArchetypeFieldsetModel item, string modeCode, ref bool foundExternalLink)
+			{
+						string html = null;
 
-      if (item.Alias == "topicsItem")
-      {
-         string urlLink = "#";
-         string targetLink = "";
-         bool appendModeCode = false;
+						if (item.Alias == "topicsItem")
+						{
+									string urlLink = "#";
+									string targetLink = "";
+									bool appendModeCode = false;
 
-         if (item.HasValue("location"))
-         {
-            Link navLink = item.GetValue<MultiUrls>("location").FirstOrDefault();
+									if (item.HasValue("location"))
+									{
+												Link navLink = item.GetValue<MultiUrls>("location").FirstOrDefault();
 
-            if (navLink != null && navLink.Url != null)
-            {
-               urlLink = navLink.Url;
-            }
-         }
-         else if (item.HasValue("linkToFile"))
-         {
-            urlLink = item.GetValue<string>("linkToFile");
-            targetLink = " target=\"_blank\"";
-         }
+												if (navLink != null && navLink.Url != null)
+												{
+															urlLink = navLink.Url;
+												}
+									}
+									else if (item.HasValue("linkToFile"))
+									{
+												urlLink = item.GetValue<string>("linkToFile");
+												targetLink = " target=\"_blank\"";
+									}
 
 
-         appendModeCode = item.GetValue<bool>("appendModeCode");
+									appendModeCode = item.GetValue<bool>("appendModeCode");
 
-         if (true == appendModeCode && false == string.IsNullOrEmpty(modeCode))
-         {
-            if (true == urlLink.Contains("?"))
-            {
-               urlLink += "&";
-            }
-            else
-            {
-               urlLink += "?";
-            }
-            urlLink += "modeCode=" + modeCode;
-         }
+									if (true == appendModeCode && false == string.IsNullOrEmpty(modeCode))
+									{
+												if (urlLink.IndexOf("?projectlist=true&NP_CODE=", StringComparison.OrdinalIgnoreCase) >= 0 || urlLink.IndexOf("?list421s=true&NP_CODE=", StringComparison.OrdinalIgnoreCase) >= 0)
+												{
+															if (urlLink.IndexOf("{{npCode}}", StringComparison.OrdinalIgnoreCase) >= 0)
+															{
+																		string npCode = "";
 
-         // Look for NP CODE replacement tag
-         if (urlLink.Contains("{{npCode}}"))
-         {
-            string npCode = "";
+																		if (Model != null && Model.HasValue("npCode"))
+																		{
+																					npCode = Model.GetPropertyValue<string>("npCode");
+																		}
 
-            if (Model != null && Model.HasValue("npCode"))
-            {
-               npCode = Model.GetPropertyValue<string>("npCode");
-            }
+																		urlLink = urlLink.Replace("{{npCode}}", npCode);
+															}
+															else if (Model != null && Model.HasValue("npCode"))
+															{
+																		urlLink += Model.GetPropertyValue<string>("npCode");
+															}
+												}
+												else
+												{
+															if (true == urlLink.Contains("?"))
+															{
+																		urlLink += "&";
+															}
+															else
+															{
+																		urlLink += "?";
+															}
+															urlLink += "modeCode=" + modeCode;
+												}
+									}
 
-            urlLink = urlLink.Replace("{{npCode}}", npCode);
-         }
+									// Look for NP CODE replacement tag
 
-         string externalIcon = "";
 
-         if (urlLink.StartsWith("http"))
-         {
-            if (urlLink.ToLower().IndexOf(".gov") < 0)
-            {
-               externalIcon = " *";
+									string externalIcon = "";
 
-               foundExternalLink = true;
-            }
-         }
+									if (urlLink.StartsWith("http"))
+									{
+												if (urlLink.ToLower().IndexOf(".gov") < 0)
+												{
+															externalIcon = " *";
 
-         html = "<li><a href=\"" + urlLink + "\"" + targetLink + ">" + item.GetValue<string>("title") + externalIcon + "</a></li>";
-      }
-      else if (item.Alias == "topicsHeader")
-      {
-         html = "<h2 class=\"related_topics\">" + item.GetValue<string>("sectionTitle") + "</h2>";
-      }
+															foundExternalLink = true;
+												}
+									}
 
-      html += "\r\n";
+									html = "<li><a href=\"" + urlLink + "\"" + targetLink + ">" + item.GetValue<string>("title") + externalIcon + "</a></li>";
+						}
+						else if (item.Alias == "topicsHeader")
+						{
+									html = "<h2 class=\"related_topics\">" + item.GetValue<string>("sectionTitle") + "</h2>";
+						}
 
-      return html;
-   }
+						html += "\r\n";
+
+						return html;
+			}
 
 }

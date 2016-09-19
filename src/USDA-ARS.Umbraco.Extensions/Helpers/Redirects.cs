@@ -23,7 +23,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
 									if (false == string.IsNullOrEmpty(badUrl))
 									{
-												if (false == badUrl.ToLower().StartsWith("/umbraco/") && false == badUrl.ToLower().StartsWith("/__browserLink/"))
+												if (false == badUrl.ToLower().StartsWith("/umbraco/") && false == badUrl.ToLower().StartsWith("/__browserlink/"))
 												{
 															// Magazine
 															redirectUrl = RedirectMagazineUrl(badUrl);
@@ -240,7 +240,8 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 									redirectList.Add(new RedirectToNode() { OldUrl = "/pandp/people/projects.htm?personid=", UmbracoId = 200349, AppendString = "?person-id=" });
 									redirectList.Add(new RedirectToNode() { OldUrl = "/pandp/people/publications.htm?personid=", UmbracoId = 200350, AppendString = "?person-id=" });
 
-									//redirectList.Add(new RedirectToNode() { OldUrl = "/research/programs/programs.htm?projectlist=true&np_code=", UmbracoId = xxx, AppendString = "?npCode=" });
+									redirectList.Add(new RedirectToNode() { OldUrl = "/research/programs/programs.htm?projectlist=true&np_code=", UmbracoId = 200759, AppendString = "?npCode=" });
+									redirectList.Add(new RedirectToNode() { OldUrl = "/research/programs/programs.htm?list421s=true&np_code=", UmbracoId = 23458, AppendString = "?npCode=" });
 
 
 
