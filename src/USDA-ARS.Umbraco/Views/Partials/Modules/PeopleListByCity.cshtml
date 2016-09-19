@@ -172,7 +172,7 @@
 
 																											if (peopleList != null && peopleList.Any() && peopleList[0].ModeCodeConcat != null &&
 																																				peopleList[0].ModeCodeConcat.Length > 3 &&
-																																				(peopleList[0].ModeCodeConcat.Substring(6, 2) == "02"))
+																																				(peopleList[0].ModeCodeConcat.Substring(6, 2) == "02" || peopleList[0].ModeCodeConcat.Substring(4, 2) == "02"))
 																											{
 																														//peopleList = peopleList.OrderBy()
 																														siteLabel.SiteLabel = "Location Support Staff";
