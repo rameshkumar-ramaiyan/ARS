@@ -177,19 +177,24 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
       }
 
 
-      public static List<string> GetProjectAnnualReportYears(int accountNo)
+      public static List<string> GetProjectAnnualReportYears(int accountNo, int currentYear = 2050)
       {
          List<string> yearList = null;
+
+									if (currentYear >= 2050)
+									{
+												currentYear = DateTime.Now.Year;
+         }
 
          var db = new Database("arisPublicWebDbDSN");
 
          string sql = @"SELECT	DISTINCT A421Q.FY
 			        FROM	A421_QUESTIONS A421Q
 			        WHERE 	A421Q.ACCN_NO = @accountNo
-			        and		FY <> @currentYear		
+			        and		FY <= @currentYear		
 			        ORDER BY fy desc";
 
-         yearList = db.Query<string>(sql, new { accountNo = accountNo, currentYear = DateTime.Now.Year }).ToList();
+         yearList = db.Query<string>(sql, new { accountNo = accountNo, currentYear = currentYear }).ToList();
 
          return yearList;
       }
@@ -470,7 +475,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
       }
 
 
-      public static List<ProjectInfo> GetProjectAnnualReportList(string npCode, string sort)
+      public static List<ProjectInfo> GetProjectAnnualReportList(string npCode, string sort, int year = 2050)
       {
          List<ProjectInfo> projectList = null;
 
@@ -486,6 +491,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 					            v_locations MODECODES
 			            WHERE 	q.accn_no = p.accn_no
 			            AND 	q.fy >=  datepart(yyyy, getdate()) -5
+															AND  q.fy <= @year
 			            AND 	np.accn_no = p.accn_no
 			            AND 	np_code = @npCode
 			            AND 	np_percent >= 30
@@ -506,7 +512,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
          }
 
 
-         projectList = db.Query<ProjectInfo>(sql, new { npCode = npCode }).ToList();
+         projectList = db.Query<ProjectInfo>(sql, new { npCode = npCode, year = year }).ToList();
 
          return projectList;
       }

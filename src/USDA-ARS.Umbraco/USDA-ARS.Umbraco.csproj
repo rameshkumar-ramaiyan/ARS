@@ -3093,6 +3093,7 @@
     <Content Include="Views\ProjectListByProgram.cshtml" />
     <Content Include="Views\Partials\SubscribeToArsJobs.cshtml" />
     <Content Include="Views\SubscribeArsJobs.cshtml" />
+    <Content Include="Views\Partials\Modules\RelatedTopicsListProjects.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

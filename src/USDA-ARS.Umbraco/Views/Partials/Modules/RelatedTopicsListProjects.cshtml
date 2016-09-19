@@ -10,12 +10,19 @@
 @model IPublishedContent
 @{
    IPublishedContent currentPage = Model;
+			IPublishedContent settingsNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.SiteSettings();
 
    string accnNo = "";
 
    accnNo = Request.QueryString["accnNo"];
 
    int intAccnNo = -1;
+			int yearLatest = 2050;
+
+			if (settingsNode != null)
+			{
+						yearLatest = settingsNode.GetPropertyValue<int>("latestYearToDisplay");
+			}
 
    List<ProjectTeam> projectTeamList = null;
    List<string> projectAnnualReportYearList = null;
@@ -24,14 +31,12 @@
 
    if (false == string.IsNullOrWhiteSpace(accnNo) && int.TryParse(accnNo, out intAccnNo))
    {
-      projectTeamList = Projects.GetProjectTeam(Convert.ToInt32(accnNo));
-      projectAnnualReportYearList = Projects.GetProjectAnnualReportYears(Convert.ToInt32(accnNo));
-      hasProjectPublication = Projects.HasProjectPublication(Convert.ToInt32(accnNo));
-      relatedtProgramList = ProjectPrograms.GetRelatedPrograms(Convert.ToInt32(accnNo));
+      projectTeamList = Projects.GetProjectTeam(intAccnNo);
+      projectAnnualReportYearList = Projects.GetProjectAnnualReportYears(intAccnNo, yearLatest);
+      hasProjectPublication = Projects.HasProjectPublication(intAccnNo);
+      relatedtProgramList = ProjectPrograms.GetRelatedPrograms(intAccnNo);
    }
-
 }
-
 
 <h2 class="related_topics">
    Project Team
