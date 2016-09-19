@@ -37,7 +37,7 @@
       }
       else
       {
-         if (breadcrumb.DocumentTypeAlias == "Person" || (breadcrumb.DocumentTypeAlias == "StandardWebpage" && 
+         if (breadcrumb.DocumentTypeAlias == "Person" || (breadcrumb.DocumentTypeAlias == "StandardWebpage" &&
                (breadcrumb.GetTemplateAlias() == "PersonAddress" || breadcrumb.GetTemplateAlias() == "PersonPublications" || breadcrumb.GetTemplateAlias() == "PersonProjects" || breadcrumb.GetTemplateAlias() == "PersonNews")))
          {
             if (false == string.IsNullOrWhiteSpace(personId))
@@ -99,7 +99,20 @@
          }
          else if (breadcrumb.DocumentTypeAlias == "StandardWebpage" && false == string.IsNullOrWhiteSpace(modeCode))
          {
-            nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.GetPropertyValue<string>("breadcrumbLabel", breadcrumb.Name), breadcrumb.Url + "?modeCode=" + modeCode, breadcrumb.Level));
+            if (breadcrumb.Name == "Publications")
+            {
+               //Get publications at this location
+               IPublishedContent publicationsAtThisLocation = breadcrumb.Children.Where(p => p.Name == "Publications at this Location").FirstOrDefault();
+
+               if (publicationsAtThisLocation != null)
+               {
+                  nodeBreadcrumbList.Add(new NodeBreadcrumb(publicationsAtThisLocation.GetPropertyValue<string>("breadcrumbLabel", publicationsAtThisLocation.Name), publicationsAtThisLocation.Url + "?modeCode=" + modeCode, breadcrumb.Level));
+               }
+            }
+            else
+            {
+               nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.GetPropertyValue<string>("breadcrumbLabel", breadcrumb.Name), breadcrumb.Url + "?modeCode=" + modeCode, breadcrumb.Level));
+            }
          }
          else if (breadcrumb.DocumentTypeAlias == "NewsYear" || (breadcrumb.DocumentTypeAlias == "NewsFolder" && breadcrumb.Name.Length == 4))
          {

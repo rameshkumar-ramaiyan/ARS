@@ -78,7 +78,7 @@
    List<IPublishedContent> siteRelatedTopicsTop = null;
    List<IPublishedContent> siteRelatedTopicsBottom = null;
 
-   USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetSiteGlobalNav(Model, ref siteRelatedTopicsTop, ref siteRelatedTopicsBottom);
+   Topics.GetSiteGlobalNav(Model, ref siteRelatedTopicsTop, ref siteRelatedTopicsBottom);
 
    bool foundExternalLink = false;
 }
@@ -93,6 +93,8 @@
 <div id="relatedTopics">
    <h1 class="related_topics">Related Topics</h1>
    <ul>
+      @Html.Partial("~/Views/Partials/Modules/RelatedTopicsListProjects.cshtml", Model)
+
       @if (siteRelatedTopicsTop != null && siteRelatedTopicsTop.Any())
       {
          foreach (var siteNavTop in siteRelatedTopicsTop)
@@ -119,7 +121,7 @@
 
                if (topicItemListValue != null && false == string.IsNullOrEmpty(topicItemListValue.Value))
                {
-                  ArchetypeModel topicItem = USDA_ARS.Umbraco.Extensions.Helpers.Topics.GetTopicsById(Convert.ToInt32(topicItemListValue.Value));
+                  ArchetypeModel topicItem = Topics.GetTopicsById(Convert.ToInt32(topicItemListValue.Value));
 
                   if (topicItem != null)
                   {

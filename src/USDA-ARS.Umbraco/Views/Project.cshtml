@@ -22,10 +22,6 @@
 
     bodyText = BodyTextTags.ReplaceTags(bodyText, "");
 
-    List<ProjectTeam> projectTeamList = Projects.GetProjectTeam(Convert.ToInt32(accnNo));
-    List<string> projectAnnualReportYearList = Projects.GetProjectAnnualReportYears(Convert.ToInt32(accnNo));
-    bool hasProjectPublication = Projects.HasProjectPublication(Convert.ToInt32(accnNo));
-    List<ProjectProgram> relatedtProgramList = ProjectPrograms.GetRelatedPrograms(Convert.ToInt32(accnNo));
     ProjectInfo projectInfo = Projects.GetProjectInfo(Convert.ToInt32(accnNo));
 
     IPublishedContent projectLocation = null;
@@ -59,95 +55,11 @@
 
 <div id="fullPage">
 
-			<div id="relatedTopics">
-						<h1 class="related_topics">Related Topics</h1>
+    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", projectLocation)
 
-						<!--LT:navid:42758-->
-						<!--RT:navid:0-->
+    <div id="pageContent">
 
-						<ul>
-									<h2 class="related_topics">
-												Project Team
-									</h2>
-
-									@if (projectTeamList != null && projectTeamList.Count > 0)
-            {
-                foreach (ProjectTeam teamMember in projectTeamList)
-                {
-                    string fullName = teamMember.LastName + ", " + teamMember.FirstName;
-                    if (false == string.IsNullOrEmpty(teamMember.CommonName))
-                    {
-                        fullName += " - <i>" + teamMember.CommonName + "</i>";
-                    }
-                    if (teamMember.PrimeIndicator == "P")
-                    {
-                        fullName = "<b>" + fullName + "</b>";
-                    }
-
-												<li>
-															<a href="/people-locations/person/?person-id=@(teamMember.PersonId)" title="@(USDA_ARS.Umbraco.Extensions.Utilities.Strings.RemoveHtmlTags(fullName))" id="anch_48">
-																		@Html.Raw(fullName)
-															</a>
-												</li>
-                }
-            }
-
-									<h2 class="related_topics">
-												Project Annual Reports
-									</h2>
-
-									@if (projectAnnualReportYearList != null && projectAnnualReportYearList.Count > 0)
-            {
-                foreach (string year in projectAnnualReportYearList)
-                {
-												<li>
-															<a href="@(currentPage.Url +"?accnNo=" + accnNo + "&fy=" + year)" title="@year" id="anch_53">
-																		@year
-															</a>
-												</li>
-                }
-            }
-
-									@if (true == hasProjectPublication)
-            {
-												<h2 class="related_topics">
-															Project Publications
-												</h2>
-												<li>
-															<a href="@(currentPage.Url +"?accnNo=" + accnNo + "&showpubs=true")" title="Publications" id="anch_56">
-																		Publications
-															</a>
-												</li>
-            }
-
-									@if (relatedtProgramList != null && relatedtProgramList.Count > 0)
-            {
-												<h2 class="related_topics">
-															Related National Programs
-												</h2>
-
-                foreach (ProjectProgram relatedProgram in relatedtProgramList)
-                {
-												<li>
-															<a href="/research/programs/program?npCode=@(relatedProgram.NpCode)" title="@(relatedProgram.ShortDescription) (@(relatedProgram.NpCode))" id="anch_57">
-																		@(relatedProgram.ShortDescription) (@(relatedProgram.NpCode))
-															</a>
-												</li>
-                }
-            }
-
-						</ul>
-
-
-			</div>
-
-			<div id="pageContent">
-
-
-
-
-
-						<script language="javascript">
+        <script language="javascript">
 	<!--
 	var remote = null;
 	function rs(n,u,w,h) {
@@ -160,47 +72,45 @@
 	}
 	}
 	//-->
-						</script>
+        </script>
 
-						@if (projectInfo != null)
-									{
-									<font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-1">
 
-												<strong>Research Project: </strong>
+        <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-1">
+            <strong>Research Project: </strong>
 
-												@if (false == string.IsNullOrEmpty(fy))
+            @if (false == string.IsNullOrEmpty(fy))
             {
-															<a href="/research/project/?accnNo=@(accnNo)">@(projectInfo.ProjectTitle)</a>
+                <a href="/research/project/?accnNo=@(accnNo)">@(projectInfo.ProjectTitle)</a>
             }
             else
             {
-															@(projectInfo.ProjectTitle)
+                @(projectInfo.ProjectTitle)
             }
-												<p>
-															<strong>
-																		Location:
+            <p>
+                <strong>
+                    Location:
 
-																		@if (projectLocation != null)
+                    @if (projectLocation != null)
                     {
-																					<a href="@(projectLocation.Url)" id="anch_62">@(projectLocation.Name)</a>
+                        <a href="@(projectLocation.Url)" id="anch_62">@(projectLocation.Name)</a>
                     }
-															</strong>
-												</p>
-									</font>
-									if (false == string.IsNullOrEmpty(fy))
+                </strong>
+            </p>
+        </font>
+        @if (false == string.IsNullOrEmpty(fy))
         {
-												<b><font size="-1" face="arial,helvetica" color="navy">@(fy) Annual Report</font></b>
+            <b><font size="-1" face="arial,helvetica" color="navy">@(fy) Annual Report</font></b>
 
             if (projectReport != null && projectReport.Any())
             {
                 foreach (ProjectReport report in projectReport)
                 {
-												<p>
-															<br />
-															<strong>@(report.VisualQuestionNo). @(report.Question)</strong>
-															<br />
+                    <p>
+                        <br />
+                        <strong>@(report.VisualQuestionNo). @(report.Question)</strong>
+                        <br />
 
-															@if (report.QuestionNo == 40 && report.Response.Trim() == "None")
+                        @if (report.QuestionNo == 40 && report.Response.Trim() == "None")
                         {
                             if (projectAccompList != null && projectAccompList.Any())
                             {
@@ -208,37 +118,37 @@
                                 {
                                     if (projectAccomp.AccomplishNo != 1)
                                     {
-															<p>@Html.Raw(projectAccomp.AccomplishNo + ". " + projectAccomp.Accomplishment)</p>
+                                    <p>@Html.Raw(projectAccomp.AccomplishNo + ". " + projectAccomp.Accomplishment)</p>
                                     }
                                     else
                                     {
-															@Html.Raw(projectAccomp.AccomplishNo + ". " + projectAccomp.Accomplishment)
+                                        @Html.Raw(projectAccomp.AccomplishNo + ". " + projectAccomp.Accomplishment)
                                     }
                                 }
                             }
                         }
                         else
                         {
-															@Html.Raw(report.Response)
+                            @Html.Raw(report.Response)
                         }
-															</p>
+                        </p>
                 }
             }
 
             if (projectPublicationByYearList != null && projectPublicationByYearList.Any())
             {
-
-															<p>
-																		<br />
-																		<strong>Review Publications</strong>
-																		<br />
-																		@foreach (ProjectPublication publication in projectPublicationByYearList)
+                
+                <p>
+                    <br />
+                    <strong>Review Publications</strong>
+                    <br />
+                    @foreach (ProjectPublication publication in projectPublicationByYearList)
                     {
-																					<em><a href="/research/publications/publication/?seqNo115=@(publication.SeqNo115)" id="anch_60">@(publication.Publication)</a><br></em>
-																		<p></p>
+                        <em><a href="/research/publications/publication/?seqNo115=@(publication.SeqNo115)" id="anch_60">@(publication.Publication)</a><br></em>
+                        <p></p>
                     }
-
-																		</p>
+                    
+                </p>
             }
 
         }
@@ -246,90 +156,89 @@
         {
             if (projectPublicationList != null && projectPublicationList.Any())
             {
-																		<p>
-																					<font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-1">
+                <p>
+                    <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-1">
 
 
-																					</font>
+                    </font>
 
-																					<font class="hdrBlackBold">
-																								Publications
-																					</font>
+                    <font class="hdrBlackBold">
+                        Publications
+                    </font>
 
-																					<font size="-2">
-																								(Clicking on the reprint icon
-																								<img src="/images/reprintURLIcon.gif" alt="Reprint Icon" border="0">
-																								will take you to the publication reprint.)
-																					</font>
+                    <font size="-2">
+                        (Clicking on the reprint icon
+                        <img src="/images/reprintURLIcon.gif" alt="Reprint Icon" border="0">
+                        will take you to the publication reprint.)
+                    </font>
 
-																					<br />
-																					<br />
-																		</p>
+                    <br />
+                    <br />
+                </p>
 
                 foreach (UsdaPublication publication in projectPublicationList)
                 {
-																		<p>
-																					<a href="/research/publications/publication/?seqNo115=@(publication.SeqNo115)" class="projectNav" id="anch_60">@publication.Title</a>
-																					@if (false == string.IsNullOrEmpty(publication.ReprintUrl))
+                    <p>
+                        <a href="/research/publications/publication/?seqNo115=@(publication.SeqNo115)" class="projectNav" id="anch_60">@publication.Title</a>
+                        @if (false == string.IsNullOrEmpty(publication.ReprintUrl))
                         {
-																								<a href="http://@(publication.ReprintUrl)" target="_blank" title="Reprint URL" id="anch_74">
-																											<img src="/images/reprintURLIcon.gif" alt="Reprint Icon" border="0" style="padding-left:15px;" />
-																								</a>
+                            <a href="http://@(publication.ReprintUrl)" target="_blank" title="Reprint URL" id="anch_74">
+                                <img src="/images/reprintURLIcon.gif" alt="Reprint Icon" border="0" style="padding-left:15px;" />
+                            </a>
                         }
-																					- (@(Publications.PublicationType(publication.PubTypeCode)))
-																					<br />
-																					@(publication.Citation)
-																					<br />
-																					<img src="/images/content-divider.gif" />
-																		</p>
+                        - (@(Publications.PublicationType(publication.PubTypeCode)))
+                        <br />
+                        @(publication.Citation)
+                        <br />
+                        <img src="/images/content-divider.gif" />
+                    </p>
                 }
             }
         }
         else
         {
-																		<p>
-																					<font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-1">
+            <p>
+                <font face="Verdana,Geneva,Arial,Helvetica,sans-serif" size="-1">
 
 
-																					</font>
+                </font>
 
-																					<font size="2">
-																								Project Number: @projectInfo.ProjectNumber
-																								<br />
-																								Project Type: @Projects.ProjectTypeByCode(projectInfo.ProjectType)
-																					</font>
-																		</p><p>
-																					<font size="2">
-																								<font size="-2"></font>
+                <font size="2">
+                    Project Number: @projectInfo.ProjectNumber
+                    <br />
+                    Project Type: @Projects.ProjectTypeByCode(projectInfo.ProjectType)
+                </font>
+            </p><p>
+                <font size="2">
+                    <font size="-2"></font>
 
 
 
-																					</font>
-																		</p><p>
-																					<font size="2">
-																								<font face="arial,helvetica" size="-1">
-																											Start Date: @projectInfo.DateStart.ToString("MMM d, yyyy")
-																											<br>
-																											End Date: @projectInfo.DateTermination.ToString("MMM d, yyyy")
-																								</font>
-																					</font>
-																		</p><p><font size="2"><font face="arial,helvetica" size="-1">  </font></font></p><p>
-																					<font size="2">
-																					</font>
+                </font>
+            </p><p>
+                <font size="2">
+                    <font face="arial,helvetica" size="-1">
+                        Start Date: @projectInfo.DateStart.ToString("MMM d, yyyy")
+                        <br>
+                        End Date: @projectInfo.DateTermination.ToString("MMM d, yyyy")
+                    </font>
+                </font>
+            </p><p><font size="2"><font face="arial,helvetica" size="-1">  </font></font></p><p>
+                <font size="2">
+                </font>
 
-																					<strong>Objective:</strong>
-																					<br>
-																					@Html.Raw(projectInfo.Objective)
-																		</p><p>
-																					<strong>Approach:</strong>
-																					<br>
-																					@Html.Raw(projectInfo.Approach)
-																		</p><p>
+                <strong>Objective:</strong>
+                <br>
+                @Html.Raw(projectInfo.Objective)
+            </p><p>
+                <strong>Approach:</strong>
+                <br>
+                @Html.Raw(projectInfo.Approach)
+            </p><p>
 
-																		</p>
+            </p>
         }
-													}
 
-			</div>
+    </div>
 
 </div>
