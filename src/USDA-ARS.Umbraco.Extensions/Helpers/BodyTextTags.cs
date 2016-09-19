@@ -32,11 +32,11 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                }
             }
 
-												if (true == text.Contains("{{HTML-CODE}}"))
+												if (true == text.IndexOf("{{HTML-CODE}}", StringComparison.OrdinalIgnoreCase) >= 0)
 												{
 															if (false == string.IsNullOrWhiteSpace(htmlCode))
 															{
-																		text = text.Replace("{{HTML-CODE}}", htmlCode);
+																		text = Regex.Replace(text, @"{{HTML\-CODE}}", htmlCode, RegexOptions.IgnoreCase);
 															}
 												}
 									}
