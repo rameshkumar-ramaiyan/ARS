@@ -420,9 +420,13 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
       {
          List<ProjectPublication> projectPublicationList = null;
 
-         var db = new Database("arisPublicWebDbDSN");
+									int yearInt = 0;
 
-         string sql = @"select 	publication, seq_no_115,
+									if (int.TryParse(year, out yearInt))
+									{
+												var db = new Database("arisPublicWebDbDSN");
+
+												string sql = @"select 	publication, seq_no_115,
 			            (
 				            select 	count(*) 
 				            from 	gen_public_115s
@@ -432,7 +436,8 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 	            where 	ACCN_NO = @accountNo
 	            and 	fy = @year ";
 
-         projectPublicationList = db.Query<ProjectPublication>(sql, new { accountNo = accountNo, year = year }).ToList();
+												projectPublicationList = db.Query<ProjectPublication>(sql, new { accountNo = accountNo, year = year }).ToList();
+									}
 
          return projectPublicationList;
       }

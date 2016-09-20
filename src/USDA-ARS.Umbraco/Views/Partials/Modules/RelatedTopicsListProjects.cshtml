@@ -9,14 +9,14 @@
 @using Newtonsoft.Json
 @model IPublishedContent
 @{
-   IPublishedContent currentPage = Model;
+			IPublishedContent currentPage = Model;
 			IPublishedContent settingsNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.SiteSettings();
 
-   string accnNo = "";
+			string accnNo = "";
 
-   accnNo = Request.QueryString["accnNo"];
+			accnNo = Request.QueryString["accnNo"];
 
-   int intAccnNo = -1;
+			int intAccnNo = -1;
 			int yearLatest = 2050;
 
 			if (settingsNode != null)
@@ -24,86 +24,91 @@
 						yearLatest = settingsNode.GetPropertyValue<int>("latestYearToDisplay");
 			}
 
-   List<ProjectTeam> projectTeamList = null;
-   List<string> projectAnnualReportYearList = null;
-   bool hasProjectPublication = false;
-   List<ProjectProgram> relatedtProgramList = null;
+			List<ProjectTeam> projectTeamList = null;
+			List<string> projectAnnualReportYearList = null;
+			bool hasProjectPublication = false;
+			List<ProjectProgram> relatedtProgramList = null;
 
-   if (false == string.IsNullOrWhiteSpace(accnNo) && int.TryParse(accnNo, out intAccnNo))
-   {
-      projectTeamList = Projects.GetProjectTeam(intAccnNo);
-      projectAnnualReportYearList = Projects.GetProjectAnnualReportYears(intAccnNo, yearLatest);
-      hasProjectPublication = Projects.HasProjectPublication(intAccnNo);
-      relatedtProgramList = ProjectPrograms.GetRelatedPrograms(intAccnNo);
-   }
+			if (false == string.IsNullOrWhiteSpace(accnNo) && int.TryParse(accnNo, out intAccnNo))
+			{
+						projectTeamList = Projects.GetProjectTeam(intAccnNo);
+						projectAnnualReportYearList = Projects.GetProjectAnnualReportYears(intAccnNo, yearLatest);
+						hasProjectPublication = Projects.HasProjectPublication(intAccnNo);
+						relatedtProgramList = ProjectPrograms.GetRelatedPrograms(intAccnNo);
+			}
 }
 
-<h2 class="related_topics">
-   Project Team
-</h2>
-
-@if (projectTeamList != null && projectTeamList.Count > 0)
+@if (intAccnNo > 0)
 {
-   foreach (ProjectTeam teamMember in projectTeamList)
-   {
-      string fullName = teamMember.LastName + ", " + teamMember.FirstName;
-      if (false == string.IsNullOrEmpty(teamMember.CommonName))
-      {
-         fullName += " - <i>" + teamMember.CommonName + "</i>";
-      }
-      if (teamMember.PrimeIndicator == "P")
-      {
-         fullName = "<b>" + fullName + "</b>";
-      }
+if (projectTeamList != null && projectTeamList.Count > 0)
+			{
+			<h2 class="related_topics">
+						Project Team
+			</h2>
 
-      <li>
-         <a href="/people-locations/person/?person-id=@(teamMember.PersonId)" title="@(USDA_ARS.Umbraco.Extensions.Utilities.Strings.RemoveHtmlTags(fullName))" id="anch_48">
-            @Html.Raw(fullName)
-         </a>
-      </li>
-   }
-}
 
-<h2 class="related_topics">
-   Project Annual Reports
-</h2>
+						foreach (ProjectTeam teamMember in projectTeamList)
+						{
+									string fullName = teamMember.LastName + ", " + teamMember.FirstName;
+									if (false == string.IsNullOrEmpty(teamMember.CommonName))
+									{
+												fullName += " - <i>" + teamMember.CommonName + "</i>";
+									}
+									if (teamMember.PrimeIndicator == "P")
+									{
+												fullName = "<b>" + fullName + "</b>";
+									}
 
-@if (projectAnnualReportYearList != null && projectAnnualReportYearList.Count > 0)
-{
-   foreach (string year in projectAnnualReportYearList)
-   {
-      <li>
-         <a href="@(currentPage.Url +"?accnNo=" + accnNo + "&fy=" + year)" title="@year" id="anch_53">
-            @year
-         </a>
-      </li>
-   }
-}
+			<li>
+						<a href="/people-locations/person/?person-id=@(teamMember.PersonId)" title="@(USDA_ARS.Umbraco.Extensions.Utilities.Strings.RemoveHtmlTags(fullName))" id="anch_48">
+									@Html.Raw(fullName)
+						</a>
+			</li>
+						}
+			}
 
-@if (true == hasProjectPublication)
-{
-   <h2 class="related_topics">
-      Project Publications
-   </h2>
-               <li>
-                  <a href="@(currentPage.Url +"?accnNo=" + accnNo + "&showpubs=true")" title="Publications" id="anch_56">
-                     Publications
-                  </a>
-               </li>
-}
+if (projectAnnualReportYearList != null && projectAnnualReportYearList.Count > 0)
+			{
+			<h2 class="related_topics">
+						Project Annual Reports
+			</h2>
 
-@if (relatedtProgramList != null && relatedtProgramList.Count > 0)
-{
-   <h2 class="related_topics">
-      Related National Programs
-   </h2>
 
-   foreach (ProjectProgram relatedProgram in relatedtProgramList)
-   {
-      <li>
-         <a href="/research/programs/program?npCode=@(relatedProgram.NpCode)" title="@(relatedProgram.ShortDescription) (@(relatedProgram.NpCode))" id="anch_57">
-            @(relatedProgram.ShortDescription) (@(relatedProgram.NpCode))
-         </a>
-      </li>
-   }
+						foreach (string year in projectAnnualReportYearList)
+						{
+			<li>
+						<a href="@("?accnNo=" + accnNo + "&fy=" + year)" title="@year" id="anch_53">
+									@year
+						</a>
+			</li>
+						}
+			}
+
+			if (true == hasProjectPublication)
+			{
+			<h2 class="related_topics">
+						Project Publications
+			</h2>
+			<li>
+						<a href="@("?accnNo=" + accnNo + "&showpubs=true")" title="Publications" id="anch_56">
+									Publications
+						</a>
+			</li>
+			}
+
+			if (relatedtProgramList != null && relatedtProgramList.Count > 0)
+			{
+			<h2 class="related_topics">
+						Related National Programs
+			</h2>
+
+						foreach (ProjectProgram relatedProgram in relatedtProgramList)
+						{
+			<li>
+						<a href="/research/programs/program/?npCode=@(relatedProgram.NpCode)" title="@(relatedProgram.ShortDescription) (@(relatedProgram.NpCode))" id="anch_57">
+									@(relatedProgram.ShortDescription) (@(relatedProgram.NpCode))
+						</a>
+			</li>
+						}
+			}
 }
