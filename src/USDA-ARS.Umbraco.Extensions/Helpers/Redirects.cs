@@ -167,7 +167,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 			}
 
 
-			if (badUrl.ToLower().IndexOf("/research/programs/program?npcode=") >= 0 || badUrl.ToLower().IndexOf("/research/programs/programs.htm?np_code=") >= 0)
+			if (badUrl.ToLower().IndexOf("/research/programs/program?npcode=") >= 0 || badUrl.ToLower().IndexOf("/research/programs/program/?npcode=") >= 0 || badUrl.ToLower().IndexOf("/research/programs/programs.htm?np_code=") >= 0)
 			{
 				string npCode = "";
 
