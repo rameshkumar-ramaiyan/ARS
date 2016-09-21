@@ -11,41 +11,60 @@
 
     ArchetypeModel socialLinks = siteSettings.GetPropertyValue<ArchetypeModel>("socialLinks");
     bool hideHeaderTitle = currentPage.GetPropertyValue<bool>("hidePageTitle");
+
+	 string bodyText = currentPage.GetPropertyValue<string>("bodyText");
+
+    string htmlCode = null;
+
+			if (currentPage.HasProperty("htmlCode"))
+			{
+						if (currentPage.HasValue("htmlCode"))
+						{
+									htmlCode = currentPage.GetPropertyValue<string>("htmlCode");
+						}
+			}
+
+   bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode, htmlCode);
 }
 
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
 
 <div id="fullPage">
 
-    @Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
+	@Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", currentPage)
 
-    <div id="pageContent">
+	<div id="pageContent">
 
-        <table border="0" width="100%">
-            @if (false == hideHeaderTitle)
+		<table border="0" width="100%">
+			@if (false == hideHeaderTitle)
             {
-                <tr>
-                    <td class="pageHeading">@currentPage.Name                                                                                                                                                                                               </td>
-                </tr>
-                    <tr>
-                        <td>
+				<tr>
+					<td class="pageHeading">@currentPage.Name</td>
+				</tr>
+				<tr>
+					<td>
 
-                            <img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
-                        </td>
-                    </tr>
+						<img src="/images/headline_bar.gif" alt="headline bar" width="100%" />
+					</td>
+				</tr>
             }
-            <tr>
-                <td>
-                    @Html.Raw(currentPage.GetPropertyValue<string>("contentTable"))
-                </td>
-            </tr>
-        </table>
+			<tr>
+				<td>
+					@Html.Raw(bodyText)
+				</td>
+			</tr>
+			<tr>
+				<td>
+					@Html.Raw(currentPage.GetPropertyValue<string>("contentTable"))
+				</td>
+			</tr>
+		</table>
 
-        <!-- document content end -->
-        <br>
-        <p></p>
+		<!-- document content end -->
+		<br>
+		<p></p>
 
 
-    </div>
+	</div>
 
 </div>
