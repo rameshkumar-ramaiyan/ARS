@@ -6,52 +6,52 @@
 @using RJP.MultiUrlPicker.Models
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
-    Layout = "_Master.cshtml";
+	Layout = "_Master.cshtml";
 
-    string npCode = null;
-    string sort = null;
-    int year = 2050;
-    IPublishedContent currentPage = Model.Content;
-			 IPublishedContent settingsNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.SiteSettings();
-    IPublishedContent programNode = null;
-			 List<ProjectInfo> projectProgramList = null;
-			 List<ProjectInfo> projectProgramListDistinct = null;
+	string npCode = null;
+	string sort = null;
+	int year = 2050;
+	IPublishedContent currentPage = Model.Content;
+	IPublishedContent settingsNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.SiteSettings();
+	IPublishedContent programNode = null;
+	List<ProjectInfo> projectProgramList = null;
+	List<ProjectInfo> projectProgramListDistinct = null;
 
-    if (Request.QueryString["npCode"] != null)
-    {
-        npCode = Request.QueryString.Get("npCode");
+	if (Request.QueryString["npCode"] != null)
+	{
+		npCode = Request.QueryString.Get("npCode");
 
-        programNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByNpCode(npCode);
-    }
-    if (Request.QueryString["sort"] != null)
-    {
-        sort = Request.QueryString.Get("sort");
-    }
+		programNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByNpCode(npCode);
+	}
+	if (Request.QueryString["sort"] != null)
+	{
+		sort = Request.QueryString.Get("sort");
+	}
 
-			 if (settingsNode != null)
-			 {
-						year = settingsNode.GetPropertyValue<int>("latestYearToDisplay");
-			 }
+	if (settingsNode != null)
+	{
+		year = settingsNode.GetPropertyValue<int>("latestYearToDisplay");
+	}
 
-    projectProgramList = Projects.GetProjectAnnualReportList(npCode, sort, year);
+	projectProgramList = Projects.GetProjectAnnualReportList(npCode, sort, year);
 
-			 if (projectProgramList != null && projectProgramList.Any())
-			 {
-						projectProgramListDistinct = projectProgramList.DistinctBy(p => p.AccountNo).ToList();
-			 }
+	if (projectProgramList != null && projectProgramList.Any())
+	{
+		projectProgramListDistinct = projectProgramList.DistinctBy(p => p.AccountNo).ToList();
+	}
 
 }
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
 
 <div id="fullPage">
 
-			@Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", programNode)
+	@Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", programNode)
 
-			<div id="pageContent">
+	<div id="pageContent">
 
 
 
-						<script language="javascript">
+		<script language="javascript">
 	<!--
 	window.name = 'nps2000';
 	var remote = null;
@@ -67,96 +67,95 @@
 		}
 	}
 	//-->
-						</script>
+		</script>
 
-						@if (programNode != null)
-       {
-									<div class="pageHeading">
-												National Program @npCode: @programNode.Name
-									</div>
-
-									<table border="0" cellspacing="2" cellpadding="0">
-												<tbody>
-															<tr>
-																		<td valign="top">
-																					<table border="0">
-																								<tbody>
-																											<tr>
-																														<td>
-																																	<br />
-
-																																	<font face="verdana,arial,helvetica" color="FF6600" size="2">
-																																				<b>Project Annual Reports from National Program @npCode</b>
-																																	</font>
-																																	<p>
-
-																																				<b>Current View: <font color="FF3300">@(false == string.IsNullOrWhiteSpace(sort) && sort.ToLower() == "projecttype" ? "Project Type" : "Location")</font></b>
-
-																																				<br /><br />
-
-																																				<b>
-																																							Sort by
-																																							<a href="/research/project-reports-by-program/?npCode=@npCode">Location</a>
-																																							||
-																																							<a href="/research/project-reports-by-program/?npCode=@npCode&sort=projecttype">Project Type</a>
-																																				</b>
-
-																																				<br />
-																																				<br />
-
-																																	</p><table border="0" cellspacing="0" cellpadding="0">
-																																				@if (projectProgramListDistinct != null && projectProgramListDistinct.Any())
-                                            {
-
-
-																																							<tbody>
-																																										@foreach (ProjectInfo project in projectProgramListDistinct)
-                                                    {
-                                                        List<ProjectInfo> projectProgramListYears = projectProgramList.Where(p => p.AccountNo == project.AccountNo).ToList();
-
-																																													<tr>
-																																																<td><a href="/research/project/?accnNo=@(project.AccountNo)" target="nps2000" class="projectNav">@(project.ProjectTitle)</a></td>
-																																													</tr>
-
-																																													<tr>
-																																																<td class="bodyTextBlackSmall">@(project.WebLabel)</td>
-																																													</tr>
-																																													<tr>
-																																																<td class="bodyTextBlackSmall">@(project.CityName), @(project.StateAbbr)</td>
-																																													</tr>
-																																													<tr>
-																																																<td class="bodyTextBlackSmall">
-																																																			@(Projects.ProjectTypeByCode(project.ProjectTypeCode)) (@(project.ProjectTypeCode))
-																																																</td>
-																																													</tr>
-																																													<tr>
-																																																<td>
-																																																			@if (projectProgramListYears != null && projectProgramListYears.Any())
-                                                                {
-																																																						@Html.Raw("Annual Reports by Year:")
-
-                                                                    foreach (ProjectInfo projectYear in projectProgramListYears)
-                                                                    {
-																																																						<a href="/research/project/?accnNo=@(project.AccountNo)&fy=@(projectYear.Year)" target="nps2000" class="projectNav" style="margin-right: 10px;">@(projectYear.Year)</a>
-                                                                    }
-                                                                }
-																																																</td>
-																																													</tr>
-																																													<tr>
-																																																<td><img src="/images/content-divider.gif"></td>
-																																													</tr>
-                                                    }
-																																							</tbody>
-                                            }
-																																	</table>
-																														</td>
-																											</tr>
-																								</tbody>
-																					</table>
-																		</td>
-															</tr>
-												</tbody>
-									</table>
-        }
+		@if (programNode != null)
+		{
+			<div class="pageHeading">
+				National Program @npCode: @programNode.Name
 			</div>
+
+			<table border="0" cellspacing="2" cellpadding="0">
+				<tbody>
+					<tr>
+						<td valign="top">
+							<table border="0">
+								<tbody>
+									<tr>
+										<td>
+											<br />
+
+											<font face="verdana,arial,helvetica" color="FF6600" size="2">
+												<b>Project Annual Reports from National Program @npCode</b>
+											</font>
+											<p>
+
+												<b>Current View: <font color="FF3300">@(false == string.IsNullOrWhiteSpace(sort) && sort.ToLower() == "projecttype" ? "Project Type" : "Location")</font></b>
+
+												<br /><br />
+
+												<b>
+													Sort by
+													<a href="/research/project-reports-by-program/?npCode=@npCode">Location</a>
+													||
+													<a href="/research/project-reports-by-program/?npCode=@npCode&sort=projecttype">Project Type</a>
+												</b>
+
+												<br />
+												<br />
+
+											</p><table border="0" cellspacing="0" cellpadding="0">
+												@if (projectProgramListDistinct != null && projectProgramListDistinct.Any())
+												{
+
+
+													<tbody>
+														@foreach (ProjectInfo project in projectProgramListDistinct)
+														{
+															List<ProjectInfo> projectProgramListYears = projectProgramList.Where(p => p.AccountNo == project.AccountNo).ToList();
+
+															<tr>
+																<td><a href="/research/project/?accnNo=@(project.AccountNo)" target="nps2000" class="projectNav">@(project.ProjectTitle)</a></td>
+															</tr>
+
+															<tr>
+																<td class="bodyTextBlackSmall">@(project.WebLabel)</td>
+															</tr>
+															<tr>
+																<td class="bodyTextBlackSmall">@(project.CityName), @(project.StateAbbr)</td>
+															</tr>
+															<tr>
+																<td class="bodyTextBlackSmall">
+																	@(Projects.ProjectTypeByCode(project.ProjectTypeCode)) (@(project.ProjectTypeCode))
+																</td>
+															</tr>
+															<tr>
+																<td>
+																	@if (projectProgramListYears != null && projectProgramListYears.Any())
+																	{
+																		@Html.Raw("Annual Reports by Year:")
+
+																		foreach (ProjectInfo projectYear in projectProgramListYears)
+																		{
+																			<a href="/research/project/?accnNo=@(project.AccountNo)&fy=@(projectYear.Year)" target="nps2000" class="projectNav" style="margin-right: 10px;">@(projectYear.Year)</a>			}
+																	}
+																</td>
+															</tr>
+															<tr>
+																<td><img src="/images/content-divider.gif"></td>
+															</tr>
+														}
+													</tbody>
+												}
+											</table>
+										</td>
+									</tr>
+								</tbody>
+							</table>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		}
+	</div>
 </div>

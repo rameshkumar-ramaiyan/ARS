@@ -7,244 +7,244 @@
 @using USDA_ARS.Umbraco.Extensions.Models.Aris
 @model IPublishedContent
 @{
-			IEnumerable<IPublishedContent> mainOfficeList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.MainOfficeList();
+	IEnumerable<IPublishedContent> mainOfficeList = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.MainOfficeList();
 
-			IPublishedContent currentPage = Model;
-			IPublishedContent rootNode = currentPage.AncestorOrSelf(2);
-			IPublishedContent breadcrumb = currentPage;
-			string modeCode = Request.QueryString["modeCode"];
-			string accnNo = Request.QueryString["accnNo"];
-			string npCode = Request.QueryString["npCode"];
-			string seqNo115 = Request.QueryString["seqNo115"];
-			string personId = Request.QueryString["person-id"];
+	IPublishedContent currentPage = Model;
+	IPublishedContent rootNode = currentPage.AncestorOrSelf(2);
+	IPublishedContent breadcrumb = currentPage;
+	string modeCode = Request.QueryString["modeCode"];
+	string accnNo = Request.QueryString["accnNo"];
+	string npCode = Request.QueryString["npCode"];
+	string seqNo115 = Request.QueryString["seqNo115"];
+	string personId = Request.QueryString["person-id"];
 
-			List<NodeBreadcrumb> nodeBreadcrumbList = new List<NodeBreadcrumb>();
+	List<NodeBreadcrumb> nodeBreadcrumbList = new List<NodeBreadcrumb>();
 
-			while (breadcrumb.Level >= 2)
+	while (breadcrumb.Level >= 2)
+	{
+		if (breadcrumb.Level == 2 && breadcrumb.DocumentTypeAlias == "Research" && false == string.IsNullOrEmpty(modeCode))
+		{
+			IPublishedContent programsAndProjects = Nodes.ProgramsAndProjects();
+
+			if (programsAndProjects != null)
 			{
-						if (breadcrumb.Level == 2 && breadcrumb.DocumentTypeAlias == "Research" && false == string.IsNullOrEmpty(modeCode))
-						{
-									IPublishedContent programsAndProjects = Nodes.ProgramsAndProjects();
-
-									if (programsAndProjects != null)
-									{
-												nodeBreadcrumbList.Add(new NodeBreadcrumb(programsAndProjects.GetPropertyValue<string>("breadcrumbLabel", programsAndProjects.Name), programsAndProjects.Url + "?modeCode=" + modeCode, programsAndProjects.Level - 1));
-									}
-						}
-						else if (breadcrumb.Level == 3 && breadcrumb.DocumentTypeAlias == "ProgramsAndProjects")
-						{
-									// Skip
-						}
-						else
-						{
-									if (breadcrumb.DocumentTypeAlias == "Person" || (breadcrumb.DocumentTypeAlias == "StandardWebpage" &&
-															(breadcrumb.GetTemplateAlias() == "PersonAddress" || breadcrumb.GetTemplateAlias() == "PersonPublications" || breadcrumb.GetTemplateAlias() == "PersonProjects" || breadcrumb.GetTemplateAlias() == "PersonNews")))
-									{
-												if (false == string.IsNullOrWhiteSpace(personId))
-												{
-															int intPersonId = -1;
-
-															if (int.TryParse(personId, out intPersonId))
-															{
-																		PeopleInfo peopleInfo = People.GetPerson(intPersonId);
-
-																		if (peopleInfo != null)
-																		{
-																					modeCode = peopleInfo.ModeCode1 + "-" + peopleInfo.ModeCode2.ToString("00") + "-" + peopleInfo.ModeCode3.ToString("00") + "-" + peopleInfo.ModeCode4.ToString("00");
-
-																					string personName = peopleInfo.FirstName + " " + peopleInfo.LastName;
-
-																					if (false == string.IsNullOrEmpty(peopleInfo.CommonName))
-																					{
-																								personName += " (" + peopleInfo.CommonName + ")";
-																					}
-
-																					nodeBreadcrumbList.Add(new NodeBreadcrumb(personName, "/people-locations/person?person-id=" + personId, breadcrumb.Level + 5));
-																		}
-															}
-												}
-									}
-									else if (breadcrumb.DocumentTypeAlias == "PeopleLocations" && false == string.IsNullOrEmpty(modeCode))
-									{
-												nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.GetPropertyValue<string>("breadcrumbLabel", breadcrumb.Name), breadcrumb.Url + "/people-list/?modeCode=" + modeCode, breadcrumb.Level));
-									}
-									else if (breadcrumb.DocumentTypeAlias == "Project" && false == string.IsNullOrWhiteSpace(accnNo))
-									{
-												int accnNoInt = 0;
-
-												if (int.TryParse(accnNo, out accnNoInt))
-												{
-															ProjectInfo projectInfo = Projects.GetProjectInfo(Convert.ToInt32(accnNo));
-
-															if (projectInfo != null)
-															{
-																		modeCode = projectInfo.ModeCode1 + projectInfo.ModeCode2 + projectInfo.ModeCode3 + projectInfo.ModeCode4;
-
-																		modeCode = ModeCodes.ModeCodeAddDashes(modeCode);
-
-																		nodeBreadcrumbList.Add(new NodeBreadcrumb("Research Project #" + accnNo, breadcrumb.Url + "?accnNo=" + accnNo, breadcrumb.Level));
-															}
-												}
-									}
-									else if (breadcrumb.DocumentTypeAlias == "Publication" && false == string.IsNullOrWhiteSpace(seqNo115))
-									{
-												int intSeqNo115 = 0;
-
-												if (int.TryParse(seqNo115, out intSeqNo115))
-												{
-															UsdaPublication publication = Publications.GetPublicationById(intSeqNo115);
-
-															if (publication != null)
-															{
-																		modeCode = ModeCodes.ModeCodeIntsToString(publication.ModeCode1, publication.ModeCode2, publication.ModeCode3, publication.ModeCode4);
-
-																		nodeBreadcrumbList.Add(new NodeBreadcrumb("Publication #" + seqNo115, breadcrumb.Url + "?seqNo115=" + seqNo115, breadcrumb.Level));
-															}
-												}
-									}
-									else if (breadcrumb.DocumentTypeAlias == "StandardWebpage" && false == string.IsNullOrWhiteSpace(modeCode))
-									{
-												if (breadcrumb.Name == "Publications")
-												{
-															//Get publications at this location
-															IPublishedContent publicationsAtThisLocation = breadcrumb.Children.Where(p => p.Name == "Publications at this Location").FirstOrDefault();
-
-															if (publicationsAtThisLocation != null)
-															{
-																		nodeBreadcrumbList.Add(new NodeBreadcrumb(publicationsAtThisLocation.GetPropertyValue<string>("breadcrumbLabel", publicationsAtThisLocation.Name), publicationsAtThisLocation.Url + "?modeCode=" + modeCode, breadcrumb.Level));
-															}
-												}
-												else
-												{
-															nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.GetPropertyValue<string>("breadcrumbLabel", breadcrumb.Name), breadcrumb.Url + "?modeCode=" + modeCode, breadcrumb.Level));
-												}
-									}
-									else if (breadcrumb.DocumentTypeAlias == "NewsYear" || (breadcrumb.DocumentTypeAlias == "NewsFolder" && breadcrumb.Name.Length == 4))
-									{
-												nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.Name, "/news-events/news-archive/?year=" + breadcrumb.Name, breadcrumb.Level));
-									}
-									else if (breadcrumb.DocumentTypeAlias == "NewsFolder")
-									{
-												nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.Name, "/news-events/news-archive/", breadcrumb.Level));
-									}
-									else if (breadcrumb.DocumentTypeAlias == "PeopleFolder")
-									{
-												IPublishedContent parentNode = breadcrumb.Parent;
-												string foundModeCode = "";
-												if (parentNode != null)
-												{
-															foundModeCode = parentNode.GetPropertyValue<string>("modeCode");
-												}
-
-												nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.Name, "/people-locations/people-list/?modeCode=" + foundModeCode, breadcrumb.Level));
-									}
-									else
-									{
-												nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.GetPropertyValue<string>("breadcrumbLabel", breadcrumb.Name), breadcrumb.Url, breadcrumb.Level));
-									}
-						}
-
-						breadcrumb = breadcrumb.Parent;
+				nodeBreadcrumbList.Add(new NodeBreadcrumb(programsAndProjects.GetPropertyValue<string>("breadcrumbLabel", programsAndProjects.Name), programsAndProjects.Url + "?modeCode=" + modeCode, programsAndProjects.Level - 1));
 			}
-
-			// National Program Bread Crumbs
-			if (currentPage.DocumentTypeAlias == "NationalProgramGroup" || currentPage.DocumentTypeAlias == "NationalProgram")
+		}
+		else if (breadcrumb.Level == 3 && breadcrumb.DocumentTypeAlias == "ProgramsAndProjects")
+		{
+			// Skip
+		}
+		else
+		{
+			if (breadcrumb.DocumentTypeAlias == "Person" || (breadcrumb.DocumentTypeAlias == "StandardWebpage" &&
+									(breadcrumb.GetTemplateAlias() == "PersonAddress" || breadcrumb.GetTemplateAlias() == "PersonPublications" || breadcrumb.GetTemplateAlias() == "PersonProjects" || breadcrumb.GetTemplateAlias() == "PersonNews")))
 			{
-						IPublishedContent nationalProgramsPage = Nodes.NationProgramsPage();
+				if (false == string.IsNullOrWhiteSpace(personId))
+				{
+					int intPersonId = -1;
 
-						if (nationalProgramsPage != null)
+					if (int.TryParse(personId, out intPersonId))
+					{
+						PeopleInfo peopleInfo = People.GetPerson(intPersonId);
+
+						if (peopleInfo != null)
 						{
-									nodeBreadcrumbList.Add(new NodeBreadcrumb(nationalProgramsPage.GetPropertyValue<string>("breadcrumbLabel", nationalProgramsPage.Name), nationalProgramsPage.Url, 0));
+							modeCode = peopleInfo.ModeCode1 + "-" + peopleInfo.ModeCode2.ToString("00") + "-" + peopleInfo.ModeCode3.ToString("00") + "-" + peopleInfo.ModeCode4.ToString("00");
+
+							string personName = peopleInfo.FirstName + " " + peopleInfo.LastName;
+
+							if (false == string.IsNullOrEmpty(peopleInfo.CommonName))
+							{
+								personName += " (" + peopleInfo.CommonName + ")";
+							}
+
+							nodeBreadcrumbList.Add(new NodeBreadcrumb(personName, "/people-locations/person?person-id=" + personId, breadcrumb.Level + 5));
 						}
+					}
+				}
 			}
-			else if (currentPage.DocumentTypeAlias == "ProjectReportsByProgram")
+			else if (breadcrumb.DocumentTypeAlias == "PeopleLocations" && false == string.IsNullOrEmpty(modeCode))
 			{
-						IPublishedContent nationalProgramsPage = Nodes.GetNodeByNpCode(npCode);
-
-						if (nationalProgramsPage != null)
-						{
-									nodeBreadcrumbList.Add(new NodeBreadcrumb(nationalProgramsPage.Parent.GetPropertyValue<string>("breadcrumbLabel", nationalProgramsPage.Parent.Name), nationalProgramsPage.Parent.Url, 0));
-									nodeBreadcrumbList.Add(new NodeBreadcrumb(nationalProgramsPage.GetPropertyValue<string>("breadcrumbLabel", nationalProgramsPage.Name), nationalProgramsPage.Url, 1));
-						}
+				nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.GetPropertyValue<string>("breadcrumbLabel", breadcrumb.Name), breadcrumb.Url + "/people-list/?modeCode=" + modeCode, breadcrumb.Level));
 			}
-
-			if (nodeBreadcrumbList != null && nodeBreadcrumbList.Count > 0)
+			else if (breadcrumb.DocumentTypeAlias == "Project" && false == string.IsNullOrWhiteSpace(accnNo))
 			{
-						if (false == string.IsNullOrWhiteSpace(modeCode))
-						{
-									IPublishedContent siteNode = Nodes.GetNodeByModeCode(modeCode, false);
+				int accnNoInt = 0;
 
-									if (siteNode != null)
-									{
-												while (siteNode.Level >= 2)
-												{
-															nodeBreadcrumbList.Add(new NodeBreadcrumb(siteNode.GetPropertyValue<string>("breadcrumbLabel", siteNode.Name), siteNode.Url, siteNode.Level - 5));
+				if (int.TryParse(accnNo, out accnNoInt))
+				{
+					ProjectInfo projectInfo = Projects.GetProjectInfo(Convert.ToInt32(accnNo));
 
-															siteNode = siteNode.Parent;
-												}
-									}
-						}
+					if (projectInfo != null)
+					{
+						modeCode = projectInfo.ModeCode1 + projectInfo.ModeCode2 + projectInfo.ModeCode3 + projectInfo.ModeCode4;
 
-						nodeBreadcrumbList = nodeBreadcrumbList.OrderBy(p => p.Level).ToList();
+						modeCode = ModeCodes.ModeCodeAddDashes(modeCode);
+
+						nodeBreadcrumbList.Add(new NodeBreadcrumb("Research Project #" + accnNo, breadcrumb.Url + "?accnNo=" + accnNo, breadcrumb.Level));
+					}
+				}
 			}
+			else if (breadcrumb.DocumentTypeAlias == "Publication" && false == string.IsNullOrWhiteSpace(seqNo115))
+			{
+				int intSeqNo115 = 0;
+
+				if (int.TryParse(seqNo115, out intSeqNo115))
+				{
+					UsdaPublication publication = Publications.GetPublicationById(intSeqNo115);
+
+					if (publication != null)
+					{
+						modeCode = ModeCodes.ModeCodeIntsToString(publication.ModeCode1, publication.ModeCode2, publication.ModeCode3, publication.ModeCode4);
+
+						nodeBreadcrumbList.Add(new NodeBreadcrumb("Publication #" + seqNo115, breadcrumb.Url + "?seqNo115=" + seqNo115, breadcrumb.Level));
+					}
+				}
+			}
+			else if (breadcrumb.DocumentTypeAlias == "StandardWebpage" && false == string.IsNullOrWhiteSpace(modeCode))
+			{
+				if (breadcrumb.Name == "Publications")
+				{
+					//Get publications at this location
+					IPublishedContent publicationsAtThisLocation = breadcrumb.Children.Where(p => p.Name == "Publications at this Location").FirstOrDefault();
+
+					if (publicationsAtThisLocation != null)
+					{
+						nodeBreadcrumbList.Add(new NodeBreadcrumb(publicationsAtThisLocation.GetPropertyValue<string>("breadcrumbLabel", publicationsAtThisLocation.Name), publicationsAtThisLocation.Url + "?modeCode=" + modeCode, breadcrumb.Level));
+					}
+				}
+				else
+				{
+					nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.GetPropertyValue<string>("breadcrumbLabel", breadcrumb.Name), breadcrumb.Url + "?modeCode=" + modeCode, breadcrumb.Level));
+				}
+			}
+			else if (breadcrumb.DocumentTypeAlias == "NewsYear" || (breadcrumb.DocumentTypeAlias == "NewsFolder" && breadcrumb.Name.Length == 4))
+			{
+				nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.Name, "/news-events/news-archive/?year=" + breadcrumb.Name, breadcrumb.Level));
+			}
+			else if (breadcrumb.DocumentTypeAlias == "NewsFolder")
+			{
+				nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.Name, "/news-events/news-archive/", breadcrumb.Level));
+			}
+			else if (breadcrumb.DocumentTypeAlias == "PeopleFolder")
+			{
+				IPublishedContent parentNode = breadcrumb.Parent;
+				string foundModeCode = "";
+				if (parentNode != null)
+				{
+					foundModeCode = parentNode.GetPropertyValue<string>("modeCode");
+				}
+
+				nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.Name, "/people-locations/people-list/?modeCode=" + foundModeCode, breadcrumb.Level));
+			}
+			else
+			{
+				nodeBreadcrumbList.Add(new NodeBreadcrumb(breadcrumb.GetPropertyValue<string>("breadcrumbLabel", breadcrumb.Name), breadcrumb.Url, breadcrumb.Level));
+			}
+		}
+
+		breadcrumb = breadcrumb.Parent;
+	}
+
+	// National Program Bread Crumbs
+	if (currentPage.DocumentTypeAlias == "NationalProgramGroup" || currentPage.DocumentTypeAlias == "NationalProgram")
+	{
+		IPublishedContent nationalProgramsPage = Nodes.NationProgramsPage();
+
+		if (nationalProgramsPage != null)
+		{
+			nodeBreadcrumbList.Add(new NodeBreadcrumb(nationalProgramsPage.GetPropertyValue<string>("breadcrumbLabel", nationalProgramsPage.Name), nationalProgramsPage.Url, 0));
+		}
+	}
+	else if (currentPage.DocumentTypeAlias == "ProjectReportsByProgram")
+	{
+		IPublishedContent nationalProgramsPage = Nodes.GetNodeByNpCode(npCode);
+
+		if (nationalProgramsPage != null)
+		{
+			nodeBreadcrumbList.Add(new NodeBreadcrumb(nationalProgramsPage.Parent.GetPropertyValue<string>("breadcrumbLabel", nationalProgramsPage.Parent.Name), nationalProgramsPage.Parent.Url, 0));
+			nodeBreadcrumbList.Add(new NodeBreadcrumb(nationalProgramsPage.GetPropertyValue<string>("breadcrumbLabel", nationalProgramsPage.Name), nationalProgramsPage.Url, 1));
+		}
+	}
+
+	if (nodeBreadcrumbList != null && nodeBreadcrumbList.Count > 0)
+	{
+		if (false == string.IsNullOrWhiteSpace(modeCode))
+		{
+			IPublishedContent siteNode = Nodes.GetNodeByModeCode(modeCode, false);
+
+			if (siteNode != null)
+			{
+				while (siteNode.Level >= 2)
+				{
+					nodeBreadcrumbList.Add(new NodeBreadcrumb(siteNode.GetPropertyValue<string>("breadcrumbLabel", siteNode.Name), siteNode.Url, siteNode.Level - 5));
+
+					siteNode = siteNode.Parent;
+				}
+			}
+		}
+
+		nodeBreadcrumbList = nodeBreadcrumbList.OrderBy(p => p.Level).ToList();
+	}
 }
 
 @if (currentPage.DocumentTypeAlias == "ResearchUnit")
 {
-			<div style="margin: 2px 2px 5px 8px;">
+	<div style="margin: 2px 2px 5px 8px;">
 
-						@Html.Raw("You are here:")
+		@Html.Raw("You are here:")
 
-						@{
-									int i = 0;
+		@{
+			int i = 0;
 
-									foreach (NodeBreadcrumb breadNode in nodeBreadcrumbList)
-									{
-												if (i == 0)
-												{
-															<a href="@breadNode.Url">@(breadNode.Name + " Home")</a>}
-												else
-												{
-															@Html.Raw("/") <a href="@breadNode.Url">@(breadNode.Name)</a>}
+			foreach (NodeBreadcrumb breadNode in nodeBreadcrumbList)
+			{
+				if (i == 0)
+				{
+					<a href="@breadNode.Url">@(breadNode.Name + " Home")</a>}
+				else
+				{
+					@Html.Raw("/") <a href="@breadNode.Url">@(breadNode.Name)</a>}
 
-												i++;
-									}
+				i++;
+			}
+		}
+	</div>
+			}
+			else
+			{
+				<div id="navigationLinks">
+					<div id="breadcrumb">
+						You are here:
+
+						<a href="/">ARS Home</a>
+
+						@{	int i = 0;
+
+							foreach (NodeBreadcrumb breadNode in nodeBreadcrumbList)
+							{
+								if (i == (nodeBreadcrumbList.Count - 1))
+								{
+									@Html.Raw("/ ") @(breadNode.Name)
+								}
+								else
+								{
+									@Html.Raw("/") <a href="@breadNode.Url">@(breadNode.Name)</a>
+								}
+
+								i++;
+							}
 						}
-			</div>
-									}
-									else
-									{
-												<div id="navigationLinks">
-															<div id="breadcrumb">
-																		You are here:
 
-																		<a href="/">ARS Home</a>
+					</div>
 
-																		@{	int i = 0;
+					<div id="navigationStayConnected">
+						@Html.Partial("~/Views/Partials/Modules/SocialLinks.cshtml")
+					</div>
 
-																					foreach (NodeBreadcrumb breadNode in nodeBreadcrumbList)
-																					{
-																								if (i == (nodeBreadcrumbList.Count - 1))
-																								{
-																											@Html.Raw("/ ") @(breadNode.Name)
-}
-																								else
-																								{
-																											@Html.Raw("/") <a href="@breadNode.Url">@(breadNode.Name)</a>
-}
+					<div style="clear:both;">
+						<hr />
+					</div>
 
-																								i++;
-																					}
-																		}
-
-															</div>
-
-															<div id="navigationStayConnected">
-																		@Html.Partial("~/Views/Partials/Modules/SocialLinks.cshtml")
-															</div>
-
-															<div style="clear:both;">
-																		<hr />
-															</div>
-
-												</div>									}
+				</div>									}

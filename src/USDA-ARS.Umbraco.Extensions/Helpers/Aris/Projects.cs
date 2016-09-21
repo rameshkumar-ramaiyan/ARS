@@ -546,7 +546,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
 									List<ProjectSubject> projectSubjectList = null;
 									List<string> modeCodeArray = Helpers.ModeCodes.ModeCodeArray(modeCode);
 
-									if (modeCode != null && modeCode.Length == 4)
+									if (modeCodeArray != null && modeCodeArray.Count == 4)
 									{
 												var db = new Database("arisPublicWebDbDSN");
 
