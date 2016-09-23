@@ -9,6 +9,7 @@ using Umbraco.Web;
 using USDA_ARS.Umbraco.Extensions.Models;
 using USDA_ARS.Umbraco.Extensions.Helpers;
 using Umbraco.Core.Persistence;
+using System.Text.RegularExpressions;
 
 namespace USDA_ARS.Umbraco.Extensions.Helpers
 {
@@ -489,15 +490,27 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
       {
          IPublishedContent node = null;
 
-         foreach (IPublishedContent root in UmbHelper.TypedContentAtRoot())
-         {
-            if (node == null)
-            {
-               node = root.Descendants().FirstOrDefault(n => n.Url.ToLower() == url.ToLower());
-            }
-         }
+			if (false == string.IsNullOrEmpty(url))
+			{
+				if (false == url.StartsWith("http", StringComparison.OrdinalIgnoreCase))
+				{
+					url = Regex.Replace(url, "#[^#]*", "");
 
-         return node;
+					node = UmbracoContext.Current.ContentCache.GetByRoute(url);
+
+					if (node == null)
+					{
+						string currentUrl = Redirects.RedirectUrl(url);
+
+						if (false == string.IsNullOrEmpty(currentUrl))
+						{
+							node = UmbracoContext.Current.ContentCache.GetByRoute(currentUrl);
+						}
+					}
+				}
+			}
+
+			return node;
       }
 
 
