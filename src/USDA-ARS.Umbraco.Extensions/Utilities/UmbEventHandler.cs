@@ -16,6 +16,7 @@ using Umbraco.Web;
 using USDA_ARS.Umbraco.Extensions.Helpers;
 using USDA_ARS.Umbraco.Extensions.Helpers.Aris;
 using USDA_ARS.Umbraco.Extensions.Models;
+using USDA_ARS.Umbraco.Extensions.Models.Aris;
 
 namespace USDA_ARS.Umbraco.Extensions.Utilities
 {
@@ -123,6 +124,15 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 					if (node.IsPropertyDirty("bodyText"))
 					{
 						updateNewsInterLinks = true;
+					}
+					else
+					{
+						List<NewsInterLink> linksList = NewsInterLinks.GetLinksByNewsArticle(node.Id);
+
+						if (linksList == null || false == linksList.Any())
+						{
+							updateNewsInterLinks = true;
+						}
 					}
 				}
 			}

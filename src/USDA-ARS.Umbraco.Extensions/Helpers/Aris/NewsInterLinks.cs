@@ -181,7 +181,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers.Aris
                      {
                         string modeCode = node.GetPropertyValue<string>("modeCode");
 
-                        if (false == string.IsNullOrEmpty(modeCode))
+                        if (false == string.IsNullOrEmpty(modeCode) && modeCode != "00-00-00-00")
                         {
                            modeCode = ModeCodes.ModeCodeNoDashes(modeCode);
 
