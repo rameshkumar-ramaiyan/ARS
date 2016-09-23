@@ -395,7 +395,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                if (node == null)
                {
                   sql = @"SELECT contentNodeId FROM cmsPropertyData WHERE propertytypeid IN (SELECT id FROM cmsPropertyType WHERE Alias = 'oldModeCodes')
-                            AND NOT dataNvarchar IS NULL AND dataNvarchar = '%' + @modeCode + '%' AND versionId IN
+                            AND NOT dataNvarchar IS NULL AND dataNvarchar LIKE '%' + @modeCode + '%' AND versionId IN
                             (SELECT versionId FROM cmsDocument WHERE published = 1)";
 
                   contentNodeId = db.Query<string>(sql, new { modeCode = modeCode }).FirstOrDefault();
