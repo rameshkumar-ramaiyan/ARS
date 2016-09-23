@@ -5,53 +5,60 @@
 @using RJP.MultiUrlPicker.Models
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
-    Layout = "_Master.cshtml";
+	Layout = "_Master.cshtml";
 
-    IPublishedContent currentPage = Model.Content;
-    string modeCode = "";
-    string softwareId = "";
-    string fileTitle = "";
-    string fileInfo = "";
-    bool downloadFile = false;
+	IPublishedContent currentPage = Model.Content;
+	string modeCode = "";
+	string softwareId = "";
+	string fileTitle = "";
+	string fileInfo = "";
+	bool downloadFile = false;
 
-    if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
-    {
-        modeCode = Request.QueryString.Get("modeCode");
-    }
-    if (false == string.IsNullOrWhiteSpace(Request.QueryString["softwareid"]))
-    {
-        softwareId = Request.QueryString.Get("softwareId");
-    }
+	if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
+	{
+		modeCode = Request.QueryString.Get("modeCode");
+	}
+	if (false == string.IsNullOrWhiteSpace(Request.QueryString["softwareid"]))
+	{
+		softwareId = Request.QueryString.Get("softwareId");
+	}
 
-    if (TempData["downloadReady"] != null && true == Convert.ToBoolean(TempData["downloadReady"]))
-    {
-        downloadFile = true;
-    }
+	if (TempData["downloadReady"] != null && true == Convert.ToBoolean(TempData["downloadReady"]))
+	{
+		downloadFile = true;
+	}
 
-    IPublishedContent sitePage = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode, false);
+	IPublishedContent sitePage = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCode, false);
 
-    IPublishedContent softwareItem = Software.GetSoftwareById(softwareId);
-    ArchetypeModel softwareDownloadFiles = null;
+	IPublishedContent softwareItem = Software.GetSoftwareById(softwareId);
+	ArchetypeModel softwareDownloadFiles = null;
 
-    if (softwareItem != null)
-    {
-        fileTitle = softwareItem.Name;
+	if (softwareItem != null)
+	{
+		fileTitle = softwareItem.Name;
 
-        if (softwareItem.HasValue("information"))
-        {
-            fileInfo = softwareItem.GetPropertyValue<string>("information");
-        }
+		if (softwareItem.HasValue("information"))
+		{
+			fileInfo = softwareItem.GetPropertyValue<string>("information");
+		}
 
-        if (softwareItem.HasValue("fileDownloads"))
-        {
-            softwareDownloadFiles = softwareItem.GetPropertyValue<ArchetypeModel>("fileDownloads");
-        }
-    }
+		if (softwareItem.HasValue("fileDownloads"))
+		{
+			softwareDownloadFiles = softwareItem.GetPropertyValue<ArchetypeModel>("fileDownloads");
+		}
+	}
 
-    if (true == string.IsNullOrWhiteSpace(fileTitle))
-    {
-        Response.Redirect("/services/software/?modeCode=" + modeCode);
-    }
+	if (true == string.IsNullOrWhiteSpace(fileTitle))
+	{
+		if (false == string.IsNullOrEmpty(modeCode))
+		{
+			Response.Redirect("/research/software/?modeCode=" + modeCode);
+		}
+		else
+		{
+			Response.Redirect("/research/software/?" + Server.UrlEncode("Software not found in any location"));
+		}
+	}
 
 }
 
@@ -102,11 +109,13 @@
          <h2>Download Form</h2>
          <font face="arial,helvetica" size="-1">Please complete the form below to track the use of the service we are providing and to help improve our product.</font>
 
-         @Html.Action("Index", "DownloadRequestSurface")
-
-        }
-        else
-        {
+			if (false == string.IsNullOrEmpty(modeCode))
+			{
+				Html.Action("Index", "DownloadRequestSurface");
+			}
+		}
+		else
+		{
          <hr size="1" noshade="">
 
          <p>The following are the files available for the @(fileTitle) software:</p>
