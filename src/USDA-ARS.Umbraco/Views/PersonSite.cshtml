@@ -30,7 +30,17 @@
       modeCode = Request.QueryString.Get("modeCode");
    }
 
-   bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode);
+   string htmlCode = null;
+
+			if (currentPage.HasProperty("htmlCode"))
+			{
+						if (currentPage.HasValue("htmlCode"))
+						{
+									htmlCode = currentPage.GetPropertyValue<string>("htmlCode");
+						}
+			}
+
+   bodyText = USDA_ARS.Umbraco.Extensions.Helpers.BodyTextTags.ReplaceTags(bodyText, modeCode, htmlCode);
 }
 
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
