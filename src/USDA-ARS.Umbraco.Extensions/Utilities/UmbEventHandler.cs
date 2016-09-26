@@ -6,11 +6,13 @@ using System.Configuration;
 using System.IO;
 using System.Linq;
 using System.Net.Mail;
+using umbraco.BusinessLogic;
 using Umbraco.Core;
 using Umbraco.Core.Events;
 using Umbraco.Core.IO;
 using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
+using Umbraco.Core.Security;
 using Umbraco.Core.Services;
 using Umbraco.Web;
 using USDA_ARS.Umbraco.Extensions.Helpers;
@@ -23,6 +25,8 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 	public class UmbEventHandler : ApplicationEventHandler
 	{
 		private static readonly IContentService _contentService = ApplicationContext.Current.Services.ContentService;
+		private static readonly IContentTypeService _contentTypeService = ApplicationContext.Current.Services.ContentTypeService;
+		private static readonly IUserService _userService = ApplicationContext.Current.Services.UserService;
 
 		private static bool updateModeCodes = false;
 		private static bool updateOldUrl = false;
@@ -32,7 +36,6 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 		protected override void ApplicationStarted(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
 		{
 			ContentService.Created += PostProcessCreated;
-			ContentService.Saving += PostProcessSaving;
 			ContentService.Saved += PostProcessSaved;
 			ContentService.Published += PostProcessPublished;
 			ContentService.Deleted += PostProcessDelete;
@@ -40,7 +43,6 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 
 			UserService.SavedUser += UserServiceSavedUser;
 		}
-
 
 
 		private static void PostProcessCreated(IContentService cs, NewEventArgs<IContent> e)
@@ -132,6 +134,26 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 						if (linksList == null || false == linksList.Any())
 						{
 							updateNewsInterLinks = true;
+						}
+					}
+				}
+
+
+				// Check to see if user has access to create a ResearchUnit doc type
+				if (node != null && node.ContentType.Alias == "ResearchUnit")
+				{
+					var userTicket = new System.Web.HttpContextWrapper(System.Web.HttpContext.Current).GetUmbracoAuthTicket();
+					if (userTicket != null)
+					{
+						var currentUser = _userService.GetByUsername(userTicket.Name);
+
+						if (currentUser != null && currentUser.UserType.Name != "Administrators")
+						{
+							if (e.CanCancel)
+							{
+								e.Cancel = true;
+								e.Messages.Add(new EventMessage("Cannot Creat", "Unable to create node due to security permissions.", EventMessageType.Error));
+							}
 						}
 					}
 				}
@@ -411,6 +433,19 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 				if (true == updateOldUrl)
 				{
 					Nodes.NodesWithRedirectsList(false);
+				}
+
+				// Re-open a Research Unit that is Closed
+				if (node != null && node.ContentType.Alias == "ResearchUnitClosed")
+				{
+					if (node.HasProperty("reopenResearchUnit") && true == node.GetValue<bool>("reopenResearchUnit"))
+					{
+						var officeOpenDocType = _contentTypeService.GetContentType("ResearchUnit");
+
+						node.ChangeContentType(officeOpenDocType);
+
+						_contentService.SaveAndPublishWithStatus(node);
+					}
 				}
 			}
 		}
