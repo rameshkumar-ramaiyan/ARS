@@ -25,66 +25,76 @@ using USDA_ARS.Umbraco.Extensions.Models.Aris;
 
 namespace USDA_ARS.Umbraco.Extensions.Controller
 {
-			[PluginController("Usda")]
-			public class DownloadRequestController : UmbracoApiController
+	[PluginController("Usda")]
+	public class DownloadRequestController : UmbracoApiController
+	{
+		private static readonly IContentService _contentService = ApplicationContext.Current.Services.ContentService;
+
+		/// <summary>
+		/// Get a JSON string of a download requests by Umbraco id (software)
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		[System.Web.Http.AcceptVerbs("GET")]
+		[System.Web.Http.HttpGet]
+		public string Get(string id)
+		{
+			string output = "";
+
+			try
 			{
-						private static readonly IContentService _contentService = ApplicationContext.Current.Services.ContentService;
+				var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
+				IPublishedContent node = umbracoHelper.TypedContent(id);
 
-						[System.Web.Http.AcceptVerbs("GET")]
-						[System.Web.Http.HttpGet]
-						public string Get(string id)
-						{
-									string output = "";
+				if (node != null)
+				{
+					Models.NodeDownloadRequests nodeDownloadRequests = new Models.NodeDownloadRequests();
 
-									try
-									{
-												var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
-												IPublishedContent node = umbracoHelper.TypedContent(id);
+					nodeDownloadRequests = Helpers.Aris.DownloadRequests.GetDownloadRequestsByNode(node);
 
-												if (node != null)
-												{
-															Models.NodeDownloadRequests nodeDownloadRequests = new Models.NodeDownloadRequests();
-
-															nodeDownloadRequests = Helpers.Aris.DownloadRequests.GetDownloadRequestsByNode(node);
-
-															if (nodeDownloadRequests != null)
-															{
-																		output = JsonConvert.SerializeObject(nodeDownloadRequests);
-															}
-												}
-									}
-									catch (Exception ex)
-									{
-												LogHelper.Error<DownloadRequestController>("Usda Download Request Error", ex);
-									}
-
-									return output;
-						}
-
-						[System.Web.Http.AcceptVerbs("GET")]
-						[System.Web.Http.HttpGet]
-						public string Clear(string id)
-						{
-									string output = "";
-
-									try
-									{
-												var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
-												IPublishedContent node = umbracoHelper.TypedContent(id);
-
-												if (node != null)
-												{
-															string softwareId = node.GetPropertyValue<string>("softwareID");
-
-															Helpers.Aris.DownloadRequests.ClearDownloadRequest(softwareId);
-												}
-									}
-									catch (Exception ex)
-									{
-												LogHelper.Error<DownloadRequestController>("Usda Download Clear Error", ex);
-									}
-
-									return output;
-						}
+					if (nodeDownloadRequests != null)
+					{
+						output = JsonConvert.SerializeObject(nodeDownloadRequests);
+					}
+				}
 			}
+			catch (Exception ex)
+			{
+				LogHelper.Error<DownloadRequestController>("Usda Download Request Error", ex);
+			}
+
+			return output;
+		}
+
+		/// <summary>
+		/// Clear all software download requests by Umbraco id
+		/// </summary>
+		/// <param name="id"></param>
+		/// <returns></returns>
+		[System.Web.Http.AcceptVerbs("GET")]
+		[System.Web.Http.HttpGet]
+		public string Clear(string id)
+		{
+			string output = "";
+
+			try
+			{
+				var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
+				IPublishedContent node = umbracoHelper.TypedContent(id);
+
+				if (node != null)
+				{
+					string softwareId = node.GetPropertyValue<string>("softwareID");
+
+					Helpers.Aris.DownloadRequests.ClearDownloadRequest(softwareId);
+				}
+			}
+			catch (Exception ex)
+			{
+				LogHelper.Error<DownloadRequestController>("Usda Download Clear Error", ex);
+			}
+
+			return output;
+		}
+	}
 }

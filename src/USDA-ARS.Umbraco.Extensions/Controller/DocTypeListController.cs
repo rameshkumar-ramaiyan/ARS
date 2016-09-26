@@ -27,73 +27,74 @@ using USDA_ARS.Umbraco.Extensions.Models.Aris;
 
 namespace USDA_ARS.Umbraco.Extensions.Controller
 {
-    [PluginController("Usda")]
-    public class DocTypeListController : UmbracoApiController
-    {
-        private static readonly IContentService _contentService = ApplicationContext.Current.Services.ContentService;
+	[PluginController("Usda")]
+	public class DocTypeListController : UmbracoApiController
+	{
+		private static readonly IContentService _contentService = ApplicationContext.Current.Services.ContentService;
 
-        [System.Web.Http.AcceptVerbs("GET")]
-        [System.Web.Http.HttpGet]
+		/// <summary>
+		/// Get a list of doc types by Alias and Name
+		/// </summary>
+		/// <returns></returns>
+		[System.Web.Http.AcceptVerbs("GET")]
+		[System.Web.Http.HttpGet]
+		public string Get()
+		{
+			string output = "";
 
-        public string Get(string id)
-        {
-            string output = "";
+			try
+			{
+				List<DocTypeCms> docTypeList = null;
+				List<DocTypeSelectItem> selectList = new List<DocTypeSelectItem>();
 
-            try
-            {
-                List<DocTypeCms> docTypeList = null;
-                List<DocTypeSelectItem> selectList = new List<DocTypeSelectItem>();
+				var db = new Database("umbracoDbDSN");
 
-
-
-                var db = new Database("umbracoDbDSN");
-
-                string sql = @"SELECT DISTINCT(Alias), Name
+				string sql = @"SELECT DISTINCT(Alias), Name
                                   FROM [cmsPropertyType]
                                   WHERE dataTypeId > 0
                                   ORDER BY Name";
 
-                docTypeList = db.Query<DocTypeCms>(sql).ToList();
+				docTypeList = db.Query<DocTypeCms>(sql).ToList();
 
-                if (docTypeList != null && docTypeList.Any())
-                {
-                    foreach (DocTypeCms docType in docTypeList)
-                    {
-                        selectList.Add(new DocTypeSelectItem(docType.Alias, docType.Name));
-                    }
-                }
+				if (docTypeList != null && docTypeList.Any())
+				{
+					foreach (DocTypeCms docType in docTypeList)
+					{
+						selectList.Add(new DocTypeSelectItem(docType.Alias, docType.Name));
+					}
+				}
 
-                output = JsonConvert.SerializeObject(selectList);
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Error<DataImporterController>("Usda Doc Type List Request Error", ex);
-            }
+				output = JsonConvert.SerializeObject(selectList);
+			}
+			catch (Exception ex)
+			{
+				LogHelper.Error<DataImporterController>("Usda Doc Type List Request Error", ex);
+			}
 
-            return output;
-        }
-    }
+			return output;
+		}
+	}
 
-    public class DocTypeSelectItem
-    {
-        public string Alias { get; set; }
-        public string Name { get; set; }
+	public class DocTypeSelectItem
+	{
+		public string Alias { get; set; }
+		public string Name { get; set; }
 
-        public DocTypeSelectItem(string alias, string name)
-        {
-            this.Alias = alias;
-            this.Name = name;
-        }
-    }
+		public DocTypeSelectItem(string alias, string name)
+		{
+			this.Alias = alias;
+			this.Name = name;
+		}
+	}
 
 
-    public class DocTypeCms
-    {
-        [Column("Alias")]
-        public string Alias { get; set; }
+	public class DocTypeCms
+	{
+		[Column("Alias")]
+		public string Alias { get; set; }
 
-        [Column("Name")]
-        [NullSetting(NullSetting = NullSettings.Null)]
-        public string Name { get; set; }
-    }
+		[Column("Name")]
+		[NullSetting(NullSetting = NullSettings.Null)]
+		public string Name { get; set; }
+	}
 }

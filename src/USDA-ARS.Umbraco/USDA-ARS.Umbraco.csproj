@@ -3121,7 +3121,7 @@
     </ProjectReference>
     <ProjectReference Include="..\USDA_ARS.SiteDescendantsAudit\USDA_ARS.SiteDescendantsAudit.csproj">
       <Project>{86cccbf5-b11f-4288-a8c3-22afc8368666}</Project>
-      <Name>USDA_ARS.SiteDecendantsAudit</Name>
+      <Name>USDA_ARS.SiteDescendantsAudit</Name>
     </ProjectReference>
     <ProjectReference Include="..\USDA_ARS.Umbraco.FileSystemPicker\USDA_ARS.Umbraco.FileSystemPicker.csproj">
       <Project>{c0318ac1-1532-49a6-9828-13f99e722431}</Project>

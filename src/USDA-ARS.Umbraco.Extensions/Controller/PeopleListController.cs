@@ -25,82 +25,87 @@ using USDA_ARS.Umbraco.Extensions.Models.Aris;
 
 namespace USDA_ARS.Umbraco.Extensions.Controller
 {
-   [PluginController("Usda")]
-   public class PeopleListController : UmbracoApiController
-   {
-      private static readonly IContentService _contentService = ApplicationContext.Current.Services.ContentService;
+    [PluginController("Usda")]
+    public class PeopleListController : UmbracoApiController
+    {
+        private static readonly IContentService _contentService = ApplicationContext.Current.Services.ContentService;
 
-      [System.Web.Http.AcceptVerbs("GET")]
-      [System.Web.Http.HttpGet]
 
-      public string Get(string id)
-      {
-         string output = "";
+        /// <summary>
+        /// Get a JSON objec to people list by mode code/city
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [System.Web.Http.AcceptVerbs("GET")]
+        [System.Web.Http.HttpGet]
+        public string Get(string id)
+        {
+            string output = "";
 
-         try
-         {
-            var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
-            IPublishedContent node = umbracoHelper.TypedContent(id);
-
-            if (id != "0")
+            try
             {
+                var umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
+                IPublishedContent node = umbracoHelper.TypedContent(id);
 
-               if (node.DocumentTypeAlias == "PersonSite")
-               {
-                  node = node.Parent.Parent;
-               }
+                if (id != "0")
+                {
 
-               if (node != null)
-               {
-                  List<PeopleByCity> peopleList = new List<PeopleByCity>();
+                    if (node.DocumentTypeAlias == "PersonSite")
+                    {
+                        node = node.Parent.Parent;
+                    }
 
-                  string modeCode = node.GetPropertyValue<string>("modeCode"); //12-45-78-01
+                    if (node != null)
+                    {
+                        List<PeopleByCity> peopleList = new List<PeopleByCity>();
+
+                        string modeCode = node.GetPropertyValue<string>("modeCode"); //12-45-78-01
 
 
-                  // Get the research center list if in lab
-                  if (false == string.IsNullOrEmpty(modeCode) && modeCode.Length == 11)
-                  {
-                     modeCode = modeCode.Substring(0, 9) + "00";
-                  }
+                        // Get the research center list if in lab
+                        if (false == string.IsNullOrEmpty(modeCode) && modeCode.Length == 11)
+                        {
+                            modeCode = modeCode.Substring(0, 9) + "00";
+                        }
 
-                  peopleList = Helpers.Aris.People.GetPeopleByCity(modeCode);
+                        peopleList = Helpers.Aris.People.GetPeopleByCity(modeCode);
 
-                  if (peopleList != null)
-                  {
-                     peopleList = peopleList.OrderBy(p => p.LastName).ThenBy(t => t.FirstName).ToList();
+                        if (peopleList != null)
+                        {
+                            peopleList = peopleList.OrderBy(p => p.LastName).ThenBy(t => t.FirstName).ToList();
 
-                     List<PeopleSelectItem> selectList = new List<PeopleSelectItem>();
+                            List<PeopleSelectItem> selectList = new List<PeopleSelectItem>();
 
-                     selectList.Add(new PeopleSelectItem("", ""));
+                            selectList.Add(new PeopleSelectItem("", ""));
 
-                     foreach (var person in peopleList)
-                     {
-                        selectList.Add(new PeopleSelectItem(person.PersonId.ToString(), person.LastName + ", " + person.FirstName + " <" + person.Email + ">  (" + Helpers.ModeCodes.ModeCodeAddDashes(person.ModeCodeConcat) + ")"));
-                     }
+                            foreach (var person in peopleList)
+                            {
+                                selectList.Add(new PeopleSelectItem(person.PersonId.ToString(), person.LastName + ", " + person.FirstName + " <" + person.Email + ">  (" + Helpers.ModeCodes.ModeCodeAddDashes(person.ModeCodeConcat) + ")"));
+                            }
 
-                     output = JsonConvert.SerializeObject(selectList);
-                  }
-               }
+                            output = JsonConvert.SerializeObject(selectList);
+                        }
+                    }
+                }
             }
-         }
-         catch (Exception ex)
-         {
-            LogHelper.Error<DataImporterController>("Usda Download Request Error", ex);
-         }
+            catch (Exception ex)
+            {
+                LogHelper.Error<DataImporterController>("Usda Download Request Error", ex);
+            }
 
-         return output;
-      }
-   }
+            return output;
+        }
+    }
 
-   public class PeopleSelectItem
-   {
-      public string Id { get; set; }
-      public string Person { get; set; }
+    public class PeopleSelectItem
+    {
+        public string Id { get; set; }
+        public string Person { get; set; }
 
-      public PeopleSelectItem(string id, string person)
-      {
-         this.Id = id;
-         this.Person = person;
-      }
-   }
+        public PeopleSelectItem(string id, string person)
+        {
+            this.Id = id;
+            this.Person = person;
+        }
+    }
 }

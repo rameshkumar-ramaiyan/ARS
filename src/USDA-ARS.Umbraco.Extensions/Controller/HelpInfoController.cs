@@ -23,36 +23,39 @@ using USDA_ARS.Umbraco.Extensions.Models.Aris;
 
 namespace USDA_ARS.Umbraco.Extensions.Controller
 {
-    [PluginController("Usda")]
-    public class HelpInfoController : UmbracoApiController
-    {
-        private static readonly IContentService _contentService = ApplicationContext.Current.Services.ContentService;
+	[PluginController("Usda")]
+	public class HelpInfoController : UmbracoApiController
+	{
+		private static readonly IContentService _contentService = ApplicationContext.Current.Services.ContentService;
 
-        [System.Web.Http.AcceptVerbs("GET")]
-        [System.Web.Http.HttpGet]
+		/// <summary>
+		/// Gets the Help Information text for the Site Settings Umbraco node
+		/// </summary>
+		/// <returns></returns>
+		[System.Web.Http.AcceptVerbs("GET")]
+		[System.Web.Http.HttpGet]
+		public string Go()
+		{
+			string output = "";
 
-        public string Go()
-        {
-            string output = "";
+			try
+			{
+				IPublishedContent node = Helpers.Nodes.SiteSettings();
 
-            try
-            {
-                IPublishedContent node = Helpers.Nodes.SiteSettings();
+				if (node != null)
+				{
+					if (node.GetProperty("helpInformation").Value != null)
+					{
+						output = node.GetProperty("helpInformation").Value.ToString();
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				LogHelper.Error<DataImporterController>("Usda Help Info Error", ex);
+			}
 
-                if (node != null)
-                {
-                    if (node.GetProperty("helpInformation").Value != null)
-                    {
-                        output = node.GetProperty("helpInformation").Value.ToString();
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                LogHelper.Error<DataImporterController>("Usda Help Info Error", ex);
-            }
-
-            return output;
-        }
-    }
+			return output;
+		}
+	}
 }
