@@ -40,6 +40,11 @@
 		projectProgramListDistinct = projectProgramList.DistinctBy(p => p.AccountNo).ToList();
 	}
 
+    if (programNode == null)
+    {
+        programNode = Model.Content;
+    }
+
 }
 @Html.Partial("~/Views/Partials/Modules/NavigationLinksSub.cshtml", currentPage)
 
@@ -156,6 +161,10 @@
 					</tr>
 				</tbody>
 			</table>
+		}
+		else
+		{
+			<em>The National Program code was not found.</em>
 		}
 	</div>
 </div>
