@@ -6,79 +6,83 @@
 @using USDA_ARS.Umbraco.Extensions.Models.Aris
 @model IPublishedContent
 @{
-			IPublishedContent currentNode = Model;
-			string modeCode = Model.GetPropertyValue<string>("modeCode");
-			string modeCodeCity = modeCode;
-			string modeCodeCityShort = "";
-			string javascriptInsert = "";
-			int incValue = -1;
+	IPublishedContent currentNode = Model;
+	string modeCode = Model.GetPropertyValue<string>("modeCode");
+	string modeCodeCity = modeCode;
+	string modeCodeCityShort = "";
+	string javascriptInsert = "";
+	int incValue = -1;
 
 
-			if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
+	if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
+	{
+		modeCode = Request.QueryString.Get("modeCode");
+
+		modeCode = ModeCodes.ModeCodeAddDashes(modeCode);
+
+		List<string> modeCodeArray = ModeCodes.ModeCodeArray(modeCode);
+
+		if (modeCodeArray != null && modeCodeArray.Any())
+		{
+			modeCodeCityShort = modeCodeArray[0] + "-" + modeCodeArray[1];
+			modeCodeCity = modeCodeCityShort + "-00-00";
+
+			currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCodeCity, false);
+		}
+	}
+
+
+	List<PeopleByCity> peopleFullList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByCity(modeCodeCity);
+	List<PeopleByCity> siteLabelList = null;
+
+	// Fix people with mode codes ending in 01
+	if (peopleFullList != null && peopleFullList.Any())
+	{
+		peopleFullList = peopleFullList.Where(p => false == string.IsNullOrEmpty(p.ModeCodeConcat)).ToList();
+
+		foreach (PeopleByCity personItem in peopleFullList)
+		{
+			if (personItem.ModeCodeConcat.EndsWith("01"))
 			{
-						modeCode = Request.QueryString.Get("modeCode");
-
-						modeCode = ModeCodes.ModeCodeAddDashes(modeCode);
-
-						List<string> modeCodeArray = ModeCodes.ModeCodeArray(modeCode);
-
-						if (modeCodeArray != null && modeCodeArray.Any())
-						{
-									modeCodeCityShort = modeCodeArray[0] + "-" + modeCodeArray[1];
-									modeCodeCity = modeCodeCityShort + "-00-00";
-
-									currentNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByModeCode(modeCodeCity, false);
-						}
+				personItem.ModeCodeConcat = personItem.ModeCodeConcat.Substring(0, 6) + "00";
+				personItem.ModeCode = ModeCodes.ModeCodeAddDashes(personItem.ModeCodeConcat);
 			}
-
-
-			List<PeopleByCity> peopleFullList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.People.GetPeopleByCity(modeCodeCity);
-			List<PeopleByCity> siteLabelList = null;
-
-			// Fix people with mode codes ending in 01
-			if (peopleFullList != null && peopleFullList.Any())
+			else if (personItem.ModeCodeConcat.EndsWith("010000"))
 			{
-						peopleFullList = peopleFullList.Where(p => false == string.IsNullOrEmpty(p.ModeCodeConcat)).ToList();
+				personItem.SiteLabel = "Office of the Area Director";
+			}
+		}
 
-						foreach (PeopleByCity personItem in peopleFullList)
-						{
-									if (personItem.ModeCodeConcat.EndsWith("01"))
-									{
-												personItem.ModeCodeConcat = personItem.ModeCodeConcat.Substring(0, 6) + "00";
-												personItem.ModeCode = ModeCodes.ModeCodeAddDashes(personItem.ModeCodeConcat);
-									}
-						}
+		siteLabelList = peopleFullList.DistinctBy(p => p.ModeCodeConcat).ToList();
 
-						siteLabelList = peopleFullList.DistinctBy(p => p.ModeCodeConcat).ToList();
+		if (siteLabelList != null && siteLabelList.Any())
+		{
+			siteLabelList = siteLabelList.OrderBy(p => p.ModeCodeConcat).ToList();
 
-						if (siteLabelList != null && siteLabelList.Any())
-						{
-									siteLabelList = siteLabelList.OrderBy(p => p.ModeCodeConcat).ToList();
+			int i = 0;
+			foreach (PeopleByCity peopleByCity in siteLabelList)
+			{
+				if (incValue == -1 && peopleByCity.ModeCode == modeCode)
+				{
+					incValue = i;
+				}
 
-									int i = 0;
-									foreach (PeopleByCity peopleByCity in siteLabelList)
-									{
-												if (incValue == -1 && peopleByCity.ModeCode == modeCode)
-												{
-															incValue = i;
-												}
+				i++;
+			}
+		}
 
-												i++;
-									}
-						}
-
-						if (incValue >= 0)
-						{
-									javascriptInsert += @"
+		if (incValue >= 0)
+		{
+			javascriptInsert += @"
                  // Open the panel by modecode
         ";
-									javascriptInsert += "$('#accordion').accordion('activate', " + incValue + ");\r\n";
+			javascriptInsert += "$('#accordion').accordion('activate', " + incValue + ");\r\n";
 
-									javascriptInsert += @"         // auto scroll to a div
+			javascriptInsert += @"         // auto scroll to a div
         $('html, body').animate({";
-									javascriptInsert += " scrollTop: $('#" + modeCode.Replace("-", "") + "').offset().top}, 2000);";
-						}
-			}
+			javascriptInsert += " scrollTop: $('#" + modeCode.Replace("-", "") + "').offset().top}, 2000);";
+		}
+	}
 
 
 }
