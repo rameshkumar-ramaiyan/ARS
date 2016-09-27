@@ -141,7 +141,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 
 
 				// Check to see if user has access to create a ResearchUnit doc type
-				if (node != null && node.ContentType.Alias == "ResearchUnit")
+				if (node != null && (node.ContentType.Alias == "ResearchUnit" || node.ContentType.Alias == "ResearchUnitClosed"))
 				{
 					var userTicket = new System.Web.HttpContextWrapper(System.Web.HttpContext.Current).GetUmbracoAuthTicket();
 					if (userTicket != null)
@@ -153,7 +153,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 							if (e.CanCancel)
 							{
 								e.Cancel = true;
-								e.Messages.Add(new EventMessage("Cannot Creat", "Unable to create node due to security permissions.", EventMessageType.Error));
+								e.Messages.Add(new EventMessage("Cannot Create", "Unable to create node due to security permissions.", EventMessageType.Error));
 							}
 						}
 					}
