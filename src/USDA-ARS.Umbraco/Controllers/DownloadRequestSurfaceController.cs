@@ -49,12 +49,12 @@ namespace USDA_ARS.Umbraco.Controllers
             }
             else
             {
-               return Redirect("/research/software/?"+ Server.UrlEncode("Software not found in any location"));
+					return PartialView("DownloadRequest", downloadRequest);
             }
          }
          else
          {
-            return Redirect("/research/software/?modeCode=" + modeCode);
+				return PartialView("DownloadRequest", downloadRequest);
          }
 
       }

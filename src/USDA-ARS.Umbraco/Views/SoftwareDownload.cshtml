@@ -56,7 +56,7 @@
 		}
 		else
 		{
-			Response.Redirect("/research/software/?" + Server.UrlEncode("Software not found in any location"));
+			Response.Redirect("/research/software/?badid=1&" + Server.UrlEncode("Software not found in any location"));
 		}
 	}
 
@@ -109,10 +109,7 @@
          <h2>Download Form</h2>
          <font face="arial,helvetica" size="-1">Please complete the form below to track the use of the service we are providing and to help improve our product.</font>
 
-			if (false == string.IsNullOrEmpty(modeCode))
-			{
-				Html.Action("Index", "DownloadRequestSurface");
-			}
+				@Html.Action("Index", "DownloadRequestSurface");
 		}
 		else
 		{
