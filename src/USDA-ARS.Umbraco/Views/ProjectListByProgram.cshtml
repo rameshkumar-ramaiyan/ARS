@@ -7,120 +7,125 @@
 @using RJP.MultiUrlPicker.Models
 @inherits Umbraco.Web.Mvc.UmbracoTemplatePage
 @{
-			Layout = "_Master.cshtml";
+	Layout = "_Master.cshtml";
 
-			string npCode = null;
-			string sort = null;
-			IPublishedContent currentPage = Model.Content;
-			IPublishedContent programNode = currentPage;
-			string projectStatus = "A";
-			string filterName = "";
-			List<int> filterNameIntList = new List<int>();
-			string projectType = "";
-			string filterLocation = "";
-			string showAllProjects = "N";
-			string orderBy = "L";
-			bool performFilter = false;
+	string npCode = null;
+	string sort = null;
+	IPublishedContent currentPage = Model.Content;
+	IPublishedContent programNode = currentPage;
+	string projectStatus = "A";
+	string filterName = "";
+	List<int> filterNameIntList = new List<int>();
+	string projectType = "";
+	string filterLocation = "";
+	string showAllProjects = "N";
+	string orderBy = "L";
+	bool performFilter = false;
 
 
-			// NP CODE
-			if (Request.QueryString["npCode"] != null)
+	// NP CODE
+	if (Request.QueryString["npCode"] != null)
+	{
+		npCode = Request.QueryString.Get("npCode");
+
+		programNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByNpCode(npCode);
+	}
+	else
+	{
+		Response.Redirect("/research/programs");
+	}
+	if (Request.QueryString["sort"] != null)
+	{
+		sort = Request.QueryString.Get("sort");
+	}
+
+	// PROJECT STATUS
+	if (false == string.IsNullOrEmpty(Request.QueryString["projectStatus"]))
+	{
+		projectStatus = Request.QueryString.Get("projectStatus");
+
+		if (projectStatus.Length != 1)
+		{
+			projectStatus = "A";
+		}
+	}
+
+	// FILTER NAMES
+	if (false == string.IsNullOrEmpty(Request.QueryString["filterName"]))
+	{
+		filterName = Request.QueryString.Get("filterName");
+
+		foreach (string intStr in filterName.Split(','))
+		{
+			int personId = 0;
+
+			if (int.TryParse(intStr, out personId))
 			{
-						npCode = Request.QueryString.Get("npCode");
-
-						programNode = USDA_ARS.Umbraco.Extensions.Helpers.Nodes.GetNodeByNpCode(npCode);
+				filterNameIntList.Add(personId);
 			}
-			else
-			{
-						Response.Redirect("/research/programs");
-			}
-			if (Request.QueryString["sort"] != null)
-			{
-						sort = Request.QueryString.Get("sort");
-			}
+		}
+	}
 
-			// PROJECT STATUS
-			if (false == string.IsNullOrEmpty(Request.QueryString["projectStatus"]))
-			{
-						projectStatus = Request.QueryString.Get("projectStatus");
+	// PROJECT TYPE
+	if (false == string.IsNullOrEmpty(Request.QueryString["projectType"]))
+	{
+		projectType = Request.QueryString.Get("projectType");
 
-						if (projectStatus.Length != 1)
-						{
-									projectStatus = "A";
-						}
-			}
+		if (projectType.Length != 1)
+		{
+			projectType = "";
+		}
+	}
 
-			// FILTER NAMES
-			if (false == string.IsNullOrEmpty(Request.QueryString["filterName"]))
-			{
-						filterName = Request.QueryString.Get("filterName");
+	// LOCATION
+	if (false == string.IsNullOrEmpty(Request.QueryString["filterLocation"]))
+	{
+		filterLocation = Request.QueryString.Get("filterLocation");
+	}
 
-						foreach (string intStr in filterName.Split(','))
-						{
-									int personId = 0;
+	// SHOW ALL PROJECTS
+	if (false == string.IsNullOrEmpty(Request.QueryString["showAllProjects"]))
+	{
+		if (Request.QueryString.Get("showAllProjects") == "Y")
+		{
+			showAllProjects = "Y";
+		}
+	}
 
-									if (int.TryParse(intStr, out personId))
-									{
-												filterNameIntList.Add(personId);
-									}
-						}
-			}
+	// SHOW ALL PROJECTS
+	if (false == string.IsNullOrEmpty(Request.QueryString["sortBy"]))
+	{
+		if (Request.QueryString.Get("sortBy") == "P")
+		{
+			orderBy = "P";
+		}
+	}
 
-			// PROJECT TYPE
-			if (false == string.IsNullOrEmpty(Request.QueryString["projectType"]))
-			{
-						projectType = Request.QueryString.Get("projectType");
+	// SHOW ALL PROJECTS
+	if (false == string.IsNullOrEmpty(Request.QueryString["filter"]))
+	{
+		if (Request.QueryString.Get("filter") == "yes")
+		{
+			performFilter = true;
+		}
+	}
 
-						if (projectType.Length != 1)
-						{
-									projectType = "";
-						}
-			}
-
-			// LOCATION
-			if (false == string.IsNullOrEmpty(Request.QueryString["filterLocation"]))
-			{
-						filterLocation = Request.QueryString.Get("filterLocation");
-			}
-
-			// SHOW ALL PROJECTS
-			if (false == string.IsNullOrEmpty(Request.QueryString["showAllProjects"]))
-			{
-						if (Request.QueryString.Get("showAllProjects") == "Y")
-						{
-									showAllProjects = "Y";
-						}
-			}
-
-			// SHOW ALL PROJECTS
-			if (false == string.IsNullOrEmpty(Request.QueryString["sortBy"]))
-			{
-						if (Request.QueryString.Get("sortBy") == "P")
-						{
-									orderBy = "P";
-						}
-			}
-
-			// SHOW ALL PROJECTS
-			if (false == string.IsNullOrEmpty(Request.QueryString["filter"]))
-			{
-						if (Request.QueryString.Get("filter") == "yes")
-						{
-									performFilter = true;
-						}
-			}
-
-			List<ProjectOption> projectStatusList = FormProjectFilter.GetProjectStatusList();
-			List<ProjectOption> projectTypeList = FormProjectFilter.GetProjectTypeList();
-			List<PeopleInfo> peopleListByProject = FormProjectFilter.GetPeopleByProject(npCode, projectStatus);
-			List<CityState> locationListByProject = FormProjectFilter.GetLocationsByProject(npCode, projectStatus);
-			List<ProjectProgram> projectList = null;
+	List<ProjectOption> projectStatusList = FormProjectFilter.GetProjectStatusList();
+	List<ProjectOption> projectTypeList = FormProjectFilter.GetProjectTypeList();
+	List<PeopleInfo> peopleListByProject = FormProjectFilter.GetPeopleByProject(npCode, projectStatus);
+	List<CityState> locationListByProject = FormProjectFilter.GetLocationsByProject(npCode, projectStatus);
+	List<ProjectProgram> projectList = null;
 
 
-			if (true == performFilter)
-			{
-						projectList = FormProjectFilter.GetProjectList(npCode, projectStatus, filterNameIntList, projectType, filterLocation, orderBy);
-			}
+	if (true == performFilter)
+	{
+		projectList = FormProjectFilter.GetProjectList(npCode, projectStatus, filterNameIntList, projectType, filterLocation, orderBy);
+	}
+
+	if (programNode == null)
+	{
+		programNode = Model.Content;
+   }
 
 
 }
@@ -130,178 +135,176 @@
 
 <div id="fullPage">
 
-			@Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", programNode)
+	@Html.Partial("~/Views/Partials/Modules/RelatedTopicsList.cshtml", programNode)
 
-			<div id="pageContent">
+	<div id="pageContent">
 
-						<div class="cfform">
-									<form id="filterForm" action="@(currentPage.Url)" method="get" class="cfHaloSkin" name="filterForm">
-												<input id="npCode" name="npCode" type="hidden" value="@(npCode)" />
-												<input id="filter" name="filter" type="hidden" value="yes" />
-												<table border="0" cellpadding="2" cellspacing="0" width="100%" class="vertical">
-															<tbody>
-																		<tr>
-																					<td colspan="2">
-																								<table border="0" cellpadding="2" cellspacing="0" width="100%" class="vertical">
-																											<tbody>
-																														<tr>
-																																	<td colspan="2" class="cfHeaderTitle">Filter Project List</td>
-																														</tr>
-																														<tr>
-																																	<td colspan="2">
-																																				<table border="0" cellspacing="0" cellpadding="0" class="horizontal">
-																																							<tbody>
-																																										<tr class="cfElementRow">
-																																													<td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Project Status</td>
-																																													<td>
-																																																@if (projectStatusList != null)
-																																																{
-																																																			foreach (ProjectOption projectStatusItem in projectStatusList)
-																																																			{
-																																																						<input type="radio" id="projectStatus@(projectStatusItem.Value)" name="projectStatus" class="cfRadio " onclick="redirectCheck('@(projectStatusItem.Value)');" @(projectStatus == projectStatusItem.Value ? "checked=\"checked\"" : "") value="@(projectStatusItem.Value)">
-																																																						<label for="projectStatus@(projectStatusItem.Value)">@(projectStatusItem.Text)</label>
-}
-																																																}
-																																													</td>
-																																										</tr>
-																																							</tbody>
-																																				</table>
-																																	</td>
-																														</tr>
-																														<tr class="cfElementRow">
-																																	<td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
-																																				<label for="filterName">Name</label>
-																																	</td>
-																																	<td width="1000" align="left">
-																																				<select id="filterName" name="filterName" class="cfSelect " multiple="multiple" size="4">
-																																							<option value="">All People</option>
-																																							@if (peopleListByProject != null && peopleListByProject.Any())
-																																							{
-																																										foreach (PeopleInfo personItem in peopleListByProject)
-																																										{
-																																													string selectedOption = "";
-
-																																													if (filterNameIntList != null && filterNameIntList.Any())
-																																													{
-																																																if (filterNameIntList.Contains(Convert.ToInt32(personItem.PersonId)))
-																																																{
-																																																			selectedOption = " selected=\"selected\"";
-																																																}
-																																													}
-
-																																													<option value="@(personItem.PersonId)" @Html.Raw(selectedOption)>@(personItem.FullName)</option>
-}
-																																							}
-																																				</select>
-																																	</td>
-																														</tr>
-																														<tr class="cfElementRow">
-																																	<td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
-																																				<label for="filterProjectType">Project Type</label>
-																																	</td>
-																																	<td width="1000" align="left">
-																																				<select id="projectType" name="projectType" class="cfSelect ">
-																																							<option value="">All Project Types</option>
-																																							@if (projectTypeList != null)
-																																							{
-																																										foreach (ProjectOption projectTypeItem in projectTypeList)
-																																										{
-																																													<option value="@(projectTypeItem.Value)" @Html.Raw(projectTypeItem.Value == projectType ? " selected=\"selected\"" : "")>@(projectTypeItem.Text)</option>					}
-																																							}
-																																				</select>
-																																	</td>
-																														</tr>
-																														<tr class="cfElementRow">
-																																	<td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
-																																				<label for="filterLocation">Location</label>
-																																	</td>
-																																	<td width="1000" align="left">
-																																				<select id="filterLocation" name="filterLocation" class="cfSelect ">
-																																							<option value="">All Locations</option>
-																																							@if (locationListByProject != null && locationListByProject.Any())
-																																							{
-																																										foreach (CityState location in locationListByProject)
-																																										{
-																																													string locationStr = location.City + ", " + location.StateCode;
-																																													<option value="@(locationStr)" @Html.Raw(locationStr == filterLocation ? " selected=\"selected\"" : "")>@(locationStr)</option>					}
-																																							}
-																																				</select>
-																																	</td>
-																														</tr>
-																														<tr>
-																																	<td>
-																																				<br>
-																																	</td>
-																														</tr>
-																											</tbody>
-																								</table>
-																					</td>
-																		</tr>
-																		<tr>
-																					<td colspan="2">
-																								<table border="0" cellspacing="0" cellpadding="0" class="horizontal">
-																											<tbody>
-																														<tr class="cfElementRow">
-																																	<td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Show all projects</td>
-																																	<td>
-																																				<input type="radio" id="showAllProjects1" name="showAllProjects" class="cfRadio " @Html.Raw(showAllProjects == "Y" ? " checked=\"checked\"" : "") value="Y">
-																																				<label for="showAllProjects1">Yes</label>
-																																				<input type="radio" id="showAllProjects2" name="showAllProjects" class="cfRadio " @Html.Raw(showAllProjects == "N" ? " checked=\"checked\"" : "") value="N">
-																																				<label for="showAllProjects2">No</label>
-																																	</td>
-																														</tr>
-																											</tbody>
-																								</table>
-																					</td>
-																		</tr>
-																		<tr>
-																					<td colspan="2">
-																								<table border="0" cellspacing="0" cellpadding="0" class="horizontal">
-																											<tbody>
-																														<tr class="cfElementRow">
-																																	<td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Sort By</td>
-																																	<td>
-																																				<input type="radio" id="sortBy1" name="sortBy" class="cfRadio " @Html.Raw(orderBy == "L" ? " checked=\"checked\"" : "") value="L">
-																																				<label for="sortBy1">Location</label>
-																																				<input type="radio" id="sortBy2" name="sortBy" class="cfRadio " @Html.Raw(orderBy == "P" ? " checked=\"checked\"" : "") value="P">
-																																				<label for="sortBy2">Project Type</label>
-																																	</td>
-																														</tr>
-																											</tbody>
-																								</table>
-																					</td>
-																		</tr>
-																		<tr>
-																					<td colspan="2">
-																								<table border="0" cellspacing="0" cellpadding="0" class="horizontal">
-																											<tbody>
-																														<tr class="cfElementRow">
-																																	<td>
-																																				<input id="submitFilter" name="submitFilter" class="cfButton " value="Filter" type="submit" style="margin-left:120px;">
-																																	</td>
-																																	<td>
-																																				<input id="resetProjectList" name="resetProjectList" class="cfButton " type="reset" value="Reset">
-																																	</td>
-																														</tr>
-																											</tbody>
-																								</table>
-																					</td>
-																		</tr>
-																		<tr>
-																					<td>
-																								<br />
-																					</td>
-																		</tr>
-															</tbody>
+		<div class="cfform">
+			<form id="filterForm" action="@(currentPage.Url)" method="get" class="cfHaloSkin" name="filterForm">
+				<input id="npCode" name="npCode" type="hidden" value="@(npCode)" />
+				<input id="filter" name="filter" type="hidden" value="yes" />
+				<table border="0" cellpadding="2" cellspacing="0" width="100%" class="vertical">
+					<tbody>
+						<tr>
+							<td colspan="2">
+								<table border="0" cellpadding="2" cellspacing="0" width="100%" class="vertical">
+									<tbody>
+										<tr>
+											<td colspan="2" class="cfHeaderTitle">Filter Project List</td>
+										</tr>
+										<tr>
+											<td colspan="2">
+												<table border="0" cellspacing="0" cellpadding="0" class="horizontal">
+													<tbody>
+														<tr class="cfElementRow">
+															<td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Project Status</td>
+															<td>
+																@if (projectStatusList != null)
+																{
+																	foreach (ProjectOption projectStatusItem in projectStatusList)
+																	{
+																		<input type="radio" id="projectStatus@(projectStatusItem.Value)" name="projectStatus" class="cfRadio " onclick="redirectCheck('@(projectStatusItem.Value)');" @(projectStatus == projectStatusItem.Value ? "checked=\"checked\"" : "") value="@(projectStatusItem.Value)">
+																		<label for="projectStatus@(projectStatusItem.Value)">@(projectStatusItem.Text)</label>		}
+																}
+															</td>
+														</tr>
+													</tbody>
 												</table>
-									</form>
-						</div>
+											</td>
+										</tr>
+										<tr class="cfElementRow">
+											<td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
+												<label for="filterName">Name</label>
+											</td>
+											<td width="1000" align="left">
+												<select id="filterName" name="filterName" class="cfSelect " multiple="multiple" size="4">
+													<option value="">All People</option>
+													@if (peopleListByProject != null && peopleListByProject.Any())
+													{
+														foreach (PeopleInfo personItem in peopleListByProject)
+														{
+															string selectedOption = "";
 
-						<br />
+															if (filterNameIntList != null && filterNameIntList.Any())
+															{
+																if (filterNameIntList.Contains(Convert.ToInt32(personItem.PersonId)))
+																{
+																	selectedOption = " selected=\"selected\"";
+																}
+															}
 
-						@if (true == performFilter && projectList != null)
-						{
-									<font face="verdana,arial,helvetica" size="2" style="color: #FF6600; font-weight: bold;">National Program @npCode Project List</font>
+															<option value="@(personItem.PersonId)" @Html.Raw(selectedOption)>@(personItem.FullName)</option>		}
+													}
+												</select>
+											</td>
+										</tr>
+										<tr class="cfElementRow">
+											<td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
+												<label for="filterProjectType">Project Type</label>
+											</td>
+											<td width="1000" align="left">
+												<select id="projectType" name="projectType" class="cfSelect ">
+													<option value="">All Project Types</option>
+													@if (projectTypeList != null)
+													{
+														foreach (ProjectOption projectTypeItem in projectTypeList)
+														{
+															<option value="@(projectTypeItem.Value)" @Html.Raw(projectTypeItem.Value == projectType ? " selected=\"selected\"" : "")>@(projectTypeItem.Text)</option>					}
+													}
+												</select>
+											</td>
+										</tr>
+										<tr class="cfElementRow">
+											<td valign="top" align="right" width="100" class="cfLabelTitle cfLabelPosRight cfFirstChild" nowrap="nowrap">
+												<label for="filterLocation">Location</label>
+											</td>
+											<td width="1000" align="left">
+												<select id="filterLocation" name="filterLocation" class="cfSelect ">
+													<option value="">All Locations</option>
+													@if (locationListByProject != null && locationListByProject.Any())
+													{
+														foreach (CityState location in locationListByProject)
+														{
+															string locationStr = location.City + ", " + location.StateCode;
+															<option value="@(locationStr)" @Html.Raw(locationStr == filterLocation ? " selected=\"selected\"" : "")>@(locationStr)</option>					}
+													}
+												</select>
+											</td>
+										</tr>
+										<tr>
+											<td>
+												<br>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<table border="0" cellspacing="0" cellpadding="0" class="horizontal">
+									<tbody>
+										<tr class="cfElementRow">
+											<td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Show all projects</td>
+											<td>
+												<input type="radio" id="showAllProjects1" name="showAllProjects" class="cfRadio " @Html.Raw(showAllProjects == "Y" ? " checked=\"checked\"" : "") value="Y">
+												<label for="showAllProjects1">Yes</label>
+												<input type="radio" id="showAllProjects2" name="showAllProjects" class="cfRadio " @Html.Raw(showAllProjects == "N" ? " checked=\"checked\"" : "") value="N">
+												<label for="showAllProjects2">No</label>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<table border="0" cellspacing="0" cellpadding="0" class="horizontal">
+									<tbody>
+										<tr class="cfElementRow">
+											<td valign="top" rowspan="99" nowrap="nowrap" class="cfLabelTitle cfLabelPosRight cfFirstChild ">Sort By</td>
+											<td>
+												<input type="radio" id="sortBy1" name="sortBy" class="cfRadio " @Html.Raw(orderBy == "L" ? " checked=\"checked\"" : "") value="L">
+												<label for="sortBy1">Location</label>
+												<input type="radio" id="sortBy2" name="sortBy" class="cfRadio " @Html.Raw(orderBy == "P" ? " checked=\"checked\"" : "") value="P">
+												<label for="sortBy2">Project Type</label>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td colspan="2">
+								<table border="0" cellspacing="0" cellpadding="0" class="horizontal">
+									<tbody>
+										<tr class="cfElementRow">
+											<td>
+												<input id="submitFilter" name="submitFilter" class="cfButton " value="Filter" type="submit" style="margin-left:120px;">
+											</td>
+											<td>
+												<input id="resetProjectList" name="resetProjectList" class="cfButton " type="reset" value="Reset">
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</td>
+						</tr>
+						<tr>
+							<td>
+								<br />
+							</td>
+						</tr>
+					</tbody>
+				</table>
+			</form>
+		</div>
+
+		<br />
+
+		@if (true == performFilter && projectList != null)
+		{
+			<font face="verdana,arial,helvetica" size="2" style="color: #FF6600; font-weight: bold;">National Program @npCode Project List</font>
 									<br />
 
 									<font face="verdana,arial,helvetica" size="2" style="color: #FF6600; font-weight: bold;">@(projectList.Count) All Project Types Active Projects</font>
@@ -309,58 +312,58 @@
 
 									<img src="/images/content-divider.gif" /><br />
 
-									if (projectList.Any())
-									{
-												foreach (ProjectProgram project in projectList)
-												{
-															<a href="/research/project/?accnNo=@(project.AccountNo)" target="nps2000" class="projectNav" style="font-family: verdana,arial,helvetica; font-weight: bold; font-size: 13px;">
-																		@project.ProjectTitle
-															</a>
+			if (projectList.Any())
+			{
+				foreach (ProjectProgram project in projectList)
+				{
+					<a href="/research/project/?accnNo=@(project.AccountNo)" target="nps2000" class="projectNav" style="font-family: verdana,arial,helvetica; font-weight: bold; font-size: 13px;">
+						@project.ProjectTitle
+					</a>
 
 															<table border="0" style="font-family: verdana,arial,helvetica; font-weight: bold;">
-																		<tbody>
+																<tbody>
+																	<tr>
+																		<td width="25">&nbsp;</td>
+																		<td><font style="font-size:11px;">@project.WebLabel.ToUpper()</font></td>
+																	</tr>
+																	<tr>
+																		<td>&nbsp;</td>
+																		<td><font style="font-size:11px;">@(project.City + ", " + project.StateAbbr)</font></td>
+																	</tr>
+																	<tr>
+																		<td>&nbsp;</td>
+																		<td>
+																			<font style="font-size:11px;">@(Projects.ProjectTypeByCode(project.ProjectType)) (@project.ProjectType)</font>
+																		</td>
+																	</tr>
+																	<tr>
+																		<td>&nbsp;</td>
+																		<td>
+																			<table border="0" cellpadding="0" cellspacing="0">
+																				<tbody>
 																					<tr>
-																								<td width="25">&nbsp;</td>
-																								<td><font style="font-size:11px;">@project.WebLabel.ToUpper()</font></td>
+																						<td width="80" align="left" valign="top" style="font-size:11px;">Scientists:</td>
+																						<td valign="top">
+																							<font style="font-size:11px;">@(project.LastName + ", " + project.FirstName)<br /></font>
+																						</td>
 																					</tr>
-																					<tr>
-																								<td>&nbsp;</td>
-																								<td><font style="font-size:11px;">@(project.City + ", " + project.StateAbbr)</font></td>
-																					</tr>
-																					<tr>
-																								<td>&nbsp;</td>
-																								<td>
-																											<font style="font-size:11px;">@(Projects.ProjectTypeByCode(project.ProjectType)) (@project.ProjectType)</font>
-																								</td>
-																					</tr>
-																					<tr>
-																								<td>&nbsp;</td>
-																								<td>
-																											<table border="0" cellpadding="0" cellspacing="0">
-																														<tbody>
-																																	<tr>
-																																				<td width="80" align="left" valign="top" style="font-size:11px;">Scientists:</td>
-																																				<td valign="top">
-																																							<font style="font-size:11px;">@(project.LastName +", " + project.FirstName)<br /></font>
-																																				</td>
-																																	</tr>
-																														</tbody>
-																											</table>
-																								</td>
-																					</tr>
-																		</tbody>
+																				</tbody>
+																			</table>
+																		</td>
+																	</tr>
+																</tbody>
 															</table>
 
 															<img src="/images/content-divider.gif" /><br />
-												}
-									}
-						}
+				}
+			}
+		}
 
-			</div>
+	</div>
 </div>
 
 <script type="text/javascript">
-			function redirectCheck(projectStatus) {
-						window.location = "?npCode=@(npCode)&projectStatus=" + projectStatus;
-			}
+	function redirectCheck(projectStatus) {
+		window.location = "?npCode=@(npCode)&projectStatus=" + projectStatus;
+	}
 </script>
