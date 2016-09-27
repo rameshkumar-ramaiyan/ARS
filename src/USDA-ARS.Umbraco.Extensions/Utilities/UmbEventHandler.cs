@@ -36,6 +36,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 		protected override void ApplicationStarted(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
 		{
 			ContentService.Created += PostProcessCreated;
+			ContentService.Saving += PostProcessSaving;
 			ContentService.Saved += PostProcessSaved;
 			ContentService.Published += PostProcessPublished;
 			ContentService.Deleted += PostProcessDelete;
