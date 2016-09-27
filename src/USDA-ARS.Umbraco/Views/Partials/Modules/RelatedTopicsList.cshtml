@@ -31,6 +31,7 @@
 	}
 
 	ArchetypeModel currentRelatedTopics = null;
+	ArchetypeModel currentLocationRelatedTopics = null;
 	ArchetypeModel siteFolderRelatedTopics = null;
 
 	if (Model.Parent != null && Model.Parent.DocumentTypeAlias == "NationalProgramFolderContainer")
@@ -39,7 +40,7 @@
 	}
 
 	// Check for Research/Careers/News/People Page
-	if (currentRelatedTopics == null && false == string.IsNullOrWhiteSpace(modeCode))
+	if (currentLocationRelatedTopics == null && false == string.IsNullOrWhiteSpace(modeCode))
 	{
 		if (Model.Parent != null && Model.AncestorOrSelf(2).DocumentTypeAlias == "Research")
 		{
@@ -47,7 +48,7 @@
 
 			if (researchNode != null)
 			{
-				currentRelatedTopics = researchNode.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+				currentLocationRelatedTopics = researchNode.GetPropertyValue<ArchetypeModel>("leftNavPicker");
 			}
 		}
 		else if (Model.Parent != null && Model.AncestorOrSelf(2).DocumentTypeAlias == "Careers")
@@ -56,7 +57,7 @@
 
 			if (careersNode != null)
 			{
-				currentRelatedTopics = careersNode.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+				currentLocationRelatedTopics = careersNode.GetPropertyValue<ArchetypeModel>("leftNavPicker");
 			}
 		}
 		else if (Model.Parent != null && Model.AncestorOrSelf(2).DocumentTypeAlias == "NewsHome")
@@ -65,7 +66,7 @@
 
 			if (newsNode != null)
 			{
-				currentRelatedTopics = newsNode.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+				currentLocationRelatedTopics = newsNode.GetPropertyValue<ArchetypeModel>("leftNavPicker");
 			}
 		}
 		else if (Model.Parent != null && Model.AncestorOrSelf(2).DocumentTypeAlias == "PeopleLocations")
@@ -74,7 +75,7 @@
 
 			if (peopleNode != null)
 			{
-				currentRelatedTopics = peopleNode.GetPropertyValue<ArchetypeModel>("leftNavPicker");
+				currentLocationRelatedTopics = peopleNode.GetPropertyValue<ArchetypeModel>("leftNavPicker");
 			}
 		}
 	}
@@ -136,9 +137,10 @@
 			}
 		}
 
-		@if (currentRelatedTopics != null && currentRelatedTopics.Any())
+
+		@if (siteFolderRelatedTopics != null && siteFolderRelatedTopics.Any())
 		{
-			foreach (var topicList in currentRelatedTopics)
+			foreach (var topicList in siteFolderRelatedTopics)
 			{
 				foreach (var topicItemList in topicList.Properties)
 				{
@@ -160,9 +162,35 @@
 			}
 		}
 
-		@if (siteFolderRelatedTopics != null && siteFolderRelatedTopics.Any())
+
+		@if (currentLocationRelatedTopics != null && siteFolderRelatedTopics.Any())
 		{
-			foreach (var topicList in siteFolderRelatedTopics)
+			foreach (var topicList in currentLocationRelatedTopics)
+			{
+				foreach (var topicItemList in topicList.Properties)
+				{
+					TopicPickerValue topicItemListValue = JsonConvert.DeserializeObject<TopicPickerValue>(topicItemList.Value.ToString());
+
+					if (topicItemListValue != null && false == string.IsNullOrEmpty(topicItemListValue.Value))
+					{
+						ArchetypeModel topicItem = Topics.GetTopicsById(Convert.ToInt32(topicItemListValue.Value));
+
+						if (topicItem != null)
+						{
+							foreach (var item in topicItem)
+							{
+								@Html.Raw(OutputTopic(item, modeCode, ref foundExternalLink))
+							}
+						}
+					}
+				}
+			}
+		}
+
+
+		@if (currentRelatedTopics != null && currentRelatedTopics.Any())
+		{
+			foreach (var topicList in currentRelatedTopics)
 			{
 				foreach (var topicItemList in topicList.Properties)
 				{
