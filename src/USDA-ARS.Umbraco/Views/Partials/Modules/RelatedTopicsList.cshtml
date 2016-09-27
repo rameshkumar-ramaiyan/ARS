@@ -44,7 +44,7 @@
 	{
 		if (Model.Parent != null && Model.AncestorOrSelf(2).DocumentTypeAlias == "Research")
 		{
-			IPublishedContent researchNode = Nodes.GetNodeByModeCodeSubFolder(modeCode, "SitesResearch");
+			IPublishedContent researchNode = Nodes.GetNodeByModeCodeSubFolder(modeCode, "SitesResearch", false);
 
 			if (researchNode != null)
 			{
@@ -53,7 +53,7 @@
 		}
 		else if (Model.Parent != null && Model.AncestorOrSelf(2).DocumentTypeAlias == "Careers")
 		{
-			IPublishedContent careersNode = Nodes.GetNodeByModeCodeSubFolder(modeCode, "SitesCareers");
+			IPublishedContent careersNode = Nodes.GetNodeByModeCodeSubFolder(modeCode, "SitesCareers", false);
 
 			if (careersNode != null)
 			{
@@ -62,7 +62,7 @@
 		}
 		else if (Model.Parent != null && Model.AncestorOrSelf(2).DocumentTypeAlias == "NewsHome")
 		{
-			IPublishedContent newsNode = Nodes.GetNodeByModeCodeSubFolder(modeCode, "SitesNews");
+			IPublishedContent newsNode = Nodes.GetNodeByModeCodeSubFolder(modeCode, "SitesNews", false);
 
 			if (newsNode != null)
 			{
@@ -71,7 +71,7 @@
 		}
 		else if (Model.Parent != null && Model.AncestorOrSelf(2).DocumentTypeAlias == "PeopleLocations")
 		{
-			IPublishedContent peopleNode = Nodes.GetNodeByModeCodeSubFolder(modeCode, "PeopleFolder");
+			IPublishedContent peopleNode = Nodes.GetNodeByModeCodeSubFolder(modeCode, "PeopleFolder", false);
 
 			if (peopleNode != null)
 			{
