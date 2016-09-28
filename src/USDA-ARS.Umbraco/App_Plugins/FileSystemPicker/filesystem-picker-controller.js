@@ -297,7 +297,7 @@ angular.module('umbraco').controller('Umbraco.FileSystemPickerUploadDialogContro
 
 function fileSystemPickerNewFolderDialogController($rootScope, $scope, $http, $log, dialogService) {
 
-   $scope.folderName = ''
+	$scope.folderName = '';
 
    $scope.createFolder = function (node) {
       if ($scope.folderName) {

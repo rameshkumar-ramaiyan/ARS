@@ -12,10 +12,16 @@
    List<IPublishedContent> softwareNodeList = new List<IPublishedContent>();
    bool showLocationText = false;
    int softwareCount = 0;
-
+   bool showBadSoftwareId = false;
+   
    if (false == string.IsNullOrWhiteSpace(Request.QueryString["modeCode"]))
    {
       modeCode = Request.QueryString.Get("modeCode");
+   }
+   
+   if (false == string.IsNullOrWhiteSpace(Request.QueryString["badid"]) && Request.QueryString.Get("badid") == "1")
+   {
+       showBadSoftwareId = true;
    }
 
    if (false == string.IsNullOrEmpty(modeCode))
@@ -44,6 +50,13 @@
       @Html.Partial("~/Views/Partials/Modules/HeaderTitle.cshtml", currentPage)
 
       @Html.Raw(currentPage.GetPropertyValue<string>("bodyText"))
+
+
+        @if (true == showBadSoftwareId)
+        {
+            <p><strong style="color: red">The software id is invalid.</strong></p>
+        }
+
 
       @if (softwareNodeList != null && softwareNodeList.Any())
       {

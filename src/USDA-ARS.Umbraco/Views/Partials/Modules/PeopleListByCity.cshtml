@@ -47,7 +47,7 @@
 			int i = 0;
 			foreach (PeopleByCity peopleByCity in siteLabelList)
 			{
-				if (incValue == -1 && peopleByCity.ModeCodeConcat == modeCode)
+				if (incValue == -1 && peopleByCity.ModeCodeConcat == ModeCodes.ModeCodeNoDashes(modeCode))
 				{
 					incValue = i;
 				}
