@@ -54,9 +54,8 @@
          var counter = (opts.currSlide + 1) + ' / ' + opts.slideCount;
          $('#carouselCounter').html(counter);
 
-         // get the photo carousel caption from the image ALT tag
-
-         $('#carouselCaption').html($('#' + this.children[0].id).data('text'));
+      	// get the photo carousel caption from the image slide-text divs
+         $('#carouselCaption').html($('#' + this.children[0].id + "-text").html());
       }
 
       function onAfter(curr, next, opts) {
@@ -95,7 +94,7 @@
             }
 
             <a href="@navLinkUrl" title="@slide.GetPropertyValue("slideAltText")" @Html.Raw(targetLink)>
-               <img id="slide@(slideNum)" src="@slide.GetPropertyValue("slideImage")" class="carouselPhoto" alt="@slide.GetPropertyValue("slideAltText")" data-text="@slide.GetPropertyValue("slideText")" style="max-width: 520px; max-height: 320px;" />
+               <img id="slide@(slideNum)" src="@slide.GetPropertyValue("slideImage")" class="carouselPhoto" alt="@slide.GetPropertyValue("slideAltText")" style="max-width: 520px; max-height: 320px;" />
             </a>
 
             slideNum++;
@@ -108,10 +107,20 @@
 
    </div>
 
-
    <div id="carouselCaption" style="width:115px;height:240px;float:right;">
       @Html.Raw(defaultCarouselText)
    </div>
+	@if (carouselSlides != null)
+	{
+		int slideNum = 0;
+
+		foreach (IPublishedContent slide in carouselSlides)
+		{
+			<div id="slide@(slideNum)-text" style="display: none;">@Html.Raw(slide.GetPropertyValue("slideText"))</div>
+
+			slideNum++;
+		}
+	}
 
    @if (carouselSlides != null && carouselSlides.Any())
    {
