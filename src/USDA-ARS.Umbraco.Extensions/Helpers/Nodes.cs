@@ -283,7 +283,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
       }
 
 
-      public static List<RedirectItem> NodesWithRedirectsList(bool useCache = true)
+      public static List<RedirectItem> NodesWithRedirectsList(bool useCache = true, bool addSlashForRedirects = true)
       {
          List<RedirectItem> redirectList = null;
 
@@ -317,12 +317,20 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                      {
                         foreach (string oldUrl in oldUrlArray)
                         {
-                           redirectList.Add(new RedirectItem { OldUrl = oldUrl.Trim().ToLower(), UmbracoId = oldUrlItem.UmbracoId });
+									string fixOldUrl = oldUrl.Trim();
 
-                           if (false == oldUrl.EndsWith("/") && false == oldUrl.ToLower().EndsWith(".htm") && false == oldUrl.ToLower().EndsWith(".html"))
-                           {
-                              redirectList.Add(new RedirectItem { OldUrl = oldUrl.Trim().ToLower() + "/", UmbracoId = oldUrlItem.UmbracoId });
-                           }
+									if (false == string.IsNullOrWhiteSpace(fixOldUrl))
+									{
+										redirectList.Add(new RedirectItem { OldUrl = fixOldUrl.Trim().ToLower(), UmbracoId = oldUrlItem.UmbracoId });
+
+										if (true == addSlashForRedirects)
+										{
+											if (false == oldUrl.EndsWith("/") && false == fixOldUrl.ToLower().EndsWith(".htm") && false == fixOldUrl.ToLower().EndsWith(".html"))
+											{
+												redirectList.Add(new RedirectItem { OldUrl = fixOldUrl.Trim().ToLower() + "/", UmbracoId = oldUrlItem.UmbracoId });
+											}
+										}
+									}
                         }
                      }
                   }

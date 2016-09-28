@@ -1,0 +1,21 @@
+﻿{   
+    //you can define multiple editors   
+    propertyEditors: [      
+        {
+            /*this must be a unique alias*/ 
+            alias: "UsdaDetectDupOldUrls",
+            /*the name*/
+            name: "USDA Detect Dup Old Urls",
+			
+            /*the html file we will load for the editor*/
+            editor: {
+                view: "~/App_Plugins/UsdaDetectDupOldUrls/views/usda.dup.old.urls.html"
+            }
+        }
+    ]
+    ,
+    //array of files we want to inject into the application on app_start
+    javascript: [
+		'~/App_Plugins/UsdaDetectDupOldUrls/js/usda.dup.old.urls.js'
+    ]
+}

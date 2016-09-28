@@ -305,6 +305,7 @@
   <ItemGroup>
     <Compile Include="Controller\ContentImporterController.cs" />
     <Compile Include="Controller\DocTypeListController.cs" />
+    <Compile Include="Controller\DupOldUrlsController.cs" />
     <Compile Include="Controller\InterLinksController.cs" />
     <Compile Include="Controller\NewsProductPickerController.cs" />
     <Compile Include="Controller\NewsTopicPickerController.cs" />

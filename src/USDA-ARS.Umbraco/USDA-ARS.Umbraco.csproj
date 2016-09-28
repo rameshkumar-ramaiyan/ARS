@@ -402,6 +402,8 @@
     <Content Include="App_Plugins\UsdaDataImporter\js\usda.data.importer.js" />
     <Content Include="App_Plugins\UsdaDataImporter\upload.file.aspx" />
     <Content Include="App_Plugins\UsdaDataImporter\views\usda.data.importer.html" />
+    <Content Include="App_Plugins\UsdaDetectDupOldUrls\js\usda.dup.old.urls.js" />
+    <Content Include="App_Plugins\UsdaDetectDupOldUrls\views\usda.dup.old.urls.html" />
     <Content Include="App_Plugins\UsdaInterLinks\js\usda.interlinks.js" />
     <Content Include="App_Plugins\UsdaInterLinks\views\usda.interlinks.html" />
     <Content Include="App_Plugins\UsdaDownloadRequests\js\usda.download.requests.js" />
@@ -2994,6 +2996,7 @@
     <Content Include="Config\applications.config" />
     <Content Include="Config\404handlers.config" />
     <Content Include="App_Offline.htm.off" />
+    <Content Include="App_Plugins\UsdaDetectDupOldUrls\package.manifest" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
     <Content Include="Views\StandardWebpage.cshtml" />
