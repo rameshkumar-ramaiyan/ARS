@@ -375,6 +375,9 @@
     <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker-newfolder-dialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker-upload-dialog.html" />
     <Content Include="App_Plugins\FileSystemPicker\foldersystem-picker.html" />
+    <Content Include="App_Plugins\NewsPicker\js\usda.news.picker.js" />
+    <Content Include="App_Plugins\NewsPicker\views\usda.news.picker.find.dialog.html" />
+    <Content Include="App_Plugins\NewsPicker\views\usda.news.picker.html" />
     <Content Include="App_Plugins\PropertyAccess\Dashboard\propertiesViews\checkbox.html" />
     <Content Include="App_Plugins\PropertyAccess\Dashboard\propertiesViews\dropdown.html" />
     <Content Include="App_Plugins\PropertyAccess\Dashboard\propertiesViews\numeric.html" />
@@ -2997,6 +3000,8 @@
     <Content Include="Config\404handlers.config" />
     <Content Include="App_Offline.htm.off" />
     <Content Include="App_Plugins\UsdaDetectDupOldUrls\package.manifest" />
+    <Content Include="App_Plugins\NewsPicker\package.manifest" />
+    <Content Include="App_Plugins\NewsPicker\js\usda.news.picker.resource.js" />
     <None Include="Properties\PublishProfiles\Publish to Dev.pubxml" />
     <Content Include="Views\Homepage.cshtml" />
     <Content Include="Views\StandardWebpage.cshtml" />

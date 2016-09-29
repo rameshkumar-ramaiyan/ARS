@@ -1,0 +1,70 @@
+﻿<div class="umb-panel ng-scope" ng-controller="Usda.News.Picker.Dialog">
+	<div class="umb-panel-header">
+		<div class="umb-el-wrap umb-panel-buttons">
+
+			<div class="form-search">
+				<i class="icon icon-search"></i>
+				<input type="text"
+						 ng-model="term"
+						 class="umb-search-field search-query"
+						 placeholder="Search News Articles..."
+						 focus-when="{{showSearch}}">
+				<h4>
+					<small><localize key="general_search">Search</localize> Results:&nbsp;</small>
+				</h4>
+			</div>
+
+		</div>
+	</div>
+	<div class="umb-panel-body with-footer">
+
+		<div class="tab-content umb-control-group">
+
+			<div results="results" select-result-callback="selectResult" class="ng-scope">
+				<ul class="umb-tree">
+
+					<li class="root">
+						<ul class="umb-search-group">
+
+							<li ng-repeat="result in results">
+
+								<div style="padding-left: 20px">
+									<a class="umb-search-group-item-link" ng-class="{first:$first}" ng-click="selectResultCallback($event, result.Id)">
+										<div class="umb-search-group-item-name">
+											<i id="news-picker-icon{{result.Id}}" class="icon umb-tree-icon sprTree icon-newspaper"></i>
+											{{result.Name}}
+										</div>
+										<small class="search-subtitle">{{result.Date}}</small>
+									</a>
+								</div>
+
+							</li>
+
+						</ul>
+					</li>
+
+				</ul>
+			</div>
+
+		</div>
+	</div>
+
+	<div class="umb-panel-footer">
+		<div class="umb-el-wrap umb-panel-buttons">
+			<div class="btn-toolbar umb-btn-toolbar pull-right">
+
+				<a href ng-click="close()" class="btn btn-link">
+					<localize key="general_cancel">Cancel</localize>
+				</a>
+
+				<button class="btn btn-primary"
+						  ng-click="multiSubmit()">
+					<localize key="buttons_select">Select</localize>
+					({{nodeArray.length}})
+				</button>
+
+			</div>
+		</div>
+	</div>
+
+</div>
