@@ -1,0 +1,22 @@
+﻿{   
+    //you can define multiple editors   
+    propertyEditors: [      
+        {
+            /*this must be a unique alias*/ 
+            alias: "NewsPicker",
+            /*the name*/
+            name: "News Picker",
+			
+            /*the html file we will load for the editor*/
+            editor: {
+                view: "~/App_Plugins/NewsPicker/views/usda.news.picker.html"
+            }
+        }
+    ]
+    ,
+    //array of files we want to inject into the application on app_start
+    javascript: [
+		'~/App_Plugins/NewsPicker/js/usda.news.picker.js',
+		'~/App_Plugins/NewsPicker/js/usda.news.picker.resource.js'
+    ]
+}

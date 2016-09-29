@@ -306,6 +306,7 @@
     <Compile Include="Controller\ContentImporterController.cs" />
     <Compile Include="Controller\DocTypeListController.cs" />
     <Compile Include="Controller\DupOldUrlsController.cs" />
+    <Compile Include="Controller\NewsPickerController.cs" />
     <Compile Include="Controller\InterLinksController.cs" />
     <Compile Include="Controller\NewsProductPickerController.cs" />
     <Compile Include="Controller\NewsTopicPickerController.cs" />
@@ -337,6 +338,7 @@
     <Compile Include="Helpers\ModeCodes.cs" />
     <Compile Include="Helpers\NavCategories.cs" />
     <Compile Include="Helpers\News.cs" />
+    <Compile Include="Helpers\NewsSearchResults.cs" />
     <Compile Include="Helpers\Nodes.cs" />
     <Compile Include="Helpers\Redirects.cs" />
     <Compile Include="Helpers\Scripts.cs" />
@@ -379,6 +381,7 @@
     <Compile Include="Models\InterLinksView.cs" />
     <Compile Include="Models\ModeCodeActive.cs" />
     <Compile Include="Models\NewsProductItem.cs" />
+    <Compile Include="Models\NewsSearchResult.cs" />
     <Compile Include="Models\NewsTopicItem.cs" />
     <Compile Include="Models\NavCategoryItem.cs" />
     <Compile Include="Models\NodeBreadcrumb.cs" />
