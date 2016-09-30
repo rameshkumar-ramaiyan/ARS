@@ -288,6 +288,7 @@
     <Compile Include="Models\PersonLookup.cs" />
     <Compile Include="Models\DocFolderLookup.cs" />
     <Compile Include="Models\ModeCodeLookup.cs" />
+    <Compile Include="Models\Sp2Document.cs" />
     <Compile Include="Models\SubSiteLookup.cs" />
     <Compile Include="Models\TestModel.cs" />
     <Compile Include="Models\UmbracoPropertyData.cs" />
@@ -309,6 +310,9 @@
       <Project>{94328c72-101b-4a7b-aefb-b0c60cae0180}</Project>
       <Name>USDA-ARS.Umbraco.Extensions</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="bin\Debug\MULTI_PAGE_DOCS_LOAD_FILE.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets" Condition="Exists('..\packages\Microsoft.Bcl.Build.1.0.14\tools\Microsoft.Bcl.Build.targets')" />

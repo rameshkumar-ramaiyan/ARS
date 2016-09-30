@@ -47,6 +47,7 @@
     <Compile Include="Models\DocFolderLookup.cs" />
     <Compile Include="Models\ImportPage.cs" />
     <Compile Include="Models\ModeCodeLookup.cs" />
+    <Compile Include="Models\Sp2Document.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -62,6 +63,9 @@
       <Project>{94328c72-101b-4a7b-aefb-b0c60cae0180}</Project>
       <Name>USDA-ARS.Umbraco.Extensions</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="MULTI_PAGE_DOCS_LOAD_FILE.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
