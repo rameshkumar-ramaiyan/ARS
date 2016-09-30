@@ -1,12 +1,17 @@
-USE [aris_public_webNew]
+USE [aris_public_web]
 GO
 
-/****** Object:  UserDefinedFunction [dbo].[udfgetDecryptedPagesBasedOnPageNumber]    Script Date: 8/29/2016 6:22:12 PM ******/
+/****** Object:  UserDefinedFunction [dbo].[udfgetDecryptedPagesBasedOnPageNumber]    Script Date: 9/30/2016 12:52:17 AM ******/
+DROP FUNCTION [dbo].[udfgetDecryptedPagesBasedOnPageNumber]
+GO
+
+/****** Object:  UserDefinedFunction [dbo].[udfgetDecryptedPagesBasedOnPageNumber]    Script Date: 9/30/2016 12:52:17 AM ******/
 SET ANSI_NULLS ON
 GO
 
 SET QUOTED_IDENTIFIER ON
 GO
+
 
 
 
@@ -22,6 +27,6 @@ END
 
 
 
-GO
 
+GO
 

@@ -69,21 +69,24 @@ namespace USDA_ARS.ImportMultiDocs
 						AddLog("Origin ID: " + docPageList[0].OriginSiteId);
 
 						int umbracoParentId = 0;
-
+						string navigationCategoryGuid = "";
 
 						string umbracoFolderDocTypeName = "";
 
 						if (docPageList[0].DocType.ToLower() == "research")
 						{
 							umbracoFolderDocTypeName = "SitesResearch";
+							navigationCategoryGuid = "f5231859-9053-4e75-835e-2fd07e3575e6";
 						}
 						else if (docPageList[0].DocType.ToLower() == "careers")
 						{
 							umbracoFolderDocTypeName = "SitesCareers";
-						}
+							navigationCategoryGuid = "d5f6c79c-a25c-4838-b154-20398f0685e2";
+                  }
 						else if (docPageList[0].DocType.ToLower() == "news")
 						{
 							umbracoFolderDocTypeName = "SitesNews";
+							navigationCategoryGuid = "ac79b700-ad67-4179-a4f6-db9705ecce31";
 						}
 						else
 						{
@@ -123,6 +126,8 @@ namespace USDA_ARS.ImportMultiDocs
 						if (false == string.IsNullOrEmpty(pageModeCode))
 						{
 							int umbracoFirstPageId = 0;
+							
+
 							umbracoParentId = GetNodeChildSubNode(pageModeCode, umbracoFolderDocTypeName);
 
 							AddLog("Umbraco Folder: " + umbracoFolderDocTypeName + " | Umbraco ID: " + umbracoParentId);
@@ -140,7 +145,7 @@ namespace USDA_ARS.ImportMultiDocs
 									if (document.DocPage == 1)
 									{
 										// save to umbracoParentId, get umbracoFirstPageId
-										ApiResponse response = AddUmbracoPage(umbracoParentId, document.Title, document.BodyText, document.DisplayTitle ? false : true, document.DocId, document.DocType, document.HtmlHeader, document.Keywords, document.DocPage);
+										ApiResponse response = AddUmbracoPage(umbracoParentId, document.Title, document.BodyText, document.DisplayTitle ? false : true, document.DocId, document.DocType, document.HtmlHeader, document.Keywords, document.DocPage, 2, "", navigationCategoryGuid);
 
 										if (response != null && response.ContentList != null && response.ContentList.Any())
 										{
@@ -154,7 +159,7 @@ namespace USDA_ARS.ImportMultiDocs
                               }
 										else
 										{
-											AddLog("Doc ID: " + document.DocId + " - COULD NOT SAVE PAGE.", LogFormat.ErrorBad);
+											AddLog("ERROR!! Doc ID: " + document.DocId + " - COULD NOT SAVE PAGE.", LogFormat.ErrorBad);
 										}
 									}
 									else
@@ -162,7 +167,7 @@ namespace USDA_ARS.ImportMultiDocs
 										if (umbracoFirstPageId > 0)
 										{
 											// Save all pages under umbracoFirstPageId
-											ApiResponse response = AddUmbracoPage(umbracoFirstPageId, document.Title, document.BodyText, document.DisplayTitle ? false : true, document.DocId, document.DocType, document.HtmlHeader, document.Keywords, document.DocPage);
+											ApiResponse response = AddUmbracoPage(umbracoFirstPageId, document.Title, document.BodyText, document.DisplayTitle ? false : true, document.DocId, document.DocType, document.HtmlHeader, document.Keywords, document.DocPage, 2, "", navigationCategoryGuid);
 
 											if (response != null && response.ContentList != null && response.ContentList.Any())
 											{
@@ -170,19 +175,19 @@ namespace USDA_ARS.ImportMultiDocs
 											}
 											else
 											{
-												AddLog("Doc ID: " + document.DocId + " - COULD NOT SAVE PAGE.", LogFormat.ErrorBad);
+												AddLog("ERROR!! Doc ID: " + document.DocId + " - COULD NOT SAVE PAGE.", LogFormat.ErrorBad);
 											}
 										}
 										else
 										{
-											AddLog("Doc ID: " + document.DocId + " - First page did not save. Can't save sub-pages.", LogFormat.Error);
+											AddLog("ERROR!! Doc ID: " + document.DocId + " - First page did not save. Can't save sub-pages.", LogFormat.ErrorBad);
 										}
 									}
 								}
 							}
 							else
 							{
-								AddLog("Unable to find the Umbraco Sub Folder (ex: Research/News/Careers)", LogFormat.Error);
+								AddLog("ERROR!! Unable to find the Umbraco Sub Folder (ex: Research/News/Careers)", LogFormat.ErrorBad);
 							}
 						}
 					}
@@ -190,6 +195,14 @@ namespace USDA_ARS.ImportMultiDocs
 					AddLog("");
 					AddLog("");
 				}
+			}
+
+
+			using (FileStream fs = File.Create("MULTI_DOCS_LOG_FILE.txt"))
+			{
+				// Add some text to file
+				Byte[] fileText = new UTF8Encoding(true).GetBytes(LOG_FILE_TEXT);
+				fs.Write(fileText, 0, fileText.Length);
 			}
 		}
 
@@ -214,6 +227,11 @@ namespace USDA_ARS.ImportMultiDocs
 					}
 				}
 			}
+			else
+			{
+				AddLog("COULD NOT FIND FILE: " + System.Reflection.Assembly.GetExecutingAssembly().CodeBase + "\\" + filename, LogFormat.ErrorBad);
+				throw new Exception("COULD NOT FIND FILE: " + System.Reflection.Assembly.GetExecutingAssembly().CodeBase + "\\" + filename);
+         }
 
 			return docIdsList;
 		}
@@ -568,12 +586,12 @@ namespace USDA_ARS.ImportMultiDocs
 				}
 				else
 				{
-					AddLog(" --- !! ERROR: " + responseBack.ContentList[0].Message, LogFormat.Error);
+					AddLog(" --- !! ERROR: " + responseBack.ContentList[0].Message, LogFormat.ErrorBad);
 				}
 			}
 			else
 			{
-				AddLog(" --- !! API ERROR: null", LogFormat.Error);
+				AddLog(" --- !! API ERROR: null", LogFormat.ErrorBad);
 			}
 		}
 

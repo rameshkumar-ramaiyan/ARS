@@ -1,7 +1,11 @@
-USE [aris_public_webNew]
+USE [aris_public_web]
 GO
 
-/****** Object:  StoredProcedure [dbo].[uspgetAllDistinctDocIdsWithMultiplePages]    Script Date: 8/29/2016 6:21:40 PM ******/
+/****** Object:  StoredProcedure [dbo].[uspgetAllDistinctDocIdsWithMultiplePages]    Script Date: 9/30/2016 12:51:02 AM ******/
+DROP PROCEDURE [dbo].[uspgetAllDistinctDocIdsWithMultiplePages]
+GO
+
+/****** Object:  StoredProcedure [dbo].[uspgetAllDistinctDocIdsWithMultiplePages]    Script Date: 9/30/2016 12:51:02 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -34,7 +38,7 @@ docpagetitle varchar(max)
 );
 DECLARE cur1 CURSOR FOR SELECT cast(DocId as varchar(max))  from sitepublisherii.dbo.Documents where SPSysEndTime is null 
 --and DocId in(19413,6566,4115,6607,18031)
-and DocId in(4162,2999,18151)
+--and DocId in(4162,2999,18151)
 OPEN cur1
 
 FETCH NEXT FROM cur1 INTO @DocId
@@ -53,6 +57,10 @@ on sitepublisherii.dbo.Documents.CurrentVersion_ID=sitepublisherii.dbo.DocPages.
 Cast(DocId as varchar(max) )=  @DocId
  and published =  'p'and sitepublisherii.dbo.Documents.SPSysEndTime is  null
  and sitepublisherii.dbo.DocPages.CurrentVersion=1
+  and sitepublisherii.dbo.DocPages.CurrentVersion=1
+and sitepublisherii.dbo.DocPages.DocPageNum not in (1)
+and Title='index'
+ and DocType in('Research','News','Careers')   
 ) as x
 
 if (@CountOfRows>0)
@@ -107,5 +115,4 @@ end
 --select * from  sitepublisherii.dbo.DocPages where DocVer_ID =(4346)and CurrentVersion = 1 order by docpagenum
 
 GO
-
 

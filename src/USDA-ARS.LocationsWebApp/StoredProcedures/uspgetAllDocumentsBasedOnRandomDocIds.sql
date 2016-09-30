@@ -1,7 +1,11 @@
-USE [aris_public_webNew]
+USE [aris_public_web]
 GO
 
-/****** Object:  StoredProcedure [dbo].[uspgetAllDocumentsBasedOnRandomDocIds]    Script Date: 8/29/2016 6:21:00 PM ******/
+/****** Object:  StoredProcedure [dbo].[uspgetAllDocumentsBasedOnRandomDocIds]    Script Date: 9/30/2016 12:51:19 AM ******/
+DROP PROCEDURE [dbo].[uspgetAllDocumentsBasedOnRandomDocIds]
+GO
+
+/****** Object:  StoredProcedure [dbo].[uspgetAllDocumentsBasedOnRandomDocIds]    Script Date: 9/30/2016 12:51:19 AM ******/
 SET ANSI_NULLS ON
 GO
 
@@ -10,7 +14,7 @@ GO
 
 
 
-ALTER PROCEDURE [dbo].[uspgetAllDocumentsBasedOnRandomDocIds]
+CREATE PROCEDURE [dbo].[uspgetAllDocumentsBasedOnRandomDocIds]
 
 @RandomDocId nvarchar(max) 
 AS
@@ -60,5 +64,4 @@ END
 
 
 GO
-
 
