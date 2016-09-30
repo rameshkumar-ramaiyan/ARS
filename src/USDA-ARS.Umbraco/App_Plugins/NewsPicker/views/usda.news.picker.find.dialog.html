@@ -1,17 +1,22 @@
-﻿<div class="umb-panel ng-scope" ng-controller="Usda.News.Picker.Dialog">
+﻿<style>
+	.picker-year-select {
+		margin-top: 5px;
+	}
+</style>
+<div class="umb-panel ng-scope" ng-controller="Usda.News.Picker.Dialog">
 	<div class="umb-panel-header">
 		<div class="umb-el-wrap umb-panel-buttons">
 
 			<div class="form-search">
 				<i class="icon icon-search"></i>
 				<input type="text"
-						 ng-model="term"
+						 ng-model="searchText"
 						 class="umb-search-field search-query"
 						 placeholder="Search News Articles..."
 						 focus-when="{{showSearch}}">
-				<h4>
-					<small><localize key="general_search">Search</localize> Results:&nbsp;</small>
-				</h4>
+
+				<select ng-model="selectedYearsModel" ng-options="p.Value as p.Text for p in yearsModel" ng-change="yearListChanged(selectedYearsModel)" class="picker-year-select"><option value="" selected>Filter by Year...</option></select>
+
 			</div>
 
 		</div>
@@ -34,7 +39,7 @@
 											<i id="news-picker-icon{{result.Id}}" class="icon umb-tree-icon sprTree icon-newspaper"></i>
 											{{result.Name}}
 										</div>
-										<small class="search-subtitle">{{result.Date}}</small>
+										<small class="search-subtitle">{{result.Date | date:'M/d/yyyy'}}</small>
 									</a>
 								</div>
 

@@ -43,13 +43,27 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 		/// <returns></returns>
 		[System.Web.Http.AcceptVerbs("GET")]
 		[System.Web.Http.HttpGet]
-		public List<NewsSearchResult> Get(string query)
+		public List<NewsSearchResult> Get(string query, string year = "")
 		{
 			List<NewsSearchResult> newsSearchResultList = null;
 
 			try
 			{
-				newsSearchResultList = NewsSearchResults.GetNewsSearchResults(query);
+				if (false == string.IsNullOrWhiteSpace(query))
+				{
+					if (query == "undefined" || query == "null")
+					{
+						query = "";
+					}
+				}
+
+				int yearInt = 0;
+
+				if (int.TryParse(year, out yearInt))
+				{ }
+
+
+				newsSearchResultList = NewsSearchResults.GetNewsSearchResults(query, yearInt);
 			}
 			catch (Exception ex)
 			{
@@ -92,10 +106,37 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 
 							if (node != null)
 							{
-								newsList.Add(new NewsItem() { Id = node.Id, Name = node.Name });
+								newsList.Add(new NewsItem() { Id = node.Id, Name = node.Name, Date = node.GetPropertyValue<DateTime>("articleDate") });
 							}
 						}
 					}
+				}
+			}
+
+			return newsList;
+		}
+
+
+		/// <summary>
+		/// Get a list of years
+		/// </summary>
+		/// <param name="nodeIds"></param>
+		/// <returns></returns>
+		[System.Web.Http.AcceptVerbs("GET")]
+		[System.Web.Http.HttpGet]
+		public List<YearItem> YearsList()
+		{
+			List<YearItem> newsList = new List<YearItem>();
+
+			IEnumerable<IPublishedContent> newsNodeList = Helpers.Nodes.NewsYearList();
+
+			if (newsNodeList != null && newsNodeList.Any())
+			{
+				newsNodeList = newsNodeList.OrderByDescending(p => p.Name);
+
+				foreach (IPublishedContent yearNode in newsNodeList)
+				{
+					newsList.Add(new YearItem(yearNode.Name, yearNode.Name));
 				}
 			}
 
@@ -107,5 +148,18 @@ namespace USDA_ARS.Umbraco.Extensions.Controller
 	{
 		public int Id { get; set; }
 		public string Name { get; set; }
+		public DateTime Date { get; set; }
+	}
+
+	public class YearItem
+	{
+		public string Value { get; set; }
+		public string Text { get; set; }
+
+		public YearItem(string value, string text)
+		{
+			this.Value = value;
+			this.Text = text;
+		}
 	}
 }

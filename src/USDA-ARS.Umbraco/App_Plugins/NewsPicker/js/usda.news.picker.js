@@ -10,8 +10,24 @@
 		});
 	};
 
-	$scope.remove = function () {
-		$scope.model.value = '';
+	$scope.remove = function (item) {
+		var nodeIds = [];
+
+		nodeIds = $scope.model.value.split(',');
+
+		if (nodeIds) {
+			var findIndex = nodeIds.indexOf(item.Id.toString());
+			if (findIndex >= 0) {
+				nodeIds.splice(findIndex, 1);
+
+				$scope.model.value = nodeIds.toString()
+			}
+		}
+		else {
+			$scope.model.value = '';
+		}
+		
+		getNodeDetails($scope.model.value);
 	};
 
 	function populate(data) {
@@ -21,7 +37,7 @@
 		else {
 			$scope.model.value = data;
 		}
-		
+
 		getNodeDetails($scope.model.value);
 	};
 
@@ -52,32 +68,27 @@
 angular.module('umbraco').controller('Usda.News.Picker', usdaNewsPicker);
 
 
-function usdaSearchDialog($scope, localizationService, searchService, $q, usdaNewsPickerResource) {
+function usdaSearchDialog($scope, $timeout, localizationService, searchService, $q, usdaNewsPickerResource) {
 	var nodeIds = [];
 
 	$scope.nodeArray = [];
+	$scope.selectedYearsModel = '';
 
-	//scope.$watch("term", _.debounce(function (newVal, oldVal) {
-	//	scope.$apply(function () {
-	//		if (newVal !== null && newVal !== undefined && newVal !== oldVal) {
-	//			performSearch();
-	//		}
-	//	});
-	//}, 200));
-
-	usdaNewsPickerResource.getResults('').then(function (response) {
+	usdaNewsPickerResource.getYears().then(function (response) {
 		if (response && response.data) {
 
-			$scope.results = response.data;
-			//$scope.records = response.data;
-
-			//$('.descendants-loading-message').hide();
-
-			//$timeout(function () {
-			//	$('.descendants-audit-table').treetable({ expandable: true, initialState: 'expanded' });
-			//}, 0);
+			$scope.yearsModel = response.data;
 		}
 	});
+
+	$scope.yearListChanged = function (item) {
+		usdaNewsPickerResource.getResults($scope.searchText, item).then(function (response) {
+			if (response && response.data) {
+
+				$scope.results = response.data;
+			}
+		});
+	};
 
 
 	$scope.selectResultCallback = function ($event, id) {
@@ -105,6 +116,28 @@ function usdaSearchDialog($scope, localizationService, searchService, $q, usdaNe
 	$scope.multiSubmit = function () {
 		$scope.submit(nodeIds.toString());
 	};
+
+	// This is what you will bind the filter to
+
+	// Instantiate these variables outside the watch
+	var filterTextTimeout;
+	$scope.$watch('searchText', function (val) {
+		if (filterTextTimeout) {
+			$timeout.cancel(filterTextTimeout);
+		}
+
+		filterTextTimeout = $timeout(function () {
+			usdaNewsPickerResource.getResults(val, $scope.selectedYearsModel).then(function (response) {
+				if (response && response.data) {
+
+					$scope.results = response.data;
+				}
+			});
+		}, 200); // delay 200 ms
+	});
+
+
+
 
 };
 angular.module('umbraco').controller("Usda.News.Picker.Dialog", usdaSearchDialog);

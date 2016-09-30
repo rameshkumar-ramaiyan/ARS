@@ -12,7 +12,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 {
 	public class NewsSearchResults
 	{
-		public static List<NewsSearchResult> GetNewsSearchResults(string query)
+		public static List<NewsSearchResult> GetNewsSearchResults(string query, int year = 0)
 		{
 			List<NewsSearchResult> newsSearchResultList = new List<NewsSearchResult>();
 
@@ -34,7 +34,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 					filter = filter.Or().GroupedOr(fieldsToSearch, term);
 				}
 
-				searchResults = Searcher.Search(filter.Compile()).OrderByDescending(x => x.Score).Take(10);
+				searchResults = Searcher.Search(filter.Compile()).OrderByDescending(x => x.Score);
 			}
 			else
 			{
@@ -66,9 +66,21 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 					newsSearchResultList.Add(newsSearchResultItem);
 				}
 
+				if (year > 0)
+				{
+					DateTime startYear = DateTime.Parse("1/1/" + year);
+					DateTime endYear = startYear.AddYears(1).AddDays(-1);
+
+					newsSearchResultList = newsSearchResultList.Where(p => p.Date >= startYear && p.Date <= endYear).ToList();
+            }
+
 				if (true == string.IsNullOrWhiteSpace(query))
 				{
-					newsSearchResultList = newsSearchResultList.OrderByDescending(p => p.Date).Take(10).ToList();
+					newsSearchResultList = newsSearchResultList.OrderByDescending(p => p.Date).Take(20).ToList();
+            }
+				else
+				{
+					newsSearchResultList = newsSearchResultList.Take(20).ToList();
             }
 			}
 
