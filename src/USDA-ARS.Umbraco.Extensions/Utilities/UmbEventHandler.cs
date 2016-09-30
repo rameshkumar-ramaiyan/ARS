@@ -141,7 +141,7 @@ namespace USDA_ARS.Umbraco.Extensions.Utilities
 
 
 				// Check to see if user has access to create a ResearchUnit doc type
-				if (node != null &&node.Id == 0 && (node.ContentType.Alias == "ResearchUnit" || node.ContentType.Alias == "ResearchUnitClosed"))
+				if (node != null && node.Id == 0 && (node.ContentType.Alias == "ResearchUnit" || node.ContentType.Alias == "ResearchUnitClosed"))
 				{
 					var userTicket = new System.Web.HttpContextWrapper(System.Web.HttpContext.Current).GetUmbracoAuthTicket();
 					if (userTicket != null)
