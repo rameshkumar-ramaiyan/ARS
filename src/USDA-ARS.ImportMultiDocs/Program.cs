@@ -63,7 +63,8 @@ namespace USDA_ARS.ImportMultiDocs
 
 					if (docPageList != null && docPageList.Any())
 					{
-						AddLog("Title: " + docPageList[0].Title);
+						AddLog("Title: " + docPageList[0].Title, LogFormat.White);
+						AddLog("SP2 Doc ID: " + docPageList[0].DocId);
 						AddLog("DocType: " + docPageList[0].DocType);
 						AddLog("Origin Type: " + docPageList[0].OriginSiteType);
 						AddLog("Origin ID: " + docPageList[0].OriginSiteId);
