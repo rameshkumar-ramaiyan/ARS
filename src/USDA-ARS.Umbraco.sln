@@ -242,7 +242,6 @@ Global
 		{3E812806-0550-4CF1-8F1C-77CF388FAAB8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3E812806-0550-4CF1-8F1C-77CF388FAAB8}.Release|Any CPU.Build.0 = Release|Any CPU
 		{3E812806-0550-4CF1-8F1C-77CF388FAAB8}.Staging|Any CPU.ActiveCfg = Release|Any CPU
-		{3E812806-0550-4CF1-8F1C-77CF388FAAB8}.Staging|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
