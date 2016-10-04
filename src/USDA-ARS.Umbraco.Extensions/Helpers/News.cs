@@ -38,7 +38,7 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
 		public static List<IPublishedContent> GetNewsManuallySelected(IPublishedContent currentPage)
 		{
-			List<IPublishedContent> newsItems = null;
+			List<IPublishedContent> newsItems = new List<IPublishedContent>();
 
 			UmbracoHelper umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
 
@@ -52,8 +52,6 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 
 					if (newsIdList != null && newsIdList.Any())
 					{
-						newsItems = new List<IPublishedContent>();
-
 						foreach (string newsIdStr in newsIdList)
 						{
 							int umbracoId = 0;
@@ -71,12 +69,6 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
                }
 				}
 			}
-
-			if (newsItems != null && false == newsItems.Any())
-			{
-				newsItems = null;
-			}
-
 
 			return newsItems;
 		}
