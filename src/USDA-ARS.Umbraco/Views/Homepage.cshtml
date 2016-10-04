@@ -11,15 +11,11 @@
     IPublishedContent currentPage = Model.Content;
 
     ArchetypeModel popularTopics = currentPage.GetPropertyValue<ArchetypeModel>("popularTopics");
-    
 
     var resourceList = currentPage.GetPropertyValue<MultiUrls>("resources");
 
-
-    //IEnumerable<IPublishedContent> newsList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("newsList");
     IEnumerable<IPublishedContent> newsList = USDA_ARS.Umbraco.Extensions.Helpers.News.GetNews(6);
 
-    //IEnumerable<IPublishedContent> latestBlogList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("latestBlog");
     List<BlogItem> latestBlogList = USDA_ARS.Umbraco.Extensions.Helpers.Blogs.GetBlogFeed().Take(10).ToList();
 
     string middleArea = currentPage.GetPropertyValue<string>("middleArea");

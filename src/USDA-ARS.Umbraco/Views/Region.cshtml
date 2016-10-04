@@ -29,7 +29,7 @@
 
     List<UsdaProject> researchList = USDA_ARS.Umbraco.Extensions.Helpers.Aris.Projects.ListProjects(modeCode, 3);
 
-    List<IPublishedContent> newsList = currentPage.GetPropertyValue<IEnumerable<IPublishedContent>>("newsList").ToList();
+    List<IPublishedContent> newsList = News.GetNewsManuallySelected(currentPage);
     List<IPublishedContent> newsInterLinksList = NewsInterLinks.GetNewsByModeCode(modeCode);
 
     if (newsInterLinksList != null && newsInterLinksList.Any())

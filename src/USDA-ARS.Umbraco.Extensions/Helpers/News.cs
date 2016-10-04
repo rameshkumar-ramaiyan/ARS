@@ -35,6 +35,53 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
       }
 
 
+
+		public static List<IPublishedContent> GetNewsManuallySelected(IPublishedContent currentPage)
+		{
+			List<IPublishedContent> newsItems = null;
+
+			UmbracoHelper umbracoHelper = new UmbracoHelper(UmbracoContext.Current);
+
+			if (currentPage != null && currentPage.HasProperty("newsList"))
+			{
+				string newsIds = currentPage.GetPropertyValue<string>("newsList");
+
+				if (false == string.IsNullOrWhiteSpace(newsIds))
+				{
+					List<string> newsIdList = newsIds.Split(',').ToList();
+
+					if (newsIdList != null && newsIdList.Any())
+					{
+						newsItems = new List<IPublishedContent>();
+
+						foreach (string newsIdStr in newsIdList)
+						{
+							int umbracoId = 0;
+
+							if (int.TryParse(newsIdStr, out umbracoId))
+							{
+								IPublishedContent newsNode = umbracoHelper.TypedContent(umbracoId);
+
+								if (newsNode != null)
+								{
+									newsItems.Add(newsNode);
+								}
+							}
+						}
+               }
+				}
+			}
+
+			if (newsItems != null && false == newsItems.Any())
+			{
+				newsItems = null;
+			}
+
+
+			return newsItems;
+		}
+
+
       public static List<IPublishedContent> GetNewsByProduct(string productName, int newsCount, string modeCode = null, DateTime? dateStart = null, DateTime? dateEnd = null)
       {
          List<IPublishedContent> newsItems = null;
