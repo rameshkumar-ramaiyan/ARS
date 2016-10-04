@@ -1,4 +1,5 @@
-﻿using System;
+﻿using RJP.MultiUrlPicker.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,6 +9,7 @@ using Umbraco.Core;
 using Umbraco.Core.Logging;
 using Umbraco.Core.Models;
 using Umbraco.Core.Services;
+using Umbraco.Web;
 using USDA_ARS.Umbraco.Extensions.Models;
 using USDA_ARS.Umbraco.Extensions.Models.Aris;
 
@@ -32,6 +34,12 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 					if (true == string.IsNullOrEmpty(redirectUrl))
 					{
 						redirectUrl = RedirectOldPages(badUrl);
+					}
+
+					// Redirects in Site Settings
+					if (true == string.IsNullOrEmpty(redirectUrl))
+					{
+						redirectUrl = RedirectSiteSettingsStore(badUrl);
 					}
 
 					// Redirects In Umbraco
@@ -321,6 +329,42 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
 						{
 							redirectUrl = docNode.Url;
 						}
+					}
+				}
+			}
+
+			return redirectUrl;
+		}
+
+
+		/// <summary>
+		/// Looks for a redirect in the site settings / redirects area
+		/// </summary>
+		/// <param name="badUrl"></param>
+		/// <returns></returns>
+		public static string RedirectSiteSettingsStore(string badUrl)
+		{
+			string redirectUrl = null;
+
+			IPublishedContent redirectList = Nodes.RedirectsFolder();
+
+			if (redirectList != null)
+			{
+				IPublishedContent redirectFound = null;
+
+				redirectFound = redirectList.Children.Where(p => p.GetPropertyValue<string>("urlToRedirect") != null &&
+						(
+							p.GetPropertyValue<string>("urlToRedirect").ToLower() == badUrl.ToLower() ||
+							p.GetPropertyValue<string>("urlToRedirect").ToLower() + "/" == badUrl.ToLower()
+						)).FirstOrDefault();
+
+				if (redirectFound != null)
+				{
+					Link urlLink = redirectFound.GetPropertyValue<MultiUrls>("redirectToUrl").FirstOrDefault();
+
+					if (urlLink != null)
+					{
+						redirectUrl = urlLink.Url;
 					}
 				}
 			}

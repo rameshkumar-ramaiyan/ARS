@@ -62,7 +62,21 @@ namespace USDA_ARS.Umbraco.Extensions.Helpers
          return null;
       }
 
-      public static IEnumerable<IPublishedContent> NewsYearList()
+
+		public static IPublishedContent RedirectsFolder()
+		{
+			IPublishedContent siteSettings = SiteSettings();
+
+			if (siteSettings != null)
+			{
+				return siteSettings.Children.FirstOrDefault(n => n.IsDocumentType("RedirectsFolder"));
+			}
+
+			return null;
+		}
+
+
+		public static IEnumerable<IPublishedContent> NewsYearList()
       {
          IPublishedContent newsFolder = Homepage().Descendants().FirstOrDefault(n => n.IsDocumentType("NewsFolder"));
 
