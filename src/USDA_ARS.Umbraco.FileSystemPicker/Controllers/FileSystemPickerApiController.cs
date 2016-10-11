@@ -41,7 +41,11 @@ namespace USDA_ARS.Umbraco.FileSystemPicker.Controllers
                {
                   while (true == string.IsNullOrEmpty(startFolderName) && node != null && node.Level > 0)
                   {
-                     if (node.HasProperty(startFolderNamePropertyAlias) && false == string.IsNullOrEmpty(node.GetValue<string>(startFolderNamePropertyAlias)))
+                            if (node.ContentType.Alias == "Subsite")
+                            {
+                                startFolderNamePropertyAlias = "folderLabel";
+                            }
+                            if (node.HasProperty(startFolderNamePropertyAlias) && false == string.IsNullOrEmpty(node.GetValue<string>(startFolderNamePropertyAlias)))
                      {
                         startFolderName = node.GetValue<string>(startFolderNamePropertyAlias);
                      }
